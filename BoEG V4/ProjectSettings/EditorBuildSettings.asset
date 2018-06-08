@@ -6,14 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/NetworkTesting/NetworkMovementTestOfflineScene.unity
-    guid: a41b41ac4142f6747a7336ee78af1123
-  - enabled: 0
-    path: Assets/NetworkTesting/NetworkTestOfflineScene.unity
-    guid: e812f8075a3710f49bdded87f6d23d70
-  - enabled: 0
-    path: Assets/NetworkTesting/NetworkTestOnlineScene.unity
-    guid: 3ac10f0824a34974ebd43ebf8919dfb7
+    path: Assets/main.unity
+    guid: 4a88716e0fabd5748b6b7262d0a11b83
   - enabled: 1
-    path: Assets/NetworkTesting/NetworkMovementTestOnlineScene.unity
-    guid: 2e83af50ca766034b9836216f3eb37c0
+    path: Assets/online.unity
+    guid: 1712f985c4b70c749b0b0b87eb99d948
