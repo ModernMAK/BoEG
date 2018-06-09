@@ -1,8 +1,6 @@
-using Core;
-
 namespace Components.Attackerable
 {
-    public interface IAttackerableInstance
+    public interface IAttackerable
     {
         float Damage { get; }
         float AttackRange { get; }

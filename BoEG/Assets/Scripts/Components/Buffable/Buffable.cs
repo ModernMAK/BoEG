@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace Components.Buffable
 {
-    public class BuffableInstance : Module, IBuffableInstance
+    public class Buffable : Module, IBuffable
     {
         [SerializeField] private List<IBuffInstance> _buffs;
 
-        public BuffableInstance()
+        public Buffable()
         {
             _buffs = new List<IBuffInstance>();
         }

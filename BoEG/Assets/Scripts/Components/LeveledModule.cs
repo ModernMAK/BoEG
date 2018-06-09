@@ -5,11 +5,11 @@ namespace Components
 {
     public class LeveledModule : Module
     {
-        private ILevelableInstance _levelable;
+        private ILevelable _levelable;
 
         public override void Initialize(Entity e)
         {
-            _levelable = e.GetComponent<ILevelableInstance>();
+            _levelable = e.GetComponent<ILevelable>();
         }
 
         public int GetLevel(int defaultValue = 1)

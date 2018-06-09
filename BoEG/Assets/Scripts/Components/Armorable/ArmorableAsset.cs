@@ -2,9 +2,15 @@
 
 namespace Components.Armorable
 {
-    [CreateAssetMenu(menuName = "Component/Armorable")]
+    /// <summary>
+    /// A Unity-Asset version of IArmorableData.
+    /// </summary>
+    [CreateAssetMenu(fileName = "Armorable.asset", menuName = "Component/Armorable")]
     public class ArmorableAsset : ScriptableObject, IArmorableData
     {
+        /// <summary>
+        /// The backing field for the data, only editable within the editor.
+        /// </summary>
         [SerializeField] private ArmorableData _data;
 
         public float BasePhysicalBlock
@@ -27,9 +33,9 @@ namespace Components.Armorable
             get { return _data.GainPhysicalResist; }
         }
 
-        public bool BasePhysicalImmunity
+        public bool HasPhysicalImmunity
         {
-            get { return _data.BasePhysicalImmunity; }
+            get { return _data.HasPhysicalImmunity; }
         }
 
         public float BaseMagicalBlock
@@ -52,9 +58,9 @@ namespace Components.Armorable
             get { return _data.GainMagicalResist; }
         }
 
-        public bool BaseMagicalImmunity
+        public bool HasMagicalImmunity
         {
-            get { return _data.BaseMagicalImmunity; }
+            get { return _data.HasMagicalImmunity; }
         }
     }
 }

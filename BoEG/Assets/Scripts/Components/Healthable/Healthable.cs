@@ -1,14 +1,13 @@
 using System;
-using Core;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Components.Healthable
 {
     [Serializable]
-    public class HealthableInstance : FullModule, IHealthableInstance
+    public class Healthable : FullModule, IHealthable
     {
-        public HealthableInstance(IHealthableData data)
+        public Healthable(IHealthableData data)
         {
             _healthRatio = 1f;
             _data = data;

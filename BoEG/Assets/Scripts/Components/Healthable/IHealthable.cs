@@ -1,8 +1,6 @@
-using Core;
-
 namespace Components.Healthable
 {
-    public interface IHealthableInstance
+    public interface IHealthable
     {
         float HealthPoints { get; set; }
         float HealthRatio { get; set; }

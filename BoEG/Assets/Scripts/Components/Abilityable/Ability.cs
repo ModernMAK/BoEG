@@ -3,6 +3,7 @@
 
 namespace Components.Abilityable
 {
+    
     public abstract class Ability : ScriptableObject
     {
         public string Name;

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Components.Healthable;
+﻿using Components.Healthable;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,11 +6,11 @@ using UnityEngine.UI;
 public class HealthableSlider : MonoBehaviour
 {
     private Slider _slider;
-    private IHealthableInstance _healthable;
+    private IHealthable _healthable;
 
     private void Awake()
     {
-        _healthable = transform.root.GetComponent<IHealthableInstance>();
+        _healthable = transform.root.GetComponent<IHealthable>();
         _slider = GetComponent<Slider>();
     }
 

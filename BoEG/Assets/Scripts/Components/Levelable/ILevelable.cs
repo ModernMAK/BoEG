@@ -1,8 +1,6 @@
-using Core;
-
 namespace Components.Levelable
 {
-    public interface ILevelableInstance
+    public interface ILevelable
     {
         float Experience { get; }
         int Level { get; }

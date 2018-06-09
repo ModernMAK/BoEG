@@ -1,11 +1,6 @@
 ﻿using System;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Scene/Waypoints")]
-public class WaypointData : ScriptableObject
-{
-}
-
 public class LaneWaypointManager : MonoBehaviour
 {
     private static LaneWaypointManager _instance;

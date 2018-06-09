@@ -10,9 +10,9 @@ using UnityEngine.AI;
 namespace Components.Movable
 {
     [Serializable]
-    public class MovableInstance : BuffedModule, IMovableInstance
+    public class Movable : BuffedModule, IMovable
     {
-        public MovableInstance(IMovableData data)
+        public Movable(IMovableData data)
         {
             _data = data;
         }

@@ -8,13 +8,13 @@ namespace Components
 {
     public class FullModule : Module
     {
-        private IBuffableInstance _buffable;
-        private ILevelableInstance _levelable;
+        private IBuffable _buffable;
+        private ILevelable _levelable;
 
         public override void Initialize(Entity e)
         {
-            _levelable = e.GetComponent<ILevelableInstance>();
-            _buffable = e.GetComponent<IBuffableInstance>();
+            _levelable = e.GetComponent<ILevelable>();
+            _buffable = e.GetComponent<IBuffable>();
         }
 
         public int GetLevel(int defaultValue = 1)

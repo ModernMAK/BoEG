@@ -7,11 +7,11 @@ namespace Components
 {
     public class BuffedModule : Module
     {
-        private IBuffableInstance _buffable;
+        private IBuffable _buffable;
 
         public override void Initialize(Entity e)
         {
-            _buffable = e.GetComponent<IBuffableInstance>();
+            _buffable = e.GetComponent<IBuffable>();
             
         }
 

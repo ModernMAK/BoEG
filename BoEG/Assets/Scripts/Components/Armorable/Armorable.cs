@@ -1,19 +1,30 @@
 ﻿using System;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Components.Armorable
 {
     [Serializable]
-    public class ArmorableInstance : FullModule, IArmorableInstance
+    public class Armorable : FullModule, IArmorable
     {
-        public ArmorableInstance(IArmorableData data)
+        /// <summary>
+        /// Creates an instance of Armorable.
+        /// </summary>
+        /// <param name="data">The template data to use</param>
+        /// <exception cref="ArgumentNullException">Thrown if data is null</exception>
+        public Armorable(IArmorableData data)
         {
+            if (data == null)
+                throw new ArgumentNullException("data");
             _data = data;
         }
 
+        /// <summary>
+        /// The backing field containing template data for Armorable.
+        /// </summary>
         [SerializeField] private IArmorableData _data;
-
+    
         public float PhysicalBlock
         {
             get
@@ -42,7 +53,7 @@ namespace Components.Armorable
         {
             get
             {
-                var baseVal = _data.BasePhysicalImmunity;
+                var baseVal = _data.HasPhysicalImmunity;
                 if (baseVal) return true;
                 var buffs = GetBuffs<IArmorableBuffInstance>();
                 baseVal = buffs.Any(buff => buff.ProvidePhysicalImmunity);
@@ -78,7 +89,7 @@ namespace Components.Armorable
         {
             get
             {
-                var baseVal = _data.BaseMagicalImmunity;
+                var baseVal = _data.HasMagicalImmunity;
                 if (baseVal) return true;
                 var buffs = GetBuffs<IArmorableBuffInstance>();
                 baseVal = buffs.Any(buff => buff.ProvideMagicalImmunity);

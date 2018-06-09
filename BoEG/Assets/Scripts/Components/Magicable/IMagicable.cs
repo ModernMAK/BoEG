@@ -1,9 +1,6 @@
-using System;
-using Core;
-
 namespace Components.Magicable
 {
-    public interface IMagicableInstance 
+    public interface IMagicable 
     {
         float ManaPoints { get; set; }
         float ManaRatio { get; set; }

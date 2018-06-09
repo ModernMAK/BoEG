@@ -14,35 +14,30 @@ using UnityEngine.AI;
 
 namespace Core
 {
-    public class Player : ScriptableObject
-    {
-    }
-
-
     [RequireComponent(typeof(NavMeshAgent))]
-    public class Unit : Entity, IArmorableInstance, IAttackerableInstance, IBuffableInstance, IHealthableInstance,
-        ILevelableInstance, IMagicableInstance, IMovableInstance, ITeamableInstance, IControllerableInstance
+    public class Unit : Entity, IArmorable, IAttackerable, IBuffable, IHealthable,
+        ILevelable, IMagicable, IMovable, ITeamable, IControllerable
     {
         [SerializeField] private UnitData _data;
-        [SerializeField] private ArmorableInstance _armorable;
-        [SerializeField] private AttackerableInstance _attackerable;
-        [SerializeField] private BuffableInstance _buffable;
-        [SerializeField] private HealthableInstance _healthable;
-        [SerializeField] private LevelableInstance _levelable;
-        [SerializeField] private MagicableInstance _magicable;
-        [SerializeField] private MovableInstance _movable;
-        [SerializeField] private TeamableInstance _teamable;
-        [SerializeField] private ControllerableInstance _controllerable;
+        [SerializeField] private Armorable _armorable;
+        [SerializeField] private Attackerable _attackerable;
+        [SerializeField] private Buffable _buffable;
+        [SerializeField] private Healthable _healthable;
+        [SerializeField] private Levelable _levelable;
+        [SerializeField] private Magicable _magicable;
+        [SerializeField] private Movable _movable;
+        [SerializeField] private Teamable _teamable;
+        [SerializeField] private Controllerable _controllerable;
 
         protected override void Setup()
         {
-            _armorable = new ArmorableInstance(_data);
-            _attackerable = new AttackerableInstance(_data);
-            _buffable = new BuffableInstance();
-            _healthable = new HealthableInstance(_data);
-            _levelable = new LevelableInstance(_data);
-            _magicable = new MagicableInstance(_data);
-            _movable = new MovableInstance(_data);
+            _armorable = new Armorable(_data);
+            _attackerable = new Attackerable(_data);
+            _buffable = new Buffable();
+            _healthable = new Healthable(_data);
+            _levelable = new Levelable(_data);
+            _magicable = new Magicable(_data);
+            _movable = new Movable(_data);
         }
 
         protected override IEnumerable<IModule> Modules

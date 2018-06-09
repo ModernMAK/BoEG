@@ -165,7 +165,7 @@ namespace Editor
         }
     }
 
-    [CustomPropertyDrawer(typeof(HealthableInstance))]
+    [CustomPropertyDrawer(typeof(Healthable))]
     public class HealthableInstanceDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -177,7 +177,7 @@ namespace Editor
         }
     }
 
-    [CustomPropertyDrawer(typeof(MagicableInstance))]
+    [CustomPropertyDrawer(typeof(Magicable))]
     public class MagicableInstanceDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

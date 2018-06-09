@@ -4,9 +4,9 @@ using UnityEngine;
 namespace Components.Levelable
 {
     [Serializable]
-    public class LevelableInstance : Module, ILevelableInstance
+    public class Levelable : Module, ILevelable
     {
-        public LevelableInstance(ILevelableData data)
+        public Levelable(ILevelableData data)
         {
             _data = data;
             _level = data.InitialLevel;

@@ -6,11 +6,11 @@ using UnityEngine.UI;
 public class MagicableSlider : MonoBehaviour
 {
     private Slider _slider;
-    private IMagicableInstance _healthable;
+    private IMagicable _healthable;
 
     private void Awake()
     {
-        _healthable = transform.root.GetComponent<IMagicableInstance>();
+        _healthable = transform.root.GetComponent<IMagicable>();
         _slider = GetComponent<Slider>();
     }
 

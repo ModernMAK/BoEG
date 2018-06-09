@@ -1,6 +1,6 @@
 ﻿namespace Components.Controllable
 {
-    public interface IControllerableInstance {
+    public interface IControllerable {
 
     }
 }

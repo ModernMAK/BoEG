@@ -89,9 +89,9 @@ namespace Core
             get { return _armorableData.GainPhysicalResist; }
         }
 
-        public bool BasePhysicalImmunity
+        public bool HasPhysicalImmunity
         {
-            get { return _armorableData.BasePhysicalImmunity; }
+            get { return _armorableData.HasPhysicalImmunity; }
         }
 
         public float BaseMagicalBlock
@@ -114,9 +114,9 @@ namespace Core
             get { return _armorableData.GainMagicalResist; }
         }
 
-        public bool BaseMagicalImmunity
+        public bool HasMagicalImmunity
         {
-            get { return _armorableData.BaseMagicalImmunity; }
+            get { return _armorableData.HasMagicalImmunity; }
         }
 
         public float BaseDamage

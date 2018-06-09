@@ -1,17 +1,16 @@
-﻿using Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Components.Teamable
 {
     [System.Serializable]
-    public class TeamableInstance : Module, ITeamableInstance
+    public class Teamable : Module, ITeamable
     {
-        public TeamableInstance()
+        public Teamable()
         {
             _team = null;
         }
 
-        public TeamableInstance(TeamData team)
+        public Teamable(TeamData team)
         {
             _team = team;
         }

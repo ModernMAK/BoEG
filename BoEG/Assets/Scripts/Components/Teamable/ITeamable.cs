@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Components.Teamable
+﻿namespace Components.Teamable
 {
-    [Obsolete]
     public interface ITeamable
     {
-        ITeamableInstance Teamable { get; }
+        TeamData Team { get; }
+        void SetTeam(TeamData team);
     }
 }

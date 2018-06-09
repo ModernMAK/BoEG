@@ -3,7 +3,7 @@
 namespace Components.Attackerable
 {
     [CreateAssetMenu(menuName = "Component/Attackerable")]
-    public class AttackerableDataAsset : ScriptableObject, IAttackerableData
+    public class AttackerableAsset : ScriptableObject, IAttackerableData
     {
         [SerializeField] private AttackerableData _data;
 

@@ -2,10 +2,10 @@
 
 namespace Components.Movable
 {
-    [RequireComponent(typeof(IMovableInstance))]
+    [RequireComponent(typeof(IMovable))]
     public class MovableTester : MonoBehaviour
     {
-        private IMovableInstance _movable;
+        private IMovable _movable;
         public Vector3 Destenation;
         public bool Move;
         public bool Push;
@@ -16,7 +16,7 @@ namespace Components.Movable
 
         private void Awake()
         {
-            _movable = GetComponent<IMovableInstance>();
+            _movable = GetComponent<IMovable>();
         }
 
         private void Update()

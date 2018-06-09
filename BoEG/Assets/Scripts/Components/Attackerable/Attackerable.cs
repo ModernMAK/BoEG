@@ -1,18 +1,20 @@
 ﻿using System;
-using Core;
 using UnityEngine;
 
 namespace Components.Attackerable
 {
     [Serializable]
-    public class AttackerableInstance : FullModule, IAttackerableInstance
+    public class Attackerable : FullModule, IAttackerable
     {
-        public AttackerableInstance(IAttackerableData data)
+        public Attackerable(IAttackerableData data)
         {
             _data = data;
         }
         
         
+        /// <summary>
+        /// The backing field containing template data for Attackerable.
+        /// </summary>
         [SerializeField] private IAttackerableData _data;
 
 

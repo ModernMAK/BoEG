@@ -1,12 +1,11 @@
 using System;
-using Core;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Components.Magicable
 {
     [Serializable]
-    public class MagicableInstance : FullModule, IMagicableInstance
+    public class Magicable : FullModule, IMagicable
     {
         [SerializeField] [Range(0f, 1f)] private float _manaRatio;
         [SerializeField] private IMagicableData _data;
@@ -41,7 +40,7 @@ namespace Components.Magicable
                 _manaRatio = reader.ReadSingle();
         }
 
-        public MagicableInstance(IMagicableData data)
+        public Magicable(IMagicableData data)
         {
             _manaRatio = 1f;
             _data = data;
