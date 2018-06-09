@@ -1,23 +1,19 @@
 using Components.Armorable;
 using Components.Attackerable;
 using Components.Healthable;
-using Components.Levelable;
-using Components.Magicable;
-using Components.Movable;
 using UnityEngine;
 
 namespace Core
 {
-    [CreateAssetMenu(fileName = "Unit.asset", menuName = "Entity/Unit")]
-    public class UnitData : ScriptableObject, IHealthableData, IMagicableData, IMovableData, IArmorableData,
-        IAttackerableData, ILevelableData
+    [CreateAssetMenu(fileName = "Building", menuName = "Entity/Building")]
+    public class BuildingData : ScriptableObject, IHealthableData, IArmorableData, IAttackerableData
     {
         [SerializeField] private ArmorableData _armorableData;
         [SerializeField] private AttackerableData _attackerableData;
         [SerializeField] private HealthableData _healthableData;
-        [SerializeField] private LevelableData _levelableData;
-        [SerializeField] private MagicableData _magicableData;
-        [SerializeField] private MovableData _movableData;
+//        [SerializeField] private LevelableData _levelableData;
+//        [SerializeField] private MagicableData _magicableData;
+//        [SerializeField] private MovableData _movableData;
 
         public float BaseHealthCapacity
         {
@@ -39,35 +35,35 @@ namespace Core
             get { return _healthableData.GainHealthGen; }
         }
 
-        public float BaseManaCapacity
-        {
-            get { return _magicableData.BaseManaCapacity; }
-        }
-
-        public float BaseManaGen
-        {
-            get { return _magicableData.BaseManaGen; }
-        }
-
-        public float GainManaCapacity
-        {
-            get { return _magicableData.GainManaCapacity; }
-        }
-
-        public float GainManaGen
-        {
-            get { return _magicableData.GainManaGen; }
-        }
-
-        public float BaseMoveSpeed
-        {
-            get { return _movableData.BaseMoveSpeed; }
-        }
-
-        public float BaseTurnSpeed
-        {
-            get { return _movableData.BaseTurnSpeed; }
-        }
+//        public float BaseManaCapacity
+//        {
+//            get { return _magicableData.BaseManaCapacity; }
+//        }
+//
+//        public float BaseManaGen
+//        {
+//            get { return _magicableData.BaseManaGen; }
+//        }
+//
+//        public float GainManaCapacity
+//        {
+//            get { return _magicableData.GainManaCapacity; }
+//        }
+//
+//        public float GainManaGen
+//        {
+//            get { return _magicableData.GainManaGen; }
+//        }
+//
+//        public float BaseMoveSpeed
+//        {
+//            get { return _movableData.BaseMoveSpeed; }
+//        }
+//
+//        public float BaseTurnSpeed
+//        {
+//            get { return _movableData.BaseTurnSpeed; }
+//        }
 
         public float BasePhysicalBlock
         {
@@ -149,19 +145,19 @@ namespace Core
             get { return _attackerableData.GainAttackSpeed; }
         }
 
-        public int InitialLevel
-        {
-            get { return _levelableData.InitialLevel; }
-        }
-
-        public int MaxLevel
-        {
-            get { return _levelableData.MaxLevel; }
-        }
-
-        public int[] ExperienceCurve
-        {
-            get { return _levelableData.ExperienceCurve; }
-        }
+//        public int InitialLevel
+//        {
+//            get { return _levelableData.InitialLevel; }
+//        }
+//
+//        public int MaxLevel
+//        {
+//            get { return _levelableData.MaxLevel; }
+//        }
+//
+//        public int[] ExperienceCurve
+//        {
+//            get { return _levelableData.ExperienceCurve; }
+//        }
     }
 }

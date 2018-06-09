@@ -36,13 +36,13 @@ namespace Editor
             "_gainPhysicalBlock",
             "_basePhysicalResist",
             "_gainPhysicalResist",
-            "_basePhysicalImmunity",
+            "_hasPhysicalImmunity",
 
             "_baseMagicalBlock",
             "_gainMagicalBlock",
             "_baseMagicalResist",
             "_gainMagicalResist",
-            "_baseMagicalImmunity",
+            "_hasMagicalImmunity",
         };
 
         private static SerializedProperty[] GetProperties(SerializedProperty property)

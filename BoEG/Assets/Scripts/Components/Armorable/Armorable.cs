@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Components.Armorable
