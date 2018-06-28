@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 
 namespace Core
 {
+    
     public class Entity : NetworkBehaviour
     {
         /// <summary>

@@ -1915,6 +1915,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 966424410}
+  - component: {fileID: 966424411}
   m_Layer: 0
   m_Name: Scene
   m_TagString: Untagged
@@ -1939,6 +1940,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &966424411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 966424409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666d6f1d1541a184a886e10c2d46e552, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1050556630
 GameObject:
   m_ObjectHideFlags: 0
@@ -3261,7 +3273,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _waypointInfo:
-  - _data: {fileID: 11400000, guid: c147388430433464e99a78c83581a446, type: 2}
+  - _data: {fileID: 11400000, guid: 943a80a65f98bcb409ad15dd8f9877fc, type: 2}
     _waypoints:
     - {fileID: 293381753}
     - {fileID: 1574790824}

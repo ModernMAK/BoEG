@@ -13,6 +13,7 @@ namespace Core
     public class Building : Entity, IArmorable, IAttackerable, IBuffable, IHealthable, ITeamable, IControllerable
     {
         [SerializeField] private BuildingData _data;
+        
         [SerializeField] private Armorable _armorable;
         [SerializeField] private Attackerable _attackerable;
         [SerializeField] private Buffable _buffable;
@@ -28,7 +29,7 @@ namespace Core
 
         protected override void Setup()
         {
-            _armorable = new Armorable(_data);
+            _armorable = new Armorable(_data);            
             _attackerable = new Attackerable(_data);
             _buffable = new Buffable();
             _healthable = new Healthable(_data);

@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8183bda9c32b45a2bb03a68c47bda2bb, type: 3}
+  m_Name: VeteranMedic
+  m_EditorClassIdentifier: 
+  _name: Joey Torniquet
+  _abilityable:
+    _abilities: []
+  _armorableData:
+    _basePhysicalBlock: 0
+    _gainPhysicalBlock: 0
+    _basePhysicalResist: 0
+    _gainPhysicalResist: 0
+    _hasPhysicalImmunity: 0
+    _baseMagicalBlock: 0
+    _gainMagicalBlock: 0
+    _baseMagicalResist: 0
+    _gainMagicalResist: 0
+    _hasMagicalImmunity: 0
+  _attackerableData:
+    _baseDamage: 0
+    _baseAttackRange: 0
+    _baseAttackSpeed: 0
+    _gainDamage: 0
+    _gainAttackRange: 0
+    _gainAttackSpeed: 0
+  _healthableData:
+    _baseHealthCapacity: 0
+    _baseHealthGen: 0
+    _gainHealthCapacity: 0
+    _gainHealthGen: 0
+  _levelableData:
+    _initialLevel: 0
+    _maxLevel: 0
+    _experienceCurve: 
+  _magicableData:
+    _baseManaCapacity: 0
+    _baseManaGen: 0
+    _gainManaCapacity: 0
+    _gainManaGen: 0
+  _movableData:
+    _baseMoveSpeed: 0
+    _baseTurnSpeed: 0

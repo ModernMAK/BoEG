@@ -15,6 +15,7 @@ namespace Core
 //        [SerializeField] private MagicableData _magicableData;
 //        [SerializeField] private MovableData _movableData;
 
+        
         public float BaseHealthCapacity
         {
             get { return _healthableData.BaseHealthCapacity; }

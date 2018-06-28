@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Scene/Waypoints")]
+[CreateAssetMenu(menuName = "SceneData/Waypoints")]
 public class WaypointData : ScriptableObject
 {
 }
