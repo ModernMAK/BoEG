@@ -80,7 +80,7 @@
 ////            get { return _baseHealthCapacity + _gainHealthCapacity * (Level - 1); }
 ////        }
 ////
-////        public float HealthGen
+////        public float HealthGeneration
 ////        {
 ////            get { return _baseHealthGen + _gainHealthGen * (Level - 1); }
 ////        }

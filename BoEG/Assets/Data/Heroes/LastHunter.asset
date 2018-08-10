@@ -8,45 +8,53 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8183bda9c32b45a2bb03a68c47bda2bb, type: 3}
+  m_Script: {fileID: 11500000, guid: 0bee390a1bb043d0b3969dddf3d4676e, type: 3}
   m_Name: LastHunter
   m_EditorClassIdentifier: 
-  _name: Scar Persky
-  _abilityableData:
-    _abilities:
-    - {fileID: 11400000, guid: 67ad2cdd242c4864c85e0f00e4ea9488, type: 2}
-  _armorableData:
-    _basePhysicalBlock: 0
-    _gainPhysicalBlock: 0
-    _basePhysicalResist: 0
-    _gainPhysicalResist: 0
-    _hasPhysicalImmunity: 0
-    _baseMagicalBlock: 0
-    _gainMagicalBlock: 0
-    _baseMagicalResist: 0
-    _gainMagicalResist: 0
-    _hasMagicalImmunity: 0
-  _attackerableData:
-    _baseDamage: 0
-    _baseAttackRange: 0
-    _baseAttackSpeed: 0
-    _gainDamage: 0
-    _gainAttackRange: 0
-    _gainAttackSpeed: 0
-  _healthableData:
-    _baseHealthCapacity: 500
-    _baseHealthGen: 1
-    _gainHealthCapacity: 0
-    _gainHealthGen: 0
-  _levelableData:
-    _initialLevel: 0
-    _maxLevel: 0
-    _experienceCurve: 
-  _magicableData:
-    _baseManaCapacity: 1
-    _baseManaGen: 1
-    _gainManaCapacity: 0
-    _gainManaGen: 0
-  _movableData:
-    _baseMoveSpeed: 10
-    _baseTurnSpeed: 180
+  _name: 
+  _mat: {fileID: 0}
+  _abilityable:
+    _abilities: []
+  _armorable:
+    _physical:
+      _block:
+        _base: 5
+        _gain: 0
+      _resistance:
+        _base: 0.05
+        _gain: 0
+      _immunity: 0
+    _magical:
+      _block:
+        _base: 5
+        _gain: 0
+      _resistance:
+        _base: 0.05
+        _gain: 0
+      _immunity: 0
+  _attackerable:
+    _attackDamage:
+      _base: 50
+      _gain: 0
+    _attackSpeed:
+      _base: 1
+      _gain: 0
+    _attackRange: 5
+    _projectile: {fileID: 0}
+  _healthable:
+    _capacity:
+      _base: 500
+      _gain: 0
+    _generation:
+      _base: 1
+      _gain: 0
+  _magicable:
+    _capacity:
+      _base: 500
+      _gain: 0
+    _generation:
+      _base: 1
+      _gain: 0
+  _movable:
+    _moveSpeed: 5
+    _turnSpeed: 5

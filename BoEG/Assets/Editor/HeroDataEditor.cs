@@ -21,7 +21,7 @@
 //        */
 //        private static readonly string[] PropertyStrings =
 //        {
-//            //Abilityable
+//            //Abilitiable
 //            "_abilityableData",
 //            //Armorable
 //            "_armorableData",
