@@ -2,10 +2,10 @@
 using Modules.Abilityable;
 using Modules.Magicable;
 using Modules.MiscEvents;
-using Old;
 using Triggers;
 using Modules.Healthable;
 using UnityEngine;
+using Util;
 
 namespace Entity.Abilities.WarpedMagi
 {

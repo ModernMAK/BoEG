@@ -1,6 +1,5 @@
 ﻿using System;
 using Core;
-using Old;
 using UnityEngine;
 
 namespace Modules.Magicable

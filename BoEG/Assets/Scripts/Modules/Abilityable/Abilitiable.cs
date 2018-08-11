@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Entity;
-using Old.Entity.Modules;
 using UnityEngine;
 
 namespace Modules.Abilityable

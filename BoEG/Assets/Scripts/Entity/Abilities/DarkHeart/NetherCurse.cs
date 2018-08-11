@@ -4,11 +4,11 @@ using Modules.Abilityable;
 using Modules.Healthable;
 using Modules.Magicable;
 using Modules.Teamable;
-using Old;
 using Triggers;
 using UnityEngine;
+using Util;
 
-namespace Entity.Abilities.WarpedMagi
+namespace Entity.Abilities.DarkHeart
 {
     public class TickHelper
     {

@@ -1,8 +1,8 @@
 using Modules.Abilityable;
 using Modules.MiscEvents;
 using Modules.Teamable;
-using Old.Entity.Core;
 using UnityEngine;
+using Util;
 
 namespace Entity.Abilities.DarkHeart
 {
