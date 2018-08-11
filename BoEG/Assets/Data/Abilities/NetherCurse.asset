@@ -14,6 +14,9 @@ MonoBehaviour:
   Name: Nether Curse
   _manaCost: 100
   _castRange: 8
-  _netherCurseDuration: 6
+  _netherCurseTickInterval: 0.25
   _netherCurseAreaOfEffect: 2
-  _netherCurseDamageOverTime: 50
+  _netherCurseDamagePerTick: 10
+  _netherCurseDuration: 6
+  _debugPrefab: {fileID: 1262147203639492, guid: 9f645df4a19737f449ed1166f444636f,
+    type: 2}

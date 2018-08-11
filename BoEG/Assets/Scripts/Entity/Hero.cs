@@ -16,7 +16,7 @@ using UnityEngine;
 namespace Entity
 {
     public class Hero : Entity,
-        IAbilitiable, IArmorable, IAttackerable,
+        IAbilitiable, IArmorable, IAttackable, IAttackerable,
         IHealthable, IJobSystem,
         IMagicable, IMiscEvent, IMovable,
         ITeamable
@@ -25,6 +25,7 @@ namespace Entity
 
         [SerializeField] private Abilitiable _abilitiable;
         [SerializeField] private Armorable _armorable;
+        [SerializeField] private Attackable _attackable;
         [SerializeField] private Attackerable _attackerable;
         [SerializeField] private Healthable _healthable;
         [SerializeField] private Magicable _magicable;
@@ -43,6 +44,8 @@ namespace Entity
 
             _abilitiable = new Abilitiable(gameObject, _data.Abilityable);
             _armorable = new Armorable(_data.Armorable);
+
+            _attackable = new Attackable(gameObject);
             _attackerable = new Attackerable(gameObject, _data.Attackerable);
 
             _healthable = new Healthable(gameObject, _data.Healthable);
@@ -52,7 +55,7 @@ namespace Entity
             _events = new MiscEvent();
 
             _jobSystem = new JobSystem(gameObject);
-            
+
             _teamable = new Teamable(gameObject);
         }
 
@@ -72,6 +75,7 @@ namespace Entity
             {
                 yield return _abilitiable;
                 //yield return _armorable;
+                yield return _attackable;
                 yield return _attackerable;
                 yield return _healthable;
                 yield return _magicable;
@@ -122,7 +126,7 @@ namespace Entity
             _healthable.TakeDamage(damage);
         }
 
-        public event DEFAULT_HANDLER DamageTaken
+        public event DamageEventHandler DamageTaken
         {
             add { _healthable.DamageTaken += value; }
             remove { _healthable.DamageTaken -= value; }
@@ -171,6 +175,33 @@ namespace Entity
 
         #endregion
 
+        #region Attackable
+
+        public void PrepareAttack(GameObject attacker)
+        {
+            _attackable.PrepareAttack(attacker);
+        }
+
+        public void RecieveAttack(Damage damage)
+        {
+            _attackable.RecieveAttack(damage);
+            _healthable.TakeDamage(damage);
+        }
+
+        public event EndgameEventHandler AttackLaunchedAgainst
+        {
+            add { _attackable.AttackLaunchedAgainst += value; }
+            remove { _attackable.AttackLaunchedAgainst -= value; }
+        }
+
+        public event DamageEventHandler IncomingAttackLanded
+        {
+            add { _attackable.IncomingAttackLanded += value; }
+            remove { _attackable.IncomingAttackLanded -= value; }
+        }
+
+        #endregion
+
         #region Attackerable
 
         public float AttackDamage
@@ -198,19 +229,21 @@ namespace Entity
             _attackerable.Attack(go);
         }
 
+
+        public event DEFAULT_HANDLER OutgoingAttackLanded
+        {
+            add { _attackerable.OutgoingAttackLanded += value; }
+            remove { _attackerable.OutgoingAttackLanded -= value; }
+        }
+
         public event DEFAULT_HANDLER AttackLaunched
         {
             add { _attackerable.AttackLaunched += value; }
             remove { _attackerable.AttackLaunched -= value; }
         }
 
-        public event DEFAULT_HANDLER AttackLanded
-        {
-            add { _attackerable.AttackLanded += value; }
-            remove { _attackerable.AttackLanded -= value; }
-        }
-
         #endregion
+
 
         #region MiscEvents
 
@@ -340,14 +373,17 @@ namespace Entity
         #endregion
 
         #region Teamable
+
         public TeamData Team
         {
             get { return _teamable.Team; }
         }
+
         public void SetTeam(TeamData team)
         {
             _teamable.SetTeam(team);
         }
+
         #endregion
     }
 }

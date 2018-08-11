@@ -17,6 +17,8 @@ MonoBehaviour:
     _abilities:
     - {fileID: 11400000, guid: 7baceda6878a953448579b0de76bc976, type: 2}
     - {fileID: 11400000, guid: 45e59f66fab8dc14db5aa72a1f5f7e69, type: 2}
+    - {fileID: 11400000, guid: 3f3e569f047c0904fae992b98d3b6baa, type: 2}
+    - {fileID: 11400000, guid: 11f437b21f4298c42bfe4b366fadec80, type: 2}
   _armorable:
     _physical:
       _block:

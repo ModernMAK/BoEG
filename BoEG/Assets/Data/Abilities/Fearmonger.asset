@@ -8,9 +8,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 056b9a1efb18ecb4ab9f1cf879f8d87f, type: 3}
-  m_Name: ActiveHeroes
+  m_Script: {fileID: 11500000, guid: 02cd8412a00603c4598b87df2e2545a7, type: 3}
+  m_Name: Fearmonger
   m_EditorClassIdentifier: 
-  _heroes:
-  - {fileID: 11400000, guid: a8d7036f144a92148b68010ce87559ff, type: 2}
-  - {fileID: 11400000, guid: 1615ba2373a37aa47b0c26e1c7541275, type: 2}
+  Name: 
+  _minChance: 0.1
+  _maxChance: 0.5
+  _selfHealthWeight: 0.5

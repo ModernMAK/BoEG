@@ -11,7 +11,7 @@ namespace Modules.Healthable
         void ModifyHealth(float modification);
         event DEFAULT_HANDLER HealthModified;
         void TakeDamage(Damage damage);
-        event DEFAULT_HANDLER DamageTaken;
+        event DamageEventHandler DamageTaken;
         void Die();
         event DEFAULT_HANDLER Died;
     }

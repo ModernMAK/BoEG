@@ -55,8 +55,12 @@ namespace Modules.Attackerable
         {
             _lastAttackTime = Time.time;
             var damage = new Damage(AttackDamage, DamageType.Physical, Self);
-            var healthable = go.GetComponent<IHealthable>();
-            healthable.TakeDamage(damage);
+            var attackable = go.GetComponent<IAttackable>();
+            //Tell the attackable we are attacking it
+            attackable.PrepareAttack(Self);
+            //Tell the attackable we attacked it - This will be necessary when we impliment evasion and whatnot
+            //TODO impliment evasion in attackable
+            attackable.RecieveAttack(damage);
         }
 
         private void RangedAttack(GameObject go)
@@ -72,11 +76,11 @@ namespace Modules.Attackerable
 
         private void OnAttackLanded()
         {
-            if (AttackLanded != null)
-                AttackLanded();
+            if (OutgoingAttackLanded != null)
+                OutgoingAttackLanded();
         }
 
         public event DEFAULT_HANDLER AttackLaunched;
-        public event DEFAULT_HANDLER AttackLanded;
+        public event DEFAULT_HANDLER OutgoingAttackLanded;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Core;
+using Modules.Healthable;
 using UnityEngine;
 
 namespace Modules.Attackerable
@@ -11,6 +12,6 @@ namespace Modules.Attackerable
         GameObject Projectile { get; }
         void Attack(GameObject go);
         event DEFAULT_HANDLER AttackLaunched;
-        event DEFAULT_HANDLER AttackLanded;
+        event DEFAULT_HANDLER OutgoingAttackLanded;
     }
 }

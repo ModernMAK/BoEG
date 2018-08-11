@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43d7ac4ce1de2bf46a3ad7608ddee753, type: 3}
+  m_Name: Nightmare
+  m_EditorClassIdentifier: 
+  Name: 
+  _duration: 3
+  _ticks: 10
+  _tickDamage: 20
+  _nightmareFX: {fileID: 1911857838253870, guid: 0a22e84102334f147a6757d1a0bbb37b,
+    type: 2}
+  _manaCost: 70
+  _castRange: 10

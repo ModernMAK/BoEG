@@ -1,5 +1,6 @@
 ﻿using System;
 using Core;
+using Modules.Magicable;
 using Modules.MiscEvents;
 using UnityEngine;
 
@@ -70,20 +71,22 @@ namespace Modules.Healthable
         public void TakeDamage(Damage damage)
         {
             ModifyHealth(-damage.Value);
-            OnDamageTaken();
+            var args = new DamageEventArgs(Self, damage);
+            OnDamageTaken(args);
             //TODO, replace with a kill callback in TakeDamage
             if (HealthPercentage <= 0f)
                 Die(damage.Source);
         }
 
-        private void OnDamageTaken()
+        private void OnDamageTaken(DamageEventArgs args)
         {
             if (DamageTaken != null)
-                DamageTaken();
+                DamageTaken(args);
         }
 
-        public event DEFAULT_HANDLER DamageTaken;
-
+        public event DamageEventHandler DamageTaken;
+        
+        
         public void Die()
         {
             OnDied();
@@ -105,5 +108,14 @@ namespace Modules.Healthable
         }
 
         public event DEFAULT_HANDLER Died;
+    }
+    public delegate void DamageEventHandler(DamageEventArgs args);
+    public class DamageEventArgs : EndgameEventArgs
+    {
+        public DamageEventArgs(GameObject target, Damage damage) : base(damage.Source, target)
+        {
+            Damage = damage;
+        }
+        public Damage Damage { get; private set; }   
     }
 }
