@@ -1,4 +1,5 @@
-﻿using Entity;
+﻿using Core.Serialization;
+using Entity;
 
 namespace Modules
 {

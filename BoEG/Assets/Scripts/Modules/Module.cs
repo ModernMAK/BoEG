@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+﻿using Core.Serialization;
 using UnityEngine;
 
 namespace Modules

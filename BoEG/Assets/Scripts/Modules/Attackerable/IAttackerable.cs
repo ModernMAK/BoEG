@@ -1,5 +1,4 @@
 ﻿using Core;
-using Modules.Healthable;
 using UnityEngine;
 
 namespace Modules.Attackerable

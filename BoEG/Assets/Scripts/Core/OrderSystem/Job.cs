@@ -1,6 +1,4 @@
-﻿using Core.OrderSystem;
-using UnityEngine;
-using UnityEngine.Networking;
+﻿using UnityEngine;
 
 namespace Core.OrderSystem
 {

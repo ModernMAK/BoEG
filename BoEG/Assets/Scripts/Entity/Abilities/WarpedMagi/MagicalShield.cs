@@ -1,9 +1,9 @@
 using Core;
 using Modules.Abilityable;
 using Modules.Magicable;
-using Modules.MiscEvents;
-using Triggers;
 using Modules.Healthable;
+using Modules.Teamable;
+using Triggers;
 using UnityEngine;
 using Util;
 
@@ -22,23 +22,28 @@ namespace Entity.Abilities.WarpedMagi
 		private ITeamable _teamable;
 		private IMagicable _magicable;
 
+	    public override void Terminate()
+	    {
+		    //TODO
+		    throw new System.NotImplementedException();
+	    }
 
         public override void Initialize(GameObject go)
         {
             _self = go;
-			_teamable = go.GetComponet<ITeamable>();
+			_teamable = go.GetComponent<ITeamable>();
 			_magicable = go.GetComponent<IMagicable>();
         }
 
         public override void Trigger()
         {
             _magicable.ModifyMana(-_manaCost, _self);
-            ApplyMagicalShield(go);
+            ApplyMagicalShield(_self);
         }
 		public void ApplyMagicalShield(GameObject target)
 		{
-			varr cols = Physics.OverlapSphere(target.transform.position, _damageRadius, (int)LayerUtil.Entity); 
-			var gos = Trigger.GetGameObjectFromColliders(cols);
+			var cols = Physics.OverlapSphere(target.transform.position, _damageRadius, (int)LayerMaskHelper.Entity); 
+			var gos = Triggers.Trigger.GetGameObjectFromColliders(cols);
 			var targetCount = 0;
 			
 			foreach(var go in gos)
@@ -46,8 +51,8 @@ namespace Entity.Abilities.WarpedMagi
 				if(go == target)
 					continue;
 				
-				if(_teamable == null || teamable == null || teamable.Team == _teamable.Team)
-					continue;
+//				if(_teamable == null || teamable == null || teamable.Team == _teamable.Team)
+//					continue;
 				
 				ITeamable teamable = target.GetComponent<ITeamable>();
 				IHealthable healthable = target.GetComponent<IHealthable>();		

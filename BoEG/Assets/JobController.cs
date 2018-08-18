@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using Core.OrderSystem;
 using Core.OrderSystem.Order;
 using Entity;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Core.Serialization;
 using Modules;
 using Triggers;
 using UnityEngine;
@@ -145,7 +146,7 @@ namespace Entity
 		{
 			using(var deserializer = new Deserializer(serialized))
 			{
-				Modules.Deserialize(serializer);
+				Modules.Deserialize(deserializer);
 			}
 		}
     }

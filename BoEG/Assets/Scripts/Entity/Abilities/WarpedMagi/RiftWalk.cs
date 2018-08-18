@@ -1,11 +1,7 @@
-using Core;
 using Modules.Abilityable;
 using Modules.Magicable;
-using Modules.MiscEvents;
-using Triggers;
-using Modules.Healthable;
+using Modules.Movable;
 using UnityEngine;
-using Util;
 
 namespace Entity.Abilities.WarpedMagi
 {
@@ -22,12 +18,17 @@ namespace Entity.Abilities.WarpedMagi
 		private IMovable _movable;
 		private IMagicable _magicable;
 
+	    public override void Terminate()
+	    {
+		    //TODO
+		    throw new System.NotImplementedException();
+	    }
 
         public override void Initialize(GameObject go)
         {
             _self = go;
-			_movable = go.GetComponet<IMovable>();
-			_magicable = go.GetComponet<IMagicable>();
+			_movable = go.GetComponent<IMovable>();
+			_magicable = go.GetComponent<IMagicable>();
         }
 
         public override void Trigger()
@@ -37,7 +38,7 @@ namespace Entity.Abilities.WarpedMagi
 				return;
 						
             _magicable.ModifyMana(-_manaCost, _self);
-            ApplyMagicalShield(hit.point);
+	        ApplyRiftWalk(hit.point);
         }
 		public void ApplyRiftWalk(Vector3 position)
 		{

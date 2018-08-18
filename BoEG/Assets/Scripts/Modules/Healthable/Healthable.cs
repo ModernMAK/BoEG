@@ -1,8 +1,10 @@
 ﻿using System;
 using Core;
+using Core.Serialization;
 using Modules.Magicable;
 using Modules.MiscEvents;
 using UnityEngine;
+using Util;
 
 namespace Modules.Healthable
 {
@@ -119,18 +121,18 @@ namespace Modules.Healthable
         public event DEFAULT_HANDLER Died;
 		
 		private byte _mask;
-		public void override Serialize(ISerializer serializer)
+		public override void  Serialize(ISerializer serializer)
 		{
 			serializer.Write(_mask);		
 			if(_mask.HasBit(0))
 				serializer.Write(_healthPercentage);
 			_mask = 0;
 		}
-		public void override Deserialize(IDeserializer deserializer)
+		public override void  Deserialize(IDeserializer deserializer)
 		{
-			var mask = serializer.ReadByte();		
+			var mask = deserializer.ReadByte();		
 			if(mask.HasBit(0))
-				_healthPercentage = serializer.ReadFloat();
+				_healthPercentage = deserializer.ReadFloat();
 		}
     }
     public delegate void DamageEventHandler(DamageEventArgs args);

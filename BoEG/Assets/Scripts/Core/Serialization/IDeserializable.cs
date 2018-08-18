@@ -1,8 +1,11 @@
 
-public interface IDeserializable
+namespace Core.Serialization
 {
-	// bool ShouldSerialize{ get; }
-	//void Serialize(ISerializer serializer);
-	 void Deserializer(IDeserializer deserializer);
+	public interface IDeserializable
+	{
+		// bool ShouldSerialize{ get; }
+		//void Serialize(ISerializer serializer);
+		void Deserialize(IDeserializer deserializer);
 	
+	}
 }

@@ -1,9 +1,9 @@
 using Core;
 using Modules.Abilityable;
 using Modules.Magicable;
-using Modules.MiscEvents;
-using Triggers;
 using Modules.Healthable;
+using Modules.Teamable;
+using Triggers;
 using UnityEngine;
 using Util;
 
@@ -26,11 +26,17 @@ namespace Entity.Abilities.WarpedMagi
         public override void Initialize(GameObject go)
         {
             _self = go;
-			_teamable = go.GetComponet<ITeamable>();
+			_teamable = go.GetComponent<ITeamable>();
 			_magicable = go.GetComponent<IMagicable>();
         }
 
-        public override void Trigger()
+	    public override void Terminate()
+	    {
+		    //TODO
+		    throw new System.NotImplementedException();
+	    }
+
+	    public override void Trigger()
         {
             RaycastHit hit;
             if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) return;
@@ -52,8 +58,8 @@ namespace Entity.Abilities.WarpedMagi
         }
 		public void ApplyInfusion(GameObject target)
 		{
-			varr cols = Physics.OverlapSphere(target.transform.position, _manaStealSearchRadius, (int)LayerUtil.Entity); 
-			var gos = Trigger.GetGameObjectFromColliders(cols);
+			var cols = Physics.OverlapSphere(target.transform.position, _manaStealSearchRadius, (int)LayerMaskHelper.Entity); 
+			var gos = Triggers.Trigger.GetGameObjectFromColliders(cols);
 			
 			ITeamable teamable = target.GetComponent<ITeamable>();
 			IMagicable magicable = target.GetComponent<IMagicable>();

@@ -1,7 +1,6 @@
 ﻿using Core;
 using Modules.Abilityable;
 using Modules.Magicable;
-using Modules.MiscEvents;
 using Triggers;
 using Modules.Healthable;
 using UnityEngine;

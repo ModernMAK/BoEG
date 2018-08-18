@@ -1,6 +1,7 @@
 ﻿using System;
-using Core;
+using Core.Serialization;
 using UnityEngine;
+using Util;
 
 namespace Modules.Magicable
 {
@@ -18,18 +19,18 @@ namespace Modules.Magicable
         private readonly IMagicableData _data;
 		
 		private byte _mask;
-		public void override Serialize(ISerializer serializer)
+		public override void  Serialize(ISerializer serializer)
 		{
 			serializer.Write(_mask);		
 			if(_mask.HasBit(0))
 				serializer.Write(_manaPercentage);
 			_mask = 0;
 		}
-		public void override Deserialize(IDeserializer deserializer)
+		public override void  Deserialize(IDeserializer deserializer)
 		{
-			var mask = serializer.ReadByte();		
+			var mask = deserializer.ReadByte();		
 			if(mask.HasBit(0))
-				_manaPercentage = serializer.ReadFloat();
+				_manaPercentage = deserializer.ReadFloat();
 		}
 
 
@@ -47,7 +48,15 @@ namespace Modules.Magicable
         public float ManaPercentage
         {
             get { return _manaPercentage; }
-            private set { _manaPercentage = Mathf.Clamp01(value); }
+            private set
+            {
+                value = Mathf.Clamp01(value);
+                if(!value.SafeEquals(_manaPercentage))
+                {
+                    _mask.SetBit(0);
+                }
+                _manaPercentage = value;
+            }
         }
 
         public float ManaPoints

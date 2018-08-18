@@ -1,6 +1,5 @@
 ﻿using System;
 using Core;
-using Modules.Healthable;
 using UnityEngine;
 using Util;
 
