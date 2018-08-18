@@ -67,7 +67,6 @@ namespace Entity
             PhysicsTick(deltaTick);
         }
 
-
 //        private void PreTick()
 //        {
 //            foreach (var module in Modules)
@@ -115,8 +114,7 @@ namespace Entity
             }
         }
         public void PreTick(float deltaTick)
-        {
-            
+        {            
             Modules.PreTick(deltaTick);
         }
 
@@ -134,5 +132,21 @@ namespace Entity
         {
             Modules.PhysicsTick(deltaTick);
         }
+		
+		public byte[] Serialize()
+		{
+			using(var serializer = new Serializer())
+			{
+				Modules.Serialize(serializer);
+				return serializer.Output();
+			}
+		}
+		public void Deserialize(byte[] serialized)
+		{
+			using(var deserializer = new Deserializer(serialized))
+			{
+				Modules.Deserialize(serializer);
+			}
+		}
     }
 }

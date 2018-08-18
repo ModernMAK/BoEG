@@ -13,6 +13,7 @@ namespace Modules.Healthable
         {
             _data = data;
             _healthPercentage = 1f;
+			_mask = 0;
         }
 
         [SerializeField] [Range(0f, 1f)] private float _healthPercentage;
@@ -35,7 +36,15 @@ namespace Modules.Healthable
         public float HealthPercentage
         {
             get { return _healthPercentage; }
-            private set { _healthPercentage = Mathf.Clamp01(value); }
+            private set 
+			{ 
+				value = Mathf.Clamp01(value);
+				if(!value.SafeEquals(_healthPercentage))
+				{
+					_mask.SetBit(0);
+				}
+				_healthPercentage = value;
+			}
         }
 
         public float HealthPoints
@@ -108,6 +117,21 @@ namespace Modules.Healthable
         }
 
         public event DEFAULT_HANDLER Died;
+		
+		private byte _mask;
+		public void override Serialize(ISerializer serializer)
+		{
+			serializer.Write(_mask);		
+			if(_mask.HasBit(0))
+				serializer.Write(_healthPercentage);
+			_mask = 0;
+		}
+		public void override Deserialize(IDeserializer deserializer)
+		{
+			var mask = serializer.ReadByte();		
+			if(mask.HasBit(0))
+				_healthPercentage = serializer.ReadFloat();
+		}
     }
     public delegate void DamageEventHandler(DamageEventArgs args);
     public class DamageEventArgs : EndgameEventArgs

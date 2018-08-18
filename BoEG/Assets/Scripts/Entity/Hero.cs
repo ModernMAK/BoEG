@@ -122,6 +122,9 @@ namespace Entity
 
         public void TakeDamage(Damage damage)
         {
+			//if(!NetworkServer.isActive) //Something like this
+			//Warning('TakeDamage is Called Client Side, when it should be server side only')
+			
             damage = ResistDamage(damage);
             _healthable.TakeDamage(damage);
         }
@@ -243,7 +246,6 @@ namespace Entity
         }
 
         #endregion
-
 
         #region MiscEvents
 

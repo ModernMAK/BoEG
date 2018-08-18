@@ -11,10 +11,26 @@ namespace Modules.Magicable
         {
             _data = data;
             _manaPercentage = 1f;
+			_mask = 0;
         }
 
         [SerializeField] [Range(0f, 1f)] private float _manaPercentage;
         private readonly IMagicableData _data;
+		
+		private byte _mask;
+		public void override Serialize(ISerializer serializer)
+		{
+			serializer.Write(_mask);		
+			if(_mask.HasBit(0))
+				serializer.Write(_manaPercentage);
+			_mask = 0;
+		}
+		public void override Deserialize(IDeserializer deserializer)
+		{
+			var mask = serializer.ReadByte();		
+			if(mask.HasBit(0))
+				_manaPercentage = serializer.ReadFloat();
+		}
 
 
         public override void PreTick(float deltaTime)

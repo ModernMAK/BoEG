@@ -2,7 +2,7 @@
 
 namespace Modules
 {
-    public interface IModule : ITickable
+    public interface IModule : ITickable, ISerializable, IDeserializable
     {
         void Initialize();
         void Terminate();

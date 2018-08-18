@@ -7,6 +7,7 @@ namespace Modules.Attackerable
 {
     public interface IAttackable
     {
+		//TODO rename to TargetedForAttack?
         void PrepareAttack(GameObject attacker);
         void RecieveAttack(Damage damage);
         event EndgameEventHandler AttackLaunchedAgainst;

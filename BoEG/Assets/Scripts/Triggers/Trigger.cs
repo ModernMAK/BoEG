@@ -22,16 +22,19 @@ namespace Triggers
         private GameObject[] TriggerStep()
         {
             var ret = CollisionMethod.Collide();
-            var gos = new GameObject[ret.Length];
+            return GetGameObjectFromColliders(ret);
+        }
+		public static GameObject[] GetGameObjectFromColliders(Collider[] cols)
+		{
+			var gos = new GameObject[cols.Length];
             var counter = 0;
-            foreach (var col in ret)
+            foreach (var col in cols)
             {
                 gos[counter] = (col.attachedRigidbody != null) ? col.attachedRigidbody.gameObject : col.gameObject;
                 counter++;
             }
-
             return gos;
-        }
+		}
 
         public void PhysicsTick()
         {

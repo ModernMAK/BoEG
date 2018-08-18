@@ -31,5 +31,14 @@ namespace Modules
         public virtual void Terminate()
         {
         }
+		
+		public virtual void Serialize(ISerializer serializer)
+		{
+			
+		}
+		public virtual void Deserialize(IDeserializer deserializer)
+		{
+			
+		}
     }
 }
