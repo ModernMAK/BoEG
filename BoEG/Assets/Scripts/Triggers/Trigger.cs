@@ -36,11 +36,15 @@ namespace Triggers
             return gos;
 		}
 
-        public void PhysicsTick()
+        public void PhysicsStep()
         {
+            //Get all collisions
             var collisions = TriggerStep();
+            //Get all who entered this step
             var entered = collisions.Except(_colliders).ToArray();
+            //Get all who stayed on this step
             var stayed = collisions.Intersect(_colliders).ToArray();
+            //Get all who exited this step
             var exited = _colliders.Except(collisions).ToArray();
 
             foreach (var enter in entered)

@@ -22,13 +22,13 @@ namespace Modules.Healthable
         private readonly IHealthableData _data;
 
 
-        public override void PreTick(float deltaTime)
+        public override void PreStep(float deltaStep)
         {
             if (HealthPercentage > 0f && HealthPercentage < 1f)
-                ModifyHealth(HealthGeneration * deltaTime);
+                ModifyHealth(HealthGeneration * deltaStep);
         }
 
-        public override void PostTick(float deltaTime)
+        public override void PostStep(float deltaTime)
         {
             if (HealthPercentage <= 0f)
                 Die();

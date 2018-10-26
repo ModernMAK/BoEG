@@ -29,9 +29,9 @@ namespace Entity.Abilities.WarpedMagi
             _trigger.Exit += Exit;
         }
 
-        public override void PhysicsTick(float deltaTime)
+        public override void PhysicsStep(float deltaTime)
         {
-            _trigger.PhysicsTick();
+            _trigger.PhysicsStep();
         }
         public override void Terminate()
         {

@@ -23,14 +23,14 @@ namespace Modules.Movable
         {
         }
 
-        public override void PreTick(float deltaTime)
+        public override void PreStep(float deltaStep)
         {
             _agent.acceleration = 100;
             _agent.speed = MoveSpeed;
             _agent.angularSpeed = 360 * TurnSpeed;
         }
 
-        public override void PostTick(float deltaTime)
+        public override void PostStep(float deltaTime)
         {
             if(!_agent.isActiveAndEnabled)
                 return;
@@ -83,9 +83,9 @@ namespace Modules.Movable
             _agent.ResetPath();
         }
 
-//        protected override void PreTick()
+//        protected override void PreStep()
 //        {
-//            base.PreTick();
+//            base.PreStep();
 //            _agent.acceleration = 100;
 //            _agent.speed = MoveSpeed;
 //            _agent.angularSpeed = 360 * TurnSpeed;
@@ -94,7 +94,7 @@ namespace Modules.Movable
 
         public event DEFAULT_HANDLER MovedEvent;
 //
-//        protected override void PostTick()
+//        protected override void PostStep()
 //        {
 //        }
     }

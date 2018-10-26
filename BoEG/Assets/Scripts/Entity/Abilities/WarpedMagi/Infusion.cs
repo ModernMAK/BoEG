@@ -32,8 +32,7 @@ namespace Entity.Abilities.WarpedMagi
 
 	    public override void Terminate()
 	    {
-		    //TODO
-		    throw new System.NotImplementedException();
+		    //Nothing to Terminate
 	    }
 
 	    public override void Trigger()

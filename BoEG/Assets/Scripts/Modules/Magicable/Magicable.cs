@@ -34,13 +34,13 @@ namespace Modules.Magicable
 		}
 
 
-        public override void PreTick(float deltaTime)
+        public override void PreStep(float deltaStep)
         {
             if (ManaPercentage > 0f && ManaPercentage < 1f)
-                ModifyMana(ManaGeneration * deltaTime, Self);
+                ModifyMana(ManaGeneration * deltaStep, Self);
         }
 
-        public override void PostTick(float deltaTime)
+        public override void PostStep(float deltaTime)
         {
         }
 

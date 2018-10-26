@@ -4,18 +4,22 @@ namespace Util
     {
         public ConstantProc(float chance)
         {
-            Chance = chance;
+            _chance = chance;
         }
 
-        public float Chance { get; private set; }
+        private readonly float _chance;
+//        public float Chance
+//        {
+//            get { return _chance; }
+//        }
 
-        public void SetChace(float chance)
-        {
-            Chance = chance;
-        }
+//        public void SetChace(float chance)
+//        {
+//            Chance = chance;
+//        }
         public override bool Proc()
         {
-            return Random.NextDouble() <= Chance;
+            return Random.NextDouble() <= _chance;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Core;
 using Core.OrderSystem;
 using Modules;
@@ -36,21 +38,32 @@ namespace Entity
         protected override void Awake()
         {
             base.Awake();
+            SetData(_data);
+        }
+
+        public override void SetData(IEntityData data)
+        {
+            _data = (HeroData) data;
+            base.SetData(data);
+            if (data == null)
+                return;
 
             gameObject.name = _data.Name + " (Hero)";
 
-            gameObject.GetComponentInChildren<MeshRenderer>().material = _data.Mat;
+            var mr = gameObject.GetComponentInChildren<MeshRenderer>();
+            if (mr != null)
+                mr.material = _data.Mat;
 
-            _abilitiable = new Abilitiable(gameObject, _data.Abilityable);
-            _armorable = new Armorable(_data.Armorable);
+            _abilitiable = new Abilitiable(gameObject, _data);
+            _armorable = new Armorable(_data);
 
             _attackable = new Attackable(gameObject);
-            _attackerable = new Attackerable(gameObject, _data.Attackerable);
+            _attackerable = new Attackerable(gameObject, _data);
 
-            _healthable = new Healthable(gameObject, _data.Healthable);
+            _healthable = new Healthable(gameObject, _data);
 
-            _magicable = new Magicable(gameObject, _data.Magicable);
-            _movable = new Movable(gameObject, _data.Movable);
+            _magicable = new Magicable(gameObject, _data);
+            _movable = new Movable(gameObject, _data);
             _events = new MiscEvent();
 
             _jobSystem = new JobSystem(gameObject);
@@ -58,29 +71,40 @@ namespace Entity
             _teamable = new Teamable(gameObject);
         }
 
-        protected override void Update()
-        {
-            base.Update();
-            KeyCode[] codes = {KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R};
-            for (var i = 0; i < codes.Length; i++)
-                if (Input.GetKeyDown(codes[i]))
-                    Cast(i);
-        }
-
+        //Depreciated, Moved to HeroController
+//        protected override void Update()
+//        {
+//            base.Update();
+//            KeyCode[] codes = {KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R};
+//            for (var i = 0; i < codes.Length; i++)
+//                if (Input.GetKeyDown(codes[i]))
+//                    if(Input.GetKey(KeyCode.LeftControl))
+//                        LevelUp(i);
+//                    else
+//                        Cast(i);
+//        }
 
         protected override IEnumerable<IModule> Modules
         {
             get
             {
-                yield return _abilitiable;
+                IModule[] modules =
+                {
+                    _abilitiable,
+                    _attackable,
+                    _attackerable,
+                    _healthable,
+                    _magicable,
+                    _movable,
+                    _jobSystem
+                };
                 //yield return _armorable;
-                yield return _attackable;
-                yield return _attackerable;
-                yield return _healthable;
-                yield return _magicable;
-                yield return _movable;
                 //yield return _events;
-                yield return _jobSystem;
+                foreach (var module in modules)
+                {
+                    if (module != null)
+                        yield return module;
+                }
             }
         }
 
@@ -121,9 +145,9 @@ namespace Entity
 
         public void TakeDamage(Damage damage)
         {
-			//if(!NetworkServer.isActive) //Something like this
-			//Warning('TakeDamage is Called Client Side, when it should be server side only')
-			
+            //if(!NetworkServer.isActive) //Something like this
+            //Warning('TakeDamage is Called Client Side, when it should be server side only')
+
             damage = ResistDamage(damage);
             _healthable.TakeDamage(damage);
         }
@@ -179,9 +203,9 @@ namespace Entity
 
         #region Attackable
 
-        public void PrepareAttack(GameObject attacker)
+        public void TargetForAttack(GameObject attacker)
         {
-            _attackable.PrepareAttack(attacker);
+            _attackable.TargetForAttack(attacker);
         }
 
         public void RecieveAttack(Damage damage)
@@ -190,10 +214,10 @@ namespace Entity
             _healthable.TakeDamage(damage);
         }
 
-        public event EndgameEventHandler AttackLaunchedAgainst
+        public event EndgameEventHandler TargetedForAttack
         {
-            add { _attackable.AttackLaunchedAgainst += value; }
-            remove { _attackable.AttackLaunchedAgainst -= value; }
+            add { _attackable.TargetedForAttack += value; }
+            remove { _attackable.TargetedForAttack -= value; }
         }
 
         public event DamageEventHandler IncomingAttackLanded
@@ -267,12 +291,20 @@ namespace Entity
         {
             _abilitiable.Cast(index);
         }
+        public void LevelUp(int index)
+        {
+            _abilitiable.LevelUp(index);
+        }
 
         public T GetAbility<T>() where T : IAbility
         {
             return _abilitiable.GetAbility<T>();
         }
-
+        public IEnumerable<IAbility> Abilities
+        {
+            get { return _abilitiable.Abilities; }
+        }
+        
         #endregion
 
         #region Movable
@@ -386,5 +418,6 @@ namespace Entity
         }
 
         #endregion
+
     }
 }

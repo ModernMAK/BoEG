@@ -56,7 +56,7 @@ namespace Modules.Attackerable
             var damage = new Damage(AttackDamage, DamageType.Physical, Self);
             var attackable = go.GetComponent<IAttackable>();
             //Tell the attackable we are attacking it
-            attackable.PrepareAttack(Self);
+            attackable.TargetForAttack(Self);
             //Tell the attackable we attacked it - This will be necessary when we impliment evasion and whatnot
             //TODO impliment evasion in attackable
             attackable.RecieveAttack(damage);

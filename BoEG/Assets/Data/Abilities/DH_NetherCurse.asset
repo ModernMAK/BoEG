@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32b01cade83f02b4c80a8581fc2aa989, type: 3}
+  m_Name: DH_NetherCurse
+  m_EditorClassIdentifier: 
+  Name: Nether Curse
+  _icon: {fileID: 21300004, guid: 09300c81e0cb2c54493007b6758e2572, type: 3}
+  _level: 0
+  _data:
+    _manaCost:
+    - 80
+    - 105
+    - 125
+    - 140
+    _castRange:
+    - 7
+    - 8
+    - 9
+    - 10
+    _tickInfo:
+    - _required: 5
+      _duration: 5
+    - _required: 5
+      _duration: 5
+    - _required: 5
+      _duration: 5
+    - _required: 5
+      _duration: 5
+    _totalDamage:
+    - 75
+    - 150
+    - 225
+    - 350
+    _areaOfEffect:
+    - 3
+    - 4
+    - 5
+    - 6
+  _debugPrefab: {fileID: 1262147203639492, guid: 9f645df4a19737f449ed1166f444636f,
+    type: 2}
+  _spellAoePrefab: {fileID: 1321989120319710, guid: 51f1a113b4c079f4dbd293e62d837940,
+    type: 2}
+  _spellRangePrefab: {fileID: 1526270461379446, guid: cbfaeb9f371fa204886637b2cb10f3b5,
+    type: 2}

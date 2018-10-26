@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Entity;
 using UnityEngine;
@@ -8,15 +9,15 @@ namespace Modules.Abilityable
     [Serializable]
     public class Abilitiable : Module, IAbilitiable
     {
-        public Abilitiable(GameObject self, IAbilityableData data) : base(self)
+        public Abilitiable(GameObject self, IAbilitiableData data) : base(self)
         {
             _abilities = new List<IAbility>();
-            foreach (var abiltiy in data.Abilities)
+            foreach (var ability in data.Abilities)
             {
-                if (abiltiy == null)
+                if (ability == null)
                     continue;
 
-                _abilities.Add(abiltiy.CreateInstance());
+                _abilities.Add(ability.CreateInstance());
             }
         }
 
@@ -28,23 +29,23 @@ namespace Modules.Abilityable
             }
         }
 
-        public override void PreTick(float deltaTick)
+        public override void PreStep(float deltaStep)
         {
-            _abilities.PreTick(deltaTick);
+            _abilities.PreStep(deltaStep);
         }
 
-        public override void Tick(float deltaTick)
+        public override void Step(float deltaTick)
         {
-            _abilities.Tick(deltaTick);
+            _abilities.Step(deltaTick);
         }
 
-        public override void PostTick(float deltaTick)
+        public override void PostStep(float deltaTick)
         {
-            _abilities.PostTick(deltaTick);
+            _abilities.PostStep(deltaTick);
         }
-        public override void PhysicsTick(float deltaTick)
+        public override void PhysicsStep(float deltaTick)
         {
-            _abilities.PhysicsTick(deltaTick);
+            _abilities.PhysicsStep(deltaTick);
         }
 
         public override void Terminate()
@@ -69,12 +70,19 @@ namespace Modules.Abilityable
             return default(T);
         }
 
+        public IEnumerable<IAbility> Abilities
+        {
+            get { return _abilities; }
+        }
+
         public void Cast(int index)
         {
             _abilities[index].Trigger();
         }
+        public void LevelUp(int index)
+        {
+            _abilities[index].LevelUp();
+        }
 
-
-        //
     }
 }

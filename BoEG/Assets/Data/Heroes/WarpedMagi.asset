@@ -11,11 +11,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bee390a1bb043d0b3969dddf3d4676e, type: 3}
   m_Name: WarpedMagi
   m_EditorClassIdentifier: 
-  _name: Janice Persky
+  _name: Warped Magi
   _mat: {fileID: 2100000, guid: 444ef0399622f064c9eac2732f0b8837, type: 2}
-  _abilityable:
-    _abilities:
-    - {fileID: 11400000, guid: 476c2b3fc149c1d41955b5987fc227c6, type: 2}
+  _icon: {fileID: 21300000, guid: dd66fd99e23f55f40970af6e54a98c7b, type: 3}
+  _abilitiable:
+    _abilities: []
   _armorable:
     _physical:
       _block:

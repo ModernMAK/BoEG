@@ -3,12 +3,12 @@ using Entity;
 
 namespace Modules
 {
-    public interface IModule : ITickable, ISerializable, IDeserializable
+    public interface IModule : IStepable, ISerializable, IDeserializable
     {
         void Initialize();
         void Terminate();
-//        void PreTick();
-//        void Tick();
-//        void PostTick();
+//        void PreStep();
+//        void Step();
+//        void PostStep();
     }
 }

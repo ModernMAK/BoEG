@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Core.OrderSystem
 {
-    public interface IJob : ITickable
+    public interface IJob : IStepable
     {
         void Initialize(GameObject go);
         void Terminate();

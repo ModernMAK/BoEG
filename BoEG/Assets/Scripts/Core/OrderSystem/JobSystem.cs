@@ -20,27 +20,27 @@ namespace Core.OrderSystem
         }
 
 
-        public override void PreTick(float deltaTick)
+        public override void PreStep(float deltaStep)
         {
             if (_activeJob != null)
             {
-                _activeJob.PreTick(deltaTick);
+                _activeJob.PreStep(deltaStep);
             }
         }
 
-        public override void Tick(float deltaTick)
+        public override void Step(float deltaTick)
         {
             if (_activeJob != null)
             {
-                _activeJob.Tick(deltaTick);
+                _activeJob.Step(deltaTick);
             }
         }
 
-        public override void PostTick(float deltaTick)
+        public override void PostStep(float deltaTick)
         {
             if (_activeJob != null)
             {
-                _activeJob.PostTick(deltaTick);
+                _activeJob.PostStep(deltaTick);
                 if (_activeJob.IsDone())
                 {
                     _activeJob.Terminate();
@@ -55,11 +55,11 @@ namespace Core.OrderSystem
             }
         }
 
-        public override void PhysicsTick(float deltaTick)
+        public override void PhysicsStep(float deltaTick)
         {
             if (_activeJob != null)
             {
-                _activeJob.PhysicsTick(deltaTick);
+                _activeJob.PhysicsStep(deltaTick);
             }
         }
 

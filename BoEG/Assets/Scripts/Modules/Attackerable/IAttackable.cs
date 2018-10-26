@@ -7,10 +7,9 @@ namespace Modules.Attackerable
 {
     public interface IAttackable
     {
-		//TODO rename to TargetedForAttack?
-        void PrepareAttack(GameObject attacker);
+        void TargetForAttack(GameObject attacker);
         void RecieveAttack(Damage damage);
-        event EndgameEventHandler AttackLaunchedAgainst;
+        event EndgameEventHandler TargetedForAttack;
         event DamageEventHandler IncomingAttackLanded;
     }
 
@@ -20,10 +19,10 @@ namespace Modules.Attackerable
         {
         }
 
-        public void PrepareAttack(GameObject attacker)
+        public void TargetForAttack(GameObject attacker)
         {
             var args = new EndgameEventArgs(attacker, Self);
-            OnAttackLaunchedAgainst(args);
+            OnTargetedForAttack(args);
         }
 
         public void RecieveAttack(Damage damage)
@@ -32,13 +31,13 @@ namespace Modules.Attackerable
             OnAttackLanded(args);
         }
 
-        private void OnAttackLaunchedAgainst(EndgameEventArgs args)
+        private void OnTargetedForAttack(EndgameEventArgs args)
         {
-            if (AttackLaunchedAgainst != null)
-                AttackLaunchedAgainst(args);
+            if (TargetedForAttack != null)
+                TargetedForAttack(args);
         }
 
-        public event EndgameEventHandler AttackLaunchedAgainst;
+        public event EndgameEventHandler TargetedForAttack;
 
         private void OnAttackLanded(DamageEventArgs args)
         {

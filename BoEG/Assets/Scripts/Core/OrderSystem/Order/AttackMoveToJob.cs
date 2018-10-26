@@ -28,7 +28,7 @@ namespace Core.OrderSystem.Order
             _teamable = go.GetComponent<ITeamable>();
         }
 
-        public override void PreTick(float deltaTick)
+        public override void PreStep(float deltaStep)
         {
             var enemies = ScanForEnemies();
             if (enemies.Length == 0)

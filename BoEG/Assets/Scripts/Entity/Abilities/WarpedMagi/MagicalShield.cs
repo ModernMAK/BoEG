@@ -24,8 +24,7 @@ namespace Entity.Abilities.WarpedMagi
 
 	    public override void Terminate()
 	    {
-		    //TODO
-		    throw new System.NotImplementedException();
+		    //Nothing to terminate
 	    }
 
         public override void Initialize(GameObject go)

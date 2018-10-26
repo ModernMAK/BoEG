@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -11,14 +11,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bee390a1bb043d0b3969dddf3d4676e, type: 3}
   m_Name: DarkHeart
   m_EditorClassIdentifier: 
-  _name: Clara
+  _name: Dark Heart
   _mat: {fileID: 2100000, guid: 45630644a00f94041b22ee6d4f6be8af, type: 2}
-  _abilityable:
+  _icon: {fileID: 21300000, guid: 09300c81e0cb2c54493007b6758e2572, type: 3}
+  _abilitiable:
     _abilities:
+    - {fileID: 11400000, guid: 11f437b21f4298c42bfe4b366fadec80, type: 2}
     - {fileID: 11400000, guid: 7baceda6878a953448579b0de76bc976, type: 2}
     - {fileID: 11400000, guid: 45e59f66fab8dc14db5aa72a1f5f7e69, type: 2}
     - {fileID: 11400000, guid: 3f3e569f047c0904fae992b98d3b6baa, type: 2}
-    - {fileID: 11400000, guid: 11f437b21f4298c42bfe4b366fadec80, type: 2}
   _armorable:
     _physical:
       _block:

@@ -25,6 +25,6 @@ namespace Core.Serialization
 		void Write(ulong value);
 	
 	
-		byte[] Output();
+		byte[] Buffer();
 	}
 }

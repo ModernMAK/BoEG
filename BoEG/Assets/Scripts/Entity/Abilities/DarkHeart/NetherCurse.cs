@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Core;
 using Modules.Abilityable;
 using Modules.Healthable;
-using Modules.Magicable;
 using Modules.Teamable;
 using Triggers;
 using UnityEngine;
@@ -10,192 +9,239 @@ using Util;
 
 namespace Entity.Abilities.DarkHeart
 {
-    public class TickHelper
+    [CreateAssetMenu(fileName = "DarkHeart_NetherCurse.asset", menuName = "Ability/DarkHeart/Nether Curse")]
+    public class NetherCurse : BetterAbility
     {
-        public TickHelper(int required, float interval)
+
+        [Serializable]
+        public struct NetherCurseData
         {
-            TicksRequired = required;
-            TickInterval = interval;
-            TicksPerformed = 0;
-            ElapsedTime = 0f;
-        }
+            [SerializeField] private float[] _manaCost;
+            [SerializeField] private float[] _castRange;
+            [SerializeField] private TickData[] _tickInfo;
+            [SerializeField] private float[] _totalDamage;
+            [SerializeField] private float[] _areaOfEffect;
 
-        public static TickHelper CreateFromDuration(float duration, int required)
-        {
-            var interval = duration / required;
-            return new TickHelper(required, interval);
-        }
-
-        public static TickHelper CreateFromDuration(float duration, float interval)
-        {
-            var required = Mathf.CeilToInt(duration / interval);
-            return new TickHelper(required, interval);
-        }
-
-
-        private int TicksRequired { get; set; }
-        private int TicksPerformed { get; set; }
-        private float TickInterval { get; set; }
-        private float ElapsedTime { get; set; }
-
-        public void AdvanceTime(float time)
-        {
-            ElapsedTime += time;
-        }
-
-        public int TicksToPerform
-        {
-            get
+            public int Length
             {
-                var ticksLeft = TicksRequired - TicksPerformed;
-                var allowedTicks = Mathf.FloorToInt(ElapsedTime / TickInterval);
-                return Mathf.Min(ticksLeft, allowedTicks);
+                //Just pick any, the property drawer ensures they should all be the same
+                get { return _manaCost.Length; }
+            }
+            
+
+            public float[] AreaOfEffect
+            {
+                get { return _areaOfEffect; }
+            }
+
+            public float[] ManaCost
+            {
+                get { return _manaCost; }
+            }
+
+            public float[] CastRange
+            {
+                get { return _castRange; }
+            }
+
+            public TickData[] TickInfo
+            {
+                get { return _tickInfo; }
+            }
+
+            public float[] TotalDamage
+            {
+                get { return _totalDamage; }
             }
         }
 
-        public bool DoneTicking
+        [SerializeField] private NetherCurseData _data;
+
+        public override float ManaCost
         {
-            get { return TicksRequired <= TicksPerformed; }
+            get { return GetLeveledData(_data.ManaCost); }
         }
 
-        public void AdvanceTicks()
+        public override float CastRange
         {
-            var temp = TicksToPerform;
-            TicksPerformed += temp;
-            ElapsedTime -= TickInterval * temp;
+            get { return GetLeveledData(_data.CastRange); }
         }
-    }
 
-    [CreateAssetMenu(fileName = "DarkHeart_NetherCurse.asset", menuName = "Ability/DarkHeart/Nether Curse")]
-    public class NetherCurse : Ability
-    {
-        [SerializeField] private float _manaCost;
-        [SerializeField] private float _castRange;
-        [SerializeField] private float _netherCurseTickInterval;
-        [SerializeField] private float _netherCurseAreaOfEffect;
-        [SerializeField] private float _netherCurseDamagePerTick;
-        [SerializeField] private float _netherCurseDuration;
+        private int TicksRequired
+        {
+            get { return GetLeveledData(_data.TickInfo).TicksRequired; }
+        }
+
+        private float AreaOfEffect
+        {
+            get { return GetLeveledData(_data.AreaOfEffect); }
+        }
+
+        private float TotalDamage
+        {
+            get { return GetLeveledData(_data.TotalDamage); }
+        }
+
+        private float TickDuration
+        {
+            get { return GetLeveledData(_data.TickInfo).Duration; }
+        }
+
         [SerializeField] private GameObject _debugPrefab;
-        private GameObject _self;
-        private IMagicable _magicable;
-        private List<CurseInstance> _curseInstances;
+        private TickActionContainer<CurseInstance> _curseInstances;
+
+
+        protected override int MaxLevel
+        {
+            get { return _data.Length; }
+        }
 
 
         public override void Terminate()
         {
-        }
-
-        private class CurseInstance
-        {
-            public CurseInstance(NetherCurse curse, Vector3 position)
-            {
-                var triggerAura = new SphereTriggerMethod();
-                triggerAura.SetRadius(curse._netherCurseAreaOfEffect).SetPosition(position)
-                    .SetLayerMask((int) LayerMaskHelper.Entity);
-                _trigger = new Trigger(triggerAura);
-
-                _trigger.Enter += Damage;
-                _trigger.Stay += Damage;
-
-                _self = curse._self;
-                _damageOverTime = curse._netherCurseDamagePerTick;
-                _teamable = _self.GetComponent<ITeamable>();
-
-                _tickHelper = TickHelper.CreateFromDuration(curse._netherCurseDuration, curse._netherCurseTickInterval);
-
-                _debugInst = Instantiate(curse._debugPrefab);
-                _debugInst.transform.position = position;
-                _debugInst.transform.localScale = Vector3.one * curse._netherCurseAreaOfEffect;
-            }
-
-            private readonly GameObject _self;
-
-            private TickHelper _tickHelper;
-            private readonly float _damageOverTime;
-            private readonly Trigger _trigger;
-
-            private readonly ITeamable _teamable;
-            private GameObject _debugInst;
-
-            public void TerminateDebugInstance()
-            {
-                Destroy(_debugInst);
-            }
-
-            private void Damage(GameObject go)
-            {
-                var healthable = go.GetComponent<IHealthable>();
-                var teamable = go.GetComponent<ITeamable>();
-                var performingTicks = _tickHelper.TicksToPerform;
-                for (int i = 0; i < performingTicks; i++)
-                {
-                    if (IsDone)
-                        return;
-                    if (_self == go)
-                        return;
-                    if (healthable == null)
-                        return;
-                    if (teamable != null && _teamable != null && _teamable.Team == teamable.Team &&
-                        _teamable.Team != null)
-                        return;
-                    var damage = new Damage(_damageOverTime, DamageType.Magical, _self);
-
-                    healthable.TakeDamage(damage);
-                }
-            }
-
-            public void PhysicsTick(float deltaTime)
-            {
-                _tickHelper.AdvanceTime(deltaTime);
-                _trigger.PhysicsTick();
-                _tickHelper.AdvanceTicks();
-            }
-
-            public bool IsDone
-            {
-                get { return _tickHelper.DoneTicking; }
-            }
+            //Terminate CurseInstances if they should go away after dying
+//            _curseInstances.Terminate();
         }
 
 
         public override void Initialize(GameObject go)
         {
-            _curseInstances = new List<CurseInstance>();
-            _self = go;
-            _magicable = go.GetComponent<IMagicable>();
+            base.Initialize(go);
+            _curseInstances = new TickActionContainer<CurseInstance>();
+
+            _spellRangeGameobject = Instantiate(_spellRangePrefab);
+            _spellRangeGameobject.SetActive(false);
+            _spellRangeVisualizer = _spellRangeGameobject.GetComponent<SpellRangeVisualizer>();
+            
+            _spellAoeGameobject = Instantiate(_spellAoePrefab);
+            _spellAoeGameobject.SetActive(false);
+            _spellAoeVisualizer = _spellAoeGameobject.GetComponent<SpellAoeVisualizer>();
         }
 
-        public override void Trigger()
+        [SerializeField] private GameObject _spellAoePrefab;
+        [SerializeField] private GameObject _spellRangePrefab;
+        private GameObject _spellAoeGameobject;
+        private SpellAoeVisualizer _spellAoeVisualizer;
+        private GameObject _spellRangeGameobject;
+        private SpellRangeVisualizer _spellRangeVisualizer;
+
+        protected override void Prepare()
+        {        
+        }
+
+        protected override void CancelPrepare()
+        {
+            _spellAoeGameobject.SetActive(false);
+            _spellRangeGameobject.SetActive(false);
+        }
+
+        protected override void Cast()
         {
             RaycastHit hit;
-            if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) return;
-
-            if ((hit.point - _self.transform.position).sqrMagnitude > _castRange * _castRange)
+            if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
                 return;
 
-
-            if (_magicable.ManaPoints < _manaCost)
+            if (!InCastRange(hit.point))
                 return;
-
-            _magicable.ModifyMana(-_manaCost, _self);
-            _curseInstances.Add(new CurseInstance(this, hit.point));
+            
+            SpendMana();
+            GroundCast(hit.point);
         }
 
-        public override void PhysicsTick(float deltaTick)
+        public override void GroundCast(Vector3 point)
         {
-            for (var i = 0; i < _curseInstances.Count; i++)
+            _curseInstances.Add(new CurseInstance(this, point));
+        }
+
+        public override void Step(float deltaTick)
+        {
+            if (Preparing && IsLeveled)
             {
-                var inst = _curseInstances[i];
-                if (inst.IsDone)
+                _spellRangeVisualizer.SetStart(Self.transform);
+                _spellRangeVisualizer.SetRange(CastRange);
+                _spellAoeVisualizer.SetAoeSize(AreaOfEffect);
+                RaycastHit hit;
+                if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
                 {
-                    inst.TerminateDebugInstance();
-                    _curseInstances.RemoveAt(i);
-                    i--;
+//                    _spellAoeGameobject.SetActive(false);
                 }
                 else
                 {
-                    inst.PhysicsTick(deltaTick);
+                    _spellAoeGameobject.SetActive(true);
+                    _spellAoeVisualizer.SetPoint(hit.point);
+                    _spellRangeGameobject.SetActive(true);
+                    _spellRangeVisualizer.SetEnd(hit.point);
                 }
+            }
+        }
+
+
+
+
+        public override void PhysicsStep(float deltaTick)
+        {
+            _curseInstances.Tick(deltaTick);
+        }
+
+
+
+        private class CurseInstance : DotTickAction
+        {
+            public CurseInstance(NetherCurse curse, Vector3 position) :
+                base(curse.TicksRequired, curse.TickDuration)
+            {
+                var triggerAura = new SphereTriggerMethod();
+                triggerAura.SetRadius(curse.AreaOfEffect).SetPosition(position)
+                    .SetLayerMask((int) LayerMaskHelper.Entity);
+                _trigger = new Trigger(triggerAura);
+
+                _trigger.Enter += OnUnitEnter;
+                _trigger.Stay += OnUnitEnter;
+
+                _self = curse.Self;
+                _damageOverTime = curse.TotalDamage / TicksRequired;
+                _teamable = _self.GetComponent<ITeamable>();
+
+
+                _debugInst = Instantiate(curse._debugPrefab);
+                _debugInst.transform.position = position;
+                _debugInst.transform.localScale = Vector3.one * curse.AreaOfEffect;
+            }
+
+            private readonly GameObject _self;
+
+            private readonly float _damageOverTime;
+            private readonly Trigger _trigger;
+
+            private readonly ITeamable _teamable;
+            private readonly GameObject _debugInst;
+
+            public override void Terminate()
+            {
+                Destroy(_debugInst);
+            }
+
+            protected override void Logic()
+            {
+                _trigger.PhysicsStep(); //Each tick, run a physics step to check if anyone is inside the area of effect
+                //The Trigger's Physics tick will 
+            }
+
+            private void OnUnitEnter(GameObject go)
+            {
+                var healthable = go.GetComponent<IHealthable>();
+                var teamable = go.GetComponent<ITeamable>();
+                if (DoneTicking)
+                    return;
+                if (_self == go)
+                    return;
+                if (healthable == null)
+                    return;
+                if (teamable != null && _teamable != null && _teamable.Team == teamable.Team &&
+                    _teamable.Team != null)
+                    return;
+                var damage = new Damage(_damageOverTime, DamageType.Magical, _self);
+                ApplyDamageOverTime(healthable, damage);
             }
         }
     }

@@ -11,7 +11,7 @@
 //    {
 //        /*
 //        
-//        [SerializeField] private AbilityableData _abilityableData;
+//        [SerializeField] private AbilitiableData _abilityableData;
 //        [SerializeField] private ArmorableData _armorableData;
 //        [SerializeField] private AttackerableData _attackerableData;
 //        [SerializeField] private HealthableData _healthableData;

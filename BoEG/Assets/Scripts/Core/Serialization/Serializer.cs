@@ -3,6 +3,8 @@ using System.IO;
 
 namespace Core.Serialization
 {
+	
+	
 	public class Serializer : ISerializer, IDisposable
 	{
 		public Serializer()
@@ -95,7 +97,7 @@ namespace Core.Serialization
 		{
 			_writer.Write(value);
 		}
-		public byte[] Output()
+		public byte[] Buffer()
 		{
 			return _stream.ToArray();
 		}

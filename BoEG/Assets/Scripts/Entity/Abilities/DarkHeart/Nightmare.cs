@@ -1,28 +1,80 @@
+using System;
 using Core;
 using Modules.Healthable;
 using Modules.Abilityable;
 using UnityEngine;
-using System.Collections.Generic;
-using Modules.Magicable;
 using Util;
-
 
 namespace Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(fileName = "DarkHeart_Nightmare.asset", menuName = "Ability/DarkHeart/Nightmare")]
-    public class Nightmare : Ability
+    public class Nightmare : BetterAbility
     {
-        [SerializeField] private float _duration;
-        [SerializeField] private int _ticks;
-        [SerializeField] private float _tickDamage;
-        private GameObject _self;
+        [Serializable]
+        public struct NightmareData
+        {
+            [SerializeField] private float[] _manaCost;
+            [SerializeField] private float[] _castRange;
+            [SerializeField] private TickData[] _tickInfo;
+            [SerializeField] private float[] _totalDamage;
+
+            public int Length
+            {
+                //Just pick any, the property drawer ensures they should all be the same
+                get { return _manaCost.Length; }
+            }
+            
+            public float[] ManaCost
+            {
+                get { return _manaCost; }
+            }
+
+            public float[] CastRange
+            {
+                get { return _castRange; }
+            }
+
+            public TickData[] TickInfo
+            {
+                get { return _tickInfo; }
+            }
+
+            public float[] TotalDamage
+            {
+                get { return _totalDamage; }
+            }
+        }
+        [SerializeField] private NightmareData _data;
+
+        public override float CastRange
+        {
+            get { return GetLeveledData(_data.CastRange); }
+        }
+
+        public override float ManaCost
+        {
+            get { return GetLeveledData(_data.ManaCost); }
+        }
+
+        private TickData TickInfo
+        {
+            get { return GetLeveledData(_data.TickInfo); }
+        }
+
+        private float TotalDamage
+        {
+            get { return GetLeveledData(_data.TotalDamage); }
+        }
+
+        protected override int MaxLevel
+        {
+            get { return _data.Length; }
+        }
         [SerializeField] private GameObject _nightmareFX;
-        [SerializeField] private float _manaCost;
-        [SerializeField] private float _castRange;
-
-        private IMagicable _magicable;
-
-        //Nightmare Duration
+        
+        [SerializeField] private GameObject _spellRangePrefab;
+        private GameObject _spellRangeGameobject;
+        private SpellRangeVisualizer _spellRangeVisualizer;
         //Nightmare AttackDamage On Completion
 
 
@@ -31,33 +83,50 @@ namespace Entity.Abilities.DarkHeart
 
         public override void Terminate()
         {
-            for (int i = 0; i < _nightmareInstances.Count; i++)
-            {
-                var inst = _nightmareInstances[i];
-                inst.Terminate();
-            }
-            _nightmareInstances.Clear();
+            _nightmareInstances.Terminate();
         }
 
 
         public override void Initialize(GameObject go)
         {
-            _self = go;
-            _nightmareInstances = new List<NightmareInstance>();
-            _magicable = go.GetComponent<IMagicable>();
+            base.Initialize(go);
+            _nightmareInstances = new TickActionContainer<NightmareInstance>();
+            _spellRangeGameobject = Instantiate(_spellRangePrefab);
+            _spellRangeGameobject.SetActive(false);
+            _spellRangeVisualizer = _spellRangeGameobject.GetComponent<SpellRangeVisualizer>();
 //            throw new System.NotImplementedException();
         }
 
-        public override void Trigger()
+        protected override void CancelPrepare()
+        {
+            _spellRangeGameobject.SetActive(false);
+        }
+
+        public override void Step(float deltaTick)
+        {
+            if (Preparing && IsLeveled)
+            {
+                _spellRangeVisualizer.SetStart(Self.transform);
+                _spellRangeVisualizer.SetRange(CastRange);
+                RaycastHit hit;
+                if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+                {
+//                    _spellAoeGameobject.SetActive(false);
+                }
+                else
+                {
+                    _spellRangeGameobject.SetActive(true);
+                    _spellRangeVisualizer.SetEnd(hit.point);
+                }
+            }
+        }
+
+        protected override void Cast()
         {
             RaycastHit hit;
             if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) return;
 
-            if ((hit.point - _self.transform.position).sqrMagnitude > _castRange * _castRange)
-                return;
-
-
-            if (_magicable.ManaPoints < _manaCost)
+            if (!InCastRange(hit.point))
                 return;
 
             var col = hit.collider;
@@ -65,77 +134,54 @@ namespace Entity.Abilities.DarkHeart
             if (col.attachedRigidbody != null)
                 go = col.attachedRigidbody.gameObject;
 
-            _magicable.ModifyMana(-_manaCost, _self);
-            ApplyNightmare(go);
+            SpendMana();
+            UnitCast(go);
         }
 
-        public override void PhysicsTick(float deltaTick)
+        public override void PhysicsStep(float deltaTick)
         {
-            for (int i = 0; i < _nightmareInstances.Count; i++)
-            {
-                var inst = _nightmareInstances[i];
-                inst.PhysicsTick(deltaTick);
+            _nightmareInstances.Tick(deltaTick);
+        }
 
-                if (inst.IsDone)
-                {
-                    inst.Terminate();
-                    _nightmareInstances.RemoveAt(i);
-                    i--;
-                }
+        private TickActionContainer<NightmareInstance> _nightmareInstances;
+
+        public override void UnitCast(GameObject target)
+        {
+            var iHealthable = target.GetComponent<IHealthable>();
+            if (iHealthable != null)
+            {
+                _nightmareInstances.Add(new NightmareInstance(this, Self, target));
             }
         }
 
-        private List<NightmareInstance> _nightmareInstances;
-
-        public void ApplyNightmare(GameObject go)
+        private class NightmareInstance : DotTickAction
         {
-            _nightmareInstances.Add(new NightmareInstance(this, _self, go));
-        }
+            private readonly float _damage;
+            private readonly GameObject _target;
+            private readonly IHealthable _healthable;
+            private readonly GameObject _self;
+            private readonly GameObject _fx;
 
-
-        private class NightmareInstance
-        {
-            private TickHelper _helper;
-            private float _damage;
-            private GameObject _target;
-            private IHealthable _healthable;
-            private GameObject _self;
-            private GameObject _fx;
-
-            public NightmareInstance(Nightmare nightmare, GameObject self, GameObject target)
+            public NightmareInstance(Nightmare nightmare, GameObject self, GameObject target) :
+                base(nightmare.TickInfo.TicksRequired, nightmare.TickInfo.Duration)
             {
                 _self = self;
-                _helper = TickHelper.CreateFromDuration(nightmare._duration, nightmare._ticks);
-                _damage = nightmare._tickDamage;
+                _damage = nightmare.TotalDamage / nightmare.TickInfo.Duration;
                 _target = target;
                 _healthable = target.GetComponent<IHealthable>();
                 _fx = Instantiate(nightmare._nightmareFX, _target.transform);
             }
 
-            public void PhysicsTick(float deltaTick)
-            {
-                _helper.AdvanceTime(deltaTick);
-                Logic();
-                _helper.AdvanceTicks();
-            }
+            
 
-            private void Logic()
+            protected override void Logic()
             {
-                if(_healthable.HealthPercentage.SafeEquals(0f))
+                if (_healthable.HealthPercentage.SafeEquals(0f))
                     return;
-                var ticks = _helper.TicksToPerform;
-                for (var i = 0; i < ticks; i++)
-                {
-                    _healthable.TakeDamage(new Damage(_damage, DamageType.Magical, _self));
-                }
+                ApplyDamageOverTime(_healthable,new Damage(_damage, DamageType.Magical, _self));
             }
 
-            public bool IsDone
-            {
-                get { return _helper.DoneTicking; }
-            }
-
-            public void Terminate()
+            public override void Terminate()
             {
                 Destroy(_fx);
             }
@@ -159,12 +205,12 @@ namespace Entity.Abilities.DarkHeart
 //            _targetHealthable = Target.GetComponent<IHealthable>();
 //        }
 //
-//        public override void PreTick()
+//        public override void PreStep()
 //        {
 //            _timeStarted
 //        }
 //
-//        public override void PostTick()
+//        public override void PostStep()
 //        {
 //            if (_timeStarted + _timeDuration <= Time.time)
 //            {
@@ -175,7 +221,7 @@ namespace Entity.Abilities.DarkHeart
 //
 //        private void ApplyDamage()
 //        {
-//            _targetHealthable.TakeDamage(new Damage());
+//            _targetHealthable.TakeDamage(new ApplyDamageOverTime());
 //        }
 //    }
 }

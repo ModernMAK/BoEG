@@ -1,3 +1,4 @@
+using System;
 using Modules.Abilityable;
 using Modules.Attackerable;
 using Modules.Healthable;
@@ -8,62 +9,59 @@ using Util;
 namespace Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(fileName = "DarkHeart_Fearmonger.asset", menuName = "Ability/DarkHeart/Fearmonger")]
-    public class Fearmonger : Ability
+    public class Fearmonger : BetterAbility
     {
         private Nightmare _nightmareAbility;
-
         private IAttackable _attackable;
         private IHealthable _healthable;
         private ITeamable _teamable;
-        private ConstantProc _proc;
+        private DynamicProc _proc;
+
+
         [SerializeField] [Range(0f, 1f)] private float _minChance;
         [SerializeField] [Range(0f, 1f)] private float _maxChance;
         [SerializeField] [Range(0f, 1f)] private float _selfHealthWeight;
-        private float EnemyHealthWeight
-        {
-            get { return 1f - _selfHealthWeight; }
-        }
 
+        protected override int MaxLevel
+        {
+            get { return 1; }
+        }
 
         public override void Initialize(GameObject go)
         {
+            base.Initialize(go);
+            Level = 1;//This ability is 'innate' and starts off being leveled
             _nightmareAbility = go.GetComponent<IAbilitiable>().GetAbility<Nightmare>();
             _attackable = go.GetComponent<IAttackable>();
             _teamable = go.GetComponent<ITeamable>();
             _healthable = go.GetComponent<IHealthable>();
-            _proc = new ConstantProc(0f);
+            _proc = new DynamicProc(0f);
 
             _attackable.IncomingAttackLanded += IncomingAttackLanded;
+        }
+
+        private float CalculateChance(IHealthable self, IHealthable target)
+        {
+            return self.HealthPercentage * _selfHealthWeight +
+                   target.HealthPercentage * (1f - _selfHealthWeight);
+        }
+
+        private void Apply(GameObject go, IHealthable healthable)
+        {
+            if (healthable == null)
+                throw new Exception();
+
+            if (_proc.Proc(CalculateChance(_healthable, healthable)))
+                _nightmareAbility.UnitCast(go);
         }
 
 
         private void IncomingAttackLanded(DamageEventArgs args)
         {
-            var source = args.Source;
-            var healthable = source.GetComponent<IHealthable>();
+            var target = args.Source;
+            var healthable = target.GetComponent<IHealthable>();
 
-            var weight = 0f;
-            var totalWeight = _selfHealthWeight + EnemyHealthWeight;
-
-            if (_healthable == null)
-                totalWeight -= _selfHealthWeight;
-            else
-                weight += _healthable.HealthPercentage * _selfHealthWeight;
-
-            if (healthable == null)
-                totalWeight -= EnemyHealthWeight;
-            else
-                weight += healthable.HealthPercentage * EnemyHealthWeight;
-
-            var chance = (_minChance + _maxChance) / 2f;
-            if (!totalWeight.SafeEquals(0f))
-                chance = (weight / totalWeight) * (_maxChance - _minChance) + _minChance;
-
-            _proc.SetChace(chance);
-            if (_proc.Proc())
-            {
-                _nightmareAbility.ApplyNightmare(source);
-            }
+            Apply(target, healthable);
         }
 
         public override void Terminate()
@@ -71,11 +69,6 @@ namespace Entity.Abilities.DarkHeart
             _attackable.IncomingAttackLanded -= IncomingAttackLanded;
         }
 
-        public override void Trigger()
-        {
-        }
 
-        //TODO impliment a function to act as an attack reciever (IAttackerable acts as an attack launcher)
-        //How would this delegate to Healthable? Or Armorable?
     }
 }

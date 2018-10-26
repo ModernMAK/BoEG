@@ -8,8 +8,12 @@ namespace Entity.Abilities.DarkHeart
 {
     
     [CreateAssetMenu(fileName = "DarkHeart_Necromancy.asset", menuName = "Ability/DarkHeart/Necromancy")]
-    public class Necromancy : Ability
+    public class Necromancy : BetterAbility
     {
+        protected override int MaxLevel
+        {
+            get { return 1; }
+        }
         //Necromancy Chance
         //Skeleton Data
         [SerializeField] private GameObject _skeletonPrefab = null;
@@ -19,6 +23,7 @@ namespace Entity.Abilities.DarkHeart
         private IMiscEvent _eventable;
         public override void Initialize(GameObject go)
         {
+            base.Initialize(go);
             _necromancyProc = new GradualProc(_skeletonSpawnChance);
             _eventable = go.GetComponent<IMiscEvent>();
             _teamable = go.GetComponent<ITeamable>();
@@ -33,7 +38,8 @@ namespace Entity.Abilities.DarkHeart
 
         private void KilledEntityCallback(KillEventArgs args)
         {
-            //Should we check for errors in the KillEventArgs? No, we should assume it is working and check for errors if something is wrong
+            //Should we check for errors in the KillEventArgs?
+            //No, we should assume it is working and check for errors if something is wrong
             if (_necromancyProc.Proc())
             {
                 var location = args.Target.transform.position;
@@ -47,8 +53,5 @@ namespace Entity.Abilities.DarkHeart
             }
         }
 
-        public override void Trigger()
-        {
-        }
     }
 }
