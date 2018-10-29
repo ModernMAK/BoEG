@@ -35,7 +35,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4828502808964968}
-  - component: {fileID: 114854227048127232}
+  - component: {fileID: 114320110054795470}
   m_Layer: 0
   m_Name: SpellRangeVisualizer
   m_TagString: Untagged
@@ -92,7 +92,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1526270461379446}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 8.2290125, y: 0.0000027753663, z: 23.281462}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4797298320832570}
@@ -100,7 +100,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114854227048127232
+--- !u!114 &114320110054795470
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1526270461379446}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4be2d9887499752459f621ced73bc1a8, type: 3}
+  m_Script: {fileID: 11500000, guid: d26f171509425c84988d0e0f489b7c6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _mainRenderer: {fileID: 120633858549578408}

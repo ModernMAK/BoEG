@@ -57,7 +57,7 @@ namespace Modules.Abilityable
 
         #region LevelInfo
 
-        [SerializeField] private int _level;
+        private int _level;
 
         public int Level
         {

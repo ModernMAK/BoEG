@@ -23,7 +23,7 @@ namespace Entity.Abilities.DarkHeart
                 //Just pick any, the property drawer ensures they should all be the same
                 get { return _manaCost.Length; }
             }
-            
+
             public float[] ManaCost
             {
                 get { return _manaCost; }
@@ -44,6 +44,7 @@ namespace Entity.Abilities.DarkHeart
                 get { return _totalDamage; }
             }
         }
+
         [SerializeField] private NightmareData _data;
 
         public override float CastRange
@@ -70,10 +71,12 @@ namespace Entity.Abilities.DarkHeart
         {
             get { return _data.Length; }
         }
+
         [SerializeField] private GameObject _nightmareFX;
-        
+
         [SerializeField] private GameObject _spellRangePrefab;
         private GameObject _spellRangeGameobject;
+
         private SpellRangeVisualizer _spellRangeVisualizer;
         //Nightmare AttackDamage On Completion
 
@@ -172,13 +175,12 @@ namespace Entity.Abilities.DarkHeart
                 _fx = Instantiate(nightmare._nightmareFX, _target.transform);
             }
 
-            
 
             protected override void Logic()
             {
                 if (_healthable.HealthPercentage.SafeEquals(0f))
                     return;
-                ApplyDamageOverTime(_healthable,new Damage(_damage, DamageType.Magical, _self));
+                ApplyDamageOverTime(_healthable, new Damage(_damage, DamageType.Magical, _self));
             }
 
             public override void Terminate()
