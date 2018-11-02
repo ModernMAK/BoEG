@@ -2,14 +2,13 @@ using System;
 using Core;
 using Modules.Healthable;
 using Modules.Abilityable;
-using Modules.Abilityable.Ability;
 using UnityEngine;
 using Util;
 
 namespace Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(fileName = "DarkHeart_Nightmare.asset", menuName = "Ability/DarkHeart/Nightmare")]
-    public class Nightmare : Ability
+    public class Nightmare : BetterAbility
     {
         [Serializable]
         public struct NightmareData
@@ -48,17 +47,30 @@ namespace Entity.Abilities.DarkHeart
 
         [SerializeField] private NightmareData _data;
 
+        public override float CastRange
+        {
+            get { return GetLeveledData(_data.CastRange); }
+        }
+
+        public override float ManaCost
+        {
+            get { return GetLeveledData(_data.ManaCost); }
+        }
 
         private TickData TickInfo
         {
-            get { return this.GetLeveledData(_data.TickInfo); }
+            get { return GetLeveledData(_data.TickInfo); }
         }
 
         private float TotalDamage
         {
-            get { return this.GetLeveledData(_data.TotalDamage); }
+            get { return GetLeveledData(_data.TotalDamage); }
         }
 
+        protected override int MaxLevel
+        {
+            get { return _data.Length; }
+        }
 
         [SerializeField] private GameObject _nightmareFX;
 
@@ -78,8 +90,9 @@ namespace Entity.Abilities.DarkHeart
         }
 
 
-        protected override void Initialize()
+        public override void Initialize(GameObject go)
         {
+            base.Initialize(go);
             _nightmareInstances = new TickActionContainer<NightmareInstance>();
             _spellRangeGameobject = Instantiate(_spellRangePrefab);
             _spellRangeGameobject.SetActive(false);
@@ -87,14 +100,14 @@ namespace Entity.Abilities.DarkHeart
 //            throw new System.NotImplementedException();
         }
 
-//        protected void CancelPrepare()
-//        {
-//            _spellRangeGameobject.SetActive(false);
-//        }
+        protected override void CancelPrepare()
+        {
+            _spellRangeGameobject.SetActive(false);
+        }
 
         public override void Step(float deltaTick)
         {
-            if (Preparing && this.IsLeveled())
+            if (Preparing && IsLeveled)
             {
                 _spellRangeVisualizer.SetStart(Self.transform);
                 _spellRangeVisualizer.SetRange(CastRange);
@@ -111,22 +124,22 @@ namespace Entity.Abilities.DarkHeart
             }
         }
 
-//        protected void Cast()
-//        {
-//            RaycastHit hit;
-//            if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) return;
-//
-//            if (!InCastRange(hit.point))
-//                return;
-//
-//            var col = hit.collider;
-//            var go = col.gameObject;
-//            if (col.attachedRigidbody != null)
-//                go = col.attachedRigidbody.gameObject;
-//
-//            //SpendMana();
-//            UnitCast(go);
-//        }
+        protected override void Cast()
+        {
+            RaycastHit hit;
+            if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) return;
+
+            if (!InCastRange(hit.point))
+                return;
+
+            var col = hit.collider;
+            var go = col.gameObject;
+            if (col.attachedRigidbody != null)
+                go = col.attachedRigidbody.gameObject;
+
+            SpendMana();
+            UnitCast(go);
+        }
 
         public override void PhysicsStep(float deltaTick)
         {
@@ -135,18 +148,19 @@ namespace Entity.Abilities.DarkHeart
 
         private TickActionContainer<NightmareInstance> _nightmareInstances;
 
-//        public void UnitCast(GameObject target)
-//        {
-//            var iHealthable = target.GetComponent<IHealthable>();
-//            if (iHealthable != null)
-//            {
-//                _nightmareInstances.Add(new NightmareInstance(this, Self, target));
-//            }
-//        }
+        public override void UnitCast(GameObject target)
+        {
+            var iHealthable = target.GetComponent<IHealthable>();
+            if (iHealthable != null)
+            {
+                _nightmareInstances.Add(new NightmareInstance(this, Self, target));
+            }
+        }
 
         private class NightmareInstance : DotTickAction
         {
             private readonly float _damage;
+            private readonly GameObject _target;
             private readonly IHealthable _healthable;
             private readonly GameObject _self;
             private readonly GameObject _fx;
@@ -156,8 +170,9 @@ namespace Entity.Abilities.DarkHeart
             {
                 _self = self;
                 _damage = nightmare.TotalDamage / nightmare.TickInfo.Duration;
+                _target = target;
                 _healthable = target.GetComponent<IHealthable>();
-                _fx = Instantiate(nightmare._nightmareFX, target.transform);
+                _fx = Instantiate(nightmare._nightmareFX, _target.transform);
             }
 
 

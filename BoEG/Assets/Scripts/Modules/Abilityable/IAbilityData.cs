@@ -1,4 +1,4 @@
-namespace Modules.Abilityable.Ability
+namespace Modules.Abilityable
 {
     public interface IAbilityData
     {

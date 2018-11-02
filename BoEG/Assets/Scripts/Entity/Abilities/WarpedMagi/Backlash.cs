@@ -1,6 +1,5 @@
 ﻿using Core;
 using Modules.Abilityable;
-using Modules.Abilityable.Ability;
 using Modules.Magicable;
 using Triggers;
 using Modules.Healthable;
@@ -15,14 +14,16 @@ namespace Entity.Abilities.WarpedMagi
         //Necromancy Chance
         [SerializeField] [Range(0f, 1f)] private float _backlashPercentage = 0.1f;
         [SerializeField] private float _backlashRadius = 1f;
+        private GameObject _self;
         private Trigger _trigger;
         private SphereTriggerMethod _triggerAura;
 
 
-        protected override void Initialize()
+        public override void Initialize(GameObject go)
         {
+            _self = go;
             _triggerAura = new SphereTriggerMethod();
-            _triggerAura.SetRadius(_backlashRadius).SetFollow(Self).SetLayerMask((int) LayerMaskHelper.Entity);
+            _triggerAura.SetRadius(_backlashRadius).SetFollow(_self).SetLayerMask((int) LayerMaskHelper.Entity);
             _trigger = new Trigger(_triggerAura);
             _trigger.Enter += Enter;
             _trigger.Exit += Exit;
@@ -42,7 +43,7 @@ namespace Entity.Abilities.WarpedMagi
 
         private void Enter(GameObject go)
         {
-            if(go == Self)
+            if(go == _self)
                 return;
             
             var magicable = go.GetComponent<IMagicable>();
@@ -67,9 +68,13 @@ namespace Entity.Abilities.WarpedMagi
             var backlashAmount = amountSpent * _backlashPercentage;
             if (healthable != null && source == target && backlashAmount > 0)
             {
-                var damage = new Damage(backlashAmount, DamageType.Magical, Self);
+                var damage = new Damage(backlashAmount, DamageType.Magical, _self);
                 healthable.TakeDamage(damage);
             }
+        }
+
+        public override void Trigger()
+        {
         }
     }
 }

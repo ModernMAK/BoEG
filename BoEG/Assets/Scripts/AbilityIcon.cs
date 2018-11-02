@@ -1,13 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Modules.Abilityable;
-using Modules.Abilityable.Ability;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class AbilityIcon : MonoBehaviour
 {
-    [SerializeField] private Ability _target;
+    [SerializeField] private BetterAbility _target;
 
     [SerializeField] private Image _bg;
     [SerializeField] private Image _fg;
@@ -21,7 +20,7 @@ public class AbilityIcon : MonoBehaviour
 //    [SerializeField] private Material _unleveledMat;
 
 
-    public void SetTarget(Ability ba)
+    public void SetTarget(BetterAbility ba)
     {
         _target = ba;
     }
@@ -33,7 +32,7 @@ public class AbilityIcon : MonoBehaviour
         if (_fg != null)
         {
             _fg.sprite = _target.Icon;
-            if (!_target.IsLeveled())
+            if (!_target.IsLeveled)
                 _fg.material = _notLeveled;
             else if (!_target.OffCooldown)
                 _fg.material = _onCooldown;
@@ -50,7 +49,7 @@ public class AbilityIcon : MonoBehaviour
                 _border.enabled = true;
                 _border.material = _isCasting;
             }
-            else if (_target.CanLevelUp())
+            else if (_target.CanLevelUp)
             {
                 _border.enabled = true;
                 _border.material = _canLevel;

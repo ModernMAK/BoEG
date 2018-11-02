@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Modules.Abilityable.Ability;
 
 namespace Modules.Abilityable
 {

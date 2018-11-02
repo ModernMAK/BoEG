@@ -21,7 +21,3 @@
 //        }
 //    }
 //}
-
-namespace Modules.Abilityable.Ability
-{
-}

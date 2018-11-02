@@ -1,3 +1,0 @@
-namespace Modules.Abilityable.Ability
-{
-}

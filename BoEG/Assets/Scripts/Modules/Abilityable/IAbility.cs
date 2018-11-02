@@ -1,7 +1,7 @@
 using Entity;
 using UnityEngine;
 
-namespace Modules.Abilityable.Ability
+namespace Modules.Abilityable
 {
     public interface IAbility : IStepable
     {

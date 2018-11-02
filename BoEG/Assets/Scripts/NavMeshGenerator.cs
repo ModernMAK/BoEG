@@ -114,47 +114,47 @@ public class NavMeshGenerator : MonoBehaviour
     private static bool SimplifyEdges(Graph<Vector3> graph)
     {
         return false;
-//        var dict = new Dictionary<Graph<Vector3>.HalfEdge, Vector3>();
-//        foreach (var edge in graph.HalfEdges)
-//        {
-//            var normal = (edge.Target.Data-edge.Origin.Data).normalized;
-//            dict[edge] = normal;
-//        }
-//
-//        var removalSet = new HashSet<Graph<Vector3>.Edge>();
-//        var removalQueue = new List<Graph<Vector3>.HalfEdge>();
-//
-//        foreach (var edge in graph.HalfEdges)
-//        {
-//            if (!edge.Active || !edge.Twin.Active)
-//                continue;
-//
-//            var normal = dict[edge];
-//            var twinNormal = dict[edge.Twin];
-//
-//            var nextEdge = edge.Next;
-//            if (!nextEdge.Active || !nextEdge.Twin.Active)
-//                continue;
-//
-//            var nextNormal = dict[nextEdge];
-//            var nextTwinNormal = dict[nextEdge.Twin];
-//
-//            if (Vector3.Dot(normal, nextNormal).SafeEquals(1f) &&
-//                Vector3.Dot(twinNormal, nextTwinNormal).SafeEquals(1f))
-//            {
-//                if (removalSet.Add(edge.Pair))
-//                    removalQueue.Add(edge);
-//            }
-//        }
-//
-//        foreach (var edge in removalQueue)
-//        {
-////            Debug.Log("Before Merge : " + graph.DebugOutput());
-//            edge.MergeEdge();
-////            Debug.Log("After Merge : " + graph.DebugOutput());
-//        }
-//
-//        return removalQueue.Count > 0;
+        var dict = new Dictionary<Graph<Vector3>.HalfEdge, Vector3>();
+        foreach (var edge in graph.HalfEdges)
+        {
+            var normal = (edge.Target.Data-edge.Origin.Data).normalized;
+            dict[edge] = normal;
+        }
+
+        var removalSet = new HashSet<Graph<Vector3>.Edge>();
+        var removalQueue = new List<Graph<Vector3>.HalfEdge>();
+
+        foreach (var edge in graph.HalfEdges)
+        {
+            if (!edge.Active || !edge.Twin.Active)
+                continue;
+
+            var normal = dict[edge];
+            var twinNormal = dict[edge.Twin];
+
+            var nextEdge = edge.Next;
+            if (!nextEdge.Active || !nextEdge.Twin.Active)
+                continue;
+
+            var nextNormal = dict[nextEdge];
+            var nextTwinNormal = dict[nextEdge.Twin];
+
+            if (Vector3.Dot(normal, nextNormal).SafeEquals(1f) &&
+                Vector3.Dot(twinNormal, nextTwinNormal).SafeEquals(1f))
+            {
+                if (removalSet.Add(edge.Pair))
+                    removalQueue.Add(edge);
+            }
+        }
+
+        foreach (var edge in removalQueue)
+        {
+//            Debug.Log("Before Merge : " + graph.DebugOutput());
+            edge.MergeEdge();
+//            Debug.Log("After Merge : " + graph.DebugOutput());
+        }
+
+        return removalQueue.Count > 0;
     }
 
     private static bool SimplifyPolygons(Graph<Vector3> graph)
@@ -409,7 +409,7 @@ public class NavMeshGenerator : MonoBehaviour
         var minPos = bounds.center - bounds.extents / 2f;
         var maxPos = bounds.center + bounds.extents / 2f;
 
-//        var lerpedQueue = new Queue<KeyValuePair<Vector2Int, Vector3>>();
+        var lerpedQueue = new Queue<KeyValuePair<Vector2Int, Vector3>>();
 
         for (var x = 0; x <= precision; x++)
         for (var z = 0; z <= precision; z++)

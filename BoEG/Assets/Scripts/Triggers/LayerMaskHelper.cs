@@ -1,8 +1,5 @@
-﻿using System;
-
-namespace Triggers
+﻿namespace Triggers
 {
-    [Flags]
     public enum LayerMaskHelper
     {
         Entity = (1 << Layer.Entity),

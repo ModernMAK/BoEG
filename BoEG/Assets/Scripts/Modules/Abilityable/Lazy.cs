@@ -33,7 +33,3 @@
 //    }
 //}
 ////How I think Lazy is implimented 
-
-namespace Modules.Abilityable.Ability
-{
-}

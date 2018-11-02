@@ -1,6 +1,5 @@
 using Core;
 using Modules.Abilityable;
-using Modules.Abilityable.Ability;
 using Modules.Magicable;
 using Modules.Healthable;
 using Modules.Teamable;
@@ -19,14 +18,16 @@ namespace Entity.Abilities.WarpedMagi
         [SerializeField] private float _castRange = 5f;	
 
 		
+        private GameObject _self;
 		private ITeamable _teamable;
 		private IMagicable _magicable;
 
 
-        protected override void Initialize()
+        public override void Initialize(GameObject go)
         {
-			_teamable = Self.GetComponent<ITeamable>();
-			_magicable = Self.GetComponent<IMagicable>();
+            _self = go;
+			_teamable = go.GetComponent<ITeamable>();
+			_magicable = go.GetComponent<IMagicable>();
         }
 
 	    public override void Terminate()
@@ -34,26 +35,26 @@ namespace Entity.Abilities.WarpedMagi
 		    //Nothing to Terminate
 	    }
 
-//	    public  void Trigger()
-//        {
-//            RaycastHit hit;
-//            if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) return;
-//
-//            if ((hit.point - Self.transform.position).sqrMagnitude > _castRange * _castRange)
-//                return;
-//
-//
-//            if (_magicable.ManaPoints < _manaCost)
-//                return;
-//
-//            var col = hit.collider;
-//            var go = col.gameObject;
-//            if (col.attachedRigidbody != null)
-//                go = col.attachedRigidbody.gameObject;
-//
-//            _magicable.ModifyMana(-_manaCost, Self);
-//            ApplyInfusion(go);
-//        }
+	    public override void Trigger()
+        {
+            RaycastHit hit;
+            if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) return;
+
+            if ((hit.point - _self.transform.position).sqrMagnitude > _castRange * _castRange)
+                return;
+
+
+            if (_magicable.ManaPoints < _manaCost)
+                return;
+
+            var col = hit.collider;
+            var go = col.gameObject;
+            if (col.attachedRigidbody != null)
+                go = col.attachedRigidbody.gameObject;
+
+            _magicable.ModifyMana(-_manaCost, _self);
+            ApplyInfusion(go);
+        }
 		public void ApplyInfusion(GameObject target)
 		{
 			var cols = Physics.OverlapSphere(target.transform.position, _manaStealSearchRadius, (int)LayerMaskHelper.Entity); 
@@ -79,17 +80,17 @@ namespace Entity.Abilities.WarpedMagi
 				
 				var enemyManaPoints = enemyMagicable.ManaPoints;
 				var stolen = Mathf.Min(enemyManaPoints, _manaSteal);
-				enemyMagicable.ModifyMana(-stolen, Self);
+				enemyMagicable.ModifyMana(-stolen, _self);
 		
 				totalManaStolen += stolen;
 			}
 			
-			magicable.ModifyMana(totalManaStolen, Self);
+			magicable.ModifyMana(totalManaStolen, _self);
 			// //If allied, dont deal damage
 			// if(_teamable != null && teamable != null && _teamable.Team == teamable.Team)
 				// return;
 			
-			var damage = new Damage(totalManaStolen,DamageType.Magical,Self);
+			var damage = new Damage(totalManaStolen,DamageType.Magical,_self);
 			healthable.TakeDamage(damage);
 		}
     }
