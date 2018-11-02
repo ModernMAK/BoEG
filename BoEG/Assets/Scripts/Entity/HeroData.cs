@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Core;
 using Modules.Abilityable;
+using Modules.Abilityable.Ability;
 using Modules.Armorable;
 using Modules.Attackerable;
 using Modules.Healthable;

@@ -1,5 +1,6 @@
 using Core;
 using Modules.Abilityable;
+using Modules.Abilityable.Ability;
 using Modules.Magicable;
 using Modules.Healthable;
 using Modules.Teamable;
@@ -18,7 +19,6 @@ namespace Entity.Abilities.WarpedMagi
         [SerializeField] private float _damageRadius = 5f;
 
 		
-        private GameObject _self;
 		private ITeamable _teamable;
 		private IMagicable _magicable;
 
@@ -27,18 +27,17 @@ namespace Entity.Abilities.WarpedMagi
 		    //Nothing to terminate
 	    }
 
-        public override void Initialize(GameObject go)
+        protected override void Initialize()
         {
-            _self = go;
-			_teamable = go.GetComponent<ITeamable>();
-			_magicable = go.GetComponent<IMagicable>();
+			_teamable = Self.GetComponent<ITeamable>();
+			_magicable = Self.GetComponent<IMagicable>();
         }
 
-        public override void Trigger()
-        {
-            _magicable.ModifyMana(-_manaCost, _self);
-            ApplyMagicalShield(_self);
-        }
+//        public  void Trigger()
+//        {
+//            _magicable.ModifyMana(-_manaCost, _self);
+//            ApplyMagicalShield(_self);
+//        }
 		public void ApplyMagicalShield(GameObject target)
 		{
 			var cols = Physics.OverlapSphere(target.transform.position, _damageRadius, (int)LayerMaskHelper.Entity); 
@@ -61,7 +60,7 @@ namespace Entity.Abilities.WarpedMagi
 				
 				targetCount++;
 				
-				var damage = new Damage(_damage, DamageType.Magical, _self);
+				var damage = new Damage(_damage, DamageType.Magical, Self);
 				healthable.TakeDamage(damage);
 			}
 			

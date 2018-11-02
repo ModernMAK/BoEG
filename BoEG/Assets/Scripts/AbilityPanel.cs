@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Modules.Abilityable;
+using Modules.Abilityable.Ability;
 using UnityEngine;
 
 public class AbilityPanel : MonoBehaviour
@@ -37,7 +38,7 @@ public class AbilityPanel : MonoBehaviour
                     _icons.Add(icon);
                 }
 
-                var ab =  ability as BetterAbility;
+                var ab =  ability as Ability;
                 if (ab != null)
                 {
                     var icon = _icons[counter];

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Modules.Abilityable.Ability;
 using UnityEngine;
 
 namespace Modules.Abilityable
@@ -6,7 +7,7 @@ namespace Modules.Abilityable
     [System.Serializable]
     public struct AbilitiableData : IAbilitiableData
     {
-        [SerializeField] private Ability[] _abilities;
+        [SerializeField] private Ability.Ability[] _abilities;
 
         public IEnumerable<IAbilityData> Abilities
         {

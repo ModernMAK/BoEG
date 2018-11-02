@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Entity;
+using Modules.Abilityable.Ability;
 using UnityEngine;
 
 namespace Modules.Abilityable

@@ -35,3 +35,7 @@
 //    }
 //}
 //Why do i need this? I dont
+
+namespace Modules.Abilityable.Ability
+{
+}

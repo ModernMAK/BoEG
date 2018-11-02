@@ -189,44 +189,44 @@ namespace Graphing
             {
                 throw new NotImplementedException();
                 //Implimentation does not work
-                if (Twin == Next && Twin == Previous)
-                {
-                    Delete();
-                }
-                else if (Twin == Next)
-                {
-                    Previous.SetNext(Twin.Next);
-                    Delete();
-                }
-                else if (Twin == Previous)
-                {
-                    Next.SetPrevious(Twin.Previous);
-                    Delete();
-                }
-                else
-                {
-                    //Skip Self
-                    Previous.SetNext(Next);
-
-                    //Skip Twin
-                    Twin.Previous.SetNext(Twin.Next);
-                    //Fix Twin's Next
-                    Twin.Origin.SetEdge(Next);
-                    Twin.Next.SetOrigin(Twin.Origin);
-
-                    if (Origin.Edge == this)
-                    {
-                        HalfEdge tempEdge = null;
-                        foreach (var edge in Origin.Walk())
-                        {
-                            if (this == edge) continue;
-                            tempEdge = edge;
-                            break;
-                        }
-                        Origin.SetEdge(tempEdge);
-                    }
-                    Delete();
-                }
+//                if (Twin == Next && Twin == Previous)
+//                {
+//                    Delete();
+//                }
+//                else if (Twin == Next)
+//                {
+//                    Previous.SetNext(Twin.Next);
+//                    Delete();
+//                }
+//                else if (Twin == Previous)
+//                {
+//                    Next.SetPrevious(Twin.Previous);
+//                    Delete();
+//                }
+//                else
+//                {
+//                    //Skip Self
+//                    Previous.SetNext(Next);
+//
+//                    //Skip Twin
+//                    Twin.Previous.SetNext(Twin.Next);
+//                    //Fix Twin's Next
+//                    Twin.Origin.SetEdge(Next);
+//                    Twin.Next.SetOrigin(Twin.Origin);
+//
+//                    if (Origin.Edge == this)
+//                    {
+//                        HalfEdge tempEdge = null;
+//                        foreach (var edge in Origin.Walk())
+//                        {
+//                            if (this == edge) continue;
+//                            tempEdge = edge;
+//                            break;
+//                        }
+//                        Origin.SetEdge(tempEdge);
+//                    }
+//                    Delete();
+//                }
             }
 
 

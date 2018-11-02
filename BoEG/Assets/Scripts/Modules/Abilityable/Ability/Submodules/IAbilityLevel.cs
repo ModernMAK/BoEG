@@ -1,0 +1,3 @@
+namespace Modules.Abilityable.Ability
+{
+}

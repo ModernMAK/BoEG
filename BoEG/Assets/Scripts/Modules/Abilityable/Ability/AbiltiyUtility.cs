@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Modules.Abilityable
+namespace Modules.Abilityable.Ability
 {
     public static class AbiltiyUtility
     {

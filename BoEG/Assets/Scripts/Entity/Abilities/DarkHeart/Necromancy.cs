@@ -1,4 +1,5 @@
 using Modules.Abilityable;
+using Modules.Abilityable.Ability;
 using Modules.MiscEvents;
 using Modules.Teamable;
 using UnityEngine;
@@ -8,12 +9,8 @@ namespace Entity.Abilities.DarkHeart
 {
     
     [CreateAssetMenu(fileName = "DarkHeart_Necromancy.asset", menuName = "Ability/DarkHeart/Necromancy")]
-    public class Necromancy : BetterAbility
+    public class Necromancy : Ability
     {
-        protected override int MaxLevel
-        {
-            get { return 1; }
-        }
         //Necromancy Chance
         //Skeleton Data
         [SerializeField] private GameObject _skeletonPrefab = null;
@@ -21,12 +18,11 @@ namespace Entity.Abilities.DarkHeart
         private RandomProc _necromancyProc = null;
         private ITeamable _teamable;
         private IMiscEvent _eventable;
-        public override void Initialize(GameObject go)
+        protected override void Initialize()
         {
-            base.Initialize(go);
             _necromancyProc = new GradualProc(_skeletonSpawnChance);
-            _eventable = go.GetComponent<IMiscEvent>();
-            _teamable = go.GetComponent<ITeamable>();
+            _eventable = Self.GetComponent<IMiscEvent>();
+            _teamable = Self.GetComponent<ITeamable>();
             if (_eventable == null)
                 throw new MissingModuleException();
             _eventable.KilledEntity += KilledEntityCallback;

@@ -21,3 +21,7 @@
 //        }
 //    }
 //}
+
+namespace Modules.Abilityable.Ability
+{
+}
