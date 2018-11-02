@@ -37,12 +37,12 @@ public class AbilityPanel : MonoBehaviour
                     _icons.Add(icon);
                 }
 
-                var ab =  ability as BetterAbility;
-                if (ab != null)
+                var rawAbility = ability as Ability;
+                if (rawAbility != null)
                 {
                     var icon = _icons[counter];
                     var abIcon = icon.GetComponent<AbilityIcon>();
-                    abIcon.SetTarget(ab);
+                    abIcon.SetTarget(rawAbility);
                 }
                 counter++;
             }

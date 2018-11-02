@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Necromancy
   _icon: {fileID: 21300006, guid: 09300c81e0cb2c54493007b6758e2572, type: 3}
-  _level: 0
+  _maxLevel: 1
   _skeletonPrefab: {fileID: 1237181014863760, guid: d3f0eac8818928748a0cd574a9326353,
     type: 2}
   _skeletonSpawnChance: 1

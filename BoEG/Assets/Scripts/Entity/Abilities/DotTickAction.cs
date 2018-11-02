@@ -5,7 +5,7 @@ namespace Entity.Abilities
 {
     public abstract class DotTickAction : TickAction
     {
-        protected DotTickAction(int ticksRequired, float tickDuration) : base(ticksRequired, tickDuration)
+        protected DotTickAction(TickData data) : base(data)
         {
         }
 

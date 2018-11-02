@@ -9,7 +9,7 @@ using Util;
 namespace Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(fileName = "DarkHeart_Fearmonger.asset", menuName = "Ability/DarkHeart/Fearmonger")]
-    public class Fearmonger : BetterAbility
+    public class Fearmonger : Ability
     {
         private Nightmare _nightmareAbility;
         private IAttackable _attackable;
@@ -27,14 +27,13 @@ namespace Entity.Abilities.DarkHeart
             get { return 1; }
         }
 
-        public override void Initialize(GameObject go)
+        protected override void Initialize()
         {
-            base.Initialize(go);
             Level = 1;//This ability is 'innate' and starts off being leveled
-            _nightmareAbility = go.GetComponent<IAbilitiable>().GetAbility<Nightmare>();
-            _attackable = go.GetComponent<IAttackable>();
-            _teamable = go.GetComponent<ITeamable>();
-            _healthable = go.GetComponent<IHealthable>();
+            _nightmareAbility = Self.GetComponent<IAbilitiable>().GetAbility<Nightmare>();
+            _attackable = Self.GetComponent<IAttackable>();
+            _teamable = Self.GetComponent<ITeamable>();
+            _healthable = Self.GetComponent<IHealthable>();
             _proc = new DynamicProc(0f);
 
             _attackable.IncomingAttackLanded += IncomingAttackLanded;

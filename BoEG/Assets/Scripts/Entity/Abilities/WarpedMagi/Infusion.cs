@@ -18,16 +18,14 @@ namespace Entity.Abilities.WarpedMagi
         [SerializeField] private float _castRange = 5f;	
 
 		
-        private GameObject _self;
 		private ITeamable _teamable;
 		private IMagicable _magicable;
 
+	    protected override void Initialize()
 
-        public override void Initialize(GameObject go)
         {
-            _self = go;
-			_teamable = go.GetComponent<ITeamable>();
-			_magicable = go.GetComponent<IMagicable>();
+			_teamable = Self.GetComponent<ITeamable>();
+			_magicable = Self.GetComponent<IMagicable>();
         }
 
 	    public override void Terminate()
@@ -35,12 +33,12 @@ namespace Entity.Abilities.WarpedMagi
 		    //Nothing to Terminate
 	    }
 
-	    public override void Trigger()
+	    protected override void Cast()
         {
             RaycastHit hit;
             if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) return;
 
-            if ((hit.point - _self.transform.position).sqrMagnitude > _castRange * _castRange)
+            if ((hit.point - Self.transform.position).sqrMagnitude > _castRange * _castRange)
                 return;
 
 
@@ -52,7 +50,7 @@ namespace Entity.Abilities.WarpedMagi
             if (col.attachedRigidbody != null)
                 go = col.attachedRigidbody.gameObject;
 
-            _magicable.ModifyMana(-_manaCost, _self);
+            _magicable.ModifyMana(-_manaCost, Self);
             ApplyInfusion(go);
         }
 		public void ApplyInfusion(GameObject target)
@@ -60,9 +58,9 @@ namespace Entity.Abilities.WarpedMagi
 			var cols = Physics.OverlapSphere(target.transform.position, _manaStealSearchRadius, (int)LayerMaskHelper.Entity); 
 			var gos = Triggers.Trigger.GetGameObjectFromColliders(cols);
 			
-			ITeamable teamable = target.GetComponent<ITeamable>();
-			IMagicable magicable = target.GetComponent<IMagicable>();
-			IHealthable healthable = target.GetComponent<IHealthable>(); 			
+			var teamable = target.GetComponent<ITeamable>();
+			var magicable = target.GetComponent<IMagicable>();
+			var healthable = target.GetComponent<IHealthable>(); 			
 
 			var totalManaStolen = 0f;
 			foreach(var go in gos)
@@ -80,17 +78,17 @@ namespace Entity.Abilities.WarpedMagi
 				
 				var enemyManaPoints = enemyMagicable.ManaPoints;
 				var stolen = Mathf.Min(enemyManaPoints, _manaSteal);
-				enemyMagicable.ModifyMana(-stolen, _self);
+				enemyMagicable.ModifyMana(-stolen, Self);
 		
 				totalManaStolen += stolen;
 			}
 			
-			magicable.ModifyMana(totalManaStolen, _self);
+			magicable.ModifyMana(totalManaStolen, Self);
 			// //If allied, dont deal damage
 			// if(_teamable != null && teamable != null && _teamable.Team == teamable.Team)
 				// return;
 			
-			var damage = new Damage(totalManaStolen,DamageType.Magical,_self);
+			var damage = new Damage(totalManaStolen,DamageType.Magical,Self);
 			healthable.TakeDamage(damage);
 		}
     }

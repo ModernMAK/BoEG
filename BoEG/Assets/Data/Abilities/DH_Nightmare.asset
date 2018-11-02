@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: 
   _icon: {fileID: 21300008, guid: 09300c81e0cb2c54493007b6758e2572, type: 3}
-  _level: 0
+  _maxLevel: 4
   _data:
     _manaCost:
     - 50
@@ -26,13 +26,13 @@ MonoBehaviour:
     - 5
     - 5
     _tickInfo:
-    - _required: 10
+    - _interval: 0.25
       _duration: 1
-    - _required: 20
+    - _interval: 0.25
       _duration: 2
-    - _required: 30
+    - _interval: 0.25
       _duration: 3
-    - _required: 40
+    - _interval: 0.25
       _duration: 4
     _totalDamage:
     - 150

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(fileName = "WarpedMagi_RiftWalk.asset", menuName = "Ability/WarpedMagi/RiftWalk")]
-    public class RiftWalk : BetterAbility
+    public class RiftWalk : Ability
     {
         [SerializeField] private float _manaCost = 100f;
         [SerializeField] private float _channeltime = 1f;
@@ -35,10 +35,9 @@ namespace Entity.Abilities.WarpedMagi
 	    {
 		    //Nothing to Terminate
 	    }
+	    protected override void Initialize()
 
-        public override void Initialize(GameObject go)
         {
-	        base.Initialize(go);
 			_movable = Self.GetComponent<IMovable>();
 			_magicable = Self.GetComponent<IMagicable>();
         }

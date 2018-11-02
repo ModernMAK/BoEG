@@ -16,29 +16,23 @@ namespace EditorSpace
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var requiredTicks = property.FindPropertyRelative("_required");
-            var totalDuration = property.FindPropertyRelative("_duration");
+            var interval = property.FindPropertyRelative("_interval");
+            var duration = property.FindPropertyRelative("_duration");
 
 //            EditorGUI.BeginProperty(position, label, property);
 
             var indent = EditorGUI.indentLevel;
             var labelWidth = EditorGUIUtility.labelWidth;
             var contentPosition = EditorGUI.PrefixLabel(position, label);
-            var left = new Rect(contentPosition.x, contentPosition.y, contentPosition.width / 3f,
+            var left = new Rect(contentPosition.x, contentPosition.y, contentPosition.width / 2f,
                 contentPosition.height);
-            var middle = left;
-            middle.x += middle.width;
-            var right = middle;
+            var right = left;
             right.x += right.width;
 
             EditorGUI.indentLevel = 0;
             EditorGUIUtility.labelWidth = 15f;
-            EditorGUI.PropertyField(left, requiredTicks, new GUIContent("T"));
-            EditorGUI.PropertyField(middle, totalDuration, new GUIContent("D"));
-            var interval = totalDuration.floatValue / requiredTicks.intValue;
-            GUI.enabled = false;
-            EditorGUI.FloatField(right, new GUIContent("I"), interval);
-            GUI.enabled = true;
+            EditorGUI.PropertyField(left, duration, new GUIContent("D"));
+            EditorGUI.PropertyField(right,  interval,new GUIContent("I"));
             EditorGUIUtility.labelWidth = labelWidth;
             EditorGUI.indentLevel = indent;
         }

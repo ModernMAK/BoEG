@@ -8,7 +8,7 @@ using Util;
 namespace Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(fileName = "DarkHeart_Nightmare.asset", menuName = "Ability/DarkHeart/Nightmare")]
-    public class Nightmare : BetterAbility
+    public class Nightmare : Ability
     {
         [Serializable]
         public struct NightmareData
@@ -90,9 +90,8 @@ namespace Entity.Abilities.DarkHeart
         }
 
 
-        public override void Initialize(GameObject go)
+        protected override void Initialize()
         {
-            base.Initialize(go);
             _nightmareInstances = new TickActionContainer<NightmareInstance>();
             _spellRangeGameobject = Instantiate(_spellRangePrefab);
             _spellRangeGameobject.SetActive(false);
@@ -166,7 +165,7 @@ namespace Entity.Abilities.DarkHeart
             private readonly GameObject _fx;
 
             public NightmareInstance(Nightmare nightmare, GameObject self, GameObject target) :
-                base(nightmare.TickInfo.TicksRequired, nightmare.TickInfo.Duration)
+                base(nightmare.TickInfo)
             {
                 _self = self;
                 _damage = nightmare.TotalDamage / nightmare.TickInfo.Duration;

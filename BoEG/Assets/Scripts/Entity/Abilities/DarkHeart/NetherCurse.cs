@@ -10,91 +10,46 @@ using Util;
 namespace Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(fileName = "DarkHeart_NetherCurse.asset", menuName = "Ability/DarkHeart/Nether Curse")]
-    public class NetherCurse : BetterAbility
+    public class NetherCurse : Ability
     {
 
-        [Serializable]
-        public struct NetherCurseData
-        {
-            [SerializeField] private float[] _manaCost;
-            [SerializeField] private float[] _castRange;
-            [SerializeField] private TickData[] _tickInfo;
-            [SerializeField] private float[] _totalDamage;
-            [SerializeField] private float[] _areaOfEffect;
+        [SerializeField] private float[] _manaCost;
+        [SerializeField] private float[] _castRange;
+        [SerializeField] private TickData[] _tickInfo;
+        [SerializeField] private float[] _tickDamage;
+        [SerializeField] private float[] _areaOfEffect;
 
-            public int Length
-            {
-                //Just pick any, the property drawer ensures they should all be the same
-                get { return _manaCost.Length; }
-            }
-            
-
-            public float[] AreaOfEffect
-            {
-                get { return _areaOfEffect; }
-            }
-
-            public float[] ManaCost
-            {
-                get { return _manaCost; }
-            }
-
-            public float[] CastRange
-            {
-                get { return _castRange; }
-            }
-
-            public TickData[] TickInfo
-            {
-                get { return _tickInfo; }
-            }
-
-            public float[] TotalDamage
-            {
-                get { return _totalDamage; }
-            }
-        }
-
-        [SerializeField] private NetherCurseData _data;
 
         public override float ManaCost
         {
-            get { return GetLeveledData(_data.ManaCost); }
+            get { return GetLeveledData(_manaCost); }
         }
 
         public override float CastRange
         {
-            get { return GetLeveledData(_data.CastRange); }
+            get { return GetLeveledData(_castRange); }
         }
 
-        private int TicksRequired
+        private TickData Data
         {
-            get { return GetLeveledData(_data.TickInfo).TicksRequired; }
+            get { return GetLeveledData(_tickInfo); }
         }
 
         private float AreaOfEffect
         {
-            get { return GetLeveledData(_data.AreaOfEffect); }
+            get { return GetLeveledData(_areaOfEffect); }
         }
 
-        private float TotalDamage
+        private float TickDamage
         {
-            get { return GetLeveledData(_data.TotalDamage); }
+            get { return GetLeveledData(_tickDamage); }
         }
 
-        private float TickDuration
-        {
-            get { return GetLeveledData(_data.TickInfo).Duration; }
-        }
 
         [SerializeField] private GameObject _debugPrefab;
         private TickActionContainer<CurseInstance> _curseInstances;
 
 
-        protected override int MaxLevel
-        {
-            get { return _data.Length; }
-        }
 
 
         public override void Terminate()
@@ -104,9 +59,8 @@ namespace Entity.Abilities.DarkHeart
         }
 
 
-        public override void Initialize(GameObject go)
+        protected override void Initialize()
         {
-            base.Initialize(go);
             _curseInstances = new TickActionContainer<CurseInstance>();
 
             _spellRangeGameobject = Instantiate(_spellRangePrefab);
@@ -188,7 +142,7 @@ namespace Entity.Abilities.DarkHeart
         private class CurseInstance : DotTickAction
         {
             public CurseInstance(NetherCurse curse, Vector3 position) :
-                base(curse.TicksRequired, curse.TickDuration)
+                base(curse.Data)
             {
                 var triggerAura = new SphereTriggerMethod();
                 triggerAura.SetRadius(curse.AreaOfEffect).SetPosition(position)
@@ -199,7 +153,7 @@ namespace Entity.Abilities.DarkHeart
                 _trigger.Stay += OnUnitEnter;
 
                 _self = curse.Self;
-                _damageOverTime = curse.TotalDamage / TicksRequired;
+                _damageOverTime = curse.TickDamage;
                 _teamable = _self.GetComponent<ITeamable>();
 
 

@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Entity.Abilities
 {
-
     public class TickActionContainer<T> where T : TickAction
     {
         private readonly List<T> _internalContainer;
@@ -16,7 +15,7 @@ namespace Entity.Abilities
 
         public void Add(T instance)
         {
-            _internalContainer.Add(instance);    
+            _internalContainer.Add(instance);
         }
 
         public void Tick(float deltaTick)
@@ -43,14 +42,14 @@ namespace Entity.Abilities
             {
                 inst.Terminate();
             }
+
             _internalContainer.Clear();
         }
-            
-            
     }
+
     public sealed class TickActionDelegate : TickAction
     {
-        public TickActionDelegate(int required, float interval, Action logic) : base(required, interval)
+        public TickActionDelegate(TickData data, Action logic) : base(data)
         {
             Delegate = logic;
         }
@@ -66,39 +65,47 @@ namespace Entity.Abilities
 
     public abstract class TickAction
     {
-        protected TickAction(int required, float duration)
+        protected TickAction(TickData data)
         {
-            TicksRequired = required;
-            TickDuration = duration;
-            TicksPerformed = 0;
+            Data = data;
+            Performed = 0;
             ElapsedTime = 0f;
         }
 
+        protected TickData Data { get; private set; }
 
-        protected float TickDuration { get; private set; }
-        protected int TicksRequired { get; private set; }
-        protected int TicksPerformed { get; private set; }
-
-        protected float TickInterval
+        protected float Duration
         {
-            get { return TickDuration / TicksRequired; }
+            get { return Data.Duration; }
         }
 
+        protected float Interval
+        {
+            get { return Data.Interval; }
+        }
+
+        protected int Performed { get; private set; }
+
+
         protected float ElapsedTime { get; private set; }
+
+        protected int TicksRemaining
+        {
+            get { return Mathf.FloorToInt(Duration - (Interval * Performed) / Interval); }
+        }
 
         protected int TicksToPerform
         {
             get
             {
-                var ticksLeft = TicksRequired - TicksPerformed;
-                var allowedTicks = Mathf.FloorToInt(ElapsedTime / TickInterval);
-                return Mathf.Min(ticksLeft, allowedTicks);
+                var performing = Mathf.FloorToInt(ElapsedTime / Interval);
+                return Mathf.Min(performing, TicksRemaining);
             }
         }
 
         public bool DoneTicking
         {
-            get { return TicksRequired <= TicksPerformed; }
+            get { return TicksRemaining <= 0; }
         }
 
         protected abstract void Logic();
@@ -112,7 +119,6 @@ namespace Entity.Abilities
 
         public virtual void Terminate()
         {
-            
         }
 
         private void AdvanceTime(float time)
@@ -124,8 +130,8 @@ namespace Entity.Abilities
         private void AdvanceTicks()
         {
             var temp = TicksToPerform;
-            TicksPerformed += temp;
-            ElapsedTime -= TickInterval * temp;
+            Performed += temp;
+            ElapsedTime -= Interval * temp;
         }
     }
 }

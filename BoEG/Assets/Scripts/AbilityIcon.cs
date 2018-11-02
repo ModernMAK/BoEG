@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class AbilityIcon : MonoBehaviour
 {
-    [SerializeField] private BetterAbility _target;
+    [SerializeField] private Ability _target;
 
     [SerializeField] private Image _bg;
     [SerializeField] private Image _fg;
@@ -20,9 +20,9 @@ public class AbilityIcon : MonoBehaviour
 //    [SerializeField] private Material _unleveledMat;
 
 
-    public void SetTarget(BetterAbility ba)
+    public void SetTarget(Ability rawAbility)
     {
-        _target = ba;
+        _target = rawAbility;
     }
     private void Update()
     {

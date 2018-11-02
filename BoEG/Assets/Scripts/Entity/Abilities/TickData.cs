@@ -6,17 +6,17 @@ namespace Entity.Abilities
     [Serializable]
     public struct TickData
     {
-        public TickData(int required, float duration)
+        public TickData(float interval, float duration)
         {
-            _required = required;
+            _interval = interval;
             _duration = duration;
         }
 
-        [SerializeField] private int _required;
+        [SerializeField] private float _interval;
 
-        public int TicksRequired
+        public float Interval
         {
-            get { return _required; }
+            get { return _interval; }
         }
 
         [SerializeField] private float _duration;
