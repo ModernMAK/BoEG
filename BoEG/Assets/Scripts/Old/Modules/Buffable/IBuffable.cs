@@ -9,5 +9,4 @@ namespace Old.Modules.Buffable
 
         event DELEGATE BuffAdded;
     }
-    public delegate void DELEGATE();
 }

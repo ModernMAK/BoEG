@@ -1,9 +1,9 @@
-﻿using Core.Serialization;
-using Entity;
+﻿using Entity;
+using Framework.Core.Serialization;
 
 namespace Modules
 {
-    public interface IModule : IStepable, ISerializable, IDeserializable
+    public interface IModule : IStepableOld, ISerializable, IDeserializable
     {
         void Initialize();
         void Terminate();

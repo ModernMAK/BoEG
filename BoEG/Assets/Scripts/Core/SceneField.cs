@@ -5,6 +5,8 @@ using Object = UnityEngine.Object;
 namespace Core
 {
     [Serializable]
+    
+    [Obsolete]
     public class SceneField
     {
         [SerializeField] private Object sceneAsset;

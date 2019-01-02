@@ -1,5 +1,6 @@
 ﻿using System;
 using Core;
+using Framework.Types;
 using UnityEngine;
 
 namespace Modules.Magicable

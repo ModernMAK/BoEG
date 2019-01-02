@@ -1,6 +1,6 @@
 using Modules.Abilityable;
 using Modules.Magicable;
-using Modules.Movable;
+//using Modules.Movable;
 using UnityEngine;
 
 namespace Entity.Abilities.WarpedMagi
@@ -28,7 +28,7 @@ namespace Entity.Abilities.WarpedMagi
 	    }
 
 
-		private IMovable _movable;
+//		private IMovable _movable;
 		private IMagicable _magicable;
 
 	    public override void Terminate()
@@ -38,7 +38,7 @@ namespace Entity.Abilities.WarpedMagi
 	    protected override void Initialize()
 
         {
-			_movable = Self.GetComponent<IMovable>();
+//			_movable = Self.GetComponent<IMovable>();
 			_magicable = Self.GetComponent<IMagicable>();
         }
 
@@ -62,7 +62,7 @@ namespace Entity.Abilities.WarpedMagi
 	    public override void GroundCast(Vector3 point)
 	    {
 		    //TODO perform Channel, and introduce Cooldown
-		    _movable.Teleport(point);
+//		    _movable.Teleport(point);
 	    }
 
     }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Modules.Abilityable
 {
-    public interface IAbility : IStepable
+    public interface IAbility : IStepableOld
     {
         void Initialize(GameObject go);
         void Terminate();

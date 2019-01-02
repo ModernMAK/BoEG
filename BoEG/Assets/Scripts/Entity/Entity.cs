@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Core.Serialization;
+using Framework.Core.Serialization;
 using Modules;
 using Triggers;
 using UnityEngine;
@@ -9,11 +9,8 @@ using UnityEngine.Networking;
 namespace Entity
 {
     //A Utility class, impliment to allow data to be set on the entity
-    public interface IEntityData
-    {
-    }
 
-    public class Entity : MonoBehaviour, IStepable
+    public class Entity : MonoBehaviour, IStepableOld
     {
         protected virtual IEnumerable<IModule> Modules
         {

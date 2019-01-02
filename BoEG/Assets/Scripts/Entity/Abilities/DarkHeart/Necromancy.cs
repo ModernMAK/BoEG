@@ -1,3 +1,5 @@
+using Framework.Types;
+using Framework.Types.Exceptions;
 using Modules.Abilityable;
 using Modules.MiscEvents;
 using Modules.Teamable;

@@ -1,5 +1,6 @@
 ﻿using System;
-using Core.Serialization;
+using Framework.Core.Serialization;
+using Framework.Utility;
 using UnityEngine;
 using Util;
 
@@ -89,36 +90,5 @@ namespace Modules.Magicable
         }
 
         public event ManaModifiedHandler ManaModified;
-    }
-
-    public delegate void ManaModifiedHandler(ManaModifiedEventArgs eventArgs);
-
-    public class ManaModifiedEventArgs : EndgameEventArgs
-    {
-        public ManaModifiedEventArgs(GameObject source, GameObject owner, float modified) : base(source, owner)
-        {
-            Modified = modified;
-        }
-
-        public float Modified { get; private set; }
-    }
-
-    public class EndgameEventArgs : EventArgs
-    {
-        public EndgameEventArgs(GameObject source, GameObject owner)
-        {
-            Source = source;
-            Owner = owner;
-        }
-
-        /// <summary>
-        /// The source of the Event
-        /// </summary>
-        public GameObject Source { get; private set; }
-
-        /// <summary>
-        /// The owner of the Event
-        /// </summary>
-        public GameObject Owner { get; private set; }
     }
 }

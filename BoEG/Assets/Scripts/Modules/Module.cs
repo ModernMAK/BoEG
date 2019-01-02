@@ -1,4 +1,4 @@
-﻿using Core.Serialization;
+﻿using Framework.Core.Serialization;
 using UnityEngine;
 
 namespace Modules
