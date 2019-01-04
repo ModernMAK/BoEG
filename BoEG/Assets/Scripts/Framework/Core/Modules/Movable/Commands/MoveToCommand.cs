@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Framework.Core.Modules.Commands
 {
-    public class MoveToCommand : SimpleMovementCommand
+    public class MoveToCommand : MovementCommand
     {
         private readonly Vector3 _target;
 

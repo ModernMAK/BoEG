@@ -8,10 +8,6 @@ namespace Framework.Core.Modules
     public class Attackerable : Module, IAttackerable
     {
         private IAttackerableData _data;
-        private bool IsSpawn;
-        private bool IsInitialized;
-
-
         protected override void Instantiate()
         {
             base.Instantiate();

@@ -4,13 +4,15 @@ namespace Framework.Core.Trigger
 {
     public abstract class Pool<T> : IPool<T>
     {
-        private int _limit;
+        private readonly int _limit;
 
         protected Pool(int limit = 0)
         {
+            _limit = limit;
+            _pool = new Queue<T>();
         }
 
-        private Queue<T> _pool;
+        private readonly Queue<T> _pool;
 
         private T GetNext()
         {

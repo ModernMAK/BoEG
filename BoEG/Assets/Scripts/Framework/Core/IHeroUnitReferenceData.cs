@@ -1,4 +1,5 @@
 using Framework.Core.Modules;
+using Framework.Types;
 
 namespace Framework.Core
 {
@@ -7,7 +8,8 @@ namespace Framework.Core
         IInstantiableData<IMovableData>,
         IInstantiableData<IArmorableData>,
         IInstantiableData<IAttackerableData>,
-        IInstantiableData<IMagicableData>
+        IInstantiableData<IMagicableData>,
+        IInstantiableData<IAggroableData>
     {
     }
 }

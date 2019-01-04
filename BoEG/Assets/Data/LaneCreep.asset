@@ -10,28 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 723628e06d5744c3966b97ff4331a47f, type: 3}
-  m_Name: TestHero
-  m_EditorClassIdentifier: Assembly-CSharp:FixedNamespace.Core:HeroUnitData
+  m_Name: LaneCreep
+  m_EditorClassIdentifier: 
   _healthable:
     _healthGeneration: 0
-    _healthCapacity: 0
+    _healthCapacity: 550
   _movable:
-    _moveSpeed: 0
-    _turnSpeed: 0
+    _moveSpeed: 7
+    _turnSpeed: 360
   _armorable:
     _physical:
       _block: 0
-      _resist: 0
+      _resist: 0.05
       _immune: 0
     _magical:
       _block: 0
       _resist: 0
       _immune: 0
   _attackerable:
-    _attackRange: 0
-    _attackDamage: 0
-    _attackSpeed: 0
+    _attackRange: 1
+    _attackDamage: 20
+    _attackSpeed: 1
     _isRanged: 0
   _magicable:
     _MagicGeneration: 0
-    _MagicCapacity: 0
+    _MagicCapacity: 100

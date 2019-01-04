@@ -6,14 +6,15 @@ using UnityEngine.AI;
 namespace Framework.Core.Modules
 {
     [RequireComponent(typeof(NavMeshAgent))]
-    public class Movable : Module, IMovable, IInstantiable<IMovableData>, ISpawnable
+    public class Movable : Module, IMovable
     {
         [System.Serializable]
         public struct DebugData
         {
-            public float MoveSpeed;        
+            public float MoveSpeed;
             public float TurnSpeed;
             public bool HasReachedDestenation;
+
             public void Update(IMovable movable)
             {
                 MoveSpeed = movable.MoveSpeed;
@@ -22,14 +23,13 @@ namespace Framework.Core.Modules
             }
         }
 
-        [SerializeField]
-        private DebugData _debug;
+        [SerializeField] private DebugData _debug;
 
         protected override void LateUpdate()
         {
             _debug.Update(this);
         }
-        
+
         private NavMeshAgent _agent;
 
 
@@ -41,37 +41,20 @@ namespace Framework.Core.Modules
         }
 
 
-        void IInstantiable.Instantiate()
-        {
-            IsInitialized = true;
-        }
-
         private IMovableData _data;
-        protected bool IsInitialized { get; private set; }
 
-        void IInstantiable<IMovableData>.Instantiate(IMovableData data)
+        protected override void Instantiate()
         {
+            base.Instantiate();
+
             _agent = GetComponent<NavMeshAgent>();
-            _data = data;
-            IsInitialized = true;
+            GetData(out _data);
         }
 
-        void IInstantiable.Terminate()
+        protected override void Spawn()
         {
-            IsInitialized = false;
-        }
-
-        protected bool IsSpawned { get; private set; }
-
-        void ISpawnable.Spawn()
-        {
-            IsSpawned = true;
+            base.Spawn();
             UpdateAgent();
-        }
-
-        void ISpawnable.Despawn()
-        {
-            IsSpawned = false;
         }
 
         public float MoveSpeed

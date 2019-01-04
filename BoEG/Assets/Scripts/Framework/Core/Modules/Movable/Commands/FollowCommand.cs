@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Framework.Core.Modules.Commands
 {
-    public class FollowCommand : SimpleMovementCommand
+    public class FollowCommand : MovementCommand
     {
         private readonly Transform _target;
         private readonly Transform _self;

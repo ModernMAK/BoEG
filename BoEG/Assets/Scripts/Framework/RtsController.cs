@@ -39,7 +39,7 @@ public class RtsController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(_actionKey))
+        if (_commandable != null && Input.GetMouseButton(_actionKey))
         {
             RaycastHit info;
             if (PerformCast(out info))
@@ -54,7 +54,7 @@ public class RtsController : MonoBehaviour
                     AddOrQueueCommand(GenerateMove(point));
             }
         }
-        else if (Input.GetMouseButton(_selectKey))
+        if (Input.GetMouseButton(_selectKey))
         {
             RaycastHit info;
             if (PerformCast(out info))
@@ -71,6 +71,7 @@ public class RtsController : MonoBehaviour
         var movable = _commandable.GetComponent<IMovable>();
         return new FollowCommand(movable, _commandable.transform, target);
     }
+
     MoveToCommand GenerateMove(Vector3 target)
     {
         var movable = _commandable.GetComponent<IMovable>();

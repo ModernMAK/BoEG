@@ -1,23 +1,43 @@
+using System;
 using UnityEngine;
 
 namespace Framework.Core.Modules
 {
+    [Serializable]
     public struct ArmorData
     {
         public ArmorData(ArmorData data) : this(data.Block, data.Resist, data.Immune)
         {
         }
 
-        public ArmorData(float block, float resist, bool immune) : this()
+        public ArmorData(float block, float resist, bool immune)
         {
-            Block = block;
-            Resist = resist;
-            Immune = immune;
+            _block = block;
+            _resist = resist;
+            _immune = immune;
         }
 
-        public float Block { get; private set; }
-        public float Resist { get; private set; }
-        public bool Immune { get; private set; }
+        [SerializeField] private float _block;
+        [SerializeField] private float _resist;
+        [SerializeField] private bool _immune;
+
+        public float Block
+        {
+            get { return _block; }
+            private set { _block = value; }
+        }
+
+        public float Resist
+        {
+            get { return _resist; }
+            private set { _resist = value; }
+        }
+
+        public bool Immune
+        {
+            get { return _immune; }
+            private set { _immune = value; }
+        }
 
 
         public ArmorData SetBlock(float block)

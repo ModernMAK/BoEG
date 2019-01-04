@@ -1,7 +1,7 @@
-namespace Modules.Abilityable
-{
-    public interface IAbilityData
-    {
-        IAbility CreateInstance();
-    }
-}
+//namespace Modules.Abilityable
+//{
+//    public interface IAbilityData
+//    {
+//        IAbility CreateInstance();
+//    }
+//}

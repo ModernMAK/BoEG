@@ -1,9 +1,33 @@
+using System;
 using Framework.Types;
 using Framework.Utility;
 using UnityEngine;
 
 namespace Framework.Core.Modules
 {
+    [Serializable]
+    public struct HealthableMomento
+    {
+        public HealthableMomento(IHealthable healthable)
+        {
+            _isDead = healthable.IsDead;
+            _health = healthable.Health;
+        }
+
+        public bool IsDead
+        {
+            get { return _isDead; }
+        }
+
+        public PointData Health
+        {
+            get { return _health; }
+        }
+
+        [SerializeField] private bool _isDead;
+        [SerializeField] private PointData _health;
+    }
+
     public class Healthable : Module, IHealthable
     {
         protected override void PreStep(float delta)
@@ -11,6 +35,14 @@ namespace Framework.Core.Modules
             if (IsSpawned)
                 GenerateHealth(delta);
         }
+
+        protected override void PostStep(float deltaStep)
+        {
+            base.PostStep(deltaStep);
+            _momento = new HealthableMomento(this);
+        }
+
+        [SerializeField] private HealthableMomento _momento;
 
         private void GenerateHealth(float delta)
         {
@@ -31,7 +63,7 @@ namespace Framework.Core.Modules
         /// </summary>
         private byte _dirtyMask;
 
-        private IHealthableData _data;
+//        private IHealthableData _data;
 
         public PointData Health { get; private set; }
 
@@ -77,7 +109,7 @@ namespace Framework.Core.Modules
 
         protected override void Instantiate()
         {
-            _data = GetData<IHealthableData>();
+//            _data = GetData<IHealthableData>();
         }
 
         protected override void Spawn()

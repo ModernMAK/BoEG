@@ -1,12 +1,38 @@
 using System;
 using Framework.Types;
+using UnityEngine;
 
 namespace Framework.Core.Modules
 {
+    [Serializable]
+    public struct ArmorableMomento
+    {
+        public ArmorableMomento(IArmorable armorable)
+        {
+            _physical = armorable.Physical;
+            _magical = armorable.Magical;
+        }
+
+        [SerializeField]
+        private ArmorData _physical;
+        [SerializeField]
+        private ArmorData _magical;
+    }
+    
     public class Armorable : Module, IArmorable
     {
         public ArmorData Physical { get; private set; }
         public ArmorData Magical { get; private set; }
+
+
+        [SerializeField]
+        private ArmorableMomento _momento;
+        protected override void LateUpdate()
+        {
+            base.LateUpdate();
+            _momento = new ArmorableMomento(this);
+            
+        }
 
 
         private float CalculateReduction(float value, DamageType type)
@@ -48,6 +74,9 @@ namespace Framework.Core.Modules
 
         public event ResistEventHandler ResistingDamage;
         public event ResistEventHandler ResistedDamage;
+
+        //TODO add damage buffer (absorbs incoming damage afer immunity but before resist)
+
 
         private ResistEventArgs CreateArgs(Damage damage)
         {

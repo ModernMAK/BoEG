@@ -18,48 +18,47 @@ namespace Framework.Core.Modules
             _activeCommand = null;
         }
 
-//
-//        protected override void PreStep(float deltaStep)
-//        {
-//            if (_activeCommand != null)
-//            {
-//                _activeCommand.PreStep(deltaStep);
-//            }
-//        }
-//
-//        protected override void Step(float deltaStep)
-//        {
-//            if (_activeCommand != null)
-//            {
-//                _activeCommand.Step(deltaStep);
-//            }
-//        }
-//
-//        protected override void PostStep(float deltaTick)
-//        {
-//            if (_activeCommand != null)
-//            {
-//                _activeCommand.PostStep(deltaTick);
-//                if (_activeCommand.IsDone())
-//                {
-//                    _activeCommand.Stop();
-//                    _activeCommand = null;
-//                }
-//            }
-//
-//            if (_activeCommand == null && _commandQueue.Count > 0)
-//            {
-//                _activeCommand = Dequeue();
-//                _activeCommand.Start();
-//            }
-//        }
-//        protected override void PhysicsStep(float deltaTick)
-//        {
-//            if (_activeCommand != null)
-//            {
-//                _activeCommand.PhysicsStep(deltaTick);
-//            }
-//        }
+        protected override void PreStep(float deltaStep)
+        {
+            if (_activeCommand != null)
+            {
+                _activeCommand.PreStep(deltaStep);
+            }
+        }
+
+        protected override void Step(float deltaStep)
+        {
+            if (_activeCommand != null)
+            {
+                _activeCommand.Step(deltaStep);
+            }
+        }
+
+        protected override void PostStep(float deltaTick)
+        {
+            if (_activeCommand != null)
+            {
+                _activeCommand.PostStep(deltaTick);
+                if (_activeCommand.IsDone())
+                {
+                    _activeCommand.Stop();
+                    _activeCommand = null;
+                }
+            }
+
+            if (_activeCommand == null && _commandQueue.Count > 0)
+            {
+                _activeCommand = Dequeue();
+                _activeCommand.Start();
+            }
+        }
+        protected override void PhysicsStep(float deltaTick)
+        {
+            if (_activeCommand != null)
+            {
+                _activeCommand.PhysicsStep(deltaTick);
+            }
+        }
         
         private ICommand Dequeue()
         {

@@ -1,9 +1,11 @@
 using Framework.Types;
+using UnityEngine;
 
 namespace Framework.Core.Modules.Commands
 {
-    public abstract class MovementCommand : ICommand
+    public abstract class MovementCommand : Command
     {
+        protected abstract Vector3 Target { get; }
         protected IMovable Movable { get; private set; }
 
         protected MovementCommand(IMovable movable)
@@ -11,68 +13,20 @@ namespace Framework.Core.Modules.Commands
             Movable = movable;
         }
 
-        protected virtual void PreStep(float delta)
+        protected override void PreStep(float delta)
         {
+            Movable.MoveTo(Target);
         }
 
-        void IStepable.PreStep(float delta)
+        protected override void Start()
         {
-            PreStep(delta);
+            Movable.StartMovement();
         }
 
-        protected virtual void Step(float delta)
+        protected override void Stop()
         {
+            Movable.StopMovement();
         }
 
-        void IStepable.Step(float delta)
-        {
-            Step(delta);
-        }
-
-        protected virtual void PostStep(float delta)
-        {
-        }
-
-        void IStepable.PostStep(float delta)
-        {
-            PostStep(delta);
-        }
-
-        protected virtual void PhysicsStep(float delta)
-        {
-        }
-
-        void IStepable.PhysicsStep(float delta)
-        {
-            PhysicsStep(delta);
-        }
-
-        void ICommand.Start()
-        {
-            Start();
-        }
-
-        protected virtual void Start()
-        {
-        }
-
-        void ICommand.Stop()
-        {
-            Stop();
-        }
-
-        protected virtual void Stop()
-        {
-        }
-
-        bool ICommand.IsDone()
-        {
-            return IsDone();
-        }
-
-        protected virtual bool IsDone()
-        {
-            return true;
-        }
     }
 }

@@ -28,7 +28,7 @@ namespace Framework.Core.Modules
         /// </summary>
         private byte _dirtyMask;
 
-        private IMagicableData _data;
+//        private IMagicableData _data;
 
         public PointData Magic { get; private set; }
 
@@ -59,7 +59,7 @@ namespace Framework.Core.Modules
 
         protected override void Instantiate()
         {
-            _data = GetData<IMagicableData>();
+//            _data = GetData<IMagicableData>();
         }
 
         protected override void Spawn()

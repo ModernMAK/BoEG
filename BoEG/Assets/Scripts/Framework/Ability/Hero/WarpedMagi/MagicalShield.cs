@@ -12,12 +12,12 @@ namespace Framework.Ability.Hero.WarpedMagi
         protected override void Instantiate()
         {
             base.Instantiate();
-            _manacost = new AbilityManacost(this, 0f);
-            _cooldown = new AbilityCooldown(0f);
+//            _manacost = new AbilityManacost(this, 0f);
+//            _cooldown = new AbilityCooldown(0f);
         }
 
-        private AbilityManacost _manacost;
-        private AbilityCooldown _cooldown;
+//        private AbilityManacost _manacost;
+//        private AbilityCooldown _cooldown;
 
 
         GameObject[] TriggerCast(Vector3 point, float radius)
@@ -31,7 +31,8 @@ namespace Framework.Ability.Hero.WarpedMagi
             var targetable = go.GetComponent<ITargetable>();
             var magicable = go.GetComponent<IMagicable>();
             const float ManaLoss = 50f;
-            const float ManaAsBlock = 1.25f;
+            //const float ManaAsBlock = 1.25f;
+            
             
             if (targetable != null && magicable != null)
             {

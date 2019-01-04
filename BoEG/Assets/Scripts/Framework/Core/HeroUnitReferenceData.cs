@@ -15,6 +15,7 @@ namespace Framework.Core
         [SerializeField] private ArmorableData _armorable;
         [SerializeField] private AttackerableData _attackerable;
         [SerializeField] private MagicableData _magicable;
+        [SerializeField] private AggroableData _aggroable;
 
 
         IHealthableData IInstantiableData<IHealthableData>.Data
@@ -40,6 +41,11 @@ namespace Framework.Core
         public IMagicableData Data
         {
             get { return _magicable; }
+        }
+
+        IAggroableData IInstantiableData<IAggroableData>.Data
+        {
+            get { return _aggroable; }
         }
     }
 }
