@@ -6,7 +6,7 @@ namespace Framework.Core.Modules.Commands
     {
         private readonly Vector3 _target;
 
-        public MoveToCommand(IMovable movable, Vector3 target) : base(movable)
+        public MoveToCommand(GameObject entity, Vector3 target) : base(entity)
         {
             _target = target;
         }

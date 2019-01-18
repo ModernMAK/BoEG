@@ -5,18 +5,16 @@ namespace Framework.Core.Modules.Commands
     public class FollowCommand : MovementCommand
     {
         private readonly Transform _target;
-        private readonly Transform _self;
 
-        public FollowCommand(IMovable movable, Transform self, Transform target) : base(movable)
+        public FollowCommand(GameObject entity, Transform target) : base(entity)
         {
-            _self = self;
             _target = target;
         }
 
 
         private Vector3 Direction
         {
-            get { return (_target.position - _self.position); }
+            get { return (_target.position - Entity.transform.position); }
         }
 
         private Vector3 Location

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Analytics;
 
@@ -12,5 +13,7 @@ namespace Framework.Core.Modules
         void Attack(GameObject target);
         bool InRange(GameObject target);
         bool CanAttack { get; }
+        IEnumerable<GameObject> GetAttackTargets();
+        bool HasAttackTarget();
     }
 }

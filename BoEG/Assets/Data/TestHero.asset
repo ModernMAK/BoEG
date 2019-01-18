@@ -9,15 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 723628e06d5744c3966b97ff4331a47f, type: 3}
+  m_Script: {fileID: 11500000, guid: dbde2b63cca9a0a498a7e47406aae1e6, type: 3}
   m_Name: TestHero
   m_EditorClassIdentifier: Assembly-CSharp:FixedNamespace.Core:HeroUnitData
   _healthable:
-    _healthGeneration: 0
-    _healthCapacity: 0
+    _healthGeneration: 1
+    _healthCapacity: 100
   _movable:
-    _moveSpeed: 0
-    _turnSpeed: 0
+    _moveSpeed: 5
+    _turnSpeed: 100
   _armorable:
     _physical:
       _block: 0
@@ -28,10 +28,12 @@ MonoBehaviour:
       _resist: 0
       _immune: 0
   _attackerable:
-    _attackRange: 0
-    _attackDamage: 0
-    _attackSpeed: 0
-    _isRanged: 0
+    _attackRange: 1
+    _attackDamage: 1
+    _attackSpeed: 1
+    _isRanged: 1
   _magicable:
-    _MagicGeneration: 0
-    _MagicCapacity: 0
+    _MagicGeneration: 1
+    _MagicCapacity: 100
+  _aggroable:
+    _aggroRange: 1

@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace Framework.Core.Modules.Commands
 {
-    public abstract class MovementCommand : Command
+    public abstract class MovementCommand : EntityCommand
     {
         protected abstract Vector3 Target { get; }
         protected IMovable Movable { get; private set; }
 
-        protected MovementCommand(IMovable movable)
+        protected MovementCommand(GameObject entity) : base(entity)
         {
-            Movable = movable;
+            Movable = GetComponent<IMovable>();
         }
 
         protected override void PreStep(float delta)

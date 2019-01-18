@@ -1,3 +1,4 @@
+using System;
 using Entity;
 using Framework.Types;
 using UnityEngine;
@@ -118,6 +119,8 @@ namespace Framework.Core.Modules
         protected T GetData<T>()
         {
             var comp = GetComponent<IInstantiableData<T>>();
+            if(comp == null)
+                throw new NullReferenceException(string.Format("Failed to find {0} component.",typeof(IInstantiableData<T>)));
             return comp.Data;
         }
 

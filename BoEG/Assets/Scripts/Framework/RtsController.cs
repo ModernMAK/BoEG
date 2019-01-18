@@ -68,14 +68,12 @@ public class RtsController : MonoBehaviour
 
     FollowCommand GenerateFollow(Transform target)
     {
-        var movable = _commandable.GetComponent<IMovable>();
-        return new FollowCommand(movable, _commandable.transform, target);
+        return new FollowCommand(_commandable.gameObject, target);
     }
 
     MoveToCommand GenerateMove(Vector3 target)
     {
-        var movable = _commandable.GetComponent<IMovable>();
-        return new MoveToCommand(movable, target);
+        return new MoveToCommand(_commandable.gameObject, target);
     }
 
     void AddOrQueueCommand(ICommand command)

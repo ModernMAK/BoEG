@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Framework.Types;
 using UnityEngine;
 using UnityEngine.Analytics;
@@ -7,11 +8,13 @@ namespace Framework.Core.Modules
 {
     public class Attackerable : Module, IAttackerable
     {
+        private static Collider[] _PhysicsBuffer = new Collider[256];
         private IAttackerableData _data;
         protected override void Instantiate()
         {
             base.Instantiate();
             GetData(out _data);
+            _attackTargets = new List<GameObject>();
         }
 
         public float AttackRange
@@ -35,6 +38,7 @@ namespace Framework.Core.Modules
         }
 
         private float _lastAttack = Mathf.NegativeInfinity;
+        private List<GameObject> _attackTargets;
 
         public bool CanAttack
         {
@@ -61,6 +65,35 @@ namespace Framework.Core.Modules
         {
             var deltaVector = transform.position - target.transform.position;
             return deltaVector.sqrMagnitude <= AttackRange * AttackRange;
+        }
+        
+        public IEnumerable<GameObject> GetAttackTargets()
+        {
+            return _attackTargets;
+        }
+
+        public bool HasAttackTarget()
+        {
+            return _attackTargets.Count >0;
+        }
+
+        /// <summary>
+        /// NOT THREAD SAFE
+        /// </summary>
+        /// <param name="deltaStep"></param>
+        protected override void PhysicsStep(float deltaStep)
+        {
+            var size = Physics.OverlapSphereNonAlloc(transform.position, AttackRange, _PhysicsBuffer);
+            _attackTargets.Clear();
+            for (var i = 0; i < size; i++)
+                _attackTargets.Add(_PhysicsBuffer[i].gameObject);
+            _attackTargets.Sort((x, y) =>
+            {
+                var pos = transform.position;
+                var xDelta = (x.transform.position - pos);
+                var yDelta = (y.transform.position - pos);
+                return xDelta.sqrMagnitude.CompareTo(yDelta.sqrMagnitude);
+            });
         }
     }
 }

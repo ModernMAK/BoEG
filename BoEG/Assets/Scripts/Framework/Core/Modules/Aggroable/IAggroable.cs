@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Framework.Core.Modules
@@ -6,5 +8,7 @@ namespace Framework.Core.Modules
     {
         float AggroRange { get; }
         bool InAggro(GameObject go);
+        IEnumerable<GameObject> GetAggroTargets();
+        bool HasAggroTarget();
     }
 }
