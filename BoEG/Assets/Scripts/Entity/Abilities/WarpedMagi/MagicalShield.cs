@@ -63,7 +63,7 @@
 //				healthable.TakeDamage(damage);
 //			}
 //			
-//			//TODO apply damage block
+//			//TO DO apply damage block
 //			//Dont have any way to damage block outside of buffs
 //			
 //		}

@@ -1,4 +1,4 @@
-﻿using Core;
+﻿
 using Framework.Types;
 
 namespace Modules.Magicable

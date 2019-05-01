@@ -1,120 +1,68 @@
 using System;
 using Framework.Types;
 using Framework.Utility;
-using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    [Serializable]
-    public struct HealthableMomento
+    public class Healthable : Statable, IHealthable
     {
-        public HealthableMomento(IHealthable healthable)
+        public Healthable(float capacity, float generation) : base(capacity,generation)
         {
-            _isDead = healthable.IsDead;
-            _health = healthable.Health;
         }
 
-        public bool IsDead
+        public virtual float Health
         {
-            get { return _isDead; }
+            get => Value;
+            protected set => Value = value;
         }
 
-        public PointData Health
+        public virtual float HealthPercentage
         {
-            get { return _health; }
+            get => Normal;
+            protected set => Normal = value;
         }
 
-        [SerializeField] private bool _isDead;
-        [SerializeField] private PointData _health;
-    }
-
-    public class Healthable : Module, IHealthable
-    {
-        protected override void PreStep(float delta)
+        public virtual float HealthCapacity
         {
-            if (IsSpawned)
-                GenerateHealth(delta);
+            get => Capacity;
+            protected set => Capacity = value;
         }
 
-        protected override void PostStep(float deltaStep)
+        public virtual float HealthGeneration
         {
-            base.PostStep(deltaStep);
-            _momento = new HealthableMomento(this);
+            get => Generation;
+            protected set => Generation = value;
         }
 
-        [SerializeField] private HealthableMomento _momento;
-
-        private void GenerateHealth(float delta)
+        public void ModifyHealth(float change)
         {
-            if (!IsDead)
-            {
-                ModifyPoints(Health.Generation * delta);
-            }
+            var args = new HealthableEventArgs(change);
+            OnModifying(args);
+            Health += change;
+            OnModified(args);
         }
 
-        private void ModifyPoints(float deltaPoints)
+        public void SetHealth(float health)
         {
-            var nPoints = Mathf.Clamp(Health.Points + deltaPoints, 0f, Health.Capacity);
-            Health = Health.SetPoints(nPoints);
+            //Current + Change = Desired
+            //Therefore
+            //Desired - Current = Change
+            float change = health - Health;
+            ModifyHealth(change);
         }
 
-        /// <summary>
-        /// The Bit Mask used for serialization.
-        /// </summary>
-        private byte _dirtyMask;
 
-//        private IHealthableData _data;
-
-        public PointData Health { get; private set; }
-
-        public bool IsDead
+        protected virtual void OnModified(HealthableEventArgs e)
         {
-            get { return Health.Percentage <= 0f; }
+            Modified?.Invoke(this, e);
         }
 
-        public void ModifyHealth(float deltaValue)
+        protected virtual void OnModifying(HealthableEventArgs e)
         {
-            if (!IsSpawned)
-                return;
-
-            var wasDead = IsDead;
-            OnHealthModifying(deltaValue);
-            ModifyPoints(deltaValue);
-            OnHealthModified(deltaValue);
-            if (!wasDead && IsDead)
-                OnDied();
+            Modifying?.Invoke(this, e);
         }
 
-        public event HealthChangeHandler HealthModified;
-        public event HealthChangeHandler HealthModifying;
-        public event DeathHandler Died;
-
-        protected void OnDied()
-        {
-            if (Died != null)
-                Died();
-        }
-
-        protected void OnHealthModified(float deltaValue)
-        {
-            if (HealthModified != null)
-                HealthModified(deltaValue);
-        }
-
-        protected void OnHealthModifying(float deltaValue)
-        {
-            if (HealthModifying != null)
-                HealthModifying(deltaValue);
-        }
-
-        protected override void Instantiate()
-        {
-//            _data = GetData<IHealthableData>();
-        }
-
-        protected override void Spawn()
-        {
-            Health = Health.SetPercentage(1f);
-        }
+        public event EventHandler<HealthableEventArgs> Modified;
+        public event EventHandler<HealthableEventArgs> Modifying;
     }
 }

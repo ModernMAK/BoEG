@@ -9,7 +9,7 @@ namespace Framework.Ability
         public TickInstance(float interval, int ticks, Action<int> tickAction)
         {
             if (interval.SafeEquals(0f))
-                throw new ArgumentException("intverval cannot be 0f");
+                throw new ArgumentException("interval cannot be 0f");
             if (ticks == 0)
                 throw new ArgumentException("ticks cannot be 0");
             _interval = interval;

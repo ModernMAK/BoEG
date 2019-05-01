@@ -20,12 +20,12 @@ namespace Framework.Ability.Hero.WarpedMagi
 
         public void SpendMana(IMagicable magicable)
         {
-            magicable.ModifyMagic(-ManaCost);
+            magicable.ModifyMana(-ManaCost);
         }
 
         public bool HasMana(IMagicable magicable)
         {
-            return magicable.Magic.Points >= ManaCost;
+            return magicable.Mana >= ManaCost;
         }
     }
 }

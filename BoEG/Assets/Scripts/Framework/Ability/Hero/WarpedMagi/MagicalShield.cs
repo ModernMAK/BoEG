@@ -36,7 +36,7 @@ namespace Framework.Ability.Hero.WarpedMagi
             
             if (targetable != null && magicable != null)
             {
-                magicable.ModifyMagic(ManaLoss);
+                magicable.ModifyMana(ManaLoss);
                 
             }
         }

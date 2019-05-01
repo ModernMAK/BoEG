@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -17,11 +18,12 @@ namespace Framework.Core.Modules.Commands
         protected override void Step(float delta)
         {
             base.Step(delta);
-            if (Attackerable.CanAttack)
-            {
-                if (Attackerable.HasAttackTarget())
-                    Attackerable.Attack(Attackerable.GetAttackTargets().First());
-            }
+            throw new NotImplementedException();
+//            if (Attackerable.CanAttack)
+//            {
+//                if (Attackerable.HasAttackTarget())
+//                    Attackerable.Attack(Attackerable.GetAttackTargets().First());
+//            }
         }
 
         protected override bool IsDone()

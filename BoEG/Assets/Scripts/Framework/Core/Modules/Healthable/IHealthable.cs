@@ -1,17 +1,16 @@
+using System;
+
 namespace Framework.Core.Modules
 {
     public interface IHealthable
     {
-        
-        bool IsDead { get; }
-        PointData Health { get; }
-
-
-        void ModifyHealth(float deltaValue);
-        
-        event HealthChangeHandler HealthModifying;
-        event HealthChangeHandler HealthModified;
-
-        event DeathHandler Died;
+        float Health { get; }
+        float HealthPercentage { get; }
+        float HealthCapacity { get; }
+        float HealthGeneration { get; }
+        void ModifyHealth(float change);
+        void SetHealth(float health);
+        event EventHandler<HealthableEventArgs> Modified;
+        event EventHandler<HealthableEventArgs> Modifying;
     }
 }

@@ -20,7 +20,7 @@ namespace Modules.Abilityable
 //            GameObject[] spawned = new GameObject[amount];
 //            for (var i = 0; i < amount; i++)
 //            {
-//                //TODO replace with proper isServer
+//                //TO DO replace with proper isServer
 //                
 //                spawned[i] = Object.Instantiate(prefab,
 //                    position + Random.onUnitSphere * ((i + 1) * MaxSpawnOffset / (amount + 1)), Quaternion.identity);

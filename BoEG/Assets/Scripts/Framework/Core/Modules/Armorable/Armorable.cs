@@ -1,106 +1,72 @@
 using System;
 using Framework.Types;
-using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    [Serializable]
-    public struct ArmorableMomento
+    public class Armorable : IArmorable
     {
-        public ArmorableMomento(IArmorable armorable)
+        public Armor Physical { get; private set; }
+        public Armor Magical { get; private set; }
+
+        public virtual Damage ResistDamage(Damage damage)
         {
-            _physical = armorable.Physical;
-            _magical = armorable.Magical;
+            var reduction = CalculateReduction(damage);
+            var args = new ArmorableEventArgs(damage,reduction);
+            OnResisting(args);
+            //Reduction, so negate the value
+            var outDam = damage.ModifyValue(-reduction);
+            OnResisted(args);
+            return outDam;
         }
 
-        [SerializeField]
-        private ArmorData _physical;
-        [SerializeField]
-        private ArmorData _magical;
-    }
-    
-    public class Armorable : Module, IArmorable
-    {
-        public ArmorData Physical { get; private set; }
-        public ArmorData Magical { get; private set; }
-
-
-        [SerializeField]
-        private ArmorableMomento _momento;
-        protected override void LateUpdate()
+        public float CalculateReduction(Damage damage)
         {
-            base.LateUpdate();
-            _momento = new ArmorableMomento(this);
-            
-        }
-
-
-        private float CalculateReduction(float value, DamageType type)
-        {
-            switch (type)
+            var value = damage.Value;
+            switch (damage.Type)
             {
                 case DamageType.Physical:
-                    return Physical.CalculateReduction(value);
+                    return CalculateReduction(value,Physical);
                 case DamageType.Magical:
-                    return Magical.CalculateReduction(value);
+                    return CalculateReduction(value,Magical);
                 case DamageType.Pure:
-                case DamageType.Modification:
                     return 0f;
                 default:
-                    throw new ArgumentOutOfRangeException("type", type, null);
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        private float CalculateDamageAfterReduction(float value, DamageType type)
+        private static float CalculateReduction(float damage, Armor armor)
         {
-            var reduction = CalculateReduction(value, type);
-            return value - reduction;
+            if (armor.Immunity)
+                return damage;
+            else
+            {
+                //First apply block
+                var result = armor.Resistance * (damage - armor.Block);
+                var blocked = damage - result;
+                //Only happens if Resistance > 1
+                if (blocked > damage)
+                    blocked = damage;
+                return blocked;
+            }
         }
 
-        private Damage CalculateDamageAfterReduction(Damage damage)
+/*
+        protected Func<Damage, Damage> Callback { get; set; }
+*/
+
+
+        protected virtual void OnResisted(ArmorableEventArgs e)
         {
-            return damage.SetValue(CalculateDamageAfterReduction(damage.Value, damage.Type));
+            Resisted?.Invoke(this, e);
         }
 
-        public Damage ResistDamage(Damage damage)
+        protected virtual void OnResisting(ArmorableEventArgs e)
         {
-            var args = CreateArgs(damage);
-            OnResistingDamage(args);
-            var dam = CalculateDamageAfterReduction(damage);
-            OnResistedDamage(args);
-            return dam;
+            Resisting?.Invoke(this, e);
         }
 
-
-        public event ResistEventHandler ResistingDamage;
-        public event ResistEventHandler ResistedDamage;
-
-        //TODO add damage buffer (absorbs incoming damage afer immunity but before resist)
-
-
-        private ResistEventArgs CreateArgs(Damage damage)
-        {
-            return new ResistEventArgs(damage, CalculateDamageAfterReduction(damage));
-        }
-
-        private void OnResistingDamage(ResistEventArgs args)
-        {
-            if (ResistingDamage != null)
-                ResistingDamage(args);
-        }
-        private void OnResistedDamage(ResistEventArgs args)
-        {
-            if (ResistedDamage != null)
-                ResistedDamage(args);
-        }
-
-        private IArmorableData _armorableData;
-
-        protected override void Spawn()
-        {
-            GetData(out _armorableData);
-            Physical = _armorableData.Physical;
-            Magical = _armorableData.Magical;
-        }
+        public event EventHandler<ArmorableEventArgs> Resisted;
+        public event EventHandler<ArmorableEventArgs> Resisting;
     }
 }

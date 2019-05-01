@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
+    public interface IModule : IStepable, ISpawnable, IInstantiable
+    {
+    }
+    
+    [Obsolete("Use IModule instead")]
     public abstract class Module : MonoBehaviour, IStepable, ISpawnable, IInstantiable
     {
         protected virtual void Awake()
@@ -120,7 +125,7 @@ namespace Framework.Core.Modules
         {
             var comp = GetComponent<IInstantiableData<T>>();
             if(comp == null)
-                throw new NullReferenceException(string.Format("Failed to find {0} component.",typeof(IInstantiableData<T>)));
+                throw new NullReferenceException($"Failed to find {typeof(IInstantiableData<T>)} component.");
             return comp.Data;
         }
 

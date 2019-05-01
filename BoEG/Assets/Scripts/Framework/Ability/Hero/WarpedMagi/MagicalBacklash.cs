@@ -35,7 +35,7 @@ namespace Framework.Ability.Hero.WarpedMagi
         {
             const float ManaAsDamage = 0.75f;
             var damage = manaSpent * ManaAsDamage;
-            return new Damage(damage, DamageType.Magical, gameObject);
+            return new Damage(damage, DamageType.Magical, DamageModifiers.Ability);
         }
 
         private void OnTargetedForSpell(SpellTargetEventArgs args)

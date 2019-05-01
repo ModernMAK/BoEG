@@ -1,70 +1,68 @@
+using System;
 using Framework.Types;
 using Framework.Utility;
-using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    public class Magicable : Module, IMagicable
+    public class Magicable : Statable, IMagicable
     {
-        protected override void PreStep(float delta)
+        public Magicable(float capacity, float generation) : base(capacity,generation)
         {
-            if (IsSpawned)
-                GenerateMagic(delta);
         }
 
-        private void GenerateMagic(float delta)
+        public virtual float Mana
         {
-            ModifyPoints(Magic.Generation * delta);
+            get => Value;
+            protected set => Value = value;
         }
 
-        private void ModifyPoints(float deltaPoints)
+        public virtual float ManaPercentage
         {
-            var nPoints = Mathf.Clamp(Magic.Points + deltaPoints, 0f, Magic.Capacity);
-            Magic = Magic.SetPoints(nPoints);
+            get => Normal;
+            protected set => Normal = value;
         }
 
-        /// <summary>
-        /// The Bit Mask used for serialization.
-        /// </summary>
-        private byte _dirtyMask;
-
-//        private IMagicableData _data;
-
-        public PointData Magic { get; private set; }
-
-
-        public void ModifyMagic(float deltaValue)
+        public virtual float ManaCapacity
         {
-            if (!IsSpawned)
-                return;
-            OnMagicModifying(deltaValue);
-            ModifyPoints(deltaValue);
-            OnMagicModified(deltaValue);
+            get => Capacity;
+            protected set => Capacity = value;
         }
 
-        public event MagicChangeHandler MagicModified;
-        public event MagicChangeHandler MagicModifying;
-
-        protected void OnMagicModified(float deltaValue)
+        public virtual float ManaGeneration
         {
-            if (MagicModified != null)
-                MagicModified(deltaValue);
+            get => Generation;
+            protected set => Generation = value;
         }
 
-        protected void OnMagicModifying(float deltaValue)
+        public void ModifyMana(float change)
         {
-            if (MagicModifying != null)
-                MagicModifying(deltaValue);
+            var args = new MagicableEventArgs(change);
+            OnModifying(args);
+            Mana += change;
+            OnModified(args);
         }
 
-        protected override void Instantiate()
+        public void SetMana(float mana)
         {
-//            _data = GetData<IMagicableData>();
+            //Current + Change = Desired
+            //Therefore
+            //Desired - Current = Change
+            float change = mana - Mana;
+            ModifyMana(change);
         }
 
-        protected override void Spawn()
+
+        protected virtual void OnModified(MagicableEventArgs e)
         {
-            Magic = Magic.SetPercentage(1f);
+            Modified?.Invoke(this, e);
         }
+
+        protected virtual void OnModifying(MagicableEventArgs e)
+        {
+            Modifying?.Invoke(this, e);
+        }
+
+        public event EventHandler<MagicableEventArgs> Modified;
+        public event EventHandler<MagicableEventArgs> Modifying;
     }
 }

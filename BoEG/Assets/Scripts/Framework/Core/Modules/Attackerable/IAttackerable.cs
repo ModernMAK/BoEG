@@ -1,19 +1,20 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Analytics;
+using System;
 
 namespace Framework.Core.Modules
 {
     public interface IAttackerable
     {
-        float AttackRange { get; }
         float AttackDamage { get; }
+        float AttackRange { get; }
         float AttackSpeed { get; }
+        float AttackInterval { get; }
+        float AttackCooldown { get; }
         bool IsRanged { get; }
-        void Attack(GameObject target);
-        bool InRange(GameObject target);
-        bool CanAttack { get; }
-        IEnumerable<GameObject> GetAttackTargets();
-        bool HasAttackTarget();
+
+        void Attack(Actor actor);
+
+        event EventHandler<AttackerableEventArgs> Attacking;
+        
+        event EventHandler<AttackerableEventArgs> Attacked;
     }
 }
