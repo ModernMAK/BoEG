@@ -5,22 +5,12 @@ namespace Framework.Ability.Hero.WarpedMagi
 {
     public class AbilityManacost
     {
-        public AbilityManacost(IMagicable magicable, float manaCost = 0f)
+        public AbilityManacost(float manaCost = 0f)
         {
-            _magicable = magicable;
             ManaCost = manaCost;
         }
 
-        public AbilityManacost(GameObject gameObject, float manaCost = 0f) : this(gameObject.GetComponent<IMagicable>(),
-            manaCost)
-        {
-        }
 
-        public AbilityManacost(Component component, float manaCost = 0f) : this(component.gameObject, manaCost)
-        {
-        }
-
-        private IMagicable _magicable;
         public float ManaCost { get; private set; }
 
         public void SetManaCost(float manaCost)
@@ -28,14 +18,14 @@ namespace Framework.Ability.Hero.WarpedMagi
             ManaCost = manaCost;
         }
 
-        public void SpendMana()
+        public void SpendMana(IMagicable magicable)
         {
-            _magicable.ModifyMagic(-ManaCost);
+            magicable.ModifyMagic(-ManaCost);
         }
 
-        public bool HasMana
+        public bool HasMana(IMagicable magicable)
         {
-            get { return _magicable.Magic.Points >= ManaCost; }
+            return magicable.Magic.Points >= ManaCost;
         }
     }
 }

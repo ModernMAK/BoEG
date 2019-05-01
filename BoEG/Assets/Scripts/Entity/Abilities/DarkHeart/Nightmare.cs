@@ -179,7 +179,7 @@
 //
 //            protected override void Logic()
 //            {
-//                if (_healthable.HealthPercentage.SafeEquals(0f))
+//                if (_healthable.Normal.SafeEquals(0f))
 //                    return;
 //                ApplyDamageOverTime(_healthable, new Damage(_damage, DamageType.Magical, _self));
 //            }

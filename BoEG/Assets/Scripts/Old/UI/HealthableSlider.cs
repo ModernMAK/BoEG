@@ -13,7 +13,7 @@
    //
    //        protected override float NormalizedValue
    //        {
-   //            get { return _healthable.HealthPercentage; }
+   //            get { return _healthable.Normal; }
    //        }
    //    }
    //}

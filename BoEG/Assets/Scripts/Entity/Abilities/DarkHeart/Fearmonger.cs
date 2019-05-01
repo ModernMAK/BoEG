@@ -42,8 +42,8 @@
 //
 //        private float CalculateChance(IHealthable self, IHealthable target)
 //        {
-//            return self.HealthPercentage * _selfHealthWeight +
-//                   target.HealthPercentage * (1f - _selfHealthWeight);
+//            return self.Normal * _selfHealthWeight +
+//                   target.Normal * (1f - _selfHealthWeight);
 //        }
 //
 //        private void Apply(GameObject go, IHealthable healthable)
