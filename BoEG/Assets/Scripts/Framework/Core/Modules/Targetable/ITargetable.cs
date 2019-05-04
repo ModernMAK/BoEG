@@ -7,12 +7,13 @@ namespace Framework.Core.Modules
     {
         bool AllowAttackTargets { get; }
         bool AllowSpellTargets { get; }
-        event TargetEventHandler AttackTargeting;
-        event TargetEventHandler AttackTargeted;
-        event SpellTargetEventHandler SpellTargeting;
-        event SpellTargetEventHandler SpellTargeted;
-        void TargetAttack(GameObject attacker, Action attackCallback, bool forceTargeting = false);
-        void TargetSpell(SpellTargetEventArgs args, Action spellCallback, bool forceTargeting = false);
+        event EventHandler<AttackTargetEventArgs> AttackTargeting;
+        event EventHandler<AttackTargetEventArgs> AttackTargeted;
+        event EventHandler<SpellTargetEventArgs> SpellTargeting;
+        event EventHandler<SpellTargetEventArgs> SpellTargeted;
+        void TargetAttack(Actor attacker, Action attackCallback, bool forceTargeting = false);
+        void TargetSpell(Action spellCallback, bool forceTargeting = false);
         void AffectSpell(Action spellCallback, bool forceTargeting = false);
     }
+
 }

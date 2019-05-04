@@ -1,10 +1,22 @@
 using System;
 using Framework.Types;
+using UnityEngine;
 
 namespace Framework.Core.Modules
 {
     public class Armorable : IArmorable
     {
+        public Armorable(Armor physical, Armor magical)
+        {
+            Physical = physical;
+            Magical = magical;
+        }
+        public Armorable(IArmorableData data)
+        {
+            Physical = new Armor(data.Physical);
+            Magical = new Armor(data.Magical);
+        }
+        
         public Armor Physical { get; private set; }
         public Armor Magical { get; private set; }
 
@@ -25,9 +37,9 @@ namespace Framework.Core.Modules
             switch (damage.Type)
             {
                 case DamageType.Physical:
-                    return CalculateReduction(value,Physical);
+                    return CalculateReduction(value, Physical);
                 case DamageType.Magical:
-                    return CalculateReduction(value,Magical);
+                    return CalculateReduction(value, Magical);
                 case DamageType.Pure:
                     return 0f;
                 default:

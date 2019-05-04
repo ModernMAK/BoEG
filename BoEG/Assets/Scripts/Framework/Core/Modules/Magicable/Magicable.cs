@@ -6,6 +6,9 @@ namespace Framework.Core.Modules
 {
     public class Magicable : Statable, IMagicable
     {
+        public Magicable(IMagicableData data) : this(data.MagicCapacity,data.MagicGeneration)
+        {
+        }
         public Magicable(float capacity, float generation) : base(capacity,generation)
         {
         }

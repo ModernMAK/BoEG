@@ -8,6 +8,23 @@ namespace Framework.Core.Modules
     public interface IModule : IStepable, ISpawnable, IInstantiable
     {
     }
+
+    public interface IComponent<T>
+    {
+        void Initialize(T module);
+
+    }
+
+    [Obsolete]
+    public abstract class Component<T> : MonoBehaviour, IComponent<T>
+    {
+        protected virtual void Awake()
+        {
+            enabled = false;
+        }
+        public abstract void Initialize(T module);
+    }
+    
     
     [Obsolete("Use IModule instead")]
     public abstract class Module : MonoBehaviour, IStepable, ISpawnable, IInstantiable

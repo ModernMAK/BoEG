@@ -18,7 +18,7 @@ namespace Framework.Core.Modules.Commands
 
         protected override bool IsDone()
         {
-            return Movable.HasReachedDestenation;
+            return Movable.HasReachedDestination;
         }
     }
 }

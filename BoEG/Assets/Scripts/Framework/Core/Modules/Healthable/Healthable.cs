@@ -1,12 +1,17 @@
 using System;
 using Framework.Types;
 using Framework.Utility;
+using JetBrains.Annotations;
+using UnityEngine.Experimental.PlayerLoop;
 
 namespace Framework.Core.Modules
 {
     public class Healthable : Statable, IHealthable
     {
-        public Healthable(float capacity, float generation) : base(capacity,generation)
+        public Healthable(IHealthableData data) : this(data.HealthCapacity, data.HealthGeneration)
+        {
+        }
+        public Healthable(float capacity, float generation) : base(capacity, generation)
         {
         }
 

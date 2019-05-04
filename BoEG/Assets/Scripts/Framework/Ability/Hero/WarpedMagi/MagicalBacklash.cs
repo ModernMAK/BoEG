@@ -22,13 +22,13 @@ namespace Framework.Ability.Hero.WarpedMagi
         protected override void Spawn()
         {
             base.Spawn();
-            _targetable.SpellTargeted += OnTargetedForSpell;
+//            _targetable.SpellTargeted += OnTargetedForSpell;
         }
 
         protected override void Despawn()
         {
             base.Despawn();
-            _targetable.SpellTargeted -= OnTargetedForSpell;
+//            _targetable.SpellTargeted -= OnTargetedForSpell;
         }
 
         private Damage CreateDamage(float manaSpent)
@@ -42,7 +42,7 @@ namespace Framework.Ability.Hero.WarpedMagi
         {
             var go = args.Caster;
             var targetable = go.GetComponent<ITargetable>();
-            var damagable = go.GetComponent<IDamagable>();
+            var damagable = go.GetComponent<IDamageTarget>();
             const bool PierceSpellImmunity = true;
 
             if (damagable != null && targetable != null)

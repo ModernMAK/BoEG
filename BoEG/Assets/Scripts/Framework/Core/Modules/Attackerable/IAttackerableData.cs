@@ -6,5 +6,6 @@ namespace Framework.Core.Modules
         float AttackDamage { get; }
         float AttackSpeed { get; }
         bool IsRanged { get; }
+        float AttackInterval { get; }
     }
 }

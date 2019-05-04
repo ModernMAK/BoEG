@@ -14,6 +14,7 @@ namespace Framework.Core.Modules
         void StartMovement();
         void CancelMovement();
         
-        bool HasReachedDestenation { get; }
+        bool HasReachedDestination { get; }
+        void UpdateMover();
     }
 }

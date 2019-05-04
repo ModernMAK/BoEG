@@ -3,10 +3,18 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    [Serializable]
-    public struct ArmorData
+    public interface IArmorData
     {
-        public ArmorData(ArmorData data) : this(data.Block, data.Resist, data.Immune)
+        float Block { get; }
+        float Resist { get; }
+        bool Immune { get; }
+    }
+
+
+    [Serializable]
+    public struct ArmorData : IArmorData
+    {
+        public ArmorData(IArmorData data) : this(data.Block, data.Resist, data.Immune)
         {
         }
 
