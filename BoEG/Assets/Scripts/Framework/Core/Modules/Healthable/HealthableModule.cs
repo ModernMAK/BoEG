@@ -127,22 +127,22 @@ namespace Framework.Core.Modules
 //        {
 //            Health = Health.SetPercentage(1f);
 //        }
-        public void PreStep(float delta)
+        public void PreStep(float deltaTime)
         {
-            ModifyHealth(HealthGeneration * delta);
+            ModifyHealth(HealthGeneration * deltaTime);
         }
 
-        public void Step(float delta)
-        {
-            //Do nothing
-        }
-
-        public void PostStep(float delta)
+        public void Step(float deltaTime)
         {
             //Do nothing
         }
 
-        public void PhysicsStep(float delta)
+        public void PostStep(float deltaTime)
+        {
+            //Do nothing
+        }
+
+        public void PhysicsStep(float deltaTime)
         {
             //Do nothing
         }

@@ -7,6 +7,7 @@ namespace Framework.Types
     {
         void Instantiate(T data);
     }
+    [Obsolete()]
     public interface IInstantiable
     {
         void Instantiate();

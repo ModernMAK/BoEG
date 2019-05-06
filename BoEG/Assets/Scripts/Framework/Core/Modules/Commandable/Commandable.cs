@@ -18,11 +18,11 @@ namespace Framework.Core.Modules
             _activeCommand = null;
         }
 
-        protected override void PreStep(float deltaStep)
+        protected override void PreStep(float deltaTime)
         {
             if (_activeCommand != null)
             {
-                _activeCommand.PreStep(deltaStep);
+                _activeCommand.PreStep(deltaTime);
             }
         }
 

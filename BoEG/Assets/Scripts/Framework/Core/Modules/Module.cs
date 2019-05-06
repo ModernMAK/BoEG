@@ -5,25 +5,6 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    public interface IModule : IStepable, ISpawnable, IInstantiable
-    {
-    }
-
-    public interface IComponent<T>
-    {
-        void Initialize(T module);
-
-    }
-
-    [Obsolete]
-    public abstract class Component<T> : MonoBehaviour, IComponent<T>
-    {
-        protected virtual void Awake()
-        {
-            enabled = false;
-        }
-        public abstract void Initialize(T module);
-    }
     
     
     [Obsolete("Use IModule instead")]
@@ -57,36 +38,36 @@ namespace Framework.Core.Modules
         {
         }
 
-        void IStepable.PreStep(float deltaStep)
+        void IStepable.PreStep(float deltaTime)
         {
-            PreStep(deltaStep);
+            PreStep(deltaTime);
         }
 
-        protected virtual void PreStep(float deltaStep)
+        protected virtual void PreStep(float deltaTime)
         {
         }
 
-        void IStepable.Step(float deltaTick)
+        void IStepable.Step(float deltaTime)
         {
-            Step(deltaTick);
+            Step(deltaTime);
         }
 
         protected virtual void Step(float deltaStep)
         {
         }
 
-        void IStepable.PostStep(float deltaTick)
+        void IStepable.PostStep(float deltaTime)
         {
-            PostStep(deltaTick);
+            PostStep(deltaTime);
         }
 
         protected virtual void PostStep(float deltaStep)
         {
         }
 
-        void IStepable.PhysicsStep(float deltaTick)
+        void IStepable.PhysicsStep(float deltaTime)
         {
-            PhysicsStep(deltaTick);
+            PhysicsStep(deltaTime);
         }
 
         protected virtual void PhysicsStep(float deltaStep)
@@ -117,6 +98,11 @@ namespace Framework.Core.Modules
 
         protected bool IsInitialized { get; private set; }
 
+
+        protected bool IsModuleReady
+        {
+            get { return IsInitialized && IsSpawned; }
+        }
 
         void IInstantiable.Instantiate()
         {

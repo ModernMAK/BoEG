@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Framework.Types
 {
@@ -7,7 +8,7 @@ namespace Framework.Types
         public Damage(float value, DamageType type, params DamageModifiers[] modifiers)
         {
             if (value < 0)
-                value = 0;//Dont allow less than 0 damage
+                throw new ArgumentException("Cannot be less than 0.",nameof(value));
             
             Modifiers = MergerModifiers(modifiers);
             Type = type;

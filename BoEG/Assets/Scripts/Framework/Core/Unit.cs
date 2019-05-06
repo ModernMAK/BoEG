@@ -1,8 +1,10 @@
+using System;
 using Framework.Types;
 using UnityEngine;
 
 namespace Framework.Core
 {
+    [Obsolete]
     [DisallowMultipleComponent]
     public class Unit : MonoBehaviour
     {

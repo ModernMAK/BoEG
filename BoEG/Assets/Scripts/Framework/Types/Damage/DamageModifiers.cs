@@ -6,8 +6,8 @@ namespace Framework.Types
     public enum DamageModifiers
     {
         None = 0,
-        Attack,
-        Ability,
-        Reflected
+        Attack = (1 << 0),
+        Ability = (1 << 1),
+        Reflected = (1 << 2)
     }
 }

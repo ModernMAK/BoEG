@@ -1,3 +1,4 @@
+using System;
 using Framework.Types;
 using UnityEngine.Serialization;
 
@@ -15,6 +16,7 @@ namespace Framework.Core
     //[x] Targetable
 
 
+    [Obsolete]
     public class HeroUnit : Unit
     {
         protected override void StartLogic()

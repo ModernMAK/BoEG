@@ -15,9 +15,9 @@ namespace Framework.Core.Modules.Commands
         }
 
 
-        protected override void Step(float delta)
+        protected override void Step(float deltaTime)
         {
-            base.Step(delta);
+            base.Step(deltaTime);
             throw new NotImplementedException();
 //            if (Attackerable.CanAttack)
 //            {

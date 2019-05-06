@@ -5,40 +5,40 @@ namespace Framework.Core.Modules.Commands
     public abstract class Command : ICommand
     {
         
-        protected virtual void PreStep(float delta)
+        protected virtual void PreStep(float deltaTime)
         {
         }
 
-        void IStepable.PreStep(float delta)
+        void IStepable.PreStep(float deltaTime)
         {
-            PreStep(delta);
+            PreStep(deltaTime);
         }
 
-        protected virtual void Step(float delta)
-        {
-        }
-
-        void IStepable.Step(float delta)
-        {
-            Step(delta);
-        }
-
-        protected virtual void PostStep(float delta)
+        protected virtual void Step(float deltaTime)
         {
         }
 
-        void IStepable.PostStep(float delta)
+        void IStepable.Step(float deltaTime)
         {
-            PostStep(delta);
+            Step(deltaTime);
         }
 
-        protected virtual void PhysicsStep(float delta)
+        protected virtual void PostStep(float deltaTime)
         {
         }
 
-        void IStepable.PhysicsStep(float delta)
+        void IStepable.PostStep(float deltaTime)
         {
-            PhysicsStep(delta);
+            PostStep(deltaTime);
+        }
+
+        protected virtual void PhysicsStep(float deltaTime)
+        {
+        }
+
+        void IStepable.PhysicsStep(float deltaTime)
+        {
+            PhysicsStep(deltaTime);
         }
 
         void ICommand.Start()
