@@ -4,9 +4,17 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
+    [AddComponentMenu("EndGame/Components/DamageTarget")]
+    [DisallowMultipleComponent]
     public class DamageTargetComponent : MonoBehaviour, IComponent<IDamageTarget>, IDamageTarget
     {
         private IDamageTarget _damageTarget;
+
+        public void Initialize(IDamageTarget module)
+        {
+            _damageTarget = module;
+        }
+
         public void TakeDamage(Damage damage)
         {
             _damageTarget.TakeDamage(damage);
@@ -22,11 +30,6 @@ namespace Framework.Core.Modules
         {
             add => _damageTarget.Damaging += value;
             remove => _damageTarget.Damaging -= value;
-        }
-
-        public void Initialize(IDamageTarget module)
-        {
-            _damageTarget = module;
         }
     }
 }

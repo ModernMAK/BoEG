@@ -3,6 +3,8 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
+    [AddComponentMenu("EndGame/Components/Attackerable")]
+    [DisallowMultipleComponent]
     public class AttackerableComponent : MonoBehaviour, IAttackerable, IComponent<IAttackerable>
     {
         private IAttackerable _attackerable;

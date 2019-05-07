@@ -1,14 +1,18 @@
-using Framework.Types;
-using Framework.Utility;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace Framework.Core.Modules
 {
-    [RequireComponent(typeof(NavMeshAgent))]
+    [AddComponentMenu("EndGame/Components/Movable")]
+    [DisallowMultipleComponent]
     public class MovableComponent : MonoBehaviour, IComponent<IMovable>, IMovable
     {
         private IMovable _movable;
+
+        public void Initialize(IMovable module)
+        {
+            _movable = module;
+        }
+
         public float MoveSpeed => _movable.MoveSpeed;
 
         public float TurnSpeed => _movable.TurnSpeed;
@@ -44,6 +48,7 @@ namespace Framework.Core.Modules
         }
 
         public bool HasReachedDestination => _movable.HasReachedDestination;
+
         public void UpdateMover()
         {
             _movable.UpdateMover();
@@ -53,11 +58,5 @@ namespace Framework.Core.Modules
         {
             UpdateMover();
         }
-
-        public void Initialize(IMovable module)
-        {
-            _movable = module;
-        }
-        
     }
 }

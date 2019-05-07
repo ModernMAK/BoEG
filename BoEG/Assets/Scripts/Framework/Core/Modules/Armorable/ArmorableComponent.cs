@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
+    [AddComponentMenu("EndGame/Components/Armorable")]
+    [DisallowMultipleComponent]
     public class ArmorableComponent : MonoBehaviour, IComponent<IArmorable>, IArmorable
     {
         private IArmorable _armorable;

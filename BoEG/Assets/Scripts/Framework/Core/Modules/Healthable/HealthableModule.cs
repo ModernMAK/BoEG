@@ -1,42 +1,10 @@
 using System;
+using Framework.Types;
 
 namespace Framework.Core.Modules
 {
-    public class HealthableModule : IModule, IHealthable
+    public class HealthableModule : IStepable, IHealthable
     {
-//        protected override void PreStep(float delta)
-//        {
-//            if (IsSpawned)
-//                GenerateHealth(delta);
-//        }
-//
-//        protected override void PostStep(float deltaStep)
-//        {
-//            base.PostStep(deltaStep);
-//            _momento = new HealthableMomento(this);
-//        }
-
-//        [SerializeField] private HealthableMomento _momento;
-//
-//        private void GenerateHealth(float delta)
-//        {
-//            if (!IsDead)
-//            {
-//                ModifyPoints(Health.Generation * delta);
-//            }
-//        }
-//
-//        private void ModifyPoints(float deltaPoints)
-//        {
-//            var nPoints = Mathf.Clamp(Health.Points + deltaPoints, 0f, Health.Capacity);
-//            Health = Health.SetPoints(nPoints);
-//        }
-
-        /// <summary>
-        /// The Bit Mask used for serialization.
-        /// </summary>
-//        private byte _dirtyMask;
-
         private readonly IHealthable _healthable;
 
         public HealthableModule(IHealthable healthable)

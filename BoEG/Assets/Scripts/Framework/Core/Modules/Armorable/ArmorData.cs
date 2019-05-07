@@ -3,14 +3,6 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    public interface IArmorData
-    {
-        float Block { get; }
-        float Resist { get; }
-        bool Immune { get; }
-    }
-
-
     [Serializable]
     public struct ArmorData : IArmorData
     {
@@ -31,20 +23,20 @@ namespace Framework.Core.Modules
 
         public float Block
         {
-            get { return _block; }
-            private set { _block = value; }
+            get => _block;
+            private set => _block = value;
         }
 
         public float Resist
         {
-            get { return _resist; }
-            private set { _resist = value; }
+            get => _resist;
+            private set => _resist = value;
         }
 
         public bool Immune
         {
-            get { return _immune; }
-            private set { _immune = value; }
+            get => _immune;
+            private set => _immune = value;
         }
 
 

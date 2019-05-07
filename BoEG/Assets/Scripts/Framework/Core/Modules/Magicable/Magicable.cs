@@ -1,15 +1,14 @@
 using System;
-using Framework.Types;
-using Framework.Utility;
 
 namespace Framework.Core.Modules
 {
     public class Magicable : Statable, IMagicable
     {
-        public Magicable(IMagicableData data) : this(data.MagicCapacity,data.MagicGeneration)
+        public Magicable(IMagicableData data) : this(data.MagicCapacity, data.MagicGeneration)
         {
         }
-        public Magicable(float capacity, float generation) : base(capacity,generation)
+
+        public Magicable(float capacity, float generation) : base(capacity, generation)
         {
         }
 
@@ -50,9 +49,12 @@ namespace Framework.Core.Modules
             //Current + Change = Desired
             //Therefore
             //Desired - Current = Change
-            float change = mana - Mana;
+            var change = mana - Mana;
             ModifyMana(change);
         }
+
+        public event EventHandler<MagicableEventArgs> Modified;
+        public event EventHandler<MagicableEventArgs> Modifying;
 
 
         protected virtual void OnModified(MagicableEventArgs e)
@@ -64,8 +66,5 @@ namespace Framework.Core.Modules
         {
             Modifying?.Invoke(this, e);
         }
-
-        public event EventHandler<MagicableEventArgs> Modified;
-        public event EventHandler<MagicableEventArgs> Modifying;
     }
 }

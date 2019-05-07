@@ -3,9 +3,17 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
+    [AddComponentMenu("EndGame/Components/Magicable")]
+    [DisallowMultipleComponent]
     public class MagicableComponent : MonoBehaviour, IComponent<IMagicable>, IMagicable
     {
         private IMagicable _magicable;
+
+        public void Initialize(IMagicable module)
+        {
+            _magicable = module;
+        }
+
         public float Mana => _magicable.Mana;
 
         public float ManaPercentage => _magicable.ManaPercentage;
@@ -34,11 +42,6 @@ namespace Framework.Core.Modules
         {
             add => _magicable.Modifying += value;
             remove => _magicable.Modifying -= value;
-        }
-
-        public void Initialize(IMagicable module)
-        {
-            _magicable = module;
         }
     }
 }

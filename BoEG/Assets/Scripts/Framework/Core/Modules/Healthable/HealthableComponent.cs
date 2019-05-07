@@ -1,12 +1,13 @@
 using System;
-using System.ComponentModel;
 using UnityEngine;
 
 namespace Framework.Core.Modules
 {
     /// <summary>
-    /// Healthable component does not 
+    ///     Healthable component does not
     /// </summary>
+    [AddComponentMenu("EndGame/Components/Healthable")]
+    [DisallowMultipleComponent]
     public class HealthableComponent : MonoBehaviour, IComponent<IHealthable>, IHealthable
     {
         private IHealthable _healthable;

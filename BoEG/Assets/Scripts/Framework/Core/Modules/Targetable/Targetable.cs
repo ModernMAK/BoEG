@@ -1,8 +1,66 @@
 using System;
+using Framework.Types;
 using UnityEngine;
 
 namespace Framework.Core.Modules
 {
+    public class NewTargetable : ITargetable
+    {
+        public bool AllowAttackAffects { get; private set; }
+        public bool AllowSpellAffects { get; private set; }
+
+
+        public bool AllowAttackTargets { get; private set; }
+
+        public bool AllowSpellTargets { get; private set; }
+
+        public event EventHandler<AttackTargetEventArgs> AttackTargeting;
+        public event EventHandler<AttackTargetEventArgs> AttackTargeted;
+        public event EventHandler<SpellTargetEventArgs> SpellTargeting;
+        public event EventHandler<SpellTargetEventArgs> SpellTargeted;
+
+        public void TargetAttack(Actor attacker, Action attackCallback, bool forceTargeting = false)
+        {
+            var args = new AttackTargetEventArgs(attacker, new Damage(0f, DamageType.Physical));
+            OnAttackTargeting(args);
+            attackCallback();
+            OnAttackTargeted(args);
+        }
+
+        public void TargetSpell(Action spellCallback, bool forceTargeting = false)
+        {
+            var args = new SpellTargetEventArgs(null, 0f, new Damage(0f, DamageType.Physical));
+            OnSpellTargeting(args);
+            AffectSpell(spellCallback, forceTargeting);
+            OnSpellTargeted(args);
+        }
+
+        public void AffectSpell(Action spellCallback, bool forceTargeting = false)
+        {
+            spellCallback();
+        }
+
+        protected virtual void OnAttackTargeting(AttackTargetEventArgs e)
+        {
+            AttackTargeting?.Invoke(this, e);
+        }
+
+        protected virtual void OnAttackTargeted(AttackTargetEventArgs e)
+        {
+            AttackTargeted?.Invoke(this, e);
+        }
+
+        protected virtual void OnSpellTargeting(SpellTargetEventArgs e)
+        {
+            SpellTargeting?.Invoke(this, e);
+        }
+
+        protected virtual void OnSpellTargeted(SpellTargetEventArgs e)
+        {
+            SpellTargeted?.Invoke(this, e);
+        }
+    }
+
     public class Targetable : MonoBehaviour, ITargetable
     {
         public bool AllowAttackTargets { get; private set; }
@@ -24,7 +82,6 @@ namespace Framework.Core.Modules
 //            attackCallback();
 //            OnAttackTargeted(attacker);
         }
-        
 
 
         public void TargetSpell(Action spellCallback, bool forceTargeting = false)
@@ -48,22 +105,22 @@ namespace Framework.Core.Modules
 
         private void OnAttackTargeting(AttackTargetEventArgs args)
         {
-            AttackTargeting?.Invoke(this,args);
+            AttackTargeting?.Invoke(this, args);
         }
 
         private void OnAttackTargeted(AttackTargetEventArgs args)
         {
-            AttackTargeted?.Invoke(this,args);
+            AttackTargeted?.Invoke(this, args);
         }
 
         private void OnSpellTargeting(SpellTargetEventArgs args)
         {
-            SpellTargeting?.Invoke(this,args);
+            SpellTargeting?.Invoke(this, args);
         }
 
         private void OnSpellTargeted(SpellTargetEventArgs args)
         {
-            SpellTargeted?.Invoke(this,args);
+            SpellTargeted?.Invoke(this, args);
         }
     }
 }

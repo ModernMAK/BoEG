@@ -1,21 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Framework.Core;
+﻿using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Core.Modules.Commands;
 using UnityEngine;
 
 public class RtsController : MonoBehaviour
 {
-    [SerializeField] private Commandable _commandable;
-
-    private KeyCode _moveKey = KeyCode.M;
-    private int _actionKey = 1;
-    private int _selectKey = 0;
-    private KeyCode _followKey = KeyCode.F;
-    private KeyCode _queueKey = KeyCode.LeftShift;
+    [SerializeField] private CommandableComponent _commandable;
 
     private Camera _main;
+
+    private const KeyCode _followKey = KeyCode.F;
+    private const KeyCode _moveKey = KeyCode.M;
+    private const KeyCode _queueKey = KeyCode.LeftShift;
+    private const int _selectKey = 0;
+    private const int _actionKey = 1;
 
     private Camera CameraMain
     {
@@ -27,17 +25,14 @@ public class RtsController : MonoBehaviour
         }
     }
 
-    private Ray CameraRay
-    {
-        get { return CameraMain.ScreenPointToRay(Input.mousePosition); }
-    }
+    private Ray CameraRay => CameraMain.ScreenPointToRay(Input.mousePosition);
 
-    bool PerformCast(out RaycastHit info)
+    private bool PerformCast(out RaycastHit info)
     {
         return Physics.Raycast(CameraRay, out info);
     }
 
-    void Update()
+    private void Update()
     {
         if (_commandable != null && Input.GetMouseButton(_actionKey))
         {
@@ -54,29 +49,30 @@ public class RtsController : MonoBehaviour
                     AddOrQueueCommand(GenerateMove(point));
             }
         }
+
         if (Input.GetMouseButton(_selectKey))
         {
             RaycastHit info;
             if (PerformCast(out info))
             {
-                var commandable = info.collider.GetComponentInParent<Commandable>();
+                var commandable = info.collider.GetComponentInParent<CommandableComponent>();
                 if (commandable != null)
                     _commandable = commandable;
             }
         }
     }
 
-    FollowCommand GenerateFollow(Transform target)
+    private FollowCommand GenerateFollow(Transform target)
     {
         return new FollowCommand(_commandable.gameObject, target);
     }
 
-    MoveToCommand GenerateMove(Vector3 target)
+    private MoveToCommand GenerateMove(Vector3 target)
     {
         return new MoveToCommand(_commandable.gameObject, target);
     }
 
-    void AddOrQueueCommand(ICommand command)
+    private void AddOrQueueCommand(ICommand command)
     {
         if (Input.GetKey(_queueKey))
             _commandable.AddCommand(command);
