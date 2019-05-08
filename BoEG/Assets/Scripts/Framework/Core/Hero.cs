@@ -12,6 +12,7 @@ namespace Framework.Core
             base.Awake();
             SetupComponents();
         }
+        
 
         private void SetupComponents()
         {

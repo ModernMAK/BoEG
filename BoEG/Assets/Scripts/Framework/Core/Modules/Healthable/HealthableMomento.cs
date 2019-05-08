@@ -9,7 +9,7 @@ namespace Framework.Core.Modules
         public HealthableMomento()
         {
             _health = 0;
-            _healthPercetnage = 0;
+            _healthPercentage = 0;
             _healthCapacity = 0;
             _healthGeneration = 0;
         }
@@ -23,13 +23,13 @@ namespace Framework.Core.Modules
         public void Update(IHealthable healthable)
         {
             _health = healthable.Health;
-            _healthPercetnage = healthable.HealthPercentage;
+            _healthPercentage = healthable.HealthPercentage;
             _healthCapacity = healthable.HealthCapacity;
             _healthGeneration = healthable.HealthGeneration;
         }
 
         [SerializeField] private float _health;
-        [SerializeField] private float _healthPercetnage;
+        [SerializeField] private float _healthPercentage;
         [SerializeField] private float _healthCapacity;
         [SerializeField] private float _healthGeneration;
 

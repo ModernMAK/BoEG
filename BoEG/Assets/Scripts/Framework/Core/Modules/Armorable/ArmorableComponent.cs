@@ -10,31 +10,25 @@ namespace Framework.Core.Modules
     {
         private IArmorable _armorable;
         public Armor Physical => _armorable.Physical;
-
         public Armor Magical => _armorable.Magical;
-
         public Damage ResistDamage(Damage damage)
         {
             return _armorable.ResistDamage(damage);
         }
-
         public float CalculateReduction(Damage damage)
         {
             return _armorable.CalculateReduction(damage);
         }
-
         public event EventHandler<ArmorableEventArgs> Resisted
         {
             add => _armorable.Resisted += value;
             remove => _armorable.Resisted -= value;
         }
-
         public event EventHandler<ArmorableEventArgs> Resisting
         {
             add => _armorable.Resisting += value;
             remove => _armorable.Resisting -= value;
         }
-
         public void Initialize(IArmorable module)
         {
             _armorable = module;

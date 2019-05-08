@@ -1,0 +1,48 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PrototypeMaterial : MonoBehaviour
+{
+    [SerializeField] private Material _protoMaterial;
+
+    [SerializeField] private bool _refresh;
+    // Start is called before the first frame update
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (_refresh)
+        {
+            _refresh = false;
+            Refresh();
+        }
+        
+    }
+
+    private void Start()
+    {
+        //True when we have material set, otherwise dont do anything
+        _refresh = (_protoMaterial != null);
+    }
+
+    void Refresh()
+    {
+        Refresh(transform);
+    }
+
+    void Refresh(Transform t)
+    {
+        var mr = t.GetComponent<MeshRenderer>();
+        if (mr != null)
+        {
+            mr.material = _protoMaterial;
+        }
+
+        foreach (Transform child in t)
+        {
+            Refresh(child);
+        }
+        
+    }
+}

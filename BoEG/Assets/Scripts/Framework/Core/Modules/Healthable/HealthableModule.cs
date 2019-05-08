@@ -12,15 +12,6 @@ namespace Framework.Core.Modules
             _healthable = healthable;
         }
 
-//        private IHealthableData _data;
-
-//        public PointData Health { get; private set; }
-
-//        public bool IsDead
-//        {
-//            get { return Health.Percentage <= 0f; }
-//        }
-
         public float Health => _healthable.Health;
 
         public float HealthPercentage => _healthable.HealthPercentage;
@@ -28,19 +19,6 @@ namespace Framework.Core.Modules
         public float HealthCapacity => _healthable.HealthCapacity;
 
         public float HealthGeneration => _healthable.HealthGeneration;
-
-//        public void ModifyHealth(float deltaValue)
-//        {
-//            if (!IsSpawned)
-//                return;
-//
-//            var wasDead = IsDead;
-//            OnHealthModifying(deltaValue);
-//            ModifyPoints(deltaValue);
-//            OnHealthModified(deltaValue);
-//            if (!wasDead && IsDead)
-//                OnDied();
-//        }
 
         public void ModifyHealth(float change)
         {
@@ -63,28 +41,6 @@ namespace Framework.Core.Modules
             add => _healthable.Modifying += value;
             remove => _healthable.Modifying -= value;
         }
-
-//        public event HealthChangeHandler HealthModified;
-//        public event HealthChangeHandler HealthModifying;
-//        public event DeathHandler Died;
-
-//        protected void OnDied()
-//        {
-//            if (Died != null)
-//                Died();
-//        }
-//
-//        protected void OnHealthModified(float deltaValue)
-//        {
-//            if (HealthModified != null)
-//                HealthModified(deltaValue);
-//        }
-//
-//        protected void OnHealthModifying(float deltaValue)
-//        {
-//            if (HealthModifying != null)
-//                HealthModifying(deltaValue);
-//        }
 
 //        protected override void Instantiate()
 //        {

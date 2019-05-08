@@ -11,6 +11,7 @@ namespace Framework.Core.Modules
         public Healthable(IHealthableData data) : this(data.HealthCapacity, data.HealthGeneration)
         {
         }
+
         public Healthable(float capacity, float generation) : base(capacity, generation)
         {
         }

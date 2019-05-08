@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class ArmorablePanel : MonoBehaviour
+    public class ArmorablePanel : DebugUI
     {
         [SerializeField] private Text _physicalBlockText;
         [SerializeField] private Text _physicalResistText;
@@ -15,15 +15,14 @@ namespace UI
         [SerializeField] private Text _magicalResistText;
 
         // Start is called before the first frame update
-        [SerializeField] private GameObject _targetGO;
+        private GameObject _go;
+        private IArmorable _armorable;
 
-        private IArmorable _target;
-
-        void Start()
+        public override void SetTarget(GameObject go)
         {
-            _target = _targetGO.GetComponent<IArmorable>();
+            _go = go;
+            _armorable = (_go != null) ? _go.GetComponent<IArmorable>() : null;
         }
-
         // Update is called once per frame
         void Update()
         {
@@ -31,12 +30,12 @@ namespace UI
             float magBlock = 0f;
             float physResist = 0f;
             float magResist = 0f;
-            if (_target != null)
+            if (_armorable != null)
             {
-                physBlock = _target.Physical.Block;
-                physResist = _target.Physical.Resistance * 100f;
-                magBlock = _target.Magical.Block;
-                magResist = _target.Magical.Resistance * 100f;
+                physBlock = _armorable.Physical.Block;
+                physResist = _armorable.Physical.Resistance * 100f;
+                magBlock = _armorable.Magical.Block;
+                magResist = _armorable.Magical.Resistance * 100f;
             }
 
             UpdateText(physBlock, _physicalBlockText);
@@ -45,9 +44,5 @@ namespace UI
             UpdateText(magResist, _magicalResistText);
         }
 
-        private void UpdateText(float value, Text text)
-        {
-            text.text = Mathf.FloorToInt(value).ToString();
-        }
     }
 }
