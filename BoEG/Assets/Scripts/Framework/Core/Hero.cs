@@ -17,13 +17,18 @@ namespace Framework.Core
         private void SetupComponents()
         {
             //TODO register modules
+            var buffable = new Buffable();
+            GetFrameworkComponent<IBuffable>().Initialize(buffable);
+            
             var healthable = new Healthable(_healthableData);
-            var healthableModule = new HealthableModule(healthable);
+            var healthableBuffed = new BuffedHealthable(healthable, buffable);
+            var healthableModule = new HealthableModule(healthableBuffed);
             AddSteppable(healthableModule);
             GetFrameworkComponent<IHealthable>().Initialize(healthableModule);
 
             var magicable = new Magicable(_magicableData);
-            var magicableModule = new MagicableModule(magicable);
+            var magicableBuffed = new BuffedMagicable(magicable, buffable);
+            var magicableModule = new MagicableModule(magicableBuffed);
             AddSteppable(magicableModule);
             GetFrameworkComponent<IMagicable>().Initialize(magicableModule);
 

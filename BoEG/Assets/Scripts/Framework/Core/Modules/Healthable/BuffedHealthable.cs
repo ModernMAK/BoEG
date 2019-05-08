@@ -8,9 +8,8 @@ namespace Framework.Core.Modules
         public BuffedHealthable(IHealthable healthable, IBuffable buffable)
         {
             _healthable = healthable;
-            buffable.CreateHealthGenerationBuff(out _capacityBonus, out _capacityMultiplier);
-            buffable.CreateHealthCapacityBuff(out _generationBonus, out _generationMultiplier);
-
+            BuffedHealthableUtil.CreateHealthGenerationBuff(buffable, out _capacityBonus, out _capacityMultiplier);
+            BuffedHealthableUtil.CreateHealthCapacityBuff(buffable, out _generationBonus, out _generationMultiplier);
             healthable.Modified += ModifiedCatcher;
             healthable.Modifying += ModifyingCatcher;
         }
@@ -49,7 +48,8 @@ namespace Framework.Core.Modules
 
         public float HealthCapacity => _healthable.HealthCapacity * _capacityMultiplier.Value + _capacityBonus.Value;
 
-        public float HealthGeneration => _healthable.HealthGeneration * _generationMultiplier.Value + _generationBonus.Value;
+        public float HealthGeneration =>
+            _healthable.HealthGeneration * _generationMultiplier.Value + _generationBonus.Value;
 
 
         public void ModifyHealth(float change)

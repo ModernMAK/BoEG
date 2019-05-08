@@ -3242,18 +3242,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1628901332}
     m_Modifications:
-    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
-      propertyPath: m_Name
-      value: SpherePrimitive
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
-      propertyPath: m_Layer
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3309,6 +3297,18 @@ PrefabInstance:
     - target: {fileID: 400000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
       propertyPath: m_LocalScale.z
       value: 1.5000019
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
+      propertyPath: m_Name
+      value: SpherePrimitive
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3323,18 +3323,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 861881793}
     m_Modifications:
-    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
-      propertyPath: m_Name
-      value: SpherePrimitive
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
-      propertyPath: m_Layer
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3390,6 +3378,18 @@ PrefabInstance:
     - target: {fileID: 400000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
       propertyPath: m_LocalScale.z
       value: 1.5000019
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
+      propertyPath: m_Name
+      value: SpherePrimitive
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: e145d4499062fcb45a4d882b55f0fd27, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4674,11 +4674,11 @@ MonoBehaviour:
   _armorableData:
     _physical:
       _block: 0
-      _resist: 0
+      _resist: 0.01
       _immune: 0
     _magical:
       _block: 0
-      _resist: 0
+      _resist: 0.01
       _immune: 0
   _attackerableData:
     _attackRange: 0
