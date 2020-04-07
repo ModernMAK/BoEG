@@ -20,6 +20,17 @@ namespace Framework.Core.Modules
 
         public bool IsRanged => _attackerable.IsRanged;
 
+        private void OnDrawGizmosSelected()
+        {
+            if (_attackerable == null)
+                return;
+            
+            var color = Gizmos.color; //Do we still need to do this?
+            Gizmos.color = Color.red;            
+            Gizmos.DrawWireSphere(transform.position,AttackRange);
+            Gizmos.color = color;
+        }
+
         public void Attack(Actor actor)
         {
             _attackerable.Attack(actor);

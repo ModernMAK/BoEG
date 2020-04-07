@@ -40,7 +40,7 @@ public class RtsController : MonoBehaviour
             if (PerformCast(out info))
             {
                 var point = info.point;
-                var unit = info.collider.GetComponentInParent<Unit>();
+                var unit = info.collider.GetComponentInParent<Actor>();
 
 
                 if (unit != null && !Input.GetKey(_moveKey))

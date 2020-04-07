@@ -20,10 +20,7 @@ namespace Triggers
         private Vector3 _position;
         private Transform _follow;
 
-        protected Vector3 Position
-        {
-            get { return (_follow != null ? _follow.position : _position); }
-        }
+        protected Vector3 Position => (_follow != null ? _follow.position : _position);
 
         protected int Mask { get; private set; }
 

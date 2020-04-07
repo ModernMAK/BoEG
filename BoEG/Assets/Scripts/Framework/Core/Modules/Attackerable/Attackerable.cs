@@ -22,10 +22,7 @@ namespace Framework.Core.Modules
         public float AttackRange { get; protected set; }
         public float AttackSpeed { get; protected set; }
 
-        public float AttackCooldown
-        {
-            get { return AttackInterval / AttackSpeed; }
-        }
+        public float AttackCooldown => AttackInterval / AttackSpeed;
 
         public float AttackInterval { get; protected set; }
 

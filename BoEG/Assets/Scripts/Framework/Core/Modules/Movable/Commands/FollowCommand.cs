@@ -6,9 +6,10 @@ namespace Framework.Core.Modules.Commands
     {
         private readonly Transform _target;
 
-        public FollowCommand(GameObject entity, Transform target) : base(entity)
+        public FollowCommand(GameObject entity, Transform target, float followDistance = 1f) : base(entity)
         {
             _target = target;
+            DesiredDistance = followDistance;
         }
 
 
@@ -19,8 +20,10 @@ namespace Framework.Core.Modules.Commands
 
         private Vector3 Location
         {
-            get { return _target.position - Direction.normalized * 1f; }
+            get { return _target.position - Direction.normalized * DesiredDistance; }
         }
+
+        private float DesiredDistance { get; }
 
         protected override Vector3 Target
         {

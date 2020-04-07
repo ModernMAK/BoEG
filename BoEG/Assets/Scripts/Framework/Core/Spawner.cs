@@ -1,7 +1,7 @@
-using System;
 using Framework.Core.Modules;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Analytics;
 
 namespace Framework.Core
 {
@@ -9,30 +9,24 @@ namespace Framework.Core
     {
         [SerializeField] private SpawnData[] _data;
 
-        void Update()
+        private void Start()
         {
             foreach (var data in _data)
             {
-                
+                data.LastSpawn = -data.Interval;
             }
         }
 
-    }
-
-    [Serializable]
-    public class SpawnData
-    {
-
-        public GameObject Prefab;
-        public float Interval;
-        public float LastSpawn;
-        public int SpawnCount;
-
-        public void 
-        
-        public bool CanSpawn
+        protected override void Update()
         {
-            get => (Interval + LastSpawn <= Time.time);
-        } 
+            base.Update();
+            foreach (var data in _data)
+            {
+                if (data.CanSpawn)
+                {
+                    var spawned = data.Spawn();
+                }
+            }
+        }
     }
 }

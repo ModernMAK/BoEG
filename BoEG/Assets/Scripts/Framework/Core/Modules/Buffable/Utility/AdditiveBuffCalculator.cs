@@ -12,8 +12,6 @@ namespace Framework.Core.Modules
 
         private Func<T, float> Getter { get; set; }
 
-        public float Value { get; private set; }
-
         protected override void CalculateLogic()
         {
             var bonus = 0f;

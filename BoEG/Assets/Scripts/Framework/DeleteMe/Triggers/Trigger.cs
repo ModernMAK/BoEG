@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -24,17 +25,20 @@ namespace Triggers
             var ret = CollisionMethod.Collide();
             return GetGameObjectFromColliders(ret);
         }
-		public static GameObject[] GetGameObjectFromColliders(Collider[] cols)
-		{
-			var gos = new GameObject[cols.Length];
+
+        public static GameObject[] GetGameObjectFromColliders(Collider[] cols)
+        {
+            var gos = new GameObject[cols.Length];
             var counter = 0;
             foreach (var col in cols)
             {
-                gos[counter] = (col.attachedRigidbody != null) ? col.attachedRigidbody.gameObject : col.gameObject;
+                var attachedRigidbody = col.attachedRigidbody;
+                gos[counter] = (attachedRigidbody != null) ? attachedRigidbody.gameObject : col.gameObject;
                 counter++;
             }
+
             return gos;
-		}
+        }
 
         public void PhysicsStep()
         {
@@ -65,33 +69,51 @@ namespace Triggers
 
 
         private readonly List<GameObject> _colliders;
+
         public IEnumerable<GameObject> Colliders
         {
             get { return _colliders; }
         }
 
-        private void OnEnter(GameObject go)
+        private void AddCollider(GameObject go)
         {
             _colliders.Add(go);
-            if (Enter != null)
-                Enter(go);
+//            if (Enter != null)
+//                Enter(go);
+            OnEnter(go);
         }
 
-        private void OnStay(GameObject go)
-        {
-            if (Stay != null)
-                Stay(go);
-        }
+//        private void OnStay(GameObject go)
+//        {
+//            if (Stay != null)
+//                Stay(go);
+//        }
 
-        private void OnExit(GameObject go)
+        private void RemoveCollider(GameObject go)
         {
             _colliders.Remove(go);
-            if (Exit != null)
-                Exit(go);
+//            if (Exit != null)
+//                Exit(go);
+            OnExit(go);
         }
 
-        public event TriggerHandler Enter;
-        public event TriggerHandler Stay;
-        public event TriggerHandler Exit;
+        public event EventHandler<GameObject> Enter;
+        public event EventHandler<GameObject> Stay;
+        public event EventHandler<GameObject> Exit;
+
+        protected virtual void OnEnter(GameObject e)
+        {
+            Enter?.Invoke(this, e);
+        }
+
+        protected virtual void OnStay(GameObject e)
+        {
+            Stay?.Invoke(this, e);
+        }
+
+        protected virtual void OnExit(GameObject e)
+        {
+            Exit?.Invoke(this, e);
+        }
     }
 }

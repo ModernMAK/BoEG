@@ -12,14 +12,12 @@ namespace Framework.Core
             base.Awake();
             SetupComponents();
         }
-        
 
         private void SetupComponents()
         {
-            //TODO register modules
             var buffable = new Buffable();
             GetFrameworkComponent<IBuffable>().Initialize(buffable);
-            
+
             var healthable = new Healthable(_healthableData);
             var healthableBuffed = new BuffedHealthable(healthable, buffable);
             var healthableModule = new HealthableModule(healthableBuffed);
@@ -41,8 +39,6 @@ namespace Framework.Core
 
             var attackerable = new Attackerable(_attackerableData);
             GetFrameworkComponent<IAttackerable>().Initialize(attackerable);
-//            var magicable = new Magicable(_healthableData.HealthCapacity, _healthableData.HealthGeneration);
-//            GetFrameworkComponent<IHealthable>().Initialize(healthable);
 
             var movable = new Movable(_movableData, GetComponent<NavMeshAgent>());
             GetFrameworkComponent<IMovable>().Initialize(movable);

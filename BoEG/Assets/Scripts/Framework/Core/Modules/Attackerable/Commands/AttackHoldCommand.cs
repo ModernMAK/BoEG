@@ -7,23 +7,40 @@ namespace Framework.Core.Modules.Commands
 {
     public class AttackHoldCommand : EntityCommand
     {
-        protected IAttackerable Attackerable { get; private set; }
+        protected IAttackerable Attackerable => _attackerable;
+        private readonly IAttackerable _attackerable;
+        protected IAggroable Aggroable => _aggroable;
+        private readonly IAggroable _aggroable;
 
         public AttackHoldCommand(GameObject entity) : base(entity)
         {
-            Attackerable = GetComponent<IAttackerable>();
+            GetComponent(out _attackerable);
+            GetComponent(out _aggroable);
         }
 
 
         protected override void Step(float deltaTime)
         {
-            base.Step(deltaTime);
+            if (Attackerable.IsAttackOnCooldown)
+            {
+            }
+
             throw new NotImplementedException();
 //            if (Attackerable.CanAttack)
 //            {
 //                if (Attackerable.HasAttackTarget())
 //                    Attackerable.Attack(Attackerable.GetAttackTargets().First());
 //            }
+        }
+
+        protected override void Start()
+        {
+            //Do Nothing
+        }
+
+        protected override void Stop()
+        {
+            //Do nothing
         }
 
         protected override bool IsDone()
@@ -78,4 +95,4 @@ namespace Framework.Core.Modules.Commands
 //            return mo;
 //        }
 //    }
-}    
+}
