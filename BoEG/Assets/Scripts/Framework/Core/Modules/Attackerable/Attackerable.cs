@@ -1,5 +1,5 @@
 using System;
-using UnityEngine.Analytics;
+using UnityEngine;
 
 namespace Framework.Core.Modules
 {
@@ -28,10 +28,14 @@ namespace Framework.Core.Modules
 
         public bool IsRanged { get; protected set; }
 
+        public bool IsAttackOnCooldown => (Time.time <= _cooldowEnd);
+        private float _cooldowEnd = float.MinValue;
+
 
         public void Attack(Actor actor)
         {
             throw new System.NotImplementedException();
+            
         }
 
         public event EventHandler<AttackerableEventArgs> Attacking;

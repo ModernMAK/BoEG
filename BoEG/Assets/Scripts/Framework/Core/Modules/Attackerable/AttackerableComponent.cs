@@ -20,6 +20,8 @@ namespace Framework.Core.Modules
 
         public bool IsRanged => _attackerable.IsRanged;
 
+        public bool IsAttackOnCooldown => _attackerable.IsAttackOnCooldown;
+
         private void OnDrawGizmosSelected()
         {
             if (_attackerable == null)
