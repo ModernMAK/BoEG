@@ -55,9 +55,9 @@ namespace Framework.Core
         }
 
         //Todo move to a more appropriate lcoation
-        protected IComponent<T> GetFrameworkComponent<T>()
+        protected IInitializable<T> GetFrameworkComponent<T>()
         {
-            return this.GetComponent<IComponent<T>>();
+            return this.GetComponent<IInitializable<T>>();
         }
     }
 }

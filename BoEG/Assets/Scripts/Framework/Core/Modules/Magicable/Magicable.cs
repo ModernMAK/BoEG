@@ -13,7 +13,7 @@ namespace Framework.Core.Modules
 
     [DisallowMultipleComponent]
     public class Magicable : Statable,
-        IComponent<IMagicableData>, IMagicable
+        IInitializable<IMagicableData>, IMagicable
     {
         public float Magic
         {

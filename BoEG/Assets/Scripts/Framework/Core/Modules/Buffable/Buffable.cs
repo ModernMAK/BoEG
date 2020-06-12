@@ -10,7 +10,7 @@ namespace Framework.Core.Modules
             var args = new BuffEventArgs(buff);
             OnAdding(args);
             //We... don't actually cache the buffs
-            OnAdded(args);
+            OnAdded(args);    
         }
 
         public void RemoveBuff(IBuff buff)

@@ -4,7 +4,7 @@ namespace Framework.Core.Modules
 {
     [AddComponentMenu("EndGame/Components/Commandable")]
     [DisallowMultipleComponent]
-    public class CommandableComponent : MonoBehaviour, ICommandable, IComponent<ICommandable>
+    public class CommandableComponent : MonoBehaviour, ICommandable, IInitializable<ICommandable>
     {
         private ICommandable _commandable;
 

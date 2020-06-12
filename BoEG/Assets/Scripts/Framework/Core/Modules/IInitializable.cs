@@ -1,7 +1,7 @@
 namespace Framework.Core.Modules
 {
     //TODO rename to IInitializable
-    public interface IComponent<T>
+    public interface IInitializable<T>
     {
         void Initialize(T module);
     }

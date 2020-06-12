@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    public class Armorable : MonoBehaviour, IArmorable, IComponent<IArmorableData>
+    public class Armorable : MonoBehaviour, IArmorable, IInitializable<IArmorableData>
     {
         public void Initialize(IArmorableData data)
         {

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    public class BuffableComponent : MonoBehaviour, IComponent<IBuffable>, IBuffable
+    public class BuffableComponent : MonoBehaviour, IInitializable<IBuffable>, IBuffable
     {
         private IBuffable _buffable;
         public void AddBuff(IBuff buff)

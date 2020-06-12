@@ -13,7 +13,7 @@ namespace Framework.Core.Modules
 
     [DisallowMultipleComponent]
     public class Healthable : Statable,
-        IComponent<IHealthableData>, IHealthable
+        IInitializable<IHealthableData>, IHealthable
     {
         public float Health
         {

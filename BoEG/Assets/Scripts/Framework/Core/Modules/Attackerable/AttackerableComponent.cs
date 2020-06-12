@@ -5,7 +5,7 @@ namespace Framework.Core.Modules
 {
     [AddComponentMenu("EndGame/Components/Attackerable")]
     [DisallowMultipleComponent]
-    public class AttackerableComponent : MonoBehaviour, IAttackerable, IComponent<IAttackerable>
+    public class AttackerableComponent : MonoBehaviour, IAttackerable, IInitializable<IAttackerable>
     {
         private IAttackerable _attackerable;
         public float AttackDamage => _attackerable.AttackDamage;

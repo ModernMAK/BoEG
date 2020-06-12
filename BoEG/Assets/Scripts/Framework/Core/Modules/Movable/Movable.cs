@@ -4,7 +4,7 @@ using UnityEngine.AI;
 namespace Framework.Core.Modules
 {
     [DisallowMultipleComponent]
-    public class Movable : MonoBehaviour, IComponent<IMovableData>, IMovable
+    public class Movable : MonoBehaviour, IInitializable<IMovableData>, IMovable
     {
         private IMovable _movable;
 
