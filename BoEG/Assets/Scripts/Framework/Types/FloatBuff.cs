@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Framework.Types
 {
-    [Serializable]
+    [Serializable][Obsolete]
     public struct FloatBuff
     {
         public FloatBuff(float bonus, float multiplier)

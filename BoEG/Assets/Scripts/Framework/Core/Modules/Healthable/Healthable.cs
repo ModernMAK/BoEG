@@ -1,70 +1,148 @@
 using System;
+using System.Collections.Generic;
+using Framework.Types;
+using Framework.Utility;
+using Old.Modules.Levelable;
+using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    public class Healthable : Statable, IHealthable
+    //Im overcomplicating this for myself
+    //Stop overthinking this. Do what unity does best
+
+
+    [DisallowMultipleComponent]
+    public class Healthable : MonoBehaviour,
+        IComponent<IHealthableData>, IHealthable, IStepable,
+        IListener<ILevelable>, IListener<IModifiable>
     {
-        public Healthable(IHealthableData data) : this(data.HealthCapacity, data.HealthGeneration)
+        private float _percentage;
+        private float _capacity;
+        private float _generation;
+
+
+        private float _capacityGain;
+        private float _generationGain;
+
+        //TODO use these to add modifiers
+        private ModifierResult _capacityModifier;
+        private ModifierResult _generationModifier;
+        private event EventHandler<float> _healthChanged;
+
+        private List<IHealthableModifier> _modifiers;
+
+        public float Health
         {
+            get => HealthPercentage * HealthCapacity;
+            set => HealthPercentage = value / HealthCapacity;
         }
 
-        public Healthable(float capacity, float generation) : base(capacity, generation)
+        public float HealthPercentage
         {
+            get => _percentage;
+            set
+            {
+                value = Mathf.Clamp01(value);
+                if (!_percentage.SafeEquals(value))
+                    OnHealthChanged(default);
+                _percentage = value;
+            }
         }
 
-        public virtual float Health
+        public float HealthCapacity
         {
-            get => Value;
-            protected set => Value = value;
+            get => _capacity;
+            set => _capacity = value;
         }
 
-        public virtual float HealthPercentage
+        public float HealthGeneration
         {
-            get => Normal;
-            protected set => Normal = value;
+            get => _generation;
+            set => _generation = value;
         }
 
-        public virtual float HealthCapacity
+        public event EventHandler<float> HealthChanged
         {
-            get => Capacity;
-            protected set => Capacity = value;
-        }
-
-        public virtual float HealthGeneration
-        {
-            get => Generation;
-            protected set => Generation = value;
-        }
-
-        public void ModifyHealth(float change)
-        {
-            var args = new HealthableEventArgs(change);
-            OnModifying(args);
-            Health += change;
-            OnModified(args);
-        }
-
-        public void SetHealth(float health)
-        {
-            //Current + Change = Desired
-            //Therefore
-            //Desired - Current = Change
-            float change = health - Health;
-            ModifyHealth(change);
+            add => _healthChanged += value;
+            remove => _healthChanged -= value;
         }
 
 
-        protected virtual void OnModified(HealthableEventArgs e)
+        public void Initialize(IHealthableData module)
         {
-            Modified?.Invoke(this, e);
+            _capacity = module.HealthCapacity;
+            _percentage = 1f;
+            _generation = module.HealthGeneration;
         }
 
-        protected virtual void OnModifying(HealthableEventArgs e)
+        public void Register(ILevelable source)
         {
-            Modifying?.Invoke(this, e);
+            source.LevelChanged += OnLevelChanged;
         }
 
-        public event EventHandler<HealthableEventArgs> Modified;
-        public event EventHandler<HealthableEventArgs> Modifying;
+        public void Unregister(ILevelable source)
+        {
+            source.LevelChanged -= OnLevelChanged;
+        }
+
+        public void Register(IModifiable source)
+        {
+            source.OnModifierAdded += OnModifierAdded;
+            source.OnModifierRemoved += OnModifierRemoved;
+        }
+
+        public void Unregister(IModifiable source)
+        {
+            source.OnModifierAdded -= OnModifierAdded;
+            source.OnModifierRemoved -= OnModifierRemoved;
+        }
+
+        protected virtual void OnHealthChanged(float e)
+        {
+            _healthChanged?.Invoke(this, e);
+        }
+
+        private void OnLevelChanged(object sender, int levelDifference)
+        {
+            _capacity += _capacityGain * levelDifference;
+            _generation += _generationGain * levelDifference;
+        }
+
+        private void OnModifierAdded(object sender, IModifier modifier)
+        {
+            if (modifier is IHealthableModifier healthableModifier)
+            {
+                _modifiers.Add(healthableModifier);
+            }
+        }
+
+        private void OnModifierRemoved(object sender, IModifier modifier)
+        {
+            if (modifier is IHealthableModifier healthableModifier)
+            {
+                _modifiers.Remove(healthableModifier);
+            }
+        }
+
+        public void PreStep(float deltaTime)
+        {
+            if (!HealthPercentage.SafeEquals(0f))
+                Health += HealthGeneration;
+        }
+
+        public void Step(float deltaTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PostStep(float deltaTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PhysicsStep(float deltaTime)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

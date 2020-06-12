@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Framework.Types
 {
-    [Serializable]
+    [Serializable][Obsolete]
     public struct FloatScalar
     {
         public FloatScalar(float flat, float gain = default(float))

@@ -28,7 +28,6 @@ namespace Framework.Core.Modules
                 damageToTake = _armorable.ResistDamage(damage);
             }
             OnDamaging(damageToTake);
-            _healthable.ModifyHealth(damageToTake.Value);
             OnDamaged(damageToTake);
         }
         
