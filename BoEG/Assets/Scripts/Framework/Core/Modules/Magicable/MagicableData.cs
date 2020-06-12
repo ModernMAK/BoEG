@@ -7,19 +7,17 @@ namespace Framework.Core.Modules
     public struct MagicableData : IMagicableData
     {
         [SerializeField]
-        private float _MagicGeneration;
+        private float _magicGeneration;
         [SerializeField]
-        private float _MagicCapacity;
+        private float _magicCapacity;
 
-        public float MagicGeneration
-        {
-            get { return _MagicGeneration; }
-        }
+        public float MagicGeneration => _magicGeneration;
 
-        public float MagicCapacity
-        {
-            get { return _MagicCapacity; }
-        }
+        public float MagicCapacity => _magicCapacity;
+
+        public float MagicGenerationGain => throw new NotImplementedException();
+
+        public float MagicCapacityGain => throw new NotImplementedException();
     }
 
 }

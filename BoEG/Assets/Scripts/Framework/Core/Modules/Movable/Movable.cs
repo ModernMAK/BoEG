@@ -1,31 +1,25 @@
-using System;
-using Framework.Types;
-using Framework.Utility;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Framework.Core.Modules
 {
-    public class Movable : IMovable
+    [DisallowMultipleComponent]
+    public class Movable : MonoBehaviour, IComponent<IMovableData>, IMovable
     {
-        public Movable(float moveSpeed, float turnSpeed, NavMeshAgent agent)
+        private IMovable _movable;
+
+        public void Initialize(IMovableData module)
         {
-            MoveSpeed = moveSpeed;
-            TurnSpeed = turnSpeed;
-            _agent = agent;
+            MoveSpeed = module.MoveSpeed;
+            TurnSpeed = module.TurnSpeed;
+            _agent = GetComponent<NavMeshAgent>();
         }
 
-        public Movable(IMovableData data, NavMeshAgent agent) : this(data.MoveSpeed, data.TurnSpeed, agent)
-        {
-        }
+        private NavMeshAgent _agent;
+        
 
-        private readonly NavMeshAgent _agent;
-
-
-        private IMovableData _data;
-
-        public float MoveSpeed { get; }
-        public float TurnSpeed { get; }
+        public float MoveSpeed { get; private set; }
+        public float TurnSpeed { get; private set; }
 
         public void MoveTo(Vector3 destenation)
         {
@@ -57,16 +51,18 @@ namespace Framework.Core.Modules
             _agent.ResetPath();
         }
 
-        public bool HasReachedDestination
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool HasReachedDestination => (_agent.destination - _agent.nextPosition).sqrMagnitude <= 0.01f;
 
         public void UpdateMover()
         {
             _agent.speed = MoveSpeed;
             _agent.acceleration = MoveSpeed * 1000;
             _agent.angularSpeed = TurnSpeed;
+        }
+
+        private void LateUpdate()
+        {
+            UpdateMover();
         }
     }
 }

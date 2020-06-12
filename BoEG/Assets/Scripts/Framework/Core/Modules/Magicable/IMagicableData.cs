@@ -4,5 +4,8 @@ namespace Framework.Core.Modules
     {
         float MagicGeneration { get; }
         float MagicCapacity { get; }
+        float MagicGenerationGain { get; }
+        float MagicCapacityGain { get; }
+
     }
 }

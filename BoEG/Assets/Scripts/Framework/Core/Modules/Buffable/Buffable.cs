@@ -2,6 +2,7 @@ using System;
 
 namespace Framework.Core.Modules
 {
+    [Obsolete]
     public class Buffable : IBuffable
     {
         public void AddBuff(IBuff buff)

@@ -15,33 +15,20 @@ namespace Framework.Core
 
         private void SetupComponents()
         {
-            var buffable = new Buffable();
-            GetFrameworkComponent<IBuffable>().Initialize(buffable);
+//            var buffable = new Buffable();
+//            GetFrameworkComponent<IBuffable>().Initialize(buffable);
 
-            var healthable = new Healthable(_healthableData);
-            var healthableBuffed = new BuffedHealthable(healthable, buffable);
-            var healthableModule = new HealthableModule(healthableBuffed);
-            AddSteppable(healthableModule);
-            GetFrameworkComponent<IHealthable>().Initialize(healthableModule);
+            GetFrameworkComponent<IHealthableData>().Initialize(_healthableData);
+            
+            GetFrameworkComponent<IMagicableData>().Initialize(_magicableData);
 
-            var magicable = new Magicable(_magicableData);
-            var magicableBuffed = new BuffedMagicable(magicable, buffable);
-            var magicableModule = new MagicableModule(magicableBuffed);
-            AddSteppable(magicableModule);
-            GetFrameworkComponent<IMagicable>().Initialize(magicableModule);
+            GetFrameworkComponent<IArmorableData>().Initialize(_armorableData);
+            
+//            GetFrameworkComponent<IDamageTarget>().Initialize();
 
+            GetFrameworkComponent<IAttackerableData>().Initialize(_attackerableData);
 
-            var armorable = new Armorable(_armorableData);
-            GetFrameworkComponent<IArmorable>().Initialize(armorable);
-
-            var damageTarget = new DamageTarget(armorable, healthable);
-            GetFrameworkComponent<IDamageTarget>().Initialize(damageTarget);
-
-            var attackerable = new Attackerable(_attackerableData);
-            GetFrameworkComponent<IAttackerable>().Initialize(attackerable);
-
-            var movable = new Movable(_movableData, GetComponent<NavMeshAgent>());
-            GetFrameworkComponent<IMovable>().Initialize(movable);
+            GetFrameworkComponent<IMovableData>().Initialize(_movableData);
         }
 
         [SerializeField] private HealthableData _healthableData;

@@ -1,58 +1,57 @@
 using System;
 using Framework.Types;
+using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    public class DamageTarget : IDamageTarget
+    [DisallowMultipleComponent]
+    public class DamageTarget : MonoBehaviour, IDamageTarget
     {
-        public DamageTarget(IArmorable armorable, IHealthable healthable)
+        private void Awake()
         {
-            _armorable = armorable;
-            _healthable = healthable;
+            _armorable = GetComponent<IArmorable>();
+            _healthable = GetComponent<IHealthable>();
         }
 
-        private readonly IArmorable _armorable;
-        private readonly IHealthable _healthable;
-        
+        private IArmorable _armorable;
+        private IHealthable _healthable;
+        private event EventHandler<DamageEventArgs> _damaged;
+        private event EventHandler<DamageEventArgs> _damaging;
+
         public virtual void TakeDamage(Damage damage)
         {
-//            OnDamaging(args);
-//            Callback(damage);
-//            OnDamaged(args); 
-            
-            
             var damageToTake = damage;
             //ARMORABLE
             if (_armorable != null)
             {
                 damageToTake = _armorable.ResistDamage(damage);
             }
-            OnDamaging(damageToTake);
-            OnDamaged(damageToTake);
-        }
-        
-//        protected Action<Damage> Callback { get; set; }
 
-
-        private void OnDamaged(Damage damage)
-        {
-            OnDamaged(new DamageEventArgs(damage));
+            OnDamaging(new DamageEventArgs(damageToTake));
+            _healthable.Health -= damageToTake.Value;
+            OnDamaged(new DamageEventArgs(damageToTake));
         }
+
         protected virtual void OnDamaged(DamageEventArgs e)
         {
-            Damaged?.Invoke(this, e);
+            _damaged?.Invoke(this, e);
         }
 
-        private void OnDamaging(Damage damage)
-        {
-            OnDamaging(new DamageEventArgs(damage));
-        }
         protected virtual void OnDamaging(DamageEventArgs e)
         {
-            Damaging?.Invoke(this, e);
+            _damaging?.Invoke(this, e);
         }
-        
-        public event EventHandler<DamageEventArgs> Damaged;
-        public event EventHandler<DamageEventArgs> Damaging;
+
+        public event EventHandler<DamageEventArgs> Damaged
+        {
+            add => _damaged += value;
+            remove => _damaged -= value;
+        }
+
+        public event EventHandler<DamageEventArgs> Damaging
+        {
+            add => _damaging += value;
+            remove => _damaging -= value;
+        }
     }
 }

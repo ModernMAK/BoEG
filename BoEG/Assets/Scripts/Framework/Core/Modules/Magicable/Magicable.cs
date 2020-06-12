@@ -1,70 +1,79 @@
 using System;
+using System.Collections.Generic;
+using Framework.Types;
+using Framework.Utility;
+using Old.Modules.Levelable;
+using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    public class Magicable : Statable, IMagicable
+    //Im overcomplicating this for myself
+    //Stop overthinking this. Do what unity does best
+
+
+    [DisallowMultipleComponent]
+    public class Magicable : Statable,
+        IComponent<IMagicableData>, IMagicable
     {
-        public Magicable(IMagicableData data) : this(data.MagicCapacity, data.MagicGeneration)
+        public float Magic
         {
+            get => Stat;
+            set => Stat = value;
         }
 
-        public Magicable(float capacity, float generation) : base(capacity, generation)
+        public float MagicPercentage
         {
+            get => StatPercentage;
+            set => StatPercentage = value;
         }
 
-        public virtual float Mana
+        public float MagicCapacity
         {
-            get => Value;
-            protected set => Value = value;
+            get => StatCapacity;
+            set => StatCapacity = value;
         }
 
-        public virtual float ManaPercentage
+        public float MagicGeneration
         {
-            get => Normal;
-            protected set => Normal = value;
+            get => StatGeneration;
+            set => StatGeneration = value;
         }
 
-        public virtual float ManaCapacity
+        public event EventHandler<float> MagicChanged
         {
-            get => Capacity;
-            protected set => Capacity = value;
+            add => StatChanged += value;
+            remove => StatChanged -= value;
         }
 
-        public virtual float ManaGeneration
+
+        public void Initialize(IMagicableData module)
         {
-            get => Generation;
-            protected set => Generation = value;
+            _capacity = module.MagicCapacity;
+            _percentage = 1f;
+            _generation = module.MagicGeneration;
         }
 
-        public void ModifyMana(float change)
+
+        protected override void OnModifierAdded(object sender, IModifier modifier)
         {
-            var args = new MagicableEventArgs(change);
-            OnModifying(args);
-            Mana += change;
-            OnModified(args);
+            if (modifier is IMagicableModifier magicableModifier)
+            {
+//                _modifiers.Add(magicableModifier);
+            }
         }
 
-        public void SetMana(float mana)
+        protected override void OnModifierRemoved(object sender, IModifier modifier)
         {
-            //Current + Change = Desired
-            //Therefore
-            //Desired - Current = Change
-            var change = mana - Mana;
-            ModifyMana(change);
+            if (modifier is IMagicableModifier magicableModifier)
+            {
+//                _modifiers.Remove(magicableModifier);
+            }
         }
 
-        public event EventHandler<MagicableEventArgs> Modified;
-        public event EventHandler<MagicableEventArgs> Modifying;
-
-
-        protected virtual void OnModified(MagicableEventArgs e)
+        public override void PreStep(float deltaTime)
         {
-            Modified?.Invoke(this, e);
-        }
-
-        protected virtual void OnModifying(MagicableEventArgs e)
-        {
-            Modifying?.Invoke(this, e);
+            if (!MagicPercentage.SafeEquals(0f))
+                Generate();
         }
     }
 }

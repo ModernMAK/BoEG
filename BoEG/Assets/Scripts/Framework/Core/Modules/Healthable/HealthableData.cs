@@ -11,15 +11,13 @@ namespace Framework.Core.Modules
         [SerializeField]
         private float _healthCapacity;
 
-        public float HealthGeneration
-        {
-            get { return _healthGeneration; }
-        }
+        public float HealthGeneration => _healthGeneration;
 
-        public float HealthCapacity
-        {
-            get { return _healthCapacity; }
-        }
+        public float HealthCapacity => _healthCapacity;
+
+        public float HealthGenerationGain => throw new NotImplementedException();
+
+        public float HealthCapacityGain => throw new NotImplementedException();
     }
 
 }
