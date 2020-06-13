@@ -19,6 +19,6 @@ namespace Framework.Ability
 
         public virtual void SelfCast()
         {
-        }        
+        }
     }
 }

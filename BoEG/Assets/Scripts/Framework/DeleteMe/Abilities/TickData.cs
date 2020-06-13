@@ -14,16 +14,10 @@ namespace Entity.Abilities
 
         [SerializeField] private float _interval;
 
-        public float Interval
-        {
-            get { return _interval; }
-        }
+        public float Interval => _interval;
 
         [SerializeField] private float _duration;
 
-        public float Duration
-        {
-            get { return _duration; }
-        }
+        public float Duration => _duration;
     }
 }

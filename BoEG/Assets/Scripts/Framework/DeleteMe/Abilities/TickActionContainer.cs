@@ -36,10 +36,7 @@ namespace Entity.Abilities
 
         public void Terminate()
         {
-            foreach (var inst in _internalContainer)
-            {
-                inst.Terminate();
-            }
+            foreach (var inst in _internalContainer) inst.Terminate();
 
             _internalContainer.Clear();
         }

@@ -4,19 +4,20 @@ namespace Triggers
 {
     public class BoxTriggerMethod : TriggerMethod
     {
+        private Quaternion _rotation;
+
+        private Vector3 _scale;
+
         public override Collider[] Collide()
         {
             return Physics.OverlapBox(Position, _scale, _rotation, Mask);
         }
-
-        private Vector3 _scale;
 
         public BoxTriggerMethod SetRadius(Vector3 scale)
         {
             _scale = scale;
             return this;
         }
-        private Quaternion _rotation;
 
         public BoxTriggerMethod SetRadius(Quaternion rotation)
         {

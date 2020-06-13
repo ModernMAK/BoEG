@@ -5,31 +5,9 @@ namespace Framework.Core.Trigger
 {
     public class Trigger : MonoBehaviour, ISpawnable, IInstantiable
     {
-        void ISpawnable.Spawn()
-        {
-            Spawn();
-        }
-
-        protected virtual void Spawn()
-        {
-        }
-
-        void ISpawnable.Despawn()
-        {
-            Despawn();
-        }
-
-        protected virtual void Despawn()
-        {
-        }
-
         void IInstantiable.Instantiate()
         {
             Instantiate();
-        }
-
-        protected virtual void Instantiate()
-        {
         }
 
         void IInstantiable.Terminate()
@@ -37,10 +15,30 @@ namespace Framework.Core.Trigger
             Terminate();
         }
 
+        void ISpawnable.Spawn()
+        {
+            Spawn();
+        }
+
+        void ISpawnable.Despawn()
+        {
+            Despawn();
+        }
+
+        protected virtual void Spawn()
+        {
+        }
+
+        protected virtual void Despawn()
+        {
+        }
+
+        protected virtual void Instantiate()
+        {
+        }
+
         protected virtual void Terminate()
         {
         }
     }
-
-    
 }

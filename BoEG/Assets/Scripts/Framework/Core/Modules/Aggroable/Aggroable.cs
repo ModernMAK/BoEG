@@ -1,6 +1,5 @@
+using System;
 using System.Collections.Generic;
-using Framework.Types;
-using TMPro;
 using UnityEngine;
 
 namespace Framework.Core.Modules
@@ -57,21 +56,21 @@ namespace Framework.Core.Modules
 //                return xDelta.sqrMagnitude.CompareTo(yDelta.sqrMagnitude);
 //            });
 //        }
-        public float AggroRange => throw new System.NotImplementedException();
+        public float AggroRange => throw new NotImplementedException();
 
         public bool InAggro(GameObject go)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public IEnumerable<GameObject> GetAggroTargets()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public bool HasAggroTarget()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

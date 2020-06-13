@@ -4,6 +4,5 @@ namespace Old.Modules.Levelable
     {
         float Experience { get; }
         int Level { get; }
-        
     }
 }

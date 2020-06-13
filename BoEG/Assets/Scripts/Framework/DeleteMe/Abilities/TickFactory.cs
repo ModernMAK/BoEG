@@ -4,6 +4,10 @@ namespace Framework.Ability
 {
     public class TickFactory
     {
+        private float _interval;
+        private Action<int> _logic;
+        private int _ticks;
+
         public TickFactory()
         {
         }
@@ -14,13 +18,10 @@ namespace Framework.Ability
             _ticks = ticks;
             _logic = logic;
         }
-        public TickFactory(TickFactory reference) : this(reference._interval,reference._ticks,reference._logic)
+
+        public TickFactory(TickFactory reference) : this(reference._interval, reference._ticks, reference._logic)
         {
         }
-
-        private float _interval;
-        private int _ticks;
-        private Action<int> _logic;
 
         public TickFactory SetInterval(float interval)
         {

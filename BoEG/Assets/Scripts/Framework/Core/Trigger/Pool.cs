@@ -6,20 +6,12 @@ namespace Framework.Core.Trigger
     {
         private readonly int _limit;
 
+        private readonly Queue<T> _pool;
+
         protected Pool(int limit = 0)
         {
             _limit = limit;
             _pool = new Queue<T>();
-        }
-
-        private readonly Queue<T> _pool;
-
-        private T GetNext()
-        {
-            if (_pool.Count > 0)
-                return _pool.Dequeue();
-            else
-                return Create();
         }
 
         public T Allocate()
@@ -47,7 +39,14 @@ namespace Framework.Core.Trigger
                 Release(poolable);
             }
 
-            poolable = default(T);
+            poolable = default;
+        }
+
+        private T GetNext()
+        {
+            if (_pool.Count > 0)
+                return _pool.Dequeue();
+            return Create();
         }
 
         protected abstract T Create();

@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace Framework.Types
 {
-    [Serializable][Obsolete]
+    [Serializable]
+    [Obsolete]
     public struct FloatBuff
     {
         public FloatBuff(float bonus, float multiplier)
@@ -15,14 +16,8 @@ namespace Framework.Types
         [SerializeField] private float _bonus;
         [SerializeField] private float _multiplier;
 
-        public float Bonus
-        {
-            get { return _bonus; }
-        }
+        public float Bonus => _bonus;
 
-        public float Multiplier
-        {
-            get { return _multiplier; }
-        }
+        public float Multiplier => _multiplier;
     }
 }

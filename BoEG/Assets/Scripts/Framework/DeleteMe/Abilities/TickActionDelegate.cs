@@ -9,7 +9,7 @@ namespace Entity.Abilities
             Delegate = logic;
         }
 
-        private Action Delegate { get; set; }
+        private Action Delegate { get; }
 
         protected override void Logic()
         {

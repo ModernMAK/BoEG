@@ -1,6 +1,5 @@
 using System;
 using Framework.Types;
-using UnityEngine;
 
 namespace Framework.Core.Modules
 {
@@ -12,9 +11,9 @@ namespace Framework.Core.Modules
             ManaSpent = manaSpent;
             Damage = damage;
         }
-        
-        public Actor Caster { get; private set; }
-        public float ManaSpent { get; private set; }
-        public Damage Damage { get; private set; }
+
+        public Actor Caster { get; }
+        public float ManaSpent { get; }
+        public Damage Damage { get; }
     }
 }

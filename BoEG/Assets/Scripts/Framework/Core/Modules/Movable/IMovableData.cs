@@ -4,6 +4,5 @@ namespace Framework.Core.Modules
     {
         float MoveSpeed { get; }
         float TurnSpeed { get; }
-        
     }
 }

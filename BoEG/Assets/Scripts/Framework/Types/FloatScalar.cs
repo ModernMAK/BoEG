@@ -3,10 +3,11 @@ using UnityEngine;
 
 namespace Framework.Types
 {
-    [Serializable][Obsolete]
+    [Serializable]
+    [Obsolete]
     public struct FloatScalar
     {
-        public FloatScalar(float flat, float gain = default(float))
+        public FloatScalar(float flat, float gain = default)
         {
             _base = flat;
             _gain = gain;
@@ -15,15 +16,9 @@ namespace Framework.Types
         [SerializeField] private float _base;
         [SerializeField] private float _gain;
 
-        public float Base
-        {
-            get { return _base; }
-        }
+        public float Base => _base;
 
-        public float Gain
-        {
-            get { return _gain; }
-        }
+        public float Gain => _gain;
 
         public float Evaluate(int levelDelta = 0)
         {

@@ -6,12 +6,12 @@ namespace Entity.Abilities.FlameWitch
     public class ManaHelper
     {
         public IMagicable Magicable { get; set; }
-        
+
         public bool CanSpendMana(float mana)
         {
             if (Magicable == null)
                 return false;
-            return (Magicable.Magic > mana);
+            return Magicable.Magic > mana;
         }
 
         public void SpendMana(float mana)
@@ -19,8 +19,8 @@ namespace Entity.Abilities.FlameWitch
             Magicable.Magic -= mana;
         }
     }
-    
-    
+
+
     public class CooldownHelper
     {
         public float Elapsed { get; set; }
@@ -29,7 +29,14 @@ namespace Entity.Abilities.FlameWitch
         public float Normal => Mathf.Clamp01(Elapsed / Cooldown);
         public bool Done => Cooldown <= Elapsed;
 
-        public void Reset() => Elapsed = 0f;
-        public void Advance(float delta) => Elapsed += delta;
+        public void Reset()
+        {
+            Elapsed = 0f;
+        }
+
+        public void Advance(float delta)
+        {
+            Elapsed += delta;
+        }
     }
 }

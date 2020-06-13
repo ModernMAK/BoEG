@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using Framework.Types;
 using Framework.Utility;
-using Old.Modules.Levelable;
 using UnityEngine;
 
 namespace Framework.Core.Modules
@@ -14,19 +12,14 @@ namespace Framework.Core.Modules
     public class Statable : MonoBehaviour,
         IStepable, IListener<ILevelable>, IListener<IModifiable>
     {
-            
-        protected float _percentage;
         protected float _capacity;
-        protected float _generation;
 
 
         protected float _capacityGain;
+        protected float _generation;
         protected float _generationGain;
 
-        //TODO use these to add modifiers
-//        protected ModifierResult _capacityModifier;
-//        protected ModifierResult _generationModifier;
-        protected event EventHandler<float> _statChanged;
+        protected float _percentage;
 
 //        private List<IStatableModifier> _modifiers;
 
@@ -36,7 +29,7 @@ namespace Framework.Core.Modules
             set => StatPercentage = value / StatCapacity;
         }
 
-        protected virtual  float StatPercentage
+        protected virtual float StatPercentage
         {
             get => _percentage;
             set
@@ -48,22 +41,16 @@ namespace Framework.Core.Modules
             }
         }
 
-        protected virtual  float StatCapacity
+        protected virtual float StatCapacity
         {
             get => _capacity;
             set => _capacity = value;
         }
 
-        protected virtual  float StatGeneration
+        protected virtual float StatGeneration
         {
             get => _generation;
             set => _generation = value;
-        }
-
-        protected virtual event EventHandler<float> StatChanged
-        {
-            add => _statChanged += value;
-            remove => _statChanged -= value;
         }
 
 
@@ -89,28 +76,6 @@ namespace Framework.Core.Modules
             source.OnModifierRemoved -= OnModifierRemoved;
         }
 
-        protected virtual void OnStatChanged(float e)
-        {
-            _statChanged?.Invoke(this, e);
-        }
-
-        protected virtual  void OnLevelChanged(object sender, int levelDifference)
-        {
-            _capacity += _capacityGain * levelDifference;
-            _generation += _generationGain * levelDifference;
-        }
-
-        protected virtual void OnModifierAdded(object sender, IModifier modifier)
-        {
-
-        }
-
-        protected virtual void OnModifierRemoved(object sender, IModifier modifier)
-        {
-
-        }
-
-        protected virtual void Generate(float deltaTime) => Stat += StatGeneration * deltaTime;
         public virtual void PreStep(float deltaTime)
         {
         }
@@ -125,6 +90,41 @@ namespace Framework.Core.Modules
 
         public virtual void PhysicsStep(float deltaTime)
         {
+        }
+
+        //TODO use these to add modifiers
+//        protected ModifierResult _capacityModifier;
+//        protected ModifierResult _generationModifier;
+        protected event EventHandler<float> _statChanged;
+
+        protected virtual event EventHandler<float> StatChanged
+        {
+            add => _statChanged += value;
+            remove => _statChanged -= value;
+        }
+
+        protected virtual void OnStatChanged(float e)
+        {
+            _statChanged?.Invoke(this, e);
+        }
+
+        protected virtual void OnLevelChanged(object sender, int levelDifference)
+        {
+            _capacity += _capacityGain * levelDifference;
+            _generation += _generationGain * levelDifference;
+        }
+
+        protected virtual void OnModifierAdded(object sender, IModifier modifier)
+        {
+        }
+
+        protected virtual void OnModifierRemoved(object sender, IModifier modifier)
+        {
+        }
+
+        protected virtual void Generate(float deltaTime)
+        {
+            Stat += StatGeneration * deltaTime;
         }
     }
 }

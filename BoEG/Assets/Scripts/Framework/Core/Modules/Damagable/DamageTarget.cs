@@ -8,16 +8,8 @@ namespace Framework.Core.Modules
     [RequireComponent(typeof(IHealthable))]
     public class DamageTarget : MonoBehaviour, IDamageTarget
     {
-        private void Awake()
-        {
-            _armorable = GetComponent<IArmorable>();
-            _healthable = GetComponent<IHealthable>();
-        }
-
         private IArmorable _armorable;
         private IHealthable _healthable;
-        private event EventHandler<DamageEventArgs> _damaged;
-        private event EventHandler<DamageEventArgs> _damaging;
 
         [Obsolete]
         public virtual void TakeDamage(Damage damage)
@@ -28,12 +20,9 @@ namespace Framework.Core.Modules
         {
             var damageToTake = damage;
             //ARMORABLE
-            if (_armorable != null)
-            {
-                damageToTake = _armorable.ResistDamage(damage);
-            }
+            if (_armorable != null) damageToTake = _armorable.ResistDamage(damage);
 
-            var dmgArg = new DamageEventArgs()
+            var dmgArg = new DamageEventArgs
             {
                 Damage = damageToTake,
                 Source = source
@@ -41,16 +30,6 @@ namespace Framework.Core.Modules
             OnDamaging(dmgArg);
             _healthable.Health -= dmgArg.Damage.Value;
             OnDamaged(dmgArg);
-        }
-
-        protected virtual void OnDamaged(DamageEventArgs e)
-        {
-            _damaged?.Invoke(this, e);
-        }
-
-        protected virtual void OnDamaging(DamageEventArgs e)
-        {
-            _damaging?.Invoke(this, e);
         }
 
         public event EventHandler<DamageEventArgs> Damaged
@@ -63,6 +42,25 @@ namespace Framework.Core.Modules
         {
             add => _damaging += value;
             remove => _damaging -= value;
+        }
+
+        private void Awake()
+        {
+            _armorable = GetComponent<IArmorable>();
+            _healthable = GetComponent<IHealthable>();
+        }
+
+        private event EventHandler<DamageEventArgs> _damaged;
+        private event EventHandler<DamageEventArgs> _damaging;
+
+        protected virtual void OnDamaged(DamageEventArgs e)
+        {
+            _damaged?.Invoke(this, e);
+        }
+
+        protected virtual void OnDamaging(DamageEventArgs e)
+        {
+            _damaging?.Invoke(this, e);
         }
     }
 }

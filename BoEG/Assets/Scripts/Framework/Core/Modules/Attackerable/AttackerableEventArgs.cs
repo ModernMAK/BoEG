@@ -4,6 +4,5 @@ namespace Framework.Core.Modules
 {
     public class AttackerableEventArgs : EventArgs
     {
-        
     }
 }

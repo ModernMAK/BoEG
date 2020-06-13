@@ -9,10 +9,8 @@ namespace Entity.Abilities.FlameWitch
     {
         private static PlayerControls _controls;
 
-        public static void Initialize()
-        {
-            var _ = Controls;
-        }
+        private static Camera _cached;
+
         private static PlayerControls Controls
         {
             get
@@ -27,12 +25,17 @@ namespace Entity.Abilities.FlameWitch
             }
         }
 
+        public static void Initialize()
+        {
+            var _ = Controls;
+        }
+
         [Obsolete("Use ManaHelper class")]
         public static bool CanSpendMana(IMagicable magicable, float mana)
         {
             if (magicable == null)
                 return false;
-            return (magicable.Magic > mana);
+            return magicable.Magic > mana;
         }
 
         [Obsolete("Use ManaHelper class")]
@@ -43,10 +46,8 @@ namespace Entity.Abilities.FlameWitch
 
         public static bool InRange(Transform self, Vector3 target, float range)
         {
-            return (self.position - target).sqrMagnitude <= (range * range);
+            return (self.position - target).sqrMagnitude <= range * range;
         }
-
-        private static Camera _cached;
 
         public static Ray GetScreenRay(bool updateCamera = false)
         {

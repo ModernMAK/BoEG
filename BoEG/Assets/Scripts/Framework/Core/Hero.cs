@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using Entity.Abilities.FlameWitch;
 using Framework.Core.Modules;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace Framework.Core
 {
@@ -34,8 +32,8 @@ namespace Framework.Core
             if (TryGetInitializable<IMagicableData>(out var magicable))
                 magicable.Initialize(_magicableData);
             else throw new MissingComponentException("IMagicable");
-            
-            
+
+
             if (TryGetInitializable<IArmorableData>(out var armorable))
                 armorable.Initialize(_armorableData);
             else throw new MissingComponentException("IArmorable");
@@ -50,11 +48,8 @@ namespace Framework.Core
             else throw new MissingComponentException("IMovable");
 
 
-            for (var i = 0; i < _abilities.Length; i++)
-            {
-                _abilities[i] = Instantiate(_abilities[i]);
-            }
-            
+            for (var i = 0; i < _abilities.Length; i++) _abilities[i] = Instantiate(_abilities[i]);
+
             if (TryGetInitializable<IReadOnlyList<IAbility>>(out var abilitiable))
                 abilitiable.Initialize(_abilities);
             else throw new MissingComponentException("IAbilitiable");

@@ -7,8 +7,12 @@ namespace Modules.Teamable
     [Serializable]
     public class Teamable : MonoBehaviour, ITeamable, IInitializable<TeamData>
     {
-
         [SerializeField] private TeamData _team;
+
+        public void Initialize(TeamData module)
+        {
+            _team = module;
+        }
 
         public TeamData Team => _team;
 
@@ -17,11 +21,9 @@ namespace Modules.Teamable
             _team = team;
         }
 
-        public bool SameTeam(ITeamable teamable) => _team == teamable.Team;
-
-        public void Initialize(TeamData module)
+        public bool SameTeam(ITeamable teamable)
         {
-            _team = module;
+            return _team == teamable.Team;
         }
     }
 }

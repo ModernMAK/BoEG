@@ -10,8 +10,8 @@ namespace Framework.Core.Modules
             Attacker = attacker;
             Damage = damage;
         }
-        
-        public Actor Attacker { get; private set; }
-        public Damage Damage { get; private set; }
+
+        public Actor Attacker { get; }
+        public Damage Damage { get; }
     }
 }

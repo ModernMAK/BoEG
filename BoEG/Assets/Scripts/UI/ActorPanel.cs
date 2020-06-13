@@ -5,9 +5,9 @@ namespace System
 {
     public class ActorPanel : MonoBehaviour
     {
-        [SerializeField] private GameObject _target;
-        [SerializeField] private bool _setTarget;
         [SerializeField] private bool _recollectUi;
+        [SerializeField] private bool _setTarget;
+        [SerializeField] private GameObject _target;
         private DebugUI[] _uis;
 
 
@@ -34,10 +34,7 @@ namespace System
 
         private void SetTargets()
         {
-            foreach (var ui in _uis)
-            {
-                ui.SetTarget(_target);
-            }
+            foreach (var ui in _uis) ui.SetTarget(_target);
         }
     }
 }

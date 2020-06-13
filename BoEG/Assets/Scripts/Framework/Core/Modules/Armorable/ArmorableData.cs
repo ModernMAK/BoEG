@@ -11,13 +11,8 @@ namespace Framework.Core.Modules
         [SerializeField] private ArmorData _magical;
 #pragma warning restore 649
 
-        public ArmorData Physical
-        {
-            get { return _physical; }
-        }
-        public ArmorData Magical
-        {
-            get { return _magical; }
-        }
+        public ArmorData Physical => _physical;
+
+        public ArmorData Magical => _magical;
     }
 }

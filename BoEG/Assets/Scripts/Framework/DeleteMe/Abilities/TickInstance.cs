@@ -6,6 +6,12 @@ namespace Framework.Ability
 {
     public class TickInstance
     {
+        private readonly float _interval;
+        private readonly Action<int> _logic;
+        private readonly int _ticks;
+        private int _ticksPerformed;
+        private float _timeAdvanced;
+
         public TickInstance(float interval, int ticks, Action<int> tickAction)
         {
             if (interval.SafeEquals(0f))
@@ -19,16 +25,7 @@ namespace Framework.Ability
             _logic = tickAction;
         }
 
-        private readonly float _interval;
-        private readonly int _ticks;
-        private int _ticksPerformed;
-        private float _timeAdvanced;
-        private readonly Action<int> _logic;
-
-        private int TicksLeft
-        {
-            get { return _ticks - _ticksPerformed; }
-        }
+        private int TicksLeft => _ticks - _ticksPerformed;
 
         private int TicksToPerform
         {
@@ -39,10 +36,7 @@ namespace Framework.Ability
             }
         }
 
-        public bool IsDone
-        {
-            get { return _ticks <= _ticksPerformed; }
-        }
+        public bool IsDone => _ticks <= _ticksPerformed;
 
         public void Advance(float deltaTime)
         {

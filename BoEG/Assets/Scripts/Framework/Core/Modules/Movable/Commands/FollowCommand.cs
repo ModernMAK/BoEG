@@ -13,22 +13,13 @@ namespace Framework.Core.Modules.Commands
         }
 
 
-        private Vector3 Direction
-        {
-            get { return (_target.position - Entity.transform.position); }
-        }
+        private Vector3 Direction => _target.position - Entity.transform.position;
 
-        private Vector3 Location
-        {
-            get { return _target.position - Direction.normalized * DesiredDistance; }
-        }
+        private Vector3 Location => _target.position - Direction.normalized * DesiredDistance;
 
         private float DesiredDistance { get; }
 
-        protected override Vector3 Target
-        {
-            get { return Location; }
-        }
+        protected override Vector3 Target => Location;
 
         protected override bool IsDone()
         {

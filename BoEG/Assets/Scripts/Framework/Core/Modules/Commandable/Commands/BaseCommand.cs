@@ -4,18 +4,9 @@ namespace Framework.Core.Modules.Commands
 {
     public abstract class BaseCommand : ICommand
     {
-        
-        protected virtual void PreStep(float deltaTime)
-        {
-        }
-
         void IStepable.PreStep(float deltaTime)
         {
             PreStep(deltaTime);
-        }
-
-        protected virtual void Step(float deltaTime)
-        {
         }
 
         void IStepable.Step(float deltaTime)
@@ -23,17 +14,9 @@ namespace Framework.Core.Modules.Commands
             Step(deltaTime);
         }
 
-        protected virtual void PostStep(float deltaTime)
-        {
-        }
-
         void IStepable.PostStep(float deltaTime)
         {
             PostStep(deltaTime);
-        }
-
-        protected virtual void PhysicsStep(float deltaTime)
-        {
         }
 
         void IStepable.PhysicsStep(float deltaTime)
@@ -46,19 +29,35 @@ namespace Framework.Core.Modules.Commands
             Start();
         }
 
-        protected abstract void Start();
-
         void ICommand.Stop()
         {
             Stop();
         }
 
-        protected abstract void Stop();
-
         bool ICommand.IsDone()
         {
             return IsDone();
         }
+
+        protected virtual void PreStep(float deltaTime)
+        {
+        }
+
+        protected virtual void Step(float deltaTime)
+        {
+        }
+
+        protected virtual void PostStep(float deltaTime)
+        {
+        }
+
+        protected virtual void PhysicsStep(float deltaTime)
+        {
+        }
+
+        protected abstract void Start();
+
+        protected abstract void Stop();
 
         protected abstract bool IsDone();
     }

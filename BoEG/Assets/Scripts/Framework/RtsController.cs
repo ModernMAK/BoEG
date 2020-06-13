@@ -7,14 +7,36 @@ using UnityEngine.InputSystem;
 
 public class RtsController : MonoBehaviour
 {
-    private ICommandable _commandable;
-    [SerializeField] private Actor _actor;
     private IAbilitiable _abilitiableHACK;
-    private Ray _ray;
-
-    private Camera _main;
+    [SerializeField] private Actor _actor;
+    private ICommandable _commandable;
 
     private PlayerControls _controls;
+
+    private Camera _main;
+    private Ray _ray;
+
+
+    private Camera CameraMain
+    {
+        get
+        {
+            if (_main == null)
+                _main = Camera.main;
+            return _main;
+        }
+    }
+
+    private Ray CameraRay
+    {
+        get
+        {
+            var point = _controls.Cursor.Pos.ReadValue<Vector2>();
+            // Debug.Log("CameraRay:\t"+point);
+            var ray = CameraMain.ScreenPointToRay(point);
+            return ray;
+        }
+    }
 
     private void Awake()
     {
@@ -71,10 +93,7 @@ public class RtsController : MonoBehaviour
     private void SelectOnstarted(InputAction.CallbackContext obj)
     {
         RaycastHit info;
-        if (PerformCast(out info))
-        {
-            Select(info.transform.gameObject);
-        }
+        if (PerformCast(out info)) Select(info.transform.gameObject);
     }
 
     private void ActionOnstarted(InputAction.CallbackContext obj)
@@ -93,28 +112,6 @@ public class RtsController : MonoBehaviour
                 else if (!_controls.Movement.Follow.ReadValue<bool>())
                     AddOrQueueCommand(GenerateMove(point));
             }
-        }
-    }
-
-
-    private Camera CameraMain
-    {
-        get
-        {
-            if (_main == null)
-                _main = Camera.main;
-            return _main;
-        }
-    }
-
-    private Ray CameraRay
-    {
-        get
-        {
-            var point = _controls.Cursor.Pos.ReadValue<Vector2>();
-            // Debug.Log("CameraRay:\t"+point);
-            var ray = CameraMain.ScreenPointToRay(point);
-            return ray;
         }
     }
 

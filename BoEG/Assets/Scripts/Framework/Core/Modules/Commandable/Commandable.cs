@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using Framework.Types;
 using UnityEngine;
 
 namespace Framework.Core.Modules
 {
     public class Commandable : MonoBehaviour, ICommandable
     {
-        private ICommand _activeCommand;
         private readonly LinkedList<ICommand> _commandQueue;
+        private ICommand _activeCommand;
 
 
         public Commandable()

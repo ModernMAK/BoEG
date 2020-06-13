@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RayDebugger : MonoBehaviour
 {
-    [SerializeField] private Vector3 _start;
     [SerializeField] private Vector3 _dir;
     [SerializeField] private float _scale;
+    [SerializeField] private Vector3 _start;
 
     private void OnDrawGizmosSelected()
     {
-        
-        Gizmos.DrawRay(_start,_dir * _scale);
+        Gizmos.DrawRay(_start, _dir * _scale);
     }
 }

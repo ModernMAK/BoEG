@@ -7,7 +7,7 @@ namespace Util
         [SerializeField] private bool _flatten;
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             var cam = Camera.main;
             if (_flatten)

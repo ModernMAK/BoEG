@@ -6,10 +6,6 @@ namespace Util
     {
         [SerializeField] private LaneWaypointManager _laneWaypointManager;
 
-        public LaneWaypointManager Lanes
-        {
-            get { return _laneWaypointManager; }
-        }
-        
+        public LaneWaypointManager Lanes => _laneWaypointManager;
     }
 }

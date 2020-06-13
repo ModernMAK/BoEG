@@ -4,12 +4,12 @@ namespace Framework.Core.Modules.Commands
 {
     public abstract class EntityCommand : BaseCommand
     {
-        protected GameObject Entity { get; private set; }
-
         public EntityCommand(GameObject entity)
         {
             Entity = entity;
         }
+
+        protected GameObject Entity { get; }
 
         protected T GetComponent<T>()
         {

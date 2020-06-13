@@ -11,27 +11,18 @@ namespace Entity.Abilities
             ElapsedTime = 0f;
         }
 
-        protected TickData Data { get; private set; }
+        protected TickData Data { get; }
 
-        protected float Duration
-        {
-            get { return Data.Duration; }
-        }
+        protected float Duration => Data.Duration;
 
-        protected float Interval
-        {
-            get { return Data.Interval; }
-        }
+        protected float Interval => Data.Interval;
 
         protected int Performed { get; private set; }
 
 
         protected float ElapsedTime { get; private set; }
 
-        protected int TicksRemaining
-        {
-            get { return Mathf.FloorToInt(Duration - (Interval * Performed) / Interval); }
-        }
+        protected int TicksRemaining => Mathf.FloorToInt(Duration - Interval * Performed / Interval);
 
         protected int TicksToPerform
         {
@@ -42,10 +33,7 @@ namespace Entity.Abilities
             }
         }
 
-        public bool DoneTicking
-        {
-            get { return TicksRemaining <= 0; }
-        }
+        public bool DoneTicking => TicksRemaining <= 0;
 
         protected abstract void Logic();
 

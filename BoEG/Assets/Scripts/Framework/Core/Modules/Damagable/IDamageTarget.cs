@@ -8,6 +8,7 @@ namespace Framework.Core.Modules
     {
         [Obsolete("Use overload and provide a source")]
         void TakeDamage(Damage damage);
+
         void TakeDamage(GameObject gameObject, Damage damage);
         event EventHandler<DamageEventArgs> Damaged;
         event EventHandler<DamageEventArgs> Damaging;

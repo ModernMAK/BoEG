@@ -14,29 +14,14 @@ namespace Framework.Core.Modules
         [SerializeField] private bool _isRanged;
 #pragma warning restore 649
 
-        public float AttackInterval
-        {
-            get { return _attackInterval; }
-        }
+        public float AttackInterval => _attackInterval;
 
-        public float AttackRange
-        {
-            get { return _attackRange; }
-        }
+        public float AttackRange => _attackRange;
 
-        public float AttackDamage
-        {
-            get { return _attackDamage; }
-        }
+        public float AttackDamage => _attackDamage;
 
-        public float AttackSpeed
-        {
-            get { return _attackSpeed; }
-        }
+        public float AttackSpeed => _attackSpeed;
 
-        public bool IsRanged
-        {
-            get { return _isRanged; }
-        }
+        public bool IsRanged => _isRanged;
     }
 }

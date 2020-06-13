@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using Framework.Types;
 using Framework.Utility;
-using Old.Modules.Levelable;
 using UnityEngine;
 
 namespace Framework.Core.Modules
@@ -15,6 +12,13 @@ namespace Framework.Core.Modules
     public class Magicable : Statable,
         IInitializable<IMagicableData>, IMagicable
     {
+        public void Initialize(IMagicableData module)
+        {
+            _capacity = module.MagicCapacity;
+            _percentage = 1f;
+            _generation = module.MagicGeneration;
+        }
+
         public float Magic
         {
             get => Stat;
@@ -43,14 +47,6 @@ namespace Framework.Core.Modules
         {
             add => StatChanged += value;
             remove => StatChanged -= value;
-        }
-
-
-        public void Initialize(IMagicableData module)
-        {
-            _capacity = module.MagicCapacity;
-            _percentage = 1f;
-            _generation = module.MagicGeneration;
         }
 
 

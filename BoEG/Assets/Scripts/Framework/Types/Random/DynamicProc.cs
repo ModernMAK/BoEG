@@ -2,6 +2,8 @@ namespace Framework.Types
 {
     public class DynamicProc : RandomProc
     {
+        private float _currentChance;
+
         public DynamicProc() : this(0.5f)
         {
         }
@@ -10,8 +12,6 @@ namespace Framework.Types
         {
             _currentChance = chance;
         }
-
-        private float _currentChance;
 
         public override bool Proc()
         {

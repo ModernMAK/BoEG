@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Framework.Core.Modules;
+﻿using Framework.Core.Modules;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,31 +6,24 @@ namespace UI
 {
     public class ArmorablePanel : DebugUI
     {
-        
-#pragma warning disable 649
-        [SerializeField] private Text _physicalBlockText;
-        [SerializeField] private Text _physicalResistText;
-        [SerializeField] private Text _magicalBlockText;
+        private IArmorable _armorable;
 
-        [SerializeField] private Text _magicalResistText;
-#pragma warning restore 649
-        
         // Start is called before the first frame update
         private GameObject _go;
-        private IArmorable _armorable;
 
         public override void SetTarget(GameObject go)
         {
             _go = go;
-            _armorable = (_go != null) ? _go.GetComponent<IArmorable>() : null;
+            _armorable = _go != null ? _go.GetComponent<IArmorable>() : null;
         }
+
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
-            float physBlock = 0f;
-            float magBlock = 0f;
-            float physResist = 0f;
-            float magResist = 0f;
+            var physBlock = 0f;
+            var magBlock = 0f;
+            var physResist = 0f;
+            var magResist = 0f;
             if (_armorable != null)
             {
                 physBlock = _armorable.Physical.Block;
@@ -47,5 +38,12 @@ namespace UI
             UpdateText(magResist, _magicalResistText);
         }
 
+#pragma warning disable 649
+        [SerializeField] private Text _physicalBlockText;
+        [SerializeField] private Text _physicalResistText;
+        [SerializeField] private Text _magicalBlockText;
+
+        [SerializeField] private Text _magicalResistText;
+#pragma warning restore 649
     }
 }

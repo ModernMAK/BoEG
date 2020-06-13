@@ -4,12 +4,13 @@ namespace Framework.Core.Trigger
 {
     public class DelegatePool<T> : Pool<T>
     {
-        private readonly Func<T> _create;
         private readonly Action<T> _allocate;
-        private readonly Action<T> _release;
+        private readonly Func<T> _create;
         private readonly Action<T> _destroy;
+        private readonly Action<T> _release;
 
-        public DelegatePool(Func<T> create, Action<T> allocate, Action<T> release, Action<T> destroy, int limit) : base(limit)
+        public DelegatePool(Func<T> create, Action<T> allocate, Action<T> release, Action<T> destroy, int limit) :
+            base(limit)
         {
             _create = create;
             _allocate = allocate;

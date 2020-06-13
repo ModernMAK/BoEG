@@ -7,6 +7,8 @@ namespace Framework.Core
 {
     public class Actor : MonoBehaviour
     {
+        private List<IStepable> _steppable;
+
         protected virtual void Awake()
         {
             _steppable = new List<IStepable>();
@@ -21,34 +23,20 @@ namespace Framework.Core
 
         protected virtual void Update()
         {
-            foreach (var item in _steppable)
-            {
-                item.Step(Time.deltaTime);
-            }
+            foreach (var item in _steppable) item.Step(Time.deltaTime);
         }
 
         private void FixedUpdate()
         {
-            foreach (var item in _steppable)
-            {
-                item.PhysicsStep(Time.fixedDeltaTime);
-            }
+            foreach (var item in _steppable) item.PhysicsStep(Time.fixedDeltaTime);
         }
 
         protected virtual void LateUpdate()
         {
-            foreach (var item in _steppable)
-            {
-                item.PostStep(Time.deltaTime);
-            }
+            foreach (var item in _steppable) item.PostStep(Time.deltaTime);
 
-            foreach (var item in _steppable)
-            {
-                item.PreStep(Time.deltaTime);
-            }
+            foreach (var item in _steppable) item.PreStep(Time.deltaTime);
         }
-
-        private List<IStepable> _steppable;
 
         public void AddSteppable(IStepable steppable)
         {
@@ -63,13 +51,13 @@ namespace Framework.Core
         //Todo move to a more appropriate lcoation
         protected IInitializable<T> GetInitializable<T>()
         {
-            return this.GetComponent<IInitializable<T>>();
+            return GetComponent<IInitializable<T>>();
         }
 
         protected bool TryGetInitializable<T>(out IInitializable<T> initializable)
         {
             initializable = GetInitializable<T>();
-            return (initializable != null);
+            return initializable != null;
         }
     }
 }

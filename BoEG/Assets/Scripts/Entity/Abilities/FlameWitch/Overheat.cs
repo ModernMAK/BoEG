@@ -15,17 +15,19 @@ namespace Entity.Abilities.FlameWitch
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Overheat")]
     public class Overheat : AbilityObject, IStepable
     {
-        [Header("Mana Cost")] [SerializeField] public float _manaCostPerSecond;
+        [SerializeField] public float _damagePerSecond;
+        [SerializeField] public float _deathDamage;
+
+        [Header("Damage On Death")] public float _deathRange;
 
         [Header("Damage Over Time")] [SerializeField]
         public float _dotRange;
 
-        [SerializeField] public float _damagePerSecond;
-
-        [Header("Damage On Death")] public float _deathRange;
-        [SerializeField] public float _deathDamage;
-
         [SerializeField] public bool _isActive;
+        [Header("Mana Cost")] [SerializeField] public float _manaCostPerSecond;
+
+        private ManaHelper _manaHelper;
+        private TickAction _tickHelper;
 
         public bool IsActive
         {
@@ -33,14 +35,29 @@ namespace Entity.Abilities.FlameWitch
             set => _isActive = value;
         }
 
-        private ManaHelper _manaHelper;
-        private TickAction _tickHelper;
+        public void PreStep(float deltaTime)
+        {
+        }
+
+        public void Step(float deltaTime)
+        {
+            if (IsActive)
+                _tickHelper.Advance(deltaTime);
+        }
+
+        public void PostStep(float deltaTime)
+        {
+        }
+
+        public void PhysicsStep(float deltaTime)
+        {
+        }
 
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _manaHelper = new ManaHelper() {Magicable = actor.GetComponent<IMagicable>()};
-            _tickHelper = new InfiniteTickAction() {Callback = OnTick, TickInterval = 1f};
+            _manaHelper = new ManaHelper {Magicable = actor.GetComponent<IMagicable>()};
+            _tickHelper = new InfiniteTickAction {Callback = OnTick, TickInterval = 1f};
             actor.AddSteppable(this);
         }
 
@@ -71,25 +88,10 @@ namespace Entity.Abilities.FlameWitch
                     damageTarget.TakeDamage(Self.gameObject, damage);
                 }
             }
-            else IsActive = false;
-        }
-
-        public void PreStep(float deltaTime)
-        {
-        }
-
-        public void Step(float deltaTime)
-        {
-            if (IsActive)
-                _tickHelper.Advance(deltaTime);
-        }
-
-        public void PostStep(float deltaTime)
-        {
-        }
-
-        public void PhysicsStep(float deltaTime)
-        {
+            else
+            {
+                IsActive = false;
+            }
         }
     }
 }

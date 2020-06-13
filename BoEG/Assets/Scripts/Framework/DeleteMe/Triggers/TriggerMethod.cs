@@ -4,25 +4,26 @@ namespace Triggers
 {
     public class TriggerMethod
     {
+        private Transform _follow;
+
+        private Vector3 _position;
+
         public TriggerMethod()
         {
             _follow = null;
-            _position = default(Vector3);
+            _position = default;
             Mask = Physics.DefaultRaycastLayers;
         }
+
+        protected Vector3 Position => _follow != null ? _follow.position : _position;
+
+        protected int Mask { get; private set; }
 
 
         public virtual Collider[] Collide()
         {
             return new Collider[0];
         }
-
-        private Vector3 _position;
-        private Transform _follow;
-
-        protected Vector3 Position => (_follow != null ? _follow.position : _position);
-
-        protected int Mask { get; private set; }
 
         public TriggerMethod SetFollow(GameObject go)
         {

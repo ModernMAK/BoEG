@@ -6,6 +6,5 @@ namespace Framework.Core.Modules
         float MagicCapacity { get; }
         float MagicGenerationGain { get; }
         float MagicCapacityGain { get; }
-
     }
 }

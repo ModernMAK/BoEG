@@ -4,6 +4,10 @@ namespace Framework.Core.Modules
     {
         public float Flat { get; set; }
         public float Multiplier { get; set; }
-        public float Calculate(float value) => Flat + value * (1f + Multiplier);
+
+        public float Calculate(float value)
+        {
+            return Flat + value * (1f + Multiplier);
+        }
     }
 }

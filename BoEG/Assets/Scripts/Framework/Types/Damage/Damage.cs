@@ -1,10 +1,9 @@
 ﻿using System;
-using UnityEngine;
 
 namespace Framework.Types
 {
     /// <summary>
-    /// A Damage Instance
+    ///     A Damage Instance
     /// </summary>
     public struct Damage
     {
@@ -31,12 +30,12 @@ namespace Framework.Types
 
         public Damage SetValue(float value)
         {
-            if (value < 0f) 
+            if (value < 0f)
                 throw new ArgumentOutOfRangeException(nameof(value), value, "Cannot be negative.");
-            
+
             return new Damage(this)
             {
-                Value = value,
+                Value = value
             };
         }
 

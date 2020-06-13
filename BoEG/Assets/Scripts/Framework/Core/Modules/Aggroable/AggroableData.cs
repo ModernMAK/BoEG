@@ -8,9 +8,6 @@ namespace Framework.Core.Modules
     {
         [SerializeField] private float _aggroRange;
 
-        public float AggroRange
-        {
-            get { return _aggroRange; }
-        }
+        public float AggroRange => _aggroRange;
     }
 }

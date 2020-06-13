@@ -7,18 +7,22 @@ namespace Triggers
 {
     public class Trigger
     {
+        private readonly List<GameObject> _colliders;
+
         public Trigger(TriggerMethod handler)
         {
             _colliders = new List<GameObject>();
             CollisionMethod = handler;
         }
 
+        private TriggerMethod CollisionMethod { get; }
+
+        public IEnumerable<GameObject> Colliders => _colliders;
+
         private static Collider[] DefaultCollisionMethod()
         {
             return new Collider[0];
         }
-
-        private TriggerMethod CollisionMethod { get; set; }
 
         private GameObject[] TriggerStep()
         {
@@ -33,7 +37,7 @@ namespace Triggers
             foreach (var col in cols)
             {
                 var attachedRigidbody = col.attachedRigidbody;
-                gos[counter] = (attachedRigidbody != null) ? attachedRigidbody.gameObject : col.gameObject;
+                gos[counter] = attachedRigidbody != null ? attachedRigidbody.gameObject : col.gameObject;
                 counter++;
             }
 
@@ -51,28 +55,11 @@ namespace Triggers
             //Get all who exited this step
             var exited = _colliders.Except(collisions).ToArray();
 
-            foreach (var enter in entered)
-            {
-                OnEnter(enter);
-            }
+            foreach (var enter in entered) OnEnter(enter);
 
-            foreach (var stay in stayed)
-            {
-                OnStay(stay);
-            }
+            foreach (var stay in stayed) OnStay(stay);
 
-            foreach (var exit in exited)
-            {
-                OnExit(exit);
-            }
-        }
-
-
-        private readonly List<GameObject> _colliders;
-
-        public IEnumerable<GameObject> Colliders
-        {
-            get { return _colliders; }
+            foreach (var exit in exited) OnExit(exit);
         }
 
         private void AddCollider(GameObject go)

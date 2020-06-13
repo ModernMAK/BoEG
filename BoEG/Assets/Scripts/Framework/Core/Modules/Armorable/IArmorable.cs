@@ -10,7 +10,7 @@ namespace Framework.Core.Modules
         Damage ResistDamage(Damage damage);
 
         float CalculateReduction(Damage damage);
-        
+
         event EventHandler<ArmorableEventArgs> Resisted;
         event EventHandler<ArmorableEventArgs> Resisting;
     }

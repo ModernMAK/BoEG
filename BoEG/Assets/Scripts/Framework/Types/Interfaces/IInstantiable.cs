@@ -2,7 +2,7 @@ using System;
 
 namespace Framework.Types
 {
-    [Obsolete()]
+    [Obsolete]
     public interface IInstantiable
     {
         void Instantiate();

@@ -4,9 +4,9 @@ namespace Modules
 {
     public class Effect : IEffect
     {
-        
         protected GameObject Source { get; private set; }
         protected GameObject Target { get; private set; }
+
         public virtual void Initialize(GameObject source, GameObject target)
         {
             Target = target;
@@ -24,10 +24,8 @@ namespace Modules
         {
         }
 
-        public virtual bool ShouldTerminate
-        {
-            get { return true; }
-        }
+        public virtual bool ShouldTerminate => true;
+
         public virtual void Terminate()
         {
         }

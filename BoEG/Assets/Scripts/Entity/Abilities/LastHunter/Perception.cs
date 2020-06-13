@@ -6,6 +6,5 @@ namespace Entity.Abilities.LastHunter
          * Target remains visible while in range indefinately.
          * Target remains visible for a short delay after leaving range.
          */
-        
     }
 }

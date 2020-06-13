@@ -6,6 +6,7 @@ namespace Framework.Core.Modules
     [DisallowMultipleComponent]
     public class Movable : MonoBehaviour, IInitializable<IMovableData>, IMovable
     {
+        private NavMeshAgent _agent;
         private IMovable _movable;
 
         public void Initialize(IMovableData module)
@@ -15,8 +16,6 @@ namespace Framework.Core.Modules
             _agent = GetComponent<NavMeshAgent>();
         }
 
-        private NavMeshAgent _agent;
-        
 
         public float MoveSpeed { get; private set; }
         public float TurnSpeed { get; private set; }

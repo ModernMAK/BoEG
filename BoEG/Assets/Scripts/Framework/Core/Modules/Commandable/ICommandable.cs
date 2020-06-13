@@ -6,7 +6,7 @@ namespace Framework.Core.Modules
     {
         void AddCommand(ICommand command);
         void SetCommand(ICommand command);
-        
+
         void InterruptCommand(ICommand command);
         void ClearCommands();
     }

@@ -6,20 +6,13 @@ namespace Framework.Core.Modules
 {
     public class Armorable : MonoBehaviour, IArmorable, IInitializable<IArmorableData>
     {
-        public void Initialize(IArmorableData data)
-        {
-            Physical = new Armor(data.Physical);
-            Magical = new Armor(data.Magical);
-        }
-
-
         public Armor Physical { get; private set; }
         public Armor Magical { get; private set; }
 
         public virtual Damage ResistDamage(Damage damage)
         {
             var reduction = CalculateReduction(damage);
-            var args = new ArmorableEventArgs() {Damage = damage, Reduction = reduction};
+            var args = new ArmorableEventArgs {Damage = damage, Reduction = reduction};
             OnResisting(args);
             //Reduction, so negate the value
             args.Damage = args.Damage.ModifyValue(-args.Reduction);
@@ -43,6 +36,15 @@ namespace Framework.Core.Modules
             }
         }
 
+        public event EventHandler<ArmorableEventArgs> Resisted;
+        public event EventHandler<ArmorableEventArgs> Resisting;
+
+        public void Initialize(IArmorableData data)
+        {
+            Physical = new Armor(data.Physical);
+            Magical = new Armor(data.Magical);
+        }
+
         protected virtual void OnResisted(ArmorableEventArgs e)
         {
             Resisted?.Invoke(this, e);
@@ -52,8 +54,5 @@ namespace Framework.Core.Modules
         {
             Resisting?.Invoke(this, e);
         }
-
-        public event EventHandler<ArmorableEventArgs> Resisted;
-        public event EventHandler<ArmorableEventArgs> Resisting;
     }
 }

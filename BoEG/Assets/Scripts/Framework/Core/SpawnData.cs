@@ -9,16 +9,18 @@ namespace Framework.Core
     [Serializable]
     public class SpawnData
     {
-        public GameObject Prefab;
         public float Interval;
         public float LastSpawn;
+        public GameObject Prefab;
         public int SpawnCount;
+
+        public bool CanSpawn => Interval + LastSpawn <= Time.time;
 
         public GameObject[] Spawn(params Vector3[] spawnLocations)
         {
-            if(spawnLocations.Length == 0)
+            if (spawnLocations.Length == 0)
                 return new GameObject[0];
-            
+
             var list = new List<GameObject>();
             var offset = Random.Range(0, spawnLocations.Length);
             for (var i = 0; i < SpawnCount; i++)
@@ -27,6 +29,7 @@ namespace Framework.Core
                 var go = Spawn(location, Random.insideUnitCircle * Mathf.Epsilon);
                 list.Add(go);
             }
+
             LastSpawn = Time.time;
             return list.ToArray();
         }
@@ -37,11 +40,6 @@ namespace Framework.Core
             var properLocation = location + properDelta;
 
             return Object.Instantiate(Prefab, properLocation, Quaternion.identity);
-        }
-
-        public bool CanSpawn
-        {
-            get => (Interval + LastSpawn <= Time.time);
         }
     }
 }

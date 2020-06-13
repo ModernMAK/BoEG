@@ -19,7 +19,7 @@ namespace Framework.Types
             Random = random;
         }
 
-        protected Random Random { get; private set; }
+        protected Random Random { get; }
         public abstract bool Proc();
     }
 }

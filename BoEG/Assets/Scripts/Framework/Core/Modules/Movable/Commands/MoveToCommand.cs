@@ -4,14 +4,12 @@ namespace Framework.Core.Modules.Commands
 {
     public class MoveToCommand : MovementCommand
     {
-        private readonly Vector3 _target;
-
         public MoveToCommand(GameObject entity, Vector3 target) : base(entity)
         {
-            _target = target;
+            Target = target;
         }
 
-        protected override Vector3 Target => _target;
+        protected override Vector3 Target { get; }
 
         protected override bool IsDone()
         {

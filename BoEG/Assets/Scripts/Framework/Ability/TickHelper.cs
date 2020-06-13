@@ -15,8 +15,8 @@ namespace Entity.Abilities.FlameWitch
         public float TimeNormal => ElapsedTime / TotalTime;
 
         /// <summary>
-        /// Advances tick time, and returns the number of ticks to perform.
-        /// Returns true if there are no more ticks to perform
+        ///     Advances tick time, and returns the number of ticks to perform.
+        ///     Returns true if there are no more ticks to perform
         /// </summary>
         /// <param name="deltaTime"></param>
         /// <param name="ticks"></param>
@@ -27,10 +27,7 @@ namespace Entity.Abilities.FlameWitch
             var ticksRequested = Mathf.FloorToInt(InternalElapsedTime / TickInterval);
             InternalElapsedTime -= TickInterval * ticksRequested; //Doesnt matter if we fix before or after
             TicksPerformed += ticksRequested;
-            if (ticksRequested > TicksLeft)
-            {
-                ticksRequested = TicksLeft;
-            }
+            if (ticksRequested > TicksLeft) ticksRequested = TicksLeft;
 
             ticks = ticksRequested;
             return IsDone;

@@ -6,6 +6,5 @@ namespace Framework.Core.Modules
         float HealthCapacity { get; }
         float HealthGenerationGain { get; }
         float HealthCapacityGain { get; }
-
     }
 }

@@ -5,6 +5,8 @@ namespace Framework.Core.Modules
 {
     public class Attackerable : IAttackerable
     {
+        private readonly float _cooldowEnd = float.MinValue;
+
         public Attackerable(float damage, float range, float speed, float interval, bool ranged)
         {
             AttackDamage = damage;
@@ -28,24 +30,22 @@ namespace Framework.Core.Modules
 
         public bool IsRanged { get; protected set; }
 
-        public bool IsAttackOnCooldown => (Time.time <= _cooldowEnd);
-        private float _cooldowEnd = float.MinValue;
+        public bool IsAttackOnCooldown => Time.time <= _cooldowEnd;
 
 
         public void Attack(Actor actor)
         {
-            throw new System.NotImplementedException();
-            
+            throw new NotImplementedException();
         }
 
         public event EventHandler<AttackerableEventArgs> Attacking;
+
+        public event EventHandler<AttackerableEventArgs> Attacked;
 
         protected void OnAttacking(AttackerableEventArgs e)
         {
             Attacking?.Invoke(this, e);
         }
-
-        public event EventHandler<AttackerableEventArgs> Attacked;
 
         protected void OnAttacked(AttackerableEventArgs e)
         {

@@ -11,7 +11,8 @@ namespace Framework.Core.Modules
             Source = default;
             Damage = default;
         }
-        public DamageEventArgs(GameObject source,Damage damage)
+
+        public DamageEventArgs(GameObject source, Damage damage)
         {
             Source = source;
             Damage = damage;

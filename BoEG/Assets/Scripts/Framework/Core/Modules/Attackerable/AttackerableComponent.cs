@@ -22,17 +22,6 @@ namespace Framework.Core.Modules
 
         public bool IsAttackOnCooldown => _attackerable.IsAttackOnCooldown;
 
-        private void OnDrawGizmosSelected()
-        {
-            if (_attackerable == null)
-                return;
-            
-            var color = Gizmos.color; //Do we still need to do this?
-            Gizmos.color = Color.red;            
-            Gizmos.DrawWireSphere(transform.position,AttackRange);
-            Gizmos.color = color;
-        }
-
         public void Attack(Actor actor)
         {
             _attackerable.Attack(actor);
@@ -53,6 +42,17 @@ namespace Framework.Core.Modules
         public void Initialize(IAttackerable module)
         {
             _attackerable = module;
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (_attackerable == null)
+                return;
+
+            var color = Gizmos.color; //Do we still need to do this?
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, AttackRange);
+            Gizmos.color = color;
         }
     }
 }

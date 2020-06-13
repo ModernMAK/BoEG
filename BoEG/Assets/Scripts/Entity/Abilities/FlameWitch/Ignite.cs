@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
@@ -24,25 +23,48 @@ namespace Entity.Abilities.FlameWitch
         [Header("Cast Range")] [SerializeField]
         private float _castRange = 5f;
 
-        [Header("Mana Cost")] [SerializeField] private float _manaCost = 100f;
-
         [Header("Initial Damage")] [SerializeField]
         private float _damage = 100f;
 
-        [Header("Damage Over Time")] [SerializeField]
-        private float _tickInterval;
+        private IMagicable _magicable;
 
-        [SerializeField] private float _tickDamage;
-        [SerializeField] private int _tickCount;
+        [Header("Mana Cost")] [SerializeField] private float _manaCost = 100f;
+        private Overheat _overheatAbility;
 
         [Header("OverHeat FX")] [SerializeField]
         private float _overheatSearchRange = 1f;
 
-        private IMagicable _magicable;
-        private Overheat _overheatAbility;
-        private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
+        [SerializeField] private int _tickCount;
+
+        [SerializeField] private float _tickDamage;
+
+        [Header("Damage Over Time")] [SerializeField]
+        private float _tickInterval;
 
         private List<TickAction> _ticks;
+        private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
+
+        public void PreStep(float deltaTime)
+        {
+        }
+
+        public void Step(float deltaTime)
+        {
+            for (var i = 0; i < _ticks.Count; i++)
+                if (_ticks[i].Advance(deltaTime))
+                {
+                    _ticks.RemoveAt(i);
+                    i--;
+                }
+        }
+
+        public void PostStep(float deltaTime)
+        {
+        }
+
+        public void PhysicsStep(float deltaTime)
+        {
+        }
 
         public override void Initialize(Actor actor)
         {
@@ -93,7 +115,7 @@ namespace Entity.Abilities.FlameWitch
             damagable.TakeDamage(Self.gameObject, damage);
             //TODO add DOT
             //Gather DOT targets
-            var dotTargets = new List<Actor>() {target};
+            var dotTargets = new List<Actor> {target};
             if (IsInOverheat)
             {
                 var colliders = Physics.OverlapSphere(target.transform.position, _overheatSearchRange,
@@ -101,19 +123,18 @@ namespace Entity.Abilities.FlameWitch
                 foreach (var collider in colliders)
                 {
                     var actor = collider.GetComponent<Actor>();
-                    if(actor == target)//Already added
+                    if (actor == target) //Already added
                         continue;
-                    if (actor == null)//Not an actor
+                    if (actor == null) //Not an actor
                         continue;
                     dotTargets.Add(actor);
                 }
             }
 
             foreach (var actor in dotTargets)
-            {
                 if (GetDotAction(actor, out var action))
                 {
-                    var tickWrapper = new TickAction()
+                    var tickWrapper = new TickAction
                     {
                         Callback = action,
                         TickCount = _tickCount,
@@ -121,10 +142,9 @@ namespace Entity.Abilities.FlameWitch
                     };
                     _ticks.Add(tickWrapper);
                 }
-            }
         }
 
-        bool GetDotAction(Actor actor, out Action dotAction)
+        private bool GetDotAction(Actor actor, out Action dotAction)
         {
             dotAction = default;
             var dmgTarget = actor.GetComponent<IDamageTarget>();
@@ -143,30 +163,9 @@ namespace Entity.Abilities.FlameWitch
             return true;
         }
 
-        public override float GetManaCost() => _manaCost;
-
-        public void PreStep(float deltaTime)
+        public override float GetManaCost()
         {
-        }
-
-        public void Step(float deltaTime)
-        {
-            for (var i = 0; i < _ticks.Count; i++)
-            {
-                if (_ticks[i].Advance(deltaTime))
-                {
-                    _ticks.RemoveAt(i);
-                    i--;
-                }
-            }
-        }
-
-        public void PostStep(float deltaTime)
-        {
-        }
-
-        public void PhysicsStep(float deltaTime)
-        {
+            return _manaCost;
         }
     }
 }

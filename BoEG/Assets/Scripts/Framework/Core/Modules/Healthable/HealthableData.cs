@@ -7,10 +7,8 @@ namespace Framework.Core.Modules
     public struct HealthableData : IHealthableData
     {
 #pragma warning disable 649
-        [SerializeField]
-        private float _healthGeneration;
-        [SerializeField]
-        private float _healthCapacity;
+        [SerializeField] private float _healthGeneration;
+        [SerializeField] private float _healthCapacity;
 #pragma warning restore 649
 
         public float HealthGeneration => _healthGeneration;
@@ -21,5 +19,4 @@ namespace Framework.Core.Modules
 
         public float HealthCapacityGain => throw new NotImplementedException();
     }
-
 }

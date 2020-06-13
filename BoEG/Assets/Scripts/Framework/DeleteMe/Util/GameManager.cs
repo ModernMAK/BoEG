@@ -5,18 +5,13 @@ namespace Util
 {
     public class GameManager : MonoBehaviour
     {
-        private static GameManager _instance;
-
-        public static GameManager Instance
-        {
-            get { return _instance; }
-        }
+        public static GameManager Instance { get; private set; }
 
         protected virtual void Awake()
         {
-            if (_instance != null)
+            if (Instance != null)
                 throw new Exception("Cannot allow two game managers!");
-            _instance = this;
+            Instance = this;
         }
     }
 }

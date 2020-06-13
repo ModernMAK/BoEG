@@ -6,6 +6,8 @@ namespace Framework.Core.Modules
     {
         float MoveSpeed { get; }
         float TurnSpeed { get; }
+
+        bool HasReachedDestination { get; }
         void MoveTo(Vector3 destenation);
         void WarpTo(Vector3 destenation);
         void Push(Vector3 direction);
@@ -13,8 +15,6 @@ namespace Framework.Core.Modules
         void StopMovement();
         void StartMovement();
         void CancelMovement();
-        
-        bool HasReachedDestination { get; }
         void UpdateMover();
     }
 }

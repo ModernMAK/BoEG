@@ -1,22 +1,21 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Framework.Core.Modules.Commands
 {
     public class AttackHoldCommand : EntityCommand
     {
-        protected IAttackerable Attackerable => _attackerable;
-        private readonly IAttackerable _attackerable;
-        protected IAggroable Aggroable => _aggroable;
         private readonly IAggroable _aggroable;
+        private readonly IAttackerable _attackerable;
 
         public AttackHoldCommand(GameObject entity) : base(entity)
         {
             GetComponent(out _attackerable);
             GetComponent(out _aggroable);
         }
+
+        protected IAttackerable Attackerable => _attackerable;
+        protected IAggroable Aggroable => _aggroable;
 
 
         protected override void Step(float deltaTime)

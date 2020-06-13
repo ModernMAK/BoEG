@@ -5,10 +5,12 @@ namespace Util
 {
     public class LaneWaypointManager : MonoBehaviour
     {
+        private const string SingletonString = "SingletonString";
         private static LaneWaypointManager _instance;
 
+        private static readonly Transform[] NullWaypoints = new Transform[0];
 
-        private const string SingletonString = "SingletonString";
+        [SerializeField] private WaypointInfo[] _waypointInfo;
 
         private static LaneWaypointManager Instance
         {
@@ -21,6 +23,14 @@ namespace Util
             }
         }
 
+        public Transform[] GetWaypoints(WaypointData data)
+        {
+            foreach (var wpi in _waypointInfo)
+                if (wpi.Data == data)
+                    return wpi.Waypoints;
+            return NullWaypoints;
+        }
+
 
         [Serializable]
         private struct WaypointInfo
@@ -28,29 +38,9 @@ namespace Util
             [SerializeField] private WaypointData _data;
             [SerializeField] private Transform[] _waypoints;
 
-            public WaypointData Data
-            {
-                get { return _data; }
-            }
+            public WaypointData Data => _data;
 
-            public Transform[] Waypoints
-            {
-                get { return _waypoints; }
-            }
-        }
-
-        [SerializeField] private WaypointInfo[] _waypointInfo;
-
-        private static readonly Transform[] NullWaypoints = new Transform[0];
-
-        public Transform[] GetWaypoints(WaypointData data)
-        {
-            foreach (var wpi in _waypointInfo)
-            {
-                if (wpi.Data == data)
-                    return wpi.Waypoints;
-            }
-            return NullWaypoints;
+            public Transform[] Waypoints => _waypoints;
         }
     }
 }

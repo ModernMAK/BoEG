@@ -4,13 +4,12 @@ namespace Triggers
 {
     public class SphereTriggerMethod : TriggerMethod
     {
-        
+        private float _radius;
+
         public override Collider[] Collide()
         {
             return Physics.OverlapSphere(Position, _radius, Mask);
         }
-
-        private float _radius;
 
         public SphereTriggerMethod SetRadius(float radius)
         {

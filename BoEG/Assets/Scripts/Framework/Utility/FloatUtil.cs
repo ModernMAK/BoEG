@@ -11,7 +11,7 @@ namespace Framework.Utility
 
         public static bool SafeEquals(this float value, float other, float precision)
         {
-            return -precision <= (value - other) && (value - other) <= precision;
+            return -precision <= value - other && value - other <= precision;
         }
     }
 }
