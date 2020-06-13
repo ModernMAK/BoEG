@@ -10,6 +10,13 @@ namespace Framework.Core
         protected virtual void Awake()
         {
             _steppable = new List<IStepable>();
+            SetupComponents();
+        }
+
+        protected virtual void SetupComponents()
+        {
+            var steppables = GetComponents<IStepable>();
+            _steppable.AddRange(steppables);
         }
 
         protected virtual void Update()
@@ -22,7 +29,6 @@ namespace Framework.Core
 
         private void FixedUpdate()
         {
-            
             foreach (var item in _steppable)
             {
                 item.PhysicsStep(Time.fixedDeltaTime);
@@ -44,20 +50,26 @@ namespace Framework.Core
 
         private List<IStepable> _steppable;
 
-        protected void AddSteppable(IStepable steppable)
+        public void AddSteppable(IStepable steppable)
         {
             _steppable.Add(steppable);
         }
 
-        protected void RemoveSteppable(IStepable steppable)
+        public void RemoveSteppable(IStepable steppable)
         {
             _steppable.Remove(steppable);
         }
 
         //Todo move to a more appropriate lcoation
-        protected IInitializable<T> GetFrameworkComponent<T>()
+        protected IInitializable<T> GetInitializable<T>()
         {
             return this.GetComponent<IInitializable<T>>();
+        }
+
+        protected bool TryGetInitializable<T>(out IInitializable<T> initializable)
+        {
+            initializable = GetInitializable<T>();
+            return (initializable != null);
         }
     }
 }

@@ -8,10 +8,11 @@ namespace Framework.Core.Modules
             Resistance = resistance;
             Immunity = immunity;
         }
-        public Armor(IArmorData data) : this(data.Block,data.Resist,data.Immune)
+
+        public Armor(IArmorData data) : this(data.Block, data.Resist, data.Immune)
         {
         }
-        
+
         public float Block { get; }
         public float Resistance { get; }
         public bool Immunity { get; }
@@ -20,11 +21,13 @@ namespace Framework.Core.Modules
         {
             if (Immunity)
                 return value;
-            
+
             //First apply block
-            var result = Resistance * (value - Block);
-            var blocked = value - result;
-            //Only happens if Resistance > 1
+            var blocked = Block;
+
+            //Avoids Block and resistance canceling out
+            if (value < Block)
+                blocked += Resistance * (value - Block);
             if (blocked > value)
                 blocked = value;
             return blocked;

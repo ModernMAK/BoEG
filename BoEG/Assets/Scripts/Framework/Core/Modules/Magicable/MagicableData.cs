@@ -6,10 +6,12 @@ namespace Framework.Core.Modules
     [Serializable]
     public struct MagicableData : IMagicableData
     {
+#pragma warning disable 649
         [SerializeField]
         private float _magicGeneration;
         [SerializeField]
         private float _magicCapacity;
+#pragma warning restore 649
 
         public float MagicGeneration => _magicGeneration;
 

@@ -8,12 +8,15 @@ namespace UI
 {
     public class ArmorablePanel : DebugUI
     {
+        
+#pragma warning disable 649
         [SerializeField] private Text _physicalBlockText;
         [SerializeField] private Text _physicalResistText;
         [SerializeField] private Text _magicalBlockText;
 
         [SerializeField] private Text _magicalResistText;
-
+#pragma warning restore 649
+        
         // Start is called before the first frame update
         private GameObject _go;
         private IArmorable _armorable;

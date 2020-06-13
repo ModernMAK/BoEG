@@ -5,13 +5,13 @@ namespace Framework.Core.Modules
 {
     public class ArmorableEventArgs : EventArgs
     {
-        public ArmorableEventArgs(Damage damage, float reduction)
+        public ArmorableEventArgs()
         {
-            Damage = damage;
-            Reduction = reduction;
+            Damage = default;
+            Reduction = default;
         }
 
-        public Damage Damage { get; private set; }
-        public float Reduction { get; private set; }
+        public Damage Damage { get; set; }
+        public float Reduction { get; set; }
     }
 }

@@ -14,6 +14,7 @@ namespace Framework.Core.Modules
     public class Statable : MonoBehaviour,
         IStepable, IListener<ILevelable>, IListener<IModifiable>
     {
+            
         protected float _percentage;
         protected float _capacity;
         protected float _generation;
@@ -109,7 +110,7 @@ namespace Framework.Core.Modules
 
         }
 
-        protected virtual void Generate() => Stat += StatGeneration;
+        protected virtual void Generate(float deltaTime) => Stat += StatGeneration * deltaTime;
         public virtual void PreStep(float deltaTime)
         {
         }

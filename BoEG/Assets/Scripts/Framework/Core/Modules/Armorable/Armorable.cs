@@ -11,7 +11,7 @@ namespace Framework.Core.Modules
             Physical = new Armor(data.Physical);
             Magical = new Armor(data.Magical);
         }
-        
+
 
         public Armor Physical { get; private set; }
         public Armor Magical { get; private set; }
@@ -19,12 +19,12 @@ namespace Framework.Core.Modules
         public virtual Damage ResistDamage(Damage damage)
         {
             var reduction = CalculateReduction(damage);
-            var args = new ArmorableEventArgs(damage, reduction);
+            var args = new ArmorableEventArgs() {Damage = damage, Reduction = reduction};
             OnResisting(args);
             //Reduction, so negate the value
-            var outDam = damage.ModifyValue(-reduction);
+            args.Damage = args.Damage.ModifyValue(-args.Reduction);
             OnResisted(args);
-            return outDam;
+            return args.Damage;
         }
 
         public float CalculateReduction(Damage damage)

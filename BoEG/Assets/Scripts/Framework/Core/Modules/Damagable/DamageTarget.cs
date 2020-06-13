@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Framework.Core.Modules
 {
     [DisallowMultipleComponent]
+    [RequireComponent(typeof(IHealthable))]
     public class DamageTarget : MonoBehaviour, IDamageTarget
     {
         private void Awake()
@@ -18,7 +19,12 @@ namespace Framework.Core.Modules
         private event EventHandler<DamageEventArgs> _damaged;
         private event EventHandler<DamageEventArgs> _damaging;
 
+        [Obsolete]
         public virtual void TakeDamage(Damage damage)
+        {
+        }
+
+        public virtual void TakeDamage(GameObject source, Damage damage)
         {
             var damageToTake = damage;
             //ARMORABLE
@@ -27,9 +33,14 @@ namespace Framework.Core.Modules
                 damageToTake = _armorable.ResistDamage(damage);
             }
 
-            OnDamaging(new DamageEventArgs(damageToTake));
-            _healthable.Health -= damageToTake.Value;
-            OnDamaged(new DamageEventArgs(damageToTake));
+            var dmgArg = new DamageEventArgs()
+            {
+                Damage = damageToTake,
+                Source = source
+            };
+            OnDamaging(dmgArg);
+            _healthable.Health -= dmgArg.Damage.Value;
+            OnDamaged(dmgArg);
         }
 
         protected virtual void OnDamaged(DamageEventArgs e)

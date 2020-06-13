@@ -73,7 +73,7 @@ namespace Framework.Core.Modules
         public override void PreStep(float deltaTime)
         {
             if (!MagicPercentage.SafeEquals(0f))
-                Generate();
+                Generate(deltaTime);
         }
     }
 }

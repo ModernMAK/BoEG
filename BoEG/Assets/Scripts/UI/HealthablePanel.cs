@@ -8,11 +8,13 @@ namespace UI
 {
     public class HealthablePanel : DebugUI
     {
+#pragma warning disable 649
         [SerializeField] private Text _healthValueText;
         [SerializeField] private Text _healthCapacityText;
         [SerializeField] private Text _healthGenerationText;
         [SerializeField] private Image _healthNormalImage;
-
+#pragma warning restore 649
+        
         // Start is called before the first frame update
         private GameObject _go;
         private IHealthable _healthable;

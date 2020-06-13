@@ -1,19 +1,101 @@
-﻿using Framework.Core;
+﻿using System;
+using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Core.Modules.Commands;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class RtsController : MonoBehaviour
 {
-    [SerializeField] private CommandableComponent _commandable;
+    private ICommandable _commandable;
+    [SerializeField] private Actor _actor;
+    private IAbilitiable _abilitiableHACK;
+    private Ray _ray;
 
     private Camera _main;
 
-    private const KeyCode _followKey = KeyCode.F;
-    private const KeyCode _moveKey = KeyCode.M;
-    private const KeyCode _queueKey = KeyCode.LeftShift;
-    private const int _selectKey = 0;
-    private const int _actionKey = 1;
+    private PlayerControls _controls;
+
+    private void Awake()
+    {
+        _controls = new PlayerControls();
+        _controls.Movement.Action.started += ActionOnstarted;
+        _controls.Movement.Select.started += SelectOnstarted;
+        _controls.Ability.Alpha.started += AbilityOnStarted(0);
+        _controls.Ability.Beta.started += AbilityOnStarted(1);
+        _controls.Ability.Charlie.started += AbilityOnStarted(2);
+        _controls.Ability.Delta.started += AbilityOnStarted(3);
+        if (_actor != null)
+            Select(_actor.gameObject);
+    }
+
+    private void OnEnable()
+    {
+        _controls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _controls.Disable();
+    }
+
+    private void Select(GameObject go)
+    {
+        _actor = go.GetComponent<Actor>();
+        if (_actor == null)
+        {
+            _commandable = null;
+            _abilitiableHACK = null;
+            return;
+        }
+
+        _commandable = _actor.GetComponent<ICommandable>();
+        _abilitiableHACK = _actor.GetComponent<IAbilitiable>();
+    }
+
+    private Action<InputAction.CallbackContext> AbilityOnStarted(int index)
+    {
+        void InternalOnStarted(InputAction.CallbackContext context)
+        {
+            if (_abilitiableHACK != null && _abilitiableHACK.AbilityCount > index)
+            {
+                var ability = _abilitiableHACK.GetAbility(index);
+                ability.SetupCast();
+                ability.ConfirmCast();
+            }
+        }
+
+        return InternalOnStarted;
+    }
+
+    private void SelectOnstarted(InputAction.CallbackContext obj)
+    {
+        RaycastHit info;
+        if (PerformCast(out info))
+        {
+            Select(info.transform.gameObject);
+        }
+    }
+
+    private void ActionOnstarted(InputAction.CallbackContext obj)
+    {
+        if (_commandable != null)
+        {
+            RaycastHit info;
+            if (PerformCast(out info))
+            {
+                var point = info.point;
+                var unit = info.collider.GetComponentInParent<Actor>();
+
+
+                if (unit != null && !_controls.Movement.Move.ReadValue<bool>())
+                    AddOrQueueCommand(GenerateFollow(unit.transform));
+                else if (!_controls.Movement.Follow.ReadValue<bool>())
+                    AddOrQueueCommand(GenerateMove(point));
+            }
+        }
+    }
+
 
     private Camera CameraMain
     {
@@ -25,56 +107,39 @@ public class RtsController : MonoBehaviour
         }
     }
 
-    private Ray CameraRay => CameraMain.ScreenPointToRay(Input.mousePosition);
+    private Ray CameraRay
+    {
+        get
+        {
+            var point = _controls.Cursor.Pos.ReadValue<Vector2>();
+            // Debug.Log("CameraRay:\t"+point);
+            var ray = CameraMain.ScreenPointToRay(point);
+            return ray;
+        }
+    }
 
     private bool PerformCast(out RaycastHit info)
     {
-        return Physics.Raycast(CameraRay, out info);
+        var ray = CameraRay;
+
+        // Debug.Log("RTS:\t" + ray);
+        return Physics.Raycast(ray, out info);
     }
 
-    private void Update()
-    {
-        if (_commandable != null && Input.GetMouseButton(_actionKey))
-        {
-            RaycastHit info;
-            if (PerformCast(out info))
-            {
-                var point = info.point;
-                var unit = info.collider.GetComponentInParent<Actor>();
-
-
-                if (unit != null && !Input.GetKey(_moveKey))
-                    AddOrQueueCommand(GenerateFollow(unit.transform));
-                else if (!Input.GetKey(_followKey))
-                    AddOrQueueCommand(GenerateMove(point));
-            }
-        }
-
-        if (Input.GetMouseButton(_selectKey))
-        {
-            RaycastHit info;
-            if (PerformCast(out info))
-            {
-                var commandable = info.collider.GetComponentInParent<CommandableComponent>();
-                if (commandable != null)
-                    _commandable = commandable;
-            }
-        }
-    }
 
     private FollowCommand GenerateFollow(Transform target)
     {
-        return new FollowCommand(_commandable.gameObject, target);
+        return new FollowCommand(_actor.gameObject, target);
     }
 
     private MoveToCommand GenerateMove(Vector3 target)
     {
-        return new MoveToCommand(_commandable.gameObject, target);
+        return new MoveToCommand(_actor.gameObject, target);
     }
 
     private void AddOrQueueCommand(ICommand command)
     {
-        if (Input.GetKey(_queueKey))
+        if (_controls.Movement.Queue.ReadValue<bool>())
             _commandable.AddCommand(command);
         else
             _commandable.SetCommand(command);
