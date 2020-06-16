@@ -23,7 +23,7 @@ namespace Modules.Teamable
 
         public bool SameTeam(ITeamable teamable)
         {
-            return _team == teamable.Team;
+            return _team != null && _team == teamable.Team;
         }
     }
 }

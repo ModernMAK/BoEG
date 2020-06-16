@@ -9,6 +9,9 @@ namespace Framework.Core.Modules
         float MagicCapacity { get; set; }
         float MagicGeneration { get; set; }
 
+
+        bool HasMagic(float mana);
+        void SpendMagic(float mana);
         event EventHandler<float> MagicChanged;
     }
 }

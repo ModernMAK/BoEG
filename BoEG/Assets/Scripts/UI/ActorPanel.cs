@@ -11,10 +11,12 @@ namespace System
         private DebugUI[] _uis;
 
 
-        private void Start()
+        private void Awake()
         {
-            _setTarget = true;
-            _recollectUi = true;
+            _setTarget = false;
+            _recollectUi = false;
+            _uis = GetComponentsInChildren<DebugUI>();
+            SetTargets();
         }
 
         private void Update()
@@ -35,6 +37,11 @@ namespace System
         private void SetTargets()
         {
             foreach (var ui in _uis) ui.SetTarget(_target);
+        }
+
+        public void SetTarget(GameObject target)
+        {
+            foreach (var ui in _uis) ui.SetTarget(target);
         }
     }
 }

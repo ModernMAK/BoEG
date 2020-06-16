@@ -49,6 +49,9 @@ namespace Framework.Core.Modules
             remove => StatChanged -= value;
         }
 
+        public bool HasMagic(float mana) => Magic > mana;
+        public void SpendMagic(float mana) => Magic -= mana;
+
 
         protected override void OnModifierAdded(object sender, IModifier modifier)
         {

@@ -1,6 +1,7 @@
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
+using Modules.Teamable;
 using Triggers;
 using UnityEngine;
 
@@ -26,8 +27,10 @@ namespace Entity.Abilities.FlameWitch
         [SerializeField] public bool _isActive;
         [Header("Mana Cost")] [SerializeField] public float _manaCostPerSecond;
 
-        private ManaHelper _manaHelper;
+        private IMagicable _magicable;
+        private ITeamable _teamable;
         private TickAction _tickHelper;
+        private IAbilitiable _abilitiable;
 
         public bool IsActive
         {
@@ -56,9 +59,11 @@ namespace Entity.Abilities.FlameWitch
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _manaHelper = new ManaHelper {Magicable = actor.GetComponent<IMagicable>()};
+            _magicable = actor.GetComponent<IMagicable>();
+            _teamable = actor.GetComponent<ITeamable>();
             _tickHelper = new InfiniteTickAction {Callback = OnTick, TickInterval = 1f};
             actor.AddSteppable(this);
+            _abilitiable = Self.GetComponent<IAbilitiable>();
         }
 
         public override void ConfirmCast()
@@ -66,14 +71,17 @@ namespace Entity.Abilities.FlameWitch
             IsActive = !IsActive;
             //Immediately start ticking
             if (IsActive)
+            {
                 OnTick();
+                _abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCostPerSecond});
+            }
         }
 
         private void OnTick()
         {
-            if (IsActive && _manaHelper.CanSpendMana(_manaCostPerSecond))
+            if (IsActive && _magicable.HasMagic(_manaCostPerSecond))
             {
-                _manaHelper.SpendMana(_manaCostPerSecond);
+                _magicable.SpendMagic(_manaCostPerSecond);
                 var dotTargets =
                     Physics.OverlapSphere(Self.transform.position, _dotRange, (int) LayerMaskHelper.Entity);
                 foreach (var col in dotTargets)
@@ -84,6 +92,12 @@ namespace Entity.Abilities.FlameWitch
                         continue;
                     if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
                         continue;
+                    if (_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
+                    {
+                        if (_teamable.SameTeam(teamable))
+                            continue;
+                    }
+
                     var damage = new Damage(_damagePerSecond, DamageType.Magical, DamageModifiers.Ability);
                     damageTarget.TakeDamage(Self.gameObject, damage);
                 }

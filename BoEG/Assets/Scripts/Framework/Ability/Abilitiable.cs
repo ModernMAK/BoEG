@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Entity.Abilities.FlameWitch;
 using Framework.Core;
 using Framework.Core.Modules;
@@ -9,6 +11,9 @@ public interface IAbilitiable
     int AbilityCount { get; }
     bool FindAbility<T>(out T ability);
     IAbility GetAbility(int index);
+    event EventHandler<SpellEventArgs> SpellCasted;
+
+    void NotifySpellCast(SpellEventArgs e);
 }
 
 public class Abilitiable : MonoBehaviour, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>
@@ -42,5 +47,20 @@ public class Abilitiable : MonoBehaviour, IAbilitiable, IInitializable<IReadOnly
         for (var i = 0; i < _abilities.Length; i++) _abilities[i] = module[i];
 
         foreach (var ab in _abilities) ab.Initialize(self);
+    }
+
+    private event EventHandler<SpellEventArgs> _spellCasted;
+
+    public event EventHandler<SpellEventArgs> SpellCasted
+    {
+        add => _spellCasted += value;
+        remove => _spellCasted -= value;
+    }
+
+    public void NotifySpellCast(SpellEventArgs e) => OnSpellCast(e);
+
+    protected virtual void OnSpellCast(SpellEventArgs e)
+    {
+        _spellCasted?.Invoke(this, e);
     }
 }

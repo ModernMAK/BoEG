@@ -1,8 +1,10 @@
+using System;
 using Framework.Core.Modules;
 using UnityEngine;
 
 namespace Entity.Abilities.FlameWitch
 {
+    [Obsolete("Moved to IMagicable")]
     public class ManaHelper
     {
         public IMagicable Magicable { get; set; }

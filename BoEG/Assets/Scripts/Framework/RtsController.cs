@@ -2,6 +2,7 @@
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Core.Modules.Commands;
+using Triggers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,7 @@ public class RtsController : MonoBehaviour
 {
     private IAbilitiable _abilitiableHACK;
     [SerializeField] private Actor _actor;
+    [SerializeField] private ActorPanel _panel;
     private ICommandable _commandable;
 
     private PlayerControls _controls;
@@ -73,6 +75,8 @@ public class RtsController : MonoBehaviour
 
         _commandable = _actor.GetComponent<ICommandable>();
         _abilitiableHACK = _actor.GetComponent<IAbilitiable>();
+        if (_panel != null)
+            _panel.SetTarget(_actor.gameObject);
     }
 
     private Action<InputAction.CallbackContext> AbilityOnStarted(int index)
@@ -120,7 +124,7 @@ public class RtsController : MonoBehaviour
         var ray = CameraRay;
 
         // Debug.Log("RTS:\t" + ray);
-        return Physics.Raycast(ray, out info);
+        return Physics.Raycast(ray, out info, 100f, (int)(LayerMaskHelper.Entity | LayerMaskHelper.World));
     }
 
 

@@ -13,11 +13,6 @@ namespace Framework.Core
     [RequireComponent(typeof(Movable))]
     public class Hero : Actor
     {
-        protected override void Awake()
-        {
-            base.Awake();
-        }
-
         protected override void SetupComponents()
         {
             base.SetupComponents();
@@ -25,17 +20,17 @@ namespace Framework.Core
 //            GetFrameworkComponent<IBuffable>().Initialize(buffable);
 
             if (TryGetInitializable<IHealthableData>(out var healthable))
-                healthable.Initialize(_healthableData);
+                healthable.Initialize(HealthableData);
             else throw new MissingComponentException("IHealthable");
 
 
             if (TryGetInitializable<IMagicableData>(out var magicable))
-                magicable.Initialize(_magicableData);
+                magicable.Initialize(MagicableData);
             else throw new MissingComponentException("IMagicable");
 
 
             if (TryGetInitializable<IArmorableData>(out var armorable))
-                armorable.Initialize(_armorableData);
+                armorable.Initialize(ArmorableData);
             else throw new MissingComponentException("IArmorable");
 
 //            GetFrameworkComponent<IDamageTarget>().Initialize();
@@ -44,24 +39,28 @@ namespace Framework.Core
             // GetInitializable<IAttackerableData>().Initialize(_attackerableData);
 
             if (TryGetInitializable<IMovableData>(out var movable))
-                movable.Initialize(_movableData);
+                movable.Initialize(MovableData);
             else throw new MissingComponentException("IMovable");
 
 
-            for (var i = 0; i < _abilities.Length; i++) _abilities[i] = Instantiate(_abilities[i]);
+            var instanceAbilities = new AbilityObject[AbilityData.Count];
+            for (var i = 0; i < AbilityData.Count; i++) instanceAbilities[i] = Instantiate(AbilityData[i]);
 
             if (TryGetInitializable<IReadOnlyList<IAbility>>(out var abilitiable))
-                abilitiable.Initialize(_abilities);
+                abilitiable.Initialize(instanceAbilities);
             else throw new MissingComponentException("IAbilitiable");
         }
-
 #pragma warning disable 649
-        [SerializeField] private HealthableData _healthableData;
-        [SerializeField] private MagicableData _magicableData;
-        [SerializeField] private ArmorableData _armorableData;
-        [SerializeField] private AttackerableData _attackerableData;
-        [SerializeField] private MovableData _movableData;
-        [SerializeField] private AbilityObject[] _abilities;
+
+        [SerializeField] private HeroData _data;
+
+        protected IHealthableData HealthableData => _data._healthableData;
+        protected IMagicableData MagicableData => _data._magicableData;
+        protected IArmorableData ArmorableData => _data._armorableData;
+
+        protected IAttackerableData AttackerableData => _data._attackerableData;
+        protected IMovableData MovableData => _data._movableData;
+        protected IReadOnlyList<AbilityObject> AbilityData => _data._abilities;
 #pragma warning restore 649
     }
 }

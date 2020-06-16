@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
+using Modules.Teamable;
 using Triggers;
 using UnityEngine;
 
@@ -26,10 +27,8 @@ namespace Entity.Abilities.FlameWitch
         [Header("Initial Damage")] [SerializeField]
         private float _damage = 100f;
 
-        private IMagicable _magicable;
 
         [Header("Mana Cost")] [SerializeField] private float _manaCost = 100f;
-        private Overheat _overheatAbility;
 
         [Header("OverHeat FX")] [SerializeField]
         private float _overheatSearchRange = 1f;
@@ -40,6 +39,12 @@ namespace Entity.Abilities.FlameWitch
 
         [Header("Damage Over Time")] [SerializeField]
         private float _tickInterval;
+
+
+        private IMagicable _magicable;
+        private ITeamable _teamable;
+        private Overheat _overheatAbility;
+        private IAbilitiable _abilitiable;
 
         private List<TickAction> _ticks;
         private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
@@ -73,9 +78,11 @@ namespace Entity.Abilities.FlameWitch
             var abilitiable = actor.GetComponent<IAbilitiable>();
             if (abilitiable != null)
                 abilitiable.FindAbility(out _overheatAbility);
+            _teamable = actor.GetComponent<ITeamable>();
             //Manually inject the ability as a stepable
             actor.AddSteppable(this);
             _ticks = new List<TickAction>();
+            _abilitiable = Self.GetComponent<IAbilitiable>();
         }
 
 
@@ -87,7 +94,7 @@ namespace Entity.Abilities.FlameWitch
         protected void Cast()
         {
             var ray = AbilityHelper.GetScreenRay();
-            if (!Physics.Raycast(ray, out var hit)) //    , 100f, (int) LayerMaskHelper.Entity))
+            if (!Physics.Raycast(ray, out var hit, 100f, (int) LayerMaskHelper.Entity))
                 return;
 
             if (!AbilityHelper.InRange(Self.transform, hit.point, _castRange))
@@ -97,11 +104,11 @@ namespace Entity.Abilities.FlameWitch
             if (actor == null)
                 return;
 
-            if (!AbilityHelper.CanSpendMana(_magicable, _manaCost))
+            if (!_magicable.HasMagic(_manaCost))
                 return;
 
 
-            AbilityHelper.SpendMana(_magicable, _manaCost);
+            _magicable.SpendMagic(_manaCost);
             SpellLogic(actor);
         }
 
@@ -127,6 +134,9 @@ namespace Entity.Abilities.FlameWitch
                         continue;
                     if (actor == null) //Not an actor
                         continue;
+                    if (_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
+                        if (_teamable.SameTeam(teamable))
+                            continue; //Skip allies
                     dotTargets.Add(actor);
                 }
             }
@@ -142,6 +152,8 @@ namespace Entity.Abilities.FlameWitch
                     };
                     _ticks.Add(tickWrapper);
                 }
+
+            _abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCost});
         }
 
         private bool GetDotAction(Actor actor, out Action dotAction)
