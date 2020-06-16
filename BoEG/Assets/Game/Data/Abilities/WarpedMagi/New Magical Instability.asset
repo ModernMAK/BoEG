@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dee845f89fa4300a2f73c1d585fd3c2, type: 3}
   m_Name: New Magical Instability
   m_EditorClassIdentifier: 
-  _icon: {fileID: 0}
-  _manaCost: 0
-  _manaGainPerDamage: 0
-  _duration: 0
+  _icon: {fileID: 21300000, guid: 70347ad3ff269b348be0ae04acde0b3a, type: 3}
+  _manaCost: 100
+  _manaGainPerDamage: 0.4
+  _duration: 5
