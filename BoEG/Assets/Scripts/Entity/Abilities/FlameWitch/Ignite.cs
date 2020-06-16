@@ -103,6 +103,9 @@ namespace Entity.Abilities.FlameWitch
             var actor = AbilityHelper.GetActor(hit);
             if (actor == null)
                 return;
+            if (actor == Self)
+                return;
+
 
             if (!_magicable.HasMagic(_manaCost))
                 return;

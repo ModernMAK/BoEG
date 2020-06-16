@@ -63,7 +63,7 @@ namespace Entity.Abilities.WarpedMagi
                 return;
             _magicable.SpendMagic(_manaCost);
             _isActive = true;
-            _duration = 0f;
+            _timeElapsed = 0f;
             _abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCost});
         }
 
