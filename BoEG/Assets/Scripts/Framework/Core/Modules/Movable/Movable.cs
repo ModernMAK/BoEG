@@ -22,32 +22,38 @@ namespace Framework.Core.Modules
 
         public void MoveTo(Vector3 destenation)
         {
-            _agent.SetDestination(destenation);
+            if (_agent.gameObject.activeSelf)
+                _agent.SetDestination(destenation);
         }
 
         public void WarpTo(Vector3 destenation)
         {
-            _agent.Warp(destenation);
+            if (_agent.gameObject.activeSelf)
+                _agent.Warp(destenation);
         }
 
         public void Push(Vector3 direction)
         {
-            _agent.Move(direction);
+            if (_agent.gameObject.activeSelf)
+                _agent.Move(direction);
         }
 
         public void StopMovement()
         {
-            _agent.isStopped = true;
+            if (_agent.gameObject.activeSelf)
+                _agent.isStopped = true;
         }
 
         public void StartMovement()
         {
-            _agent.isStopped = false;
+            if (_agent.gameObject.activeSelf)
+                _agent.isStopped = false;
         }
 
         public void CancelMovement()
         {
-            _agent.ResetPath();
+            if (_agent.gameObject.activeSelf)
+                _agent.ResetPath();
         }
 
         public bool HasReachedDestination => (_agent.destination - _agent.nextPosition).sqrMagnitude <= 0.01f;
