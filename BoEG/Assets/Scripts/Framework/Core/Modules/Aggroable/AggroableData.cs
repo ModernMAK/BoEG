@@ -9,5 +9,10 @@ namespace Framework.Core.Modules
         [SerializeField] private float _aggroRange;
 
         public float AggroRange => _aggroRange;
+
+        public static AggroableData Default => new AggroableData()
+        {
+            _aggroRange = 1f
+        };
     }
 }

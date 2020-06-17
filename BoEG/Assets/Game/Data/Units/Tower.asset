@@ -9,33 +9,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f29a1a63af74b62a49cbaa7e611176c, type: 3}
-  m_Name: MeleeUnit
+  m_Script: {fileID: 11500000, guid: efe1e19940b53ec4c91b6fb55bb81e5f, type: 3}
+  m_Name: Tower
   m_EditorClassIdentifier: 
-  _aggroableData:
-    _aggroRange: 6
   _healthableData:
-    _healthGeneration: 1
-    _healthCapacity: 500
-  _magicableData:
-    _magicGeneration: 1
-    _magicCapacity: 500
+    _healthGeneration: 5000
+    _healthCapacity: 5000
   _armorableData:
     _physical:
       _block: 0
       _resist: 0.01
-      _immune: 0
+      _immune: 1
     _magical:
       _block: 0
       _resist: 0.01
-      _immune: 0
+      _immune: 1
   _attackerableData:
-    _attackRange: 1
-    _attackDamage: 40
+    _attackRange: 6
+    _attackDamage: 80
     _attackSpeed: 1
-    _attackInterval: 1
+    _attackInterval: 0.35
     _isRanged: 1
-  _movableData:
-    _moveSpeed: 2
-    _turnSpeed: 360
-  _icon: {fileID: 21300000, guid: 63f481542082f5f47a338461bde81e10, type: 3}
+  _icon: {fileID: 0}

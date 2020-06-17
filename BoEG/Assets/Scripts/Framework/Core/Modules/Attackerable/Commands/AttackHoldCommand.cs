@@ -5,14 +5,14 @@ namespace Framework.Core.Modules.Commands
 {
     public class AttackMoveCommand : EntityCommand
     {
-        // private readonly IAggroable _aggroable;
+        private readonly IAggroable _aggroable;
         private readonly IAttackerable _attackerable;
         private readonly IMovable _movable;
         private readonly Vector3 _destenation;
 
         public AttackMoveCommand(GameObject entity, Vector3 destenation) : base(entity)
         {
-            // GetComponent(out _aggroable);
+            GetComponent(out _aggroable);
             GetComponent(out _attackerable);
             GetComponent(out _movable);
             _destenation = destenation;
@@ -29,9 +29,15 @@ namespace Framework.Core.Modules.Commands
                     _attackerable.Attack(_attackerable.GetAttackTarget(0));
                 }
             }
+            else if (_aggroable.HasAggroTarget())
+            {
+                _movable.MoveTo(_aggroable.GetAggroTarget(0).transform.position);
+                _movable.StartMovement();
+            }
             else
             {
                 _movable.StartMovement();
+                _movable.MoveTo(_destenation);;
             }
         }
 

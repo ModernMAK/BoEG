@@ -1,76 +1,111 @@
 using System;
 using System.Collections.Generic;
+using Entity.Abilities.FlameWitch;
+using Framework.Types;
+using Modules.Teamable;
 using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    public class Aggroable : IAggroable
+    public class Aggroable : MonoBehaviour, IAggroable, IInitializable<IAggroableData>, IListener<IStepableEvent>
     {
-//        private static Collider[] _PhysicsBuffer = new Collider[256];
-//
-//        protected void Instantiate()
-//        {
-////            GetData(out _data);
-//            _aggroTargets = new List<GameObject>();
-//        }
-//
-//        private IAggroableData _data;
-//        private List<GameObject> _aggroTargets;
-//
-//        public float AggroRange
-//        {
-//            get { return IsInitialized ? _data.AggroRange : 0f; }
-//        }
-//
-//
-//        public bool InAggro(GameObject go)
-//        {
-//            var delta = go.transform.position - transform.position;
-//            return delta.sqrMagnitude <= AggroRange * AggroRange;
-//        }
-//
-//        public IEnumerable<GameObject> GetAggroTargets()
-//        {
-//            return _aggroTargets;
-//        }
-//        public bool HasAggroTarget()
-//        {
-//            return _aggroTargets.Count >0;
-//        }
-//
-//        /// <summary>
-//        /// NOT THREAD SAFE
-//        /// </summary>
-//        /// <param name="deltaStep"></param>
-//        protected override void PhysicsStep(float deltaStep)
-//        {
-//            var size = Physics.OverlapSphereNonAlloc(transform.position, AggroRange, _PhysicsBuffer);
-//            _aggroTargets.Clear();
-//            for (var i = 0; i < size; i++)
-//                _aggroTargets.Add(_PhysicsBuffer[i].gameObject);
-//            _aggroTargets.Sort((x, y) =>
-//            {
-//                var pos = transform.position;
-//                var xDelta = (x.transform.position - pos);
-//                var yDelta = (y.transform.position - pos);
-//                return xDelta.sqrMagnitude.CompareTo(yDelta.sqrMagnitude);
-//            });
-//        }
-        public float AggroRange => throw new NotImplementedException();
+        private TriggerHelper<SphereCollider> _triggerHelper;
+
+        private void Awake()
+        {
+            _triggerHelper = TriggerUtility.CreateTrigger<SphereCollider>(transform, "Aggroable Trigger");
+            _teamable = GetComponent<ITeamable>();
+            _aggroTarget = new List<GameObject>();
+            _triggerHelper.Trigger.Enter += TriggerOnEnter;
+            _triggerHelper.Trigger.Exit += TriggerOnExit;
+        }
+
+        private void TriggerOnExit(object sender, TriggerEventArgs e)
+        {
+            var go = e.Collider.gameObject;
+            _aggroTarget.Remove(go);
+        }
+
+        private void TriggerOnEnter(object sender, TriggerEventArgs e)
+        {
+            var go = e.Collider.gameObject;
+            if (go == gameObject)
+                return;
+            if (_aggroTarget.Contains(go))
+                return;
+            if (!go.TryGetComponent<Actor>(out var actor))
+                return;
+            if (_teamable != null && go.TryGetComponent<ITeamable>(out var teamable))
+            {
+                if (_teamable.SameTeam(teamable))
+                    return;
+            }
+
+            _aggroTarget.Add(go);
+        }
+
+        private float _aggroRange;
+        public float AggroRange => _aggroRange;
+        private List<GameObject> _aggroTarget;
+        private ITeamable _teamable;
 
         public bool InAggro(GameObject go)
         {
-            throw new NotImplementedException();
+            return AbilityHelper.InRange(transform, go.transform.position, AggroRange);
         }
 
-        public IEnumerable<GameObject> GetAggroTargets()
+        public IReadOnlyList<GameObject> GetAggroTargets() => _aggroTarget;
+
+        public GameObject GetAggroTarget(int index) => _aggroTarget[index];
+
+        public bool HasAggroTarget() => _aggroTarget.Count > 0;
+
+        public void Initialize(IAggroableData module)
         {
-            throw new NotImplementedException();
+            _aggroRange = module.AggroRange;
         }
 
-        public bool HasAggroTarget()
+        private void OnPreStep(float deltaStep)
         {
-            throw new NotImplementedException();
+            _triggerHelper.Collider.radius = AggroRange;
+        }
+
+        private void OnPhysicsStep(float deltaStep)
+        {
+            if (_teamable == null)
+                return;
+            for (var i = 0; i < _aggroTarget.Count; i++)
+            {
+                var target = _aggroTarget[i];
+                if (!target.activeSelf)
+                {
+                    _aggroTarget.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+
+                if (target.TryGetComponent<ITeamable>(out var teamable))
+                {
+                    if (_teamable.SameTeam(teamable))
+                    {
+                        _aggroTarget.RemoveAt(i);
+                        i--;
+                        continue;
+                    }
+                }
+            }
+        }
+
+        public void Register(IStepableEvent source)
+        {
+            source.PhysicsStep += OnPhysicsStep;
+            source.PreStep += OnPreStep;
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PreStep -= OnPreStep;
+            source.PhysicsStep -= OnPhysicsStep;
         }
     }
 }

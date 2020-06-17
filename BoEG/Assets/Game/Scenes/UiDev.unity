@@ -118,7 +118,7 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    accuratePlacement: 1
     maxJobWorkers: 0
     preserveTilesOutsideBounds: 0
     debug:
@@ -247,7 +247,7 @@ PrefabInstance:
     - target: {fileID: 5108167702665009445, guid: 7f154405d03980840bc0d2e4c0b5207b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3
+      value: 7.73
       objectReference: {fileID: 0}
     - target: {fileID: 5108167702665009445, guid: 7f154405d03980840bc0d2e4c0b5207b,
         type: 3}
@@ -257,7 +257,7 @@ PrefabInstance:
     - target: {fileID: 5108167702665009445, guid: 7f154405d03980840bc0d2e4c0b5207b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -5.23
       objectReference: {fileID: 0}
     - target: {fileID: 5108167702665009445, guid: 7f154405d03980840bc0d2e4c0b5207b,
         type: 3}
@@ -495,10 +495,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484110588}
     m_Modifications:
+    - target: {fileID: 187834067068796507, guid: c8c69dadf51f7254ab5d14707a6201a3,
+        type: 3}
+      propertyPath: _team
+      value: 
+      objectReference: {fileID: 11400000, guid: 9da5b357bf1eb4c4a85f4942c22b93c5,
+        type: 2}
     - target: {fileID: 5603037717475273472, guid: c8c69dadf51f7254ab5d14707a6201a3,
         type: 3}
       propertyPath: m_Name
       value: Tower
+      objectReference: {fileID: 0}
+    - target: {fileID: 5603037717475273472, guid: c8c69dadf51f7254ab5d14707a6201a3,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5603037717475273475, guid: c8c69dadf51f7254ab5d14707a6201a3,
         type: 3}
@@ -966,7 +977,7 @@ PrefabInstance:
     - target: {fileID: 5108167702665009445, guid: 7f154405d03980840bc0d2e4c0b5207b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.5
+      value: 5.73
       objectReference: {fileID: 0}
     - target: {fileID: 5108167702665009445, guid: 7f154405d03980840bc0d2e4c0b5207b,
         type: 3}
@@ -976,7 +987,7 @@ PrefabInstance:
     - target: {fileID: 5108167702665009445, guid: 7f154405d03980840bc0d2e4c0b5207b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -7.23
       objectReference: {fileID: 0}
     - target: {fileID: 5108167702665009445, guid: 7f154405d03980840bc0d2e4c0b5207b,
         type: 3}
@@ -1584,10 +1595,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2065782142753063279}
     m_Modifications:
+    - target: {fileID: 187834067068796507, guid: c8c69dadf51f7254ab5d14707a6201a3,
+        type: 3}
+      propertyPath: _team
+      value: 
+      objectReference: {fileID: 11400000, guid: fc2c44d2c9f84b146b2d00eac61aa73f,
+        type: 2}
     - target: {fileID: 5603037717475273472, guid: c8c69dadf51f7254ab5d14707a6201a3,
         type: 3}
       propertyPath: m_Name
       value: Tower
+      objectReference: {fileID: 0}
+    - target: {fileID: 5603037717475273472, guid: c8c69dadf51f7254ab5d14707a6201a3,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5603037717475273475, guid: c8c69dadf51f7254ab5d14707a6201a3,
         type: 3}
@@ -2008,6 +2030,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f5b20b0d32fb9c4b842985a6a6fb22c, type: 3}
+--- !u!1 &2032042070 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 815928153880685971, guid: 6f831ac78cf337147a21ee2227f4074f,
+    type: 3}
+  m_PrefabInstance: {fileID: 900349240816651209}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2032042085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032042070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52174bde8f1fa5c428e1be2838b5ddb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2054716525 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 845445115712726392, guid: 7f154405d03980840bc0d2e4c0b5207b,
@@ -2110,7 +2150,7 @@ PrefabInstance:
     - target: {fileID: 1969951838053183068, guid: 87d718b2d47f375439fe8088c8e02d1b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 3.73
       objectReference: {fileID: 0}
     - target: {fileID: 1969951838053183068, guid: 87d718b2d47f375439fe8088c8e02d1b,
         type: 3}
@@ -2120,7 +2160,7 @@ PrefabInstance:
     - target: {fileID: 1969951838053183068, guid: 87d718b2d47f375439fe8088c8e02d1b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -9.23
       objectReference: {fileID: 0}
     - target: {fileID: 1969951838053183068, guid: 87d718b2d47f375439fe8088c8e02d1b,
         type: 3}

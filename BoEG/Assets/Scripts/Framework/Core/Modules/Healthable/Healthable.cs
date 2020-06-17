@@ -1,4 +1,5 @@
 using System;
+using Framework.Types;
 using Framework.Utility;
 using UnityEngine;
 
@@ -10,8 +11,15 @@ namespace Framework.Core.Modules
 
     [DisallowMultipleComponent]
     public class Healthable : Statable,
-        IInitializable<IHealthableData>, IHealthable
+        IInitializable<IHealthableData>, IHealthable, IListener<IStepableEvent>
     {
+        private event EventHandler _died;
+
+        /// <summary>
+        /// A flag set once died has been called.
+        /// </summary>
+        private bool _isDead;
+
         public float Health
         {
             get => Stat;
@@ -42,6 +50,12 @@ namespace Framework.Core.Modules
             remove => StatChanged -= value;
         }
 
+        public event EventHandler Died
+        {
+            add => _died += value;
+            remove => _died -= value;
+        }
+
 
         public void Initialize(IHealthableData module)
         {
@@ -67,10 +81,41 @@ namespace Framework.Core.Modules
             }
         }
 
-        public override void PreStep(float deltaTime)
+        private void OnPreStep(float deltaTime)
         {
             if (!HealthPercentage.SafeEquals(0f))
+            {
+                _isDead = false;
                 Generate(deltaTime);
+            }
+        }
+
+        private void OnPostStep(float deltaTime)
+        {
+            if (!_isDead && HealthPercentage.SafeEquals(0f))
+            {
+                OnDied();
+                _isDead = true;
+                //TODO HACK
+                gameObject.SetActive(false);
+            }
+        }
+
+        public void Register(IStepableEvent source)
+        {
+            source.PreStep += OnPreStep;
+            source.PostStep += OnPostStep;
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PreStep -= OnPreStep;
+            source.PostStep -= OnPostStep;
+        }
+
+        protected virtual void OnDied()
+        {
+            _died?.Invoke(this, EventArgs.Empty);
         }
     }
 }

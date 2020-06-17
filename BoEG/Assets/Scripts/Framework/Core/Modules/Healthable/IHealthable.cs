@@ -10,5 +10,8 @@ namespace Framework.Core.Modules
         float HealthGeneration { get; set; }
 
         event EventHandler<float> HealthChanged;
+
+        event EventHandler Died;
+
     }
 }

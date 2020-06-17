@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    [AddComponentMenu("EndGame/Components/Attackerable")]
     [DisallowMultipleComponent]
     public class Attackerable : MonoBehaviour, IAttackerable, IInitializable<IAttackerableData>,
         IListener<IStepableEvent>
@@ -135,7 +134,13 @@ namespace Framework.Core.Modules
         {
             for(var i = 0; i < _targets.Count; i++)
             {
-                var actor = _targets[i];
+                var actor = _targets[i];            
+                if (!actor.gameObject.activeSelf)
+                {
+                    _targets.RemoveAt(i);
+                    i--;
+                    continue;
+                }
                 if(_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
                     if (_teamable.SameTeam(teamable))
                     {

@@ -9,8 +9,7 @@ namespace Framework.Core.Modules
     //Stop overthinking this. Do what unity does best
 
 
-    public class Statable : MonoBehaviour,
-        IStepable, IListener<ILevelable>, IListener<IModifiable>
+    public class Statable : MonoBehaviour, IListener<ILevelable>, IListener<IModifiable>
     {
         protected float _capacity;
 
@@ -76,22 +75,6 @@ namespace Framework.Core.Modules
             source.OnModifierRemoved -= OnModifierRemoved;
         }
 
-        public virtual void PreStep(float deltaTime)
-        {
-        }
-
-        public virtual void Step(float deltaTime)
-        {
-        }
-
-        public virtual void PostStep(float deltaTime)
-        {
-        }
-
-        public virtual void PhysicsStep(float deltaTime)
-        {
-        }
-
         //TODO use these to add modifiers
 //        protected ModifierResult _capacityModifier;
 //        protected ModifierResult _generationModifier;
@@ -126,5 +109,6 @@ namespace Framework.Core.Modules
         {
             Stat += StatGeneration * deltaTime;
         }
+
     }
 }

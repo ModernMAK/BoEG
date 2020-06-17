@@ -7,7 +7,8 @@ namespace Framework.Core.Modules
     {
         float AggroRange { get; }
         bool InAggro(GameObject go);
-        IEnumerable<GameObject> GetAggroTargets();
+        IReadOnlyList<GameObject> GetAggroTargets();
+        GameObject GetAggroTarget(int index);
         bool HasAggroTarget();
     }
 }

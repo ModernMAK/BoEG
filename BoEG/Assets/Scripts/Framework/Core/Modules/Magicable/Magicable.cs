@@ -1,4 +1,5 @@
 using System;
+using Framework.Types;
 using Framework.Utility;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace Framework.Core.Modules
 
     [DisallowMultipleComponent]
     public class Magicable : Statable,
-        IInitializable<IMagicableData>, IMagicable
+        IInitializable<IMagicableData>, IMagicable, IListener<IStepableEvent>
     {
         public void Initialize(IMagicableData module)
         {
@@ -69,10 +70,19 @@ namespace Framework.Core.Modules
             }
         }
 
-        public override void PreStep(float deltaTime)
+        private void OnPreStep(float deltaTime)
         {
-            if (!MagicPercentage.SafeEquals(0f))
-                Generate(deltaTime);
+            Generate(deltaTime);
+        }
+
+        public void Register(IStepableEvent source)
+        {
+            source.PreStep += OnPreStep;
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PreStep -= OnPreStep;
         }
     }
 }
