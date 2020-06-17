@@ -39,3 +39,4 @@ MonoBehaviour:
   _abilities:
   - {fileID: 11400000, guid: e009dda33b8fe764190009e58a9b70bf, type: 2}
   - {fileID: 11400000, guid: 97e0aba765e6a6c4a9cb6d8ddaa4095a, type: 2}
+  _icon: {fileID: 21300000, guid: f9f6b1118fd15604186d2a5000007941, type: 3}

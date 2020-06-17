@@ -11,9 +11,6 @@ namespace Entity.Abilities.FlameWitch
     public class Fireball : AbilityObject
     {
         private Overheat _overheat;
-        private IMagicable _magicable;
-        private ITeamable _teamable;
-        private IAbilitiable _abilitiable;
 
         [Header("Mana")] [SerializeField] private float _manaCost;
         [Header("Damage")] [SerializeField] private float _damage;
@@ -34,10 +31,8 @@ namespace Entity.Abilities.FlameWitch
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _magicable = actor.GetComponent<IMagicable>();
-            _teamable = actor.GetComponent<ITeamable>();
-            _abilitiable = actor.GetComponent<IAbilitiable>();
-            _abilitiable.FindAbility(out _overheat);
+            _commonAbilityInfo.Abilitiable.FindAbility(out _overheat);
+            _commonAbilityInfo.ManaCost = _manaCost;
         }
 
         public override void ConfirmCast()
@@ -50,15 +45,12 @@ namespace Entity.Abilities.FlameWitch
             var ray = AbilityHelper.GetScreenRay();
             if (!Physics.Raycast(ray, out var hit, 100f, (int) LayerMaskHelper.World))
                 return;
-
-            var castRange = _overheat.IsActive ? _overheatCastRange : _castRange;
-            if (!AbilityHelper.InRange(Self.transform, hit.point, castRange))
+            _commonAbilityInfo.Range = _overheat.IsActive ? _overheatCastRange : _castRange;
+            if (!_commonAbilityInfo.InRange(hit.point))
+                return;
+            if (!_commonAbilityInfo.TrySpendMana())
                 return;
 
-            if (!_magicable.HasMagic(_manaCost))
-                return;
-
-            _magicable.SpendMagic(_manaCost);
 
             var t = Self.transform.position;
             var p = hit.point;
@@ -77,20 +69,16 @@ namespace Entity.Abilities.FlameWitch
                 if (!col.gameObject.TryGetComponent<Actor>(out var actor))
                     continue;
 
-                if (_teamable != null)
-                {
-                    if (!actor.TryGetComponent<ITeamable>(out var teamable))
-                        continue;
-                    if (_teamable.SameTeam(teamable))
-                        continue;
-                }
+                if (_commonAbilityInfo.SameTeam(actor.gameObject))
+                    continue;
 
                 if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
                     continue;
 
                 damageTarget.TakeDamage(Self.gameObject, dmg);
             }
-            _abilitiable.NotifySpellCast(new SpellEventArgs(){Caster = Self, ManaSpent = _manaCost});
+
+            _commonAbilityInfo.NotifySpellCast();
         }
     }
 }

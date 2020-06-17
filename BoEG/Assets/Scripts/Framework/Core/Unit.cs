@@ -11,7 +11,7 @@ namespace Framework.Core
     [RequireComponent(typeof(DamageTarget))]
     [RequireComponent(typeof(Attackerable))]
     [RequireComponent(typeof(Movable))]
-    public class Hero : Actor
+    public class Unit : Actor
     {
         private Sprite _icon;
         public override Sprite GetIcon() => _icon;
@@ -45,18 +45,10 @@ namespace Framework.Core
             if (TryGetInitializable<IMovableData>(out var movable))
                 movable.Initialize(MovableData);
             else throw new MissingComponentException("IMovable");
-
-
-            var instanceAbilities = new AbilityObject[AbilityData.Count];
-            for (var i = 0; i < AbilityData.Count; i++) instanceAbilities[i] = Instantiate(AbilityData[i]);
-
-            if (TryGetInitializable<IReadOnlyList<IAbility>>(out var abilitiable))
-                abilitiable.Initialize(instanceAbilities);
-            else throw new MissingComponentException("IAbilitiable");
         }
 #pragma warning disable 649
 
-        [SerializeField] private HeroData _data;
+        [SerializeField] private UnitData _data;
 
         protected IHealthableData HealthableData => _data._healthableData;
         protected IMagicableData MagicableData => _data._magicableData;
@@ -66,7 +58,6 @@ namespace Framework.Core
 
         protected IAttackerableData AttackerableData => _data._attackerableData;
         protected IMovableData MovableData => _data._movableData;
-        protected IReadOnlyList<AbilityObject> AbilityData => _data._abilities;
 #pragma warning restore 649
     }
 }

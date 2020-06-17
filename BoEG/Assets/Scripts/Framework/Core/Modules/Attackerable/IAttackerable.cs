@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Framework.Core.Modules
 {
@@ -25,5 +26,9 @@ namespace Framework.Core.Modules
         event EventHandler<AttackerableEventArgs> Attacking;
 
         event EventHandler<AttackerableEventArgs> Attacked;
+        bool HasAttackTarget();
+        IReadOnlyList<Actor> GetAttackTargets();
+        Actor GetAttackTarget(int index);
+        int AttackTargetCounts { get; }
     }
 }

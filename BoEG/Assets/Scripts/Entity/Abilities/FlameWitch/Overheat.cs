@@ -27,10 +27,10 @@ namespace Entity.Abilities.FlameWitch
         [SerializeField] public bool _isActive;
         [Header("Mana Cost")] [SerializeField] public float _manaCostPerSecond;
 
-        private IMagicable _magicable;
-        private ITeamable _teamable;
         private TickAction _tickHelper;
-        private IAbilitiable _abilitiable;
+        // private IMagicable _magicable;
+        // private ITeamable _teamable;
+        // private IAbilitiable _abilitiable;
 
         public bool IsActive
         {
@@ -59,11 +59,9 @@ namespace Entity.Abilities.FlameWitch
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _magicable = actor.GetComponent<IMagicable>();
-            _teamable = actor.GetComponent<ITeamable>();
             _tickHelper = new InfiniteTickAction {Callback = OnTick, TickInterval = 1f};
+            _commonAbilityInfo.ManaCost = _manaCostPerSecond;
             actor.AddSteppable(this);
-            _abilitiable = Self.GetComponent<IAbilitiable>();
         }
 
         public override void ConfirmCast()
@@ -73,15 +71,14 @@ namespace Entity.Abilities.FlameWitch
             if (IsActive)
             {
                 OnTick();
-                _abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCostPerSecond});
+                _commonAbilityInfo.NotifySpellCast();
             }
         }
 
         private void OnTick()
         {
-            if (IsActive && _magicable.HasMagic(_manaCostPerSecond))
+            if (IsActive && _commonAbilityInfo.TrySpendMana())
             {
-                _magicable.SpendMagic(_manaCostPerSecond);
                 var dotTargets =
                     Physics.OverlapSphere(Self.transform.position, _dotRange, (int) LayerMaskHelper.Entity);
                 foreach (var col in dotTargets)
@@ -92,11 +89,8 @@ namespace Entity.Abilities.FlameWitch
                         continue;
                     if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
                         continue;
-                    if (_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
-                    {
-                        if (_teamable.SameTeam(teamable))
-                            continue;
-                    }
+                    if (_commonAbilityInfo.SameTeam(actor.gameObject))
+                        continue;
 
                     var damage = new Damage(_damagePerSecond, DamageType.Magical, DamageModifiers.Ability);
                     damageTarget.TakeDamage(Self.gameObject, damage);

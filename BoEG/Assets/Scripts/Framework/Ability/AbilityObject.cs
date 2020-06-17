@@ -1,17 +1,83 @@
 using Framework.Core;
+using Framework.Core.Modules;
+using Modules.Teamable;
 using UnityEngine;
 
 namespace Entity.Abilities.FlameWitch
 {
+    public class CommonAbilityInfo
+    {
+        private Actor _actor;
+        private Transform _transform;
+        private ITeamable _teamable;
+        private IMagicable _magicable;
+        private IAbilitiable _abilitiable;
+        public IMagicable Magicable => _magicable;
+
+        public ITeamable Teamable => _teamable;
+
+        public IAbilitiable Abilitiable => _abilitiable;
+        public Transform Transform => _transform;
+        public float Range { get; set; }
+
+        public CommonAbilityInfo(Actor actor)
+        {
+            _magicable = actor.GetComponent<IMagicable>();
+            _teamable = actor.GetComponent<ITeamable>();
+            _abilitiable = actor.GetComponent<IAbilitiable>();
+            _transform = actor.transform;
+            _actor = actor;
+        }
+
+        public float ManaCost { get; set; }
+
+        public bool TrySpendMana()
+        {
+            if (HasMana())
+            {
+                SpendMana();
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool HasMana() => _magicable.HasMagic(ManaCost);
+
+        public void SpendMana() => _magicable.SpendMagic(ManaCost);
+
+        public bool SameTeam(GameObject go, bool defaultValue = false) =>
+            SameTeam(go.GetComponent<ITeamable>(), defaultValue);
+
+        public bool SameTeam(ITeamable teamable, bool defaultValue = false)
+        {
+            if (_teamable == null || teamable == null)
+                return defaultValue;
+            return _teamable.SameTeam(teamable);
+        }
+
+        public bool InRange(Transform transform) => AbilityHelper.InRange(_transform, transform.position, Range);
+        public bool InRange(Vector3 position) => AbilityHelper.InRange(_transform, position, Range);
+
+
+        public void NotifySpellCast(SpellEventArgs args) => _abilitiable.NotifySpellCast(args);
+        public void NotifySpellCast() =>
+            _abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = _actor, ManaSpent = ManaCost});
+    }
+
+
     public class AbilityObject : ScriptableObject, IAbility, IAbilityView
     {
         [SerializeField] private Sprite _icon;
         public Actor Self { get; private set; }
+        protected CommonAbilityInfo _commonAbilityInfo;
+        private bool IsSelf(GameObject gameObject) => gameObject == Self.gameObject;
 
         public virtual void Initialize(Actor actor)
         {
             Self = actor;
             AbilityHelper.Initialize(); //HACK
+            _commonAbilityInfo = new CommonAbilityInfo(actor);
         }
 
 

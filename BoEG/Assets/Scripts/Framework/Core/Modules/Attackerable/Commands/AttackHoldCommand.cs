@@ -3,6 +3,56 @@ using UnityEngine;
 
 namespace Framework.Core.Modules.Commands
 {
+    public class AttackMoveCommand : EntityCommand
+    {
+        // private readonly IAggroable _aggroable;
+        private readonly IAttackerable _attackerable;
+        private readonly IMovable _movable;
+        private readonly Vector3 _destenation;
+
+        public AttackMoveCommand(GameObject entity, Vector3 destenation) : base(entity)
+        {
+            // GetComponent(out _aggroable);
+            GetComponent(out _attackerable);
+            GetComponent(out _movable);
+            _destenation = destenation;
+        }
+
+
+        protected override void Step(float deltaTime)
+        {
+            if (_attackerable.HasAttackTarget())
+            {
+                _movable.StopMovement();
+                if (_attackerable.IsAttackOnCooldown)
+                {
+                    _attackerable.Attack(_attackerable.GetAttackTarget(0));
+                }
+            }
+            else
+            {
+                _movable.StartMovement();
+            }
+        }
+
+        protected override void Start()
+        {
+            _movable.StopMovement();
+            _movable.MoveTo(_destenation);
+            _movable.StartMovement();
+        }
+
+        protected override void Stop()
+        {
+            _movable.StopMovement();
+        }
+
+        protected override bool IsDone()
+        {
+            return false;
+        }
+    }
+
     public class AttackHoldCommand : EntityCommand
     {
         private readonly IAggroable _aggroable;

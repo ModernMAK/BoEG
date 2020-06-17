@@ -70,6 +70,8 @@ public class RtsController : MonoBehaviour
         {
             _commandable = null;
             _abilitiableHACK = null;
+            if (_panel != null)
+                _panel.SetTarget(null);
             return;
         }
 

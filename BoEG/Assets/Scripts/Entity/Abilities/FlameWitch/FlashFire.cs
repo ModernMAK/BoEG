@@ -1,3 +1,4 @@
+using System;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
@@ -20,10 +21,8 @@ namespace Entity.Abilities.FlameWitch
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            Magicable = actor.GetComponent<IMagicable>();
-            Teamable = actor.GetComponent<ITeamable>();
-            _abilitiable = Self.GetComponent<IAbilitiable>();
-            _abilitiable.FindAbility<Overheat>(out _overheatAbility);
+            _commonAbilityInfo.ManaCost = _manaCost;
+            _commonAbilityInfo.Abilitiable.FindAbility<Overheat>(out _overheatAbility);
         }
 
         [Header("Channel Time")] [SerializeField]
@@ -36,19 +35,14 @@ namespace Entity.Abilities.FlameWitch
 
         [SerializeField] private float _aoeDamage;
 
-        private IAbilitiable _abilitiable;
 
         private Overheat _overheatAbility;
-        private IMagicable Magicable { get; set; }
-
-
-        private ITeamable Teamable { get; set; }
 
         public override void ConfirmCast()
         {
-            if (!Magicable.HasMagic(_manaCost))
+            if (!_commonAbilityInfo.TrySpendMana())
                 return;
-            Magicable.SpendMagic(_manaCost);
+
             CastLogic();
         }
 
@@ -63,18 +57,13 @@ namespace Entity.Abilities.FlameWitch
                     continue;
                 if (!target.TryGetComponent<IDamageTarget>(out var damageTarget))
                     continue;
-                if (Teamable != null)
-                {
-                    if (!target.TryGetComponent<ITeamable>(out var teamable))
-                        continue;
-                    if (Teamable.SameTeam(teamable))
-                        continue;
-                }
+                if (_commonAbilityInfo.SameTeam(target.gameObject))
+                    continue;
 
                 damageTarget.TakeDamage(Self.gameObject, damage);
             }
-
-            _abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCost});
+            _commonAbilityInfo.NotifySpellCast();
+            
         }
     }
 }

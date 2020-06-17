@@ -7,6 +7,8 @@ namespace Framework.Core
 {
     public class Actor : MonoBehaviour
     {
+        public virtual Sprite GetIcon() => null;
+
         private List<IStepable> _steppable;
 
         protected virtual void Awake()

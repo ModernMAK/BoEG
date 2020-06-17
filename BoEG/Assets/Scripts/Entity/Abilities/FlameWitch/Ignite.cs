@@ -41,10 +41,7 @@ namespace Entity.Abilities.FlameWitch
         private float _tickInterval;
 
 
-        private IMagicable _magicable;
-        private ITeamable _teamable;
         private Overheat _overheatAbility;
-        private IAbilitiable _abilitiable;
 
         private List<TickAction> _ticks;
         private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
@@ -74,15 +71,12 @@ namespace Entity.Abilities.FlameWitch
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _magicable = actor.GetComponent<IMagicable>();
-            var abilitiable = actor.GetComponent<IAbilitiable>();
-            if (abilitiable != null)
-                abilitiable.FindAbility(out _overheatAbility);
-            _teamable = actor.GetComponent<ITeamable>();
+
+            _commonAbilityInfo.Abilitiable.FindAbility(out _overheatAbility);
+            _commonAbilityInfo.ManaCost = _manaCost;
             //Manually inject the ability as a stepable
             actor.AddSteppable(this);
             _ticks = new List<TickAction>();
-            _abilitiable = Self.GetComponent<IAbilitiable>();
         }
 
 
@@ -107,11 +101,9 @@ namespace Entity.Abilities.FlameWitch
                 return;
 
 
-            if (!_magicable.HasMagic(_manaCost))
+            if (!_commonAbilityInfo.TrySpendMana())
                 return;
 
-
-            _magicable.SpendMagic(_manaCost);
             SpellLogic(actor);
         }
 
@@ -137,9 +129,8 @@ namespace Entity.Abilities.FlameWitch
                         continue;
                     if (actor == null) //Not an actor
                         continue;
-                    if (_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
-                        if (_teamable.SameTeam(teamable))
-                            continue; //Skip allies
+                    if (_commonAbilityInfo.SameTeam(actor.gameObject))
+                        continue; //Skip allies
                     dotTargets.Add(actor);
                 }
             }
@@ -156,7 +147,7 @@ namespace Entity.Abilities.FlameWitch
                     _ticks.Add(tickWrapper);
                 }
 
-            _abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCost});
+            _commonAbilityInfo.NotifySpellCast();
         }
 
         private bool GetDotAction(Actor actor, out Action dotAction)

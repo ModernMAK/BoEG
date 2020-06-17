@@ -30,6 +30,7 @@ namespace Entity.Abilities.WarpedMagi
             _armorable = Self.GetComponent<IArmorable>();
             _magicable = Self.GetComponent<IMagicable>();
             _armorable.Resisting += OnResisting;
+            
             _abilitiable = Self.GetComponent<IAbilitiable>();
             actor.AddSteppable(this);
         }
