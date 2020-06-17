@@ -8,8 +8,9 @@ namespace Framework.Core
         [SerializeField] private TeamData _team;
         [SerializeField] private SpawnData[] _data;
         [SerializeField] private Transform _targetPos;
-        
+
         [SerializeField] private Transform[] _spawnLocations;
+        [SerializeField] private Transform _spawnContainer;
 
         private void Start()
         {
@@ -22,7 +23,7 @@ namespace Framework.Core
             foreach (var data in _data)
                 if (data.CanSpawn)
                 {
-                    var spawned = data.Spawn(_spawnLocations);
+                    var spawned = data.Spawn(_spawnContainer, _spawnLocations);
                     foreach (var go in spawned)
                     {
                         if (go.TryGetComponent<ITeamable>(out var teamable))

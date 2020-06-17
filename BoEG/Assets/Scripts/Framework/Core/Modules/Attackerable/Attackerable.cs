@@ -12,8 +12,9 @@ namespace Framework.Core.Modules
     {
         private void Awake()
         {
+            var actor = GetComponent<Actor>();
             _teamable = GetComponent<ITeamable>();
-            _triggerHelper = TriggerUtility.CreateTrigger<SphereCollider>(transform, "Attackerable Trigger");
+            _triggerHelper = TriggerUtility.CreateTrigger<SphereCollider>(actor, "Attackerable Trigger");
             _targets = new List<Actor>();
             _triggerHelper.Trigger.Enter += TriggerOnEnter;
             _triggerHelper.Trigger.Exit += TriggerOnExit;

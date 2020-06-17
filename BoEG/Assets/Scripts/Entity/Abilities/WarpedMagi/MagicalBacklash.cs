@@ -23,8 +23,7 @@ namespace Entity.Abilities.WarpedMagi
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            var container = TriggerUtility.GetTriggerContainer(Self);
-            _sphereCollider = TriggerUtility.CreateTrigger<SphereCollider>(container, "MagicalBackLash Trigger");
+            _sphereCollider = TriggerUtility.CreateTrigger<SphereCollider>(Self, "MagicalBackLash Trigger");
 
             _sphereCollider.Trigger.Enter += OnActorEnter;
             _sphereCollider.Trigger.Exit += OnActorExit;

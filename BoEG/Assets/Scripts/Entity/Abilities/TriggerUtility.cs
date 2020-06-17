@@ -45,5 +45,10 @@ namespace Framework.Core.Modules
                 Trigger = trigger
             };
         }
+        public static TriggerHelper<T> CreateTrigger<T>(Actor actor, string name) where T : Collider
+        {
+            var container = GetTriggerContainer(actor);
+            return CreateTrigger<T>(container, name);
+        }
     }
 }

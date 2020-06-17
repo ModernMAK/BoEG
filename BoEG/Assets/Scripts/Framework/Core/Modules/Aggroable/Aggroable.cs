@@ -13,7 +13,8 @@ namespace Framework.Core.Modules
 
         private void Awake()
         {
-            _triggerHelper = TriggerUtility.CreateTrigger<SphereCollider>(transform, "Aggroable Trigger");
+            var actor = GetComponent<Actor>();
+            _triggerHelper = TriggerUtility.CreateTrigger<SphereCollider>(actor, "Aggroable Trigger");
             _teamable = GetComponent<ITeamable>();
             _aggroTarget = new List<GameObject>();
             _triggerHelper.Trigger.Enter += TriggerOnEnter;
