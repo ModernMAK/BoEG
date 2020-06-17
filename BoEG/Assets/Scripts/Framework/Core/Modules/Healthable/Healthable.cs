@@ -94,10 +94,8 @@ namespace Framework.Core.Modules
         {
             if (!_isDead && HealthPercentage.SafeEquals(0f))
             {
-                OnDied();
                 _isDead = true;
-                //TODO HACK
-                gameObject.SetActive(false);
+                OnDied();
             }
         }
 

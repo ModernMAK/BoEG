@@ -71,6 +71,7 @@ namespace Framework.Core.Modules
         {
             if (IsAttackOnCooldown)
                 return;
+            
             if (_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
                 if (_teamable.SameTeam(teamable))
                     return;
@@ -134,7 +135,14 @@ namespace Framework.Core.Modules
         {
             for(var i = 0; i < _targets.Count; i++)
             {
-                var actor = _targets[i];            
+                var actor = _targets[i];
+                if (actor == null)
+                {
+                    _targets.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+                
                 if (!actor.gameObject.activeSelf)
                 {
                     _targets.RemoveAt(i);

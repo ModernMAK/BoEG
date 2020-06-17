@@ -77,6 +77,12 @@ namespace Framework.Core.Modules
             for (var i = 0; i < _aggroTarget.Count; i++)
             {
                 var target = _aggroTarget[i];
+                if (target == null)
+                {
+                    _aggroTarget.RemoveAt(i);
+                    i--;
+                    continue;
+                }
                 if (!target.activeSelf)
                 {
                     _aggroTarget.RemoveAt(i);
