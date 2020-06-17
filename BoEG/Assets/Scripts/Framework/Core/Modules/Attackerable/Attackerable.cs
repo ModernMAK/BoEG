@@ -131,15 +131,32 @@ namespace Framework.Core.Modules
             _triggerHelper.Collider.radius = AttackRange;
         }
 
+        private void OnPhysicsStep(float deltaTime)
+        {
+            for(var i = 0; i < _targets.Count; i++)
+            {
+                var actor = _targets[i];
+                if(_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
+                    if (_teamable.SameTeam(teamable))
+                    {
+                        _targets.RemoveAt(i);
+                        i--;
+                        continue;
+                    }
+            }
+        }
+
 
         public void Register(IStepableEvent source)
         {
             source.PreStep += OnPreStep;
+            source.PhysicsStep += OnPhysicsStep;
         }
 
         public void Unregister(IStepableEvent source)
         {
             source.PreStep -= OnPreStep;
+            source.PhysicsStep -= OnPhysicsStep;
         }
     }
 }
