@@ -8,7 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: DarkHeart
-  m_Shader: {fileID: 4800000, guid: 89a77368777f939429727183765c7fb0, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 7a2d6084c0e0e904b804a23565e0a787,
+    type: 3}
   m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -19,7 +20,23 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture2D_32F40AF:
+        m_Texture: {fileID: 2800000, guid: 2616fe628701dce4b8f0f63f87fdba0e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_977AEB84:
+        m_Texture: {fileID: 2800000, guid: 4188fbe867f4ce64dab4110ef49b1490, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _AlbedoMap:
+        m_Texture: {fileID: 2800000, guid: 4188fbe867f4ce64dab4110ef49b1490, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CalculateToonLighting_976AA102_Texture2DF37DB730_3357330189:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -59,7 +76,16 @@ Material:
         m_Texture: {fileID: 2800000, guid: 2616fe628701dce4b8f0f63f87fdba0e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RampDiffuse:
+        m_Texture: {fileID: 2800000, guid: 2616fe628701dce4b8f0f63f87fdba0e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecRampMap:
+        m_Texture: {fileID: 2800000, guid: 2616fe628701dce4b8f0f63f87fdba0e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Vector1_28532B47: 0.5
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -78,6 +104,10 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
+    - Color_B5882453: {r: 1, g: 1, b: 1, a: 0}
+    - Color_B6438BBE: {r: 0, g: 0, b: 0, a: 0}
+    - _AlbedoTint: {r: 1, g: 1, b: 1, a: 0}
     - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []

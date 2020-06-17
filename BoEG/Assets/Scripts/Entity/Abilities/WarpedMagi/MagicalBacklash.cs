@@ -34,9 +34,9 @@ namespace Entity.Abilities.WarpedMagi
         private void OnActorEnter(object sender, TriggerEventArgs args)
         {
             var go = args.Collider.gameObject;
-            if(!go.TryGetComponent<Actor>(out var actor))
+            if (!go.TryGetComponent<Actor>(out var actor))
                 return;
-            if(!go.TryGetComponent<IAbilitiable>(out var abilitiable))
+            if (!go.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
             abilitiable.SpellCasted += OnSpellCast;
         }
@@ -44,9 +44,9 @@ namespace Entity.Abilities.WarpedMagi
         private void OnActorExit(object sender, TriggerEventArgs args)
         {
             var go = args.Collider.gameObject;
-            if(!go.TryGetComponent<Actor>(out var actor))
+            if (!go.TryGetComponent<Actor>(out var actor))
                 return;
-            if(!go.TryGetComponent<IAbilitiable>(out var abilitiable))
+            if (!go.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
             abilitiable.SpellCasted -= OnSpellCast;
         }
