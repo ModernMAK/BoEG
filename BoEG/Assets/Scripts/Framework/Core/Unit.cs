@@ -40,7 +40,9 @@ namespace Framework.Core
 //            GetFrameworkComponent<IDamageTarget>().Initialize();
 
 
-            // GetInitializable<IAttackerableData>().Initialize(_attackerableData);
+            if (TryGetInitializable<IAttackerableData>(out var attackerable))
+                attackerable.Initialize(AttackerableData);
+            else throw new MissingComponentException("IMovable");
 
             if (TryGetInitializable<IMovableData>(out var movable))
                 movable.Initialize(MovableData);

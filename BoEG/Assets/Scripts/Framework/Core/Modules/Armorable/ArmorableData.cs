@@ -14,5 +14,11 @@ namespace Framework.Core.Modules
         public ArmorData Physical => _physical;
 
         public ArmorData Magical => _magical;
+
+        public static ArmorableData Default => new ArmorableData()
+        {
+            _physical = new ArmorData(0f, 1f / 100f, false),
+            _magical = new ArmorData(0f, 1f / 100f, false),
+        };
     }
 }

@@ -24,7 +24,7 @@ namespace Framework.Core.Modules.Commands
             if (_attackerable.HasAttackTarget())
             {
                 _movable.StopMovement();
-                if (_attackerable.IsAttackOnCooldown)
+                if (!_attackerable.IsAttackOnCooldown)
                 {
                     _attackerable.Attack(_attackerable.GetAttackTarget(0));
                 }

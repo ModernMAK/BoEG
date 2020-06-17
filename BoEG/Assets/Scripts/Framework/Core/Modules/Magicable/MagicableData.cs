@@ -18,5 +18,12 @@ namespace Framework.Core.Modules
         public float MagicGenerationGain => throw new NotImplementedException();
 
         public float MagicCapacityGain => throw new NotImplementedException();
+
+        public static MagicableData Default =>
+            new MagicableData()
+            {
+                _magicCapacity = 500f,
+                _magicGeneration = 1f
+            };
     }
 }

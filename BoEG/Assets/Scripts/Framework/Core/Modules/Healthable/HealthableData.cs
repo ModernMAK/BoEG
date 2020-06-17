@@ -18,5 +18,12 @@ namespace Framework.Core.Modules
         public float HealthGenerationGain => throw new NotImplementedException();
 
         public float HealthCapacityGain => throw new NotImplementedException();
+
+        public static HealthableData Default =>
+            new HealthableData()
+            {
+                _healthCapacity = 500f,
+                _healthGeneration = 1f
+            };
     }
 }

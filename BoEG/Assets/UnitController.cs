@@ -20,7 +20,6 @@ public class UnitController : MonoBehaviour
     {
         //TODO
         var attackMoveCommand = new Commands.AttackMoveCommand(gameObject, position);
-
-        _commandable.InterruptCommand(default);
+        _commandable.InterruptCommand(attackMoveCommand);
     }
 }

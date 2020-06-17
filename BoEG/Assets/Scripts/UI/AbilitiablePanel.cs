@@ -26,28 +26,26 @@ public class AbilitiablePanel : DebugUI
     // Update is called once per frame
     private void Update()
     {
-        if(_abilitiable == null)
-            return;
-        if (_abilityPanels.Count != _abilitiable.AbilityCount)
+        var abilityCount = _abilitiable == null ? 0 : _abilitiable.AbilityCount;
+        if (_abilityPanels.Count != abilityCount)
         {
-            for (var i = _abilityPanels.Count; i < _abilitiable.AbilityCount; i++)
+            for (var i = _abilityPanels.Count; i < abilityCount; i++)
             {
                 var inst = Instantiate(_abilityPanelPrefab, _container, false);
                 inst.SetActive(true);
                 _abilityPanels.Add(inst.GetComponent<AbilityPanel>());
             }
 
-            for (var i = _abilitiable.AbilityCount; i < _abilityPanels.Count; i++)
+            for (var i = abilityCount; i < _abilityPanels.Count; i++)
             {
                 Destroy(_abilityPanels[i].gameObject);
                 _abilityPanels.RemoveAt(i);
                 i--;
             }
 
-            for (var i = 0; i < _abilityPanels.Count; i++)
-                _abilityPanels[i].SetAbility(_abilitiable.GetAbility(i));
+            if (_abilitiable != null)
+                for (var i = 0; i < _abilityPanels.Count; i++)
+                    _abilityPanels[i].SetAbility(_abilitiable.GetAbility(i));
         }
-
-
     }
 }

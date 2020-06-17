@@ -7,12 +7,12 @@ namespace Framework.Core
     public class UnitData : ScriptableObject
     {
 #pragma warning disable 649
-        [SerializeField] public HealthableData _healthableData;
+        [SerializeField] public HealthableData _healthableData = HealthableData.Default;
 
-        [SerializeField] public MagicableData _magicableData;
-        [SerializeField] public ArmorableData _armorableData;
-        [SerializeField] public AttackerableData _attackerableData;
-        [SerializeField] public MovableData _movableData;
+        [SerializeField] public MagicableData _magicableData = MagicableData.Default;
+        [SerializeField] public ArmorableData _armorableData = ArmorableData.Default;
+        [SerializeField] public AttackerableData _attackerableData = AttackerableData.Default;
+        [SerializeField] public MovableData _movableData = MovableData.Default;
         [SerializeField] public Sprite _icon;
 #pragma warning restore 649
     }

@@ -2628,7 +2628,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1263342790}
   m_Layer: 9
-  m_Name: Spawner - A
+  m_Name: Spawner - B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3010,7 +3010,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1553892449}
   m_Layer: 9
-  m_Name: Tower -A
+  m_Name: Tower -B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3404,16 +3404,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1798476408}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86c716440632495ba25931a3aa53c8d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _team: {fileID: 11400000, guid: 9da5b357bf1eb4c4a85f4942c22b93c5, type: 2}
   _data:
   - Interval: 30
     LastSpawn: -30
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 815928153880685971, guid: 6f831ac78cf337147a21ee2227f4074f, type: 3}
     SpawnCount: 1
+  _targetPos: {fileID: 1553892449}
+  _spawnLocations:
+  - {fileID: 899117536}
+  - {fileID: 1618874910}
+  - {fileID: 1959298030}
 --- !u!1001 &1826783350
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3863,7 +3869,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Flame Witch
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7124005678035609100, guid: 87d718b2d47f375439fe8088c8e02d1b, type: 3}
+    - {fileID: 6985734265359453539, guid: 87d718b2d47f375439fe8088c8e02d1b, type: 3}
+    - {fileID: 7012025480278247791, guid: 87d718b2d47f375439fe8088c8e02d1b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 87d718b2d47f375439fe8088c8e02d1b, type: 3}
 --- !u!1001 &900349240816651209
 PrefabInstance:
@@ -3937,7 +3946,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4576122659799407006, guid: 6f831ac78cf337147a21ee2227f4074f, type: 3}
+    - {fileID: 4444624531077624561, guid: 6f831ac78cf337147a21ee2227f4074f, type: 3}
+    - {fileID: 4328964465495193341, guid: 6f831ac78cf337147a21ee2227f4074f, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 6f831ac78cf337147a21ee2227f4074f, type: 3}
 --- !u!1001 &1160181587603713556
 PrefabInstance:

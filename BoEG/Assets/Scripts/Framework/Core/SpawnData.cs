@@ -16,6 +16,23 @@ namespace Framework.Core
 
         public bool CanSpawn => Interval + LastSpawn <= Time.time;
 
+        public GameObject[] Spawn(params Transform[] spawnLocations)
+        {
+            if (spawnLocations.Length == 0)
+                return new GameObject[0];
+
+            var list = new List<GameObject>();
+            var offset = Random.Range(0, spawnLocations.Length);
+            for (var i = 0; i < SpawnCount; i++)
+            {
+                var location = spawnLocations[(offset + i) % spawnLocations.Length].position;
+                var go = Spawn(location, Random.insideUnitCircle * Mathf.Epsilon);
+                list.Add(go);
+            }
+
+            LastSpawn = Time.time;
+            return list.ToArray();
+        }
         public GameObject[] Spawn(params Vector3[] spawnLocations)
         {
             if (spawnLocations.Length == 0)
