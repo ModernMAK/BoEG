@@ -18,9 +18,13 @@ public class TeamableTinter : MonoBehaviour
         _materials = new List<Material>();
         foreach (var mr in GetComponentsInChildren<MeshRenderer>())
             _materials.Add(mr.material);
+        foreach (var smr in GetComponentsInChildren<SkinnedMeshRenderer>())
+            _materials.Add(smr.material);
 
         _teamable = GetComponent<ITeamable>();
         _teamable.TeamChanged += TeamableOnTeamChanged;
+        if (_teamable.Team != null)
+            Apply(_teamable.Team.GetTint());
     }
 
     private void Apply(Color color)
