@@ -43,8 +43,19 @@ namespace Framework.Core.Modules
                     return;
             }
 
+            if (go.TryGetComponent<IHealthable>(out var healthble))
+                healthble.Died += TargetDied;
+
             _aggroTarget.Add(go);
         }
+
+        private void TargetDied(object sender, DeathEventArgs e)
+        {
+            var healthable = sender as IHealthable;
+            healthable.Died -= TargetDied;
+            _aggroTarget.Remove(e.GameObject);
+        }
+
 
         private float _aggroRange;
         public float AggroRange => _aggroRange;
@@ -85,6 +96,7 @@ namespace Framework.Core.Modules
                     i--;
                     continue;
                 }
+
                 if (!target.activeSelf)
                 {
                     _aggroTarget.RemoveAt(i);

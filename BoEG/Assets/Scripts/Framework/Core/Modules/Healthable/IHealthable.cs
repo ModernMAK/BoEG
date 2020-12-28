@@ -1,7 +1,25 @@
 using System;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Framework.Core.Modules
 {
+    public class DeathEventArgs : EventArgs
+    {
+        public DeathEventArgs(Actor actor)
+        {
+            Self = actor;
+            GameObject = actor.gameObject;
+        }
+
+        public DeathEventArgs(GameObject go)
+        {
+            Self = go.GetComponent<Actor>();
+            GameObject = go;
+        }
+        public Actor Self { get; }
+        public GameObject GameObject { get; }
+    }
     public interface IHealthable
     {
         float Health { get; set; }
@@ -11,7 +29,7 @@ namespace Framework.Core.Modules
 
         event EventHandler<float> HealthChanged;
 
-        event EventHandler Died;
+        event EventHandler<DeathEventArgs> Died;
 
     }
 }

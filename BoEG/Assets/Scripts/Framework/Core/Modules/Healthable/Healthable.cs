@@ -13,7 +13,7 @@ namespace Framework.Core.Modules
     public class Healthable : Statable,
         IInitializable<IHealthableData>, IHealthable, IListener<IStepableEvent>
     {
-        private event EventHandler _died;
+        private event EventHandler<DeathEventArgs> _died;
 
         /// <summary>
         /// A flag set once died has been called.
@@ -50,7 +50,7 @@ namespace Framework.Core.Modules
             remove => StatChanged -= value;
         }
 
-        public event EventHandler Died
+        public event EventHandler<DeathEventArgs> Died
         {
             add => _died += value;
             remove => _died -= value;
@@ -95,7 +95,7 @@ namespace Framework.Core.Modules
             if (!_isDead && HealthPercentage.SafeEquals(0f))
             {
                 _isDead = true;
-                OnDied();
+                OnDied(new DeathEventArgs(gameObject));
             }
         }
 
@@ -111,9 +111,9 @@ namespace Framework.Core.Modules
             source.PostStep -= OnPostStep;
         }
 
-        protected virtual void OnDied()
+        protected virtual void OnDied(DeathEventArgs e)
         {
-            _died?.Invoke(this, EventArgs.Empty);
+            _died?.Invoke(this, e);
         }
     }
 }

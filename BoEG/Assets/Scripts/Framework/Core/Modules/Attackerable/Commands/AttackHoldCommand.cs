@@ -31,13 +31,22 @@ namespace Framework.Core.Modules.Commands
             }
             else if (_aggroable.HasAggroTarget())
             {
-                _movable.MoveTo(_aggroable.GetAggroTarget(0).transform.position);
+                /*
+                 * BUG NullReferenceException happens here
+                 * Separated statements to get a better grasp of where the failure occurs.
+                 * Probable cause; the aggro target is destroyed, causing an exception when accessing transform
+                 *     To solve this, we'd need to subscribe to a unit's OnDie and remove it then
+                */
+                var target = _aggroable.GetAggroTarget(0);
+                var position = target.transform.position;
+                _movable.MoveTo(position);
                 _movable.StartMovement();
             }
             else
             {
                 _movable.StartMovement();
-                _movable.MoveTo(_destenation);;
+                _movable.MoveTo(_destenation);
+                ;
             }
         }
 
