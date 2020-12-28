@@ -1,4 +1,4 @@
-using Framework.Ability;
+﻿using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
@@ -11,17 +11,15 @@ namespace Entity.Abilities.FlameWitch
     [CreateAssetMenu(menuName = "Ability/FlameWitch/FireBall")]
     public class Fireball : AbilityObject, IGroundTargetAbility
     {
+#pragma warning disable 0649
         private Overheat _overheat;
-
         [Header("Mana")] [SerializeField] private float _manaCost;
         [Header("Damage")] [SerializeField] private float _damage;
-
         [Header("Cast Range")] [SerializeField]
         private float _castRange;
-
         [SerializeField] private float _overheatCastRange;
-
         [SerializeField] private float _pathWidth;
+#pragma warning restore 0649
 
 
         /* Ground-Target Spell
@@ -38,7 +36,16 @@ namespace Entity.Abilities.FlameWitch
 
         public override void ConfirmCast()
         {
-            CastLogic();
+            var ray = AbilityHelper.GetScreenRay();
+            if (!Physics.Raycast(ray, out var hit, 100f, (int) LayerMaskHelper.World))
+                return;
+            _commonAbilityInfo.Range = _overheat.IsActive ? _overheatCastRange : _castRange;
+            if (!_commonAbilityInfo.InRange(hit.point))
+                return;
+            if (!_commonAbilityInfo.TrySpendMana())
+                return;
+
+            GroundTarget(hit.point);
         }
 
 
@@ -75,20 +82,6 @@ namespace Entity.Abilities.FlameWitch
             }
 
             _commonAbilityInfo.NotifySpellCast();
-        }
-
-        void CastLogic()
-        {
-            var ray = AbilityHelper.GetScreenRay();
-            if (!Physics.Raycast(ray, out var hit, 100f, (int) LayerMaskHelper.World))
-                return;
-            _commonAbilityInfo.Range = _overheat.IsActive ? _overheatCastRange : _castRange;
-            if (!_commonAbilityInfo.InRange(hit.point))
-                return;
-            if (!_commonAbilityInfo.TrySpendMana())
-                return;
-
-            GroundTarget(hit.point);
         }
     }
 }

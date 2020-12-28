@@ -2,9 +2,12 @@
 
 public class PrototypeMaterial : MonoBehaviour
 {
+#pragma warning disable 0649
+
     [SerializeField] private Material _protoMaterial;
 
     [SerializeField] private bool _refresh;
+#pragma warning restore 0649
     // Start is called before the first frame update
 
     // Update is called once per frame

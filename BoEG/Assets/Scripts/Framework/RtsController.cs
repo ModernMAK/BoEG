@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 
 public class RtsController : MonoBehaviour
 {
+#pragma warning disable 0649
+
     private IAbilitiable _abilitiableHACK;
     [SerializeField] private Actor _actor;
     [SerializeField] private ActorPanel _panel;
@@ -17,6 +19,7 @@ public class RtsController : MonoBehaviour
 
     private Camera _main;
     private Ray _ray;
+#pragma warning restore 0649
 
 
     private Camera CameraMain

@@ -26,6 +26,7 @@ namespace Entity.Abilities.FlameWitch
             _commonAbilityInfo.Abilitiable.FindAbility<Overheat>(out _overheatAbility);
         }
 
+#pragma warning disable 0649
         [Header("Channel Time")] [SerializeField]
         private float _channelTime;
 
@@ -38,7 +39,9 @@ namespace Entity.Abilities.FlameWitch
 
 
         private Overheat _overheatAbility;
+#pragma warning restore 0649
 
+        
         public override void ConfirmCast()
         {
             if (!_commonAbilityInfo.TrySpendMana())

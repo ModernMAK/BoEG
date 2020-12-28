@@ -5,12 +5,15 @@ namespace Framework.Core
 {
     public class Spawner : Actor
     {
+#pragma warning disable 0649
         [SerializeField] private TeamData _team;
         [SerializeField] private SpawnData[] _data;
         [SerializeField] private Transform _targetPos;
 
         [SerializeField] private Transform[] _spawnLocations;
         [SerializeField] private Transform _spawnContainer;
+#pragma warning restore 0649
+
 
         private void Start()
         {

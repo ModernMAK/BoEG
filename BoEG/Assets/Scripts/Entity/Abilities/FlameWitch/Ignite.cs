@@ -21,6 +21,8 @@ namespace Entity.Abilities.FlameWitch
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Ignite")]
     public class Ignite : AbilityObject, IStepable, IObjectTargetAbility<Actor>
     {
+#pragma warning disable 0649
+
         [Header("Cast Range")] [SerializeField]
         private float _castRange = 5f;
 
@@ -44,6 +46,8 @@ namespace Entity.Abilities.FlameWitch
         private Overheat _overheatAbility;
 
         private List<Framework.Ability.TickAction> _ticks;
+#pragma warning restore 0649
+
         private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
 
         public void PreStep(float deltaTime)

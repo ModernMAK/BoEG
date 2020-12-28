@@ -8,7 +8,10 @@ using UnityEngine.UI;
 
 public class IconPanel : DebugUI
 {
+#pragma warning disable 0649
+
     [SerializeField] private Image _icon;
+#pragma warning restore 0649
 
     public override void SetTarget(GameObject go)
     {

@@ -10,15 +10,17 @@ namespace Entity.Abilities.WarpedMagi
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/MagicalBacklash")]
     public class MagicalBacklash : AbilityObject, IStepable
     {
+#pragma warning disable 0649
         [SerializeField] private float _damagePerManaSpent;
         [SerializeField] private float _aoeRange;
         private TriggerHelper<SphereCollider> _sphereCollider;
+#pragma warning restore 0649
 
 
         /* Passive Spell
          * Units who cast spells in an AOE take damage based on manacost.
          */
-        
+
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);

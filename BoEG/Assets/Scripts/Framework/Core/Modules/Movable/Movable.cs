@@ -22,8 +22,8 @@ namespace Framework.Core.Modules
 
         public void MoveTo(Vector3 destenation)
         {
-            if (_agent.gameObject.activeSelf)
-                _agent.SetDestination(destenation);
+            if (_agent.gameObject.activeInHierarchy)
+                _agent.SetDestination(destenation);//BUG agent isnt active and recieving moveto command
         }
 
         public void WarpTo(Vector3 destenation)

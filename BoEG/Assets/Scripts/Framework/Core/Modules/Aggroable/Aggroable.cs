@@ -35,7 +35,7 @@ namespace Framework.Core.Modules
                 return;
             if (_aggroTarget.Contains(go))
                 return;
-            if (!go.TryGetComponent<Actor>(out var actor))
+            if (!go.TryGetComponent<Actor>(out _))
                 return;
             if (_teamable != null && go.TryGetComponent<ITeamable>(out var teamable))
             {

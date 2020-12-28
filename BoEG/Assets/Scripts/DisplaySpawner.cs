@@ -9,9 +9,12 @@ namespace Developer.PlayTesting
     [ExecuteInEditMode]
     public class DisplaySpawner : MonoBehaviour
     {
+#pragma warning disable 0649
+
         [SerializeField] private GameObject _prefab;
         [SerializeField] private bool _spawn;
         [SerializeField] private bool _clear;
+#pragma warning restore 0649
 
 
         private void Update()

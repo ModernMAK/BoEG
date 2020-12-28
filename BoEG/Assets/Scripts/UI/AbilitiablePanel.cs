@@ -4,20 +4,14 @@ using UnityEngine;
 
 public class AbilitiablePanel : DebugUI
 {
+#pragma warning disable 0649
     [SerializeField] private GameObject _abilityPanelPrefab;
     [SerializeField] private Transform _container;
     private IAbilitiable _abilitiable;
     private List<AbilityPanel> _abilityPanels;
-
-    // Start is called before the first frame update
     private GameObject _go;
-
-    public override void SetTarget(GameObject go)
-    {
-        _go = go;
-        _abilitiable = _go != null ? _go.GetComponent<IAbilitiable>() : null;
-    }
-
+#pragma warning restore 0649
+    
     private void Awake()
     {
         _abilityPanels = new List<AbilityPanel>();
@@ -47,5 +41,10 @@ public class AbilitiablePanel : DebugUI
                 for (var i = 0; i < _abilityPanels.Count; i++)
                     _abilityPanels[i].SetAbility(_abilitiable.GetAbility(i));
         }
+    }
+    public override void SetTarget(GameObject go)
+    {
+        _go = go;
+        _abilitiable = _go != null ? _go.GetComponent<IAbilitiable>() : null;
     }
 }

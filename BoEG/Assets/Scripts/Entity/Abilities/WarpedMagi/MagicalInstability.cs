@@ -14,6 +14,8 @@ namespace Entity.Abilities.WarpedMagi
          * Negates Magical Damage.
          * Magical Damage grants mana for the duration.
          */
+#pragma warning disable 0649
+
         [Header("Mana Cost")] [SerializeField] private float _manaCost;
         [SerializeField] private float _manaGainPerDamage;
         [SerializeField] private float _duration;
@@ -24,6 +26,7 @@ namespace Entity.Abilities.WarpedMagi
         private IAbilitiable _abilitiable;
 
         private bool _isActive;
+#pragma warning restore 0649
 
         public override void Initialize(Actor actor)
         {

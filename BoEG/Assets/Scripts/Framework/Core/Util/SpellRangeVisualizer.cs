@@ -2,6 +2,8 @@
 
 public class SpellRangeVisualizer : MonoBehaviour
 {
+#pragma warning disable 0649
+
     private Transform _end;
     private Vector3 _endPoint;
     [SerializeField] private Material _excessRangeMat;
@@ -13,6 +15,7 @@ public class SpellRangeVisualizer : MonoBehaviour
     private float _range;
     private Transform _start;
     private Vector3 _startPoint;
+#pragma warning restore 0649
 
     private Vector3 LineStart => _start != null ? _start.transform.position : _startPoint;
 

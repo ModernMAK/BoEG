@@ -5,10 +5,12 @@ namespace System
 {
     public class ActorPanel : MonoBehaviour
     {
+#pragma warning disable 0649
         [SerializeField] private bool _recollectUi;
         [SerializeField] private bool _setTarget;
         [SerializeField] private GameObject _target;
         private DebugUI[] _uis;
+#pragma warning restore 0649
 
 
         private void Awake()

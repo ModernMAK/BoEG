@@ -70,15 +70,19 @@ namespace Framework.Ability
 
     public class AbilityObject : ScriptableObject, IAbility, IAbilityView
     {
+#pragma warning disable 0649
+
         [SerializeField] private Sprite _icon;
-        public Actor Self { get; private set; }
         protected CommonAbilityInfo _commonAbilityInfo;
+#pragma warning disable 0649
+
+        public Actor Self { get; private set; }
         private bool IsSelf(GameObject gameObject) => gameObject == Self.gameObject;
 
         public virtual void Initialize(Actor actor)
         {
             Self = actor;
-            AbilityHelper.Initialize(); //HACK
+            AbilityHelper.Initialize(); //HACK TODO make this not a hack
             _commonAbilityInfo = new CommonAbilityInfo(actor);
         }
 

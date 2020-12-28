@@ -73,12 +73,12 @@ namespace Entity.Abilities.FlameWitch
         public void NoTarget()
         {
             IsActive = !IsActive;
-            //Immediately start ticking
+
             if (IsActive)
-            {
+                //Immediately start ticking
                 OnTick();
-                _commonAbilityInfo.NotifySpellCast();
-            }
+            
+            //Do not notify as a spell cast
         }
 
         private void OnTick()
