@@ -44,6 +44,7 @@ namespace Entity.Abilities.FlameWitch
         private Overheat _overheatAbility;
 
         private List<TickAction> _ticks;
+        private List<Framework.Ability.TickAction> _ticks;
         private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
 
         public void PreStep(float deltaTime)
