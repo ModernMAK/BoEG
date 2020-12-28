@@ -60,6 +60,9 @@ namespace Entity.Abilities.FlameWitch
             {
                 if (!target.TryGetComponent<Actor>(out var actor))
                     continue;
+                if(actor == Self)
+                    continue;
+                
                 if (!target.TryGetComponent<IDamageTarget>(out var damageTarget))
                     continue;
                 if (_commonAbilityInfo.SameTeam(target.gameObject))
