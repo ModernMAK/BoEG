@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
-using Modules.Teamable;
 using Triggers;
 using UnityEngine;
 
@@ -19,7 +19,7 @@ namespace Entity.Abilities.FlameWitch
 
 
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Ignite")]
-    public class Ignite : AbilityObject, IStepable
+    public class Ignite : AbilityObject, IStepable, IObjectTargetAbility<Actor>
     {
         [Header("Cast Range")] [SerializeField]
         private float _castRange = 5f;
@@ -43,7 +43,6 @@ namespace Entity.Abilities.FlameWitch
 
         private Overheat _overheatAbility;
 
-        private List<TickAction> _ticks;
         private List<Framework.Ability.TickAction> _ticks;
         private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
 
@@ -69,47 +68,7 @@ namespace Entity.Abilities.FlameWitch
         {
         }
 
-        public override void Initialize(Actor actor)
-        {
-            base.Initialize(actor);
-
-            _commonAbilityInfo.Abilitiable.FindAbility(out _overheatAbility);
-            _commonAbilityInfo.ManaCost = _manaCost;
-            //Manually inject the ability as a stepable
-            actor.AddSteppable(this);
-            _ticks = new List<TickAction>();
-        }
-
-
-        public override void ConfirmCast()
-        {
-            Cast();
-        }
-
-        protected void Cast()
-        {
-            var ray = AbilityHelper.GetScreenRay();
-            if (!Physics.Raycast(ray, out var hit, 100f, (int) LayerMaskHelper.Entity))
-                return;
-
-            if (!AbilityHelper.InRange(Self.transform, hit.point, _castRange))
-                return;
-
-            var actor = AbilityHelper.GetActor(hit);
-            if (actor == null)
-                return;
-            if (actor == Self)
-                return;
-
-
-            if (!_commonAbilityInfo.TrySpendMana())
-                return;
-
-            SpellLogic(actor);
-        }
-
-
-        private void SpellLogic(Actor target)
+        public void ObjectTarget(Actor target)
         {
             //Deal damage
             var damage = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
@@ -139,7 +98,7 @@ namespace Entity.Abilities.FlameWitch
             foreach (var actor in dotTargets)
                 if (GetDotAction(actor, out var action))
                 {
-                    var tickWrapper = new TickAction
+                    var tickWrapper = new Framework.Ability.TickAction
                     {
                         Callback = action,
                         TickCount = _tickCount,
@@ -150,6 +109,41 @@ namespace Entity.Abilities.FlameWitch
 
             _commonAbilityInfo.NotifySpellCast();
         }
+
+        public override void Initialize(Actor actor)
+        {
+            base.Initialize(actor);
+
+            _commonAbilityInfo.Abilitiable.FindAbility(out _overheatAbility);
+            _commonAbilityInfo.ManaCost = _manaCost;
+            //Manually inject the ability as a stepable
+            actor.AddSteppable(this);
+            _ticks = new List<Framework.Ability.TickAction>();
+        }
+
+
+        public override void ConfirmCast()
+        {
+            var ray = AbilityHelper.GetScreenRay();
+            if (!Physics.Raycast(ray, out var hit, 100f, (int) LayerMaskHelper.Entity))
+                return;
+
+            if (!AbilityHelper.InRange(Self.transform, hit.point, _castRange))
+                return;
+
+            var actor = AbilityHelper.GetActor(hit);
+            if (actor == null)
+                return;
+            if (actor == Self)
+                return;
+
+
+            if (!_commonAbilityInfo.TrySpendMana())
+                return;
+
+            ObjectTarget(actor);
+        }
+
 
         private bool GetDotAction(Actor actor, out Action dotAction)
         {

@@ -1,4 +1,5 @@
 using System;
+using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
@@ -9,7 +10,7 @@ using UnityEngine;
 namespace Entity.Abilities.FlameWitch
 {
     [CreateAssetMenu(menuName = "Ability/FlameWitch/FlashFire")]
-    public class FlashFire : AbilityObject
+    public class FlashFire : AbilityObject, INoTargetAbility
     {
         /* Channeling Spell
          * Deals damage in an AOE around FlameWitch
@@ -43,11 +44,12 @@ namespace Entity.Abilities.FlameWitch
             if (!_commonAbilityInfo.TrySpendMana())
                 return;
 
-            CastLogic();
+            NoTarget();
         }
 
-        private void CastLogic()
+        public void NoTarget()
         {
+            
             var targets = Physics.OverlapSphere(Self.transform.position, _aoeSearchRange, (int) LayerMaskHelper.Entity);
 
             var damage = new Damage(_aoeDamage, DamageType.Magical, DamageModifiers.Ability);
@@ -63,7 +65,7 @@ namespace Entity.Abilities.FlameWitch
                 damageTarget.TakeDamage(Self.gameObject, damage);
             }
             _commonAbilityInfo.NotifySpellCast();
-            
         }
+
     }
 }

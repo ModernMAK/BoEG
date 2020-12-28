@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Entity.Abilities.FlameWitch;
+using Framework.Ability;
 using Framework.Types;
 using Modules.Teamable;
 using UnityEngine;

@@ -1,3 +1,4 @@
+using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
@@ -27,7 +28,7 @@ namespace Entity.Abilities.FlameWitch
         [SerializeField] public bool _isActive;
         [Header("Mana Cost")] [SerializeField] public float _manaCostPerSecond;
 
-        private TickAction _tickHelper;
+        private Framework.Ability.TickAction _tickHelper;
         // private IMagicable _magicable;
         // private ITeamable _teamable;
         // private IAbilitiable _abilitiable;

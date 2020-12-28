@@ -1,3 +1,4 @@
+using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
@@ -8,7 +9,7 @@ using UnityEngine;
 namespace Entity.Abilities.FlameWitch
 {
     [CreateAssetMenu(menuName = "Ability/FlameWitch/FireBall")]
-    public class Fireball : AbilityObject
+    public class Fireball : AbilityObject, IGroundTargetAbility
     {
         private Overheat _overheat;
 
@@ -23,7 +24,7 @@ namespace Entity.Abilities.FlameWitch
         [SerializeField] private float _pathWidth;
 
 
-        /* Ground-Taget Spell
+        /* Ground-Target Spell
          * Deals damage along path.
          * When OverHeating;
          *     Path is longer.
@@ -40,6 +41,42 @@ namespace Entity.Abilities.FlameWitch
             CastLogic();
         }
 
+
+        public void GroundTarget(Vector3 worldPos)
+        {
+            var t = Self.transform.position;
+            var p = worldPos;
+
+            var dir = (p - t);
+            var travelDistance = (_overheat.IsActive ? _overheatCastRange : _castRange);
+            var center = t + dir.normalized * travelDistance / 2f;
+            var bound = new Vector3(_pathWidth, 2, travelDistance);
+            var halfbound = bound / 2;
+            var rotation = Quaternion.LookRotation(dir);
+            var colliders = Physics.OverlapBox(center, halfbound, rotation, (int) LayerMaskHelper.Entity);
+            var dmg = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
+
+            foreach (var col in colliders)
+            {
+                if (!col.gameObject.TryGetComponent<Actor>(out var actor))
+                    continue; //Not an actor, ignore
+
+                if (actor == Self)
+                    continue; //Always ignore self
+
+
+                if (_commonAbilityInfo.SameTeam(actor.gameObject))
+                    continue; //Ignore if allies
+
+                if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
+                    continue; //Ignore if cant damage
+
+                damageTarget.TakeDamage(Self.gameObject, dmg);
+            }
+
+            _commonAbilityInfo.NotifySpellCast();
+        }
+
         void CastLogic()
         {
             var ray = AbilityHelper.GetScreenRay();
@@ -51,34 +88,7 @@ namespace Entity.Abilities.FlameWitch
             if (!_commonAbilityInfo.TrySpendMana())
                 return;
 
-
-            var t = Self.transform.position;
-            var p = hit.point;
-
-            var center = (p + t) / 2f;
-            var dir = (p - t);
-            var bound = new Vector3(_pathWidth, 2, dir.magnitude);
-            var halfbound = bound / 2;
-            var rotation = Quaternion.LookRotation(dir);
-
-            var colliders = Physics.OverlapBox(center, halfbound, rotation, (int) LayerMaskHelper.Entity);
-            var dmg = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
-
-            foreach (var col in colliders)
-            {
-                if (!col.gameObject.TryGetComponent<Actor>(out var actor))
-                    continue;
-
-                if (_commonAbilityInfo.SameTeam(actor.gameObject))
-                    continue;
-
-                if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
-                    continue;
-
-                damageTarget.TakeDamage(Self.gameObject, dmg);
-            }
-
-            _commonAbilityInfo.NotifySpellCast();
+            GroundTarget(hit.point);
         }
     }
 }

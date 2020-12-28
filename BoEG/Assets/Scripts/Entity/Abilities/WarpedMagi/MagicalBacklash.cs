@@ -1,4 +1,5 @@
 using Entity.Abilities.FlameWitch;
+using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
@@ -12,19 +13,16 @@ namespace Entity.Abilities.WarpedMagi
         [SerializeField] private float _damagePerManaSpent;
         [SerializeField] private float _aoeRange;
         private TriggerHelper<SphereCollider> _sphereCollider;
-        private IAbilitiable _abilitiable;
 
 
         /* Passive Spell
          * Units who cast spells in an AOE take damage based on manacost.
          */
-
-
+        
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _sphereCollider = TriggerUtility.CreateTrigger<SphereCollider>(Self, "MagicalBackLash Trigger");
-
+            _sphereCollider = TriggerUtility.CreateTrigger<SphereCollider>(Self, "MagicalBacklash Trigger");
             _sphereCollider.Trigger.Enter += OnActorEnter;
             _sphereCollider.Trigger.Exit += OnActorExit;
             actor.AddSteppable(this);
@@ -33,7 +31,7 @@ namespace Entity.Abilities.WarpedMagi
         private void OnActorEnter(object sender, TriggerEventArgs args)
         {
             var go = args.Collider.gameObject;
-            if (!go.TryGetComponent<Actor>(out var actor))
+            if (!go.TryGetComponent<Actor>(out _))
                 return;
             if (!go.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
@@ -43,7 +41,7 @@ namespace Entity.Abilities.WarpedMagi
         private void OnActorExit(object sender, TriggerEventArgs args)
         {
             var go = args.Collider.gameObject;
-            if (!go.TryGetComponent<Actor>(out var actor))
+            if (!go.TryGetComponent<Actor>(out _))
                 return;
             if (!go.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;

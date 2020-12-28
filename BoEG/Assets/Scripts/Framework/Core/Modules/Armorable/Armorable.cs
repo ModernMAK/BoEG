@@ -12,12 +12,13 @@ namespace Framework.Core.Modules
         public virtual Damage ResistDamage(Damage damage)
         {
             var reduction = CalculateReduction(damage);
-            var args = new ArmorableEventArgs {Damage = damage, Reduction = reduction};
-            OnResisting(args);
+            var reducedDamage = damage.ModifyValue(-reduction, true);
+            var resistingArgs = new ArmorableEventArgs(damage, reducedDamage);
+            OnResisting(resistingArgs);
+            var resistedArgs = new ArmorableEventArgs(resistingArgs.OutgoingDamage);
             //Reduction, so negate the value
-            args.Damage = args.Damage.ModifyValue(-args.Reduction);
-            OnResisted(args);
-            return args.Damage;
+            OnResisted(resistedArgs);
+            return resistedArgs.OutgoingDamage;
         }
 
         public float CalculateReduction(Damage damage)

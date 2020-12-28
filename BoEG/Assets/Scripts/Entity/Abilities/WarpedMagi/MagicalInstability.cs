@@ -1,4 +1,5 @@
 using Entity.Abilities.FlameWitch;
+using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
@@ -30,7 +31,7 @@ namespace Entity.Abilities.WarpedMagi
             _armorable = Self.GetComponent<IArmorable>();
             _magicable = Self.GetComponent<IMagicable>();
             _armorable.Resisting += OnResisting;
-            
+
             _abilitiable = Self.GetComponent<IAbilitiable>();
             actor.AddSteppable(this);
         }
@@ -40,15 +41,26 @@ namespace Entity.Abilities.WarpedMagi
             //Dont do anything if we aren't on
             if (!_isActive)
                 return;
+
+            var dmg = e.OutgoingDamage;
             //Only apply to magical damage
-            if (e.Damage.Type != DamageType.Magical)
+            if (dmg.Type != DamageType.Magical)
                 return;
-            var fullDamage = e.Damage.Value + e.Reduction;
-            var manaGained = _manaGainPerDamage * fullDamage;
-            manaGained = Mathf.Max(manaGained, 0f);
+
+            //Mana Available (To Gain)
+            var manaAvailable = _magicable.MagicCapacity - _magicable.Magic;
+            //Calcualte Potential Block
+            var availableDamageBlock = manaAvailable / _manaGainPerDamage;
+            //Calculate Block
+            var appliedDamageBlock = Mathf.Min(e.OutgoingDamage.Value, availableDamageBlock);
+            //Calculate mana to gain
+            var manaGained = appliedDamageBlock * _manaGainPerDamage;
+
+            //TODO consider adding a check to ensure manaGained is never negative
             //Gain mana
             _magicable.Magic += manaGained;
-            e.Reduction = e.Damage.Value; //Negate all damage, we dont rely on buffs to do the negation
+            //Negate damage damage, we don't rely on buffs to do the negation
+            e.OutgoingDamage = dmg.ModifyValue(-appliedDamageBlock);
         }
 
         public override void ConfirmCast()

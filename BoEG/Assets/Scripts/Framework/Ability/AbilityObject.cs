@@ -1,9 +1,10 @@
+using Entity.Abilities.FlameWitch;
 using Framework.Core;
 using Framework.Core.Modules;
 using Modules.Teamable;
 using UnityEngine;
 
-namespace Entity.Abilities.FlameWitch
+namespace Framework.Ability
 {
     public class CommonAbilityInfo
     {
@@ -61,6 +62,7 @@ namespace Entity.Abilities.FlameWitch
 
 
         public void NotifySpellCast(SpellEventArgs args) => _abilitiable.NotifySpellCast(args);
+
         public void NotifySpellCast() =>
             _abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = _actor, ManaSpent = ManaCost});
     }

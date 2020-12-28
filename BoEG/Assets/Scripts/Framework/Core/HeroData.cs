@@ -1,4 +1,5 @@
 using Entity.Abilities.FlameWitch;
+using Framework.Ability;
 using Framework.Core.Modules;
 using UnityEngine;
 

@@ -8,14 +8,16 @@ namespace Modules.Teamable
     public class Teamable : MonoBehaviour, ITeamable, IInitializable<TeamData>
     {
         [SerializeField] private TeamData _team;
-        private event EventHandler<TeamData> _teamChanged; 
+        private event EventHandler<TeamData> _teamChanged;
 
         public void Initialize(TeamData module)
         {
             _team = module;
+            OnTeamChanged(_team);
         }
 
         public TeamData Team => _team;
+
         public event EventHandler<TeamData> TeamChanged
         {
             add => _teamChanged += value;

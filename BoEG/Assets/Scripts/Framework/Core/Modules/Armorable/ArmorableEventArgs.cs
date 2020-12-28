@@ -1,23 +1,37 @@
 using System;
 using Framework.Types;
+using UnityEngine;
 
 namespace Framework.Core.Modules
 {
+    public static class ArmorableEventArgsUtilities
+    {
+        public static float CalculateReduction(this ArmorableEventArgs args)
+        {
+            return args.OutgoingDamage.Value - args.IncomingDamage.Value;
+        }
+        
+        public static ArmorableEventArgs CreateNextArmorableArgs(this ArmorableEventArgs args) => new ArmorableEventArgs(args.OutgoingDamage);
+    }
+
     public class ArmorableEventArgs : EventArgs
     {
-        public ArmorableEventArgs()
+        public ArmorableEventArgs(Damage damage = default) : this(damage, damage)
         {
-            Damage = default;
-            Reduction = default;
+        }
+
+        public ArmorableEventArgs(Damage incoming, Damage outgoing)
+        {
+            IncomingDamage = incoming;
+            OutgoingDamage = outgoing;
         }
 
         /// <summary>
-        /// A copy of the damage instance to reduce.
+        /// The damage coming into the Armorable event
         /// </summary>
-        public Damage Damage { get; set; }
-        /// <summary>
-        /// The amount of damage we are reducing. 
-        /// </summary>
-        public float Reduction { get; set; }
+        public Damage IncomingDamage { get; }
+
+        public Damage OutgoingDamage { get; set; }
+
     }
 }

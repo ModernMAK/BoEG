@@ -3,7 +3,7 @@ using Framework.Core;
 using Framework.Core.Modules;
 using UnityEngine;
 
-namespace Entity.Abilities.FlameWitch
+namespace Framework.Ability
 {
     public static class AbilityHelper
     {
@@ -27,7 +27,7 @@ namespace Entity.Abilities.FlameWitch
 
         public static void Initialize()
         {
-            var _ = Controls;
+            var _ = Controls; //Initializes controls
         }
 
         [Obsolete("Use ManaHelper class")]
@@ -63,12 +63,17 @@ namespace Entity.Abilities.FlameWitch
         public static Actor GetActor(RaycastHit hit)
         {
             var go = hit.collider.gameObject;
-            var rb = hit.collider.GetComponent<Rigidbody>();
-
-            if (rb != null)
-                go = rb.gameObject;
-
             var actor = go.GetComponent<Actor>();
+
+            if (actor == null)
+            {
+                var rb = hit.collider.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    go = rb.gameObject;
+                    actor = go.GetComponent<Actor>();
+                }
+            }
 
 
             if (actor == null)
