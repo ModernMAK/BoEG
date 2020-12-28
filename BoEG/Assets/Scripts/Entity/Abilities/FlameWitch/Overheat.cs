@@ -85,8 +85,7 @@ namespace Entity.Abilities.FlameWitch
         {
             if (IsActive && _commonAbilityInfo.TrySpendMana())
             {
-                var dotTargets =
-                    Physics.OverlapSphere(Self.transform.position, _dotRange, (int) LayerMaskHelper.Entity);
+                var dotTargets = Physics.OverlapSphere(Self.transform.position, _dotRange, (int) LayerMaskHelper.Entity);
                 foreach (var col in dotTargets)
                 {
                     if (!col.gameObject.TryGetComponent<Actor>(out var actor))

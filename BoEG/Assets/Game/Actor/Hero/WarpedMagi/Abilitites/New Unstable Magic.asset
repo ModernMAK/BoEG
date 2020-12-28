@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: New Unstable Magic
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _manaCost: 0
-  _castRange: 0
-  _damage: 0
-  _searchRange: 0
-  _additionalJumps: 0
+  _manaCost: 100
+  _castRange: 10
+  _damage: 100
+  _searchRange: 3
+  _additionalJumps: 4
