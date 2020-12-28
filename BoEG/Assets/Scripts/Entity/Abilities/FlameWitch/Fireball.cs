@@ -51,9 +51,9 @@ namespace Entity.Abilities.FlameWitch
             var travelDistance = (_overheat.IsActive ? _overheatCastRange : _castRange);
             var center = t + dir.normalized * travelDistance / 2f;
             var bound = new Vector3(_pathWidth, 2, travelDistance);
-            var halfbound = bound / 2;
+            var halfBound = bound / 2;
             var rotation = Quaternion.LookRotation(dir);
-            var colliders = Physics.OverlapBox(center, halfbound, rotation, (int) LayerMaskHelper.Entity);
+            var colliders = Physics.OverlapBox(center, halfBound, rotation, (int) LayerMaskHelper.Entity);
             var dmg = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
 
             foreach (var col in colliders)

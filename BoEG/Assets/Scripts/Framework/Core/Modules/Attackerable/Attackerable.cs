@@ -33,22 +33,21 @@ namespace Framework.Core.Modules
         private void TriggerOnEnter(object sender, TriggerEventArgs e)
         {
             var go = e.Collider.gameObject;
-
             if (!go.TryGetComponent<Actor>(out var actor))
                 return;
-            if (_targets.Contains(actor))
+            if (Targets.Contains(actor))
                 return;
-            if (_teamable != null && !go.TryGetComponent<ITeamable>(out var teamable))
+            if (_teamable != null && go.TryGetComponent<ITeamable>(out var teamable))
                 if (_teamable.SameTeam(teamable))
                     return;
-            _targets.Add(actor);
+            Targets.Add(actor);
         }
 
         private List<Actor> _targets;
         private IList<Actor> Targets => _targets;
 
 
-        private float _cooldowEnd = float.MinValue;
+        private float _cooldownEnd = float.MinValue;
         private TriggerHelper<SphereCollider> _triggerHelper;
         private ITeamable _teamable;
 
@@ -63,10 +62,10 @@ namespace Framework.Core.Modules
 
         public bool IsRanged { get; protected set; }
 
-        public bool IsAttackOnCooldown => (Time.time <= _cooldowEnd);
+        public bool IsAttackOnCooldown => (Time.time <= _cooldownEnd);
 
 
-        private void PutAttackOnCooldown() => _cooldowEnd = Time.time + AttackCooldown;
+        private void PutAttackOnCooldown() => _cooldownEnd = Time.time + AttackCooldown;
         
         public void Attack(Actor actor)
         {

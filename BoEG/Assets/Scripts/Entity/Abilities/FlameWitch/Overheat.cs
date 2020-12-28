@@ -15,7 +15,7 @@ namespace Entity.Abilities.FlameWitch
      * Drains mana.
     */
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Overheat")]
-    public class Overheat : AbilityObject, IStepable
+    public class Overheat : AbilityObject, IStepable, INoTargetAbility
     {
         [SerializeField] public float _damagePerSecond;
         [SerializeField] public float _deathDamage;
@@ -66,6 +66,11 @@ namespace Entity.Abilities.FlameWitch
         }
 
         public override void ConfirmCast()
+        {
+            NoTarget();
+        }
+
+        public void NoTarget()
         {
             IsActive = !IsActive;
             //Immediately start ticking
