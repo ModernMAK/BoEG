@@ -19,7 +19,7 @@ namespace Entity.Abilities.WarpedMagi
         [Header("Mana Cost")] [SerializeField] private float _manaCost;
         [SerializeField] private float _manaGainPerDamage;
         [SerializeField] private float _duration;
-        private float _timeElapsed;
+        private DurationTimer _timer;
 
         private IArmorable _armorable;
         // private IMagicable _magicable;
@@ -31,11 +31,10 @@ namespace Entity.Abilities.WarpedMagi
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
+            _timer = new DurationTimer(_duration);
             _armorable = Self.GetComponent<IArmorable>();
             // _magicable = Self.GetComponent<IMagicable>();
-            _armorable.Resisting += OnResisting;
-
-            // _abilitiable = Self.GetComponent<IAbilitiable>();
+// _abilitiable = Self.GetComponent<IAbilitiable>();
             actor.AddSteppable(this);
         }
 
@@ -74,24 +73,26 @@ namespace Entity.Abilities.WarpedMagi
                 return;
             if (!_commonAbilityInfo.TrySpendMana())
                 return;
-            NoTarget();
+            CastNoTarget();
         }
 
-        public void NoTarget()
+
+        public void CastNoTarget()
         {
             _isActive = true;
-            _timeElapsed = 0f;
+            _armorable.Resisting += OnResisting;
+            _timer.Reset();
             _commonAbilityInfo.NotifySpellCast();
         }
-        
+
         public void OnPostStep(float deltaTime)
         {
             if (!_isActive)
                 return;
-            _timeElapsed += deltaTime;
-            if (_timeElapsed >= _duration)
+            if (_timer.AdvanceTime(deltaTime))
             {
                 _isActive = false;
+                _armorable.Resisting -= OnResisting;
             }
         }
 

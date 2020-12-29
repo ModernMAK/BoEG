@@ -14,7 +14,7 @@ namespace Entity.Abilities.FlameWitch
         * Deals Damage on Cast
         *
         * When OverHeating;
-        *     Eemy heroes in an AOE also recieve DOT
+        *     Enemy heroes in an AOE also recieve DOT
         */
 
 
@@ -22,7 +22,6 @@ namespace Entity.Abilities.FlameWitch
     public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>
     {
 #pragma warning disable 0649
-
         [Header("Cast Range")] [SerializeField]
         private float _castRange = 5f;
 
@@ -42,25 +41,19 @@ namespace Entity.Abilities.FlameWitch
         [Header("Damage Over Time")] [SerializeField]
         private float _tickInterval;
 
-
         private Overheat _overheatAbility;
 
-        private List<Framework.Ability.TickAction> _ticks;
+        private List<TickAction> _ticks;
 #pragma warning restore 0649
 
         private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
 
         public void OnStep(float deltaTime)
         {
-            for (var i = 0; i < _ticks.Count; i++)
-                if (_ticks[i].Advance(deltaTime))
-                {
-                    _ticks.RemoveAt(i);
-                    i--;
-                }
+            _ticks.AdvanceAllAndRemoveDone(deltaTime);
         }
-        
-        public void ObjectTarget(Actor target)
+
+        public void CastObjectTarget(Actor target)
         {
             //Deal damage
             var damage = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
@@ -90,7 +83,7 @@ namespace Entity.Abilities.FlameWitch
             foreach (var actor in dotTargets)
                 if (GetDotAction(actor, out var action))
                 {
-                    var tickWrapper = new Framework.Ability.TickAction
+                    var tickWrapper = new TickAction
                     {
                         Callback = action,
                         TickCount = _tickCount,
@@ -110,30 +103,27 @@ namespace Entity.Abilities.FlameWitch
             _commonAbilityInfo.ManaCost = _manaCost;
             //Manually inject the ability as a stepable
             actor.AddSteppable(this);
-            _ticks = new List<Framework.Ability.TickAction>();
+            _ticks = new List<TickAction>();
         }
 
 
         public override void ConfirmCast()
         {
             var ray = AbilityHelper.GetScreenRay();
-            if (!Physics.Raycast(ray, out var hit, 100f, (int) LayerMaskHelper.Entity))
+            if (!AbilityHelper.TryGetEntity(ray, out var hit))
                 return;
-
             if (!AbilityHelper.InRange(Self.transform, hit.point, _castRange))
                 return;
-
-            var actor = AbilityHelper.GetActor(hit);
-            if (actor == null)
+            if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
                 return;
-            if (actor == Self)
+            if (IsSelf(actor))
                 return;
-
-
+            if (!AbilityHelper.HasAllComponents(actor.gameObject, typeof(IDamageTarget)))
+                return;
             if (!_commonAbilityInfo.TrySpendMana())
                 return;
 
-            ObjectTarget(actor);
+            CastObjectTarget(actor);
         }
 
 
@@ -169,7 +159,6 @@ namespace Entity.Abilities.FlameWitch
         public void Unregister(IStepableEvent source)
         {
             source.Step -= OnStep;
-            
         }
     }
 }

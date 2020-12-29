@@ -1,6 +1,6 @@
 using System;
+using System.Linq;
 using Framework.Core;
-using Framework.Core.Modules;
 using Triggers;
 using UnityEngine;
 
@@ -31,20 +31,11 @@ namespace Framework.Ability
             var _ = Controls; //Initializes controls
         }
 
-        [Obsolete("Use ManaHelper class")]
-        public static bool CanSpendMana(this IMagicable magicable, float mana)
+        public static bool HasAllComponents(GameObject gameObject, params Type[] components)
         {
-            if (magicable == null)
-                return false;
-            return magicable.Magic > mana;
+            return components.All(comp => gameObject.TryGetComponent(comp, out _));
         }
-
-        [Obsolete("Use ManaHelper class")]
-        public static void SpendMana(this IMagicable magicable, float mana)
-        {
-            magicable.Magic -= mana;
-        }
-
+        
         public static bool InRange(Transform self, Vector3 target, float range)
         {
             return (self.position - target).sqrMagnitude <= range * range;

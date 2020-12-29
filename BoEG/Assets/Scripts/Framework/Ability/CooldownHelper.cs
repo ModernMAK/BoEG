@@ -4,23 +4,6 @@ using UnityEngine;
 
 namespace Entity.Abilities.FlameWitch
 {
-    [Obsolete("Moved to IMagicable")]
-    public class ManaHelper
-    {
-        public IMagicable Magicable { get; set; }
-
-        public bool CanSpendMana(float mana)
-        {
-            if (Magicable == null)
-                return false;
-            return Magicable.Magic > mana;
-        }
-
-        public void SpendMana(float mana)
-        {
-            Magicable.Magic -= mana;
-        }
-    }
 
 
     public class CooldownHelper

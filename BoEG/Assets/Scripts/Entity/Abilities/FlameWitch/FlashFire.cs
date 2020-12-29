@@ -45,10 +45,10 @@ namespace Entity.Abilities.FlameWitch
             if (!_commonAbilityInfo.TrySpendMana())
                 return;
 
-            NoTarget();
+            CastNoTarget();
         }
 
-        public void NoTarget()
+        public void CastNoTarget()
         {
             var targets = Physics.OverlapSphere(Self.transform.position, _aoeSearchRange, (int) LayerMaskHelper.Entity);
 

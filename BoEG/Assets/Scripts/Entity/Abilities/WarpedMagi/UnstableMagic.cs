@@ -51,18 +51,18 @@ namespace Entity.Abilities.WarpedMagi
                 return;
 
             if (isGround)
-                GroundTarget(hit.point);
+                CastGroundTarget(hit.point);
             else
-                ObjectTarget(actor);
+                CastObjectTarget(actor);
         }
 
-        public void GroundTarget(Vector3 worldPos)
+        public void CastGroundTarget(Vector3 worldPos)
         {
             if (TrySearchTarget(worldPos, out var target))
                 InternalJumpTarget(target);
         }
 
-        public void ObjectTarget(Actor target) => InternalJumpTarget(target);
+        public void CastObjectTarget(Actor target) => InternalJumpTarget(target);
 
         private void InternalJumpTarget(Actor initialTarget)
         {

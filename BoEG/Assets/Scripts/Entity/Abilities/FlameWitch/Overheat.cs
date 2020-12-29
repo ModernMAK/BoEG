@@ -15,7 +15,7 @@ namespace Entity.Abilities.FlameWitch
      * Drains mana.
     */
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Overheat")]
-    public class Overheat : AbilityObject, IStepable, INoTargetAbility
+    public class Overheat : AbilityObject, IListener<IStepableEvent>, INoTargetAbility
     {
         [SerializeField] public float _damagePerSecond;
         [SerializeField] public float _deathDamage;
@@ -28,10 +28,7 @@ namespace Entity.Abilities.FlameWitch
         [SerializeField] public bool _isActive;
         [Header("Mana Cost")] [SerializeField] public float _manaCostPerSecond;
 
-        private Framework.Ability.TickAction _tickHelper;
-        // private IMagicable _magicable;
-        // private ITeamable _teamable;
-        // private IAbilitiable _abilitiable;
+        private TickAction _tickHelper;
 
         public bool IsActive
         {
@@ -39,23 +36,13 @@ namespace Entity.Abilities.FlameWitch
             set => _isActive = value;
         }
 
-        public void PreStep(float deltaTime)
-        {
-        }
 
-        public void Step(float deltaTime)
+        public void OnStep(float deltaTime)
         {
             if (IsActive)
                 _tickHelper.Advance(deltaTime);
         }
 
-        public void PostStep(float deltaTime)
-        {
-        }
-
-        public void PhysicsStep(float deltaTime)
-        {
-        }
 
         public override void Initialize(Actor actor)
         {
@@ -67,10 +54,10 @@ namespace Entity.Abilities.FlameWitch
 
         public override void ConfirmCast()
         {
-            NoTarget();
+            CastNoTarget();
         }
 
-        public void NoTarget()
+        public void CastNoTarget()
         {
             IsActive = !IsActive;
 
@@ -106,6 +93,16 @@ namespace Entity.Abilities.FlameWitch
             {
                 IsActive = false;
             }
+        }
+
+        public void Register(IStepableEvent source)
+        {
+            source.Step += OnStep;
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.Step -= OnStep;
         }
     }
 }

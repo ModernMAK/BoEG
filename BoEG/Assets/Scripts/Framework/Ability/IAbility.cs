@@ -26,23 +26,23 @@ namespace Entity.Abilities.FlameWitch
 
     public interface IGroundTargetAbility : IAbility
     {
-        void GroundTarget(Vector3 worldPos);
+        void CastGroundTarget(Vector3 worldPos);
     }
     public interface IVectorTargetAbility : IAbility
     {
-        void VectorTarget(Vector3 worldPos, Vector3 direction);
+        void CastVectorTarget(Vector3 worldPos, Vector3 direction);
     }
 
     public interface IObjectTargetAbility<TObject> : IAbility
     {
-        void ObjectTarget(TObject target);
+        void CastObjectTarget(TObject target);
     }
 
     public interface INoTargetAbility : IAbility
     {
-        void NoTarget();
+        void CastNoTarget();
     }
-
+    
     public interface IAbilityView
     {
         Sprite GetIcon();

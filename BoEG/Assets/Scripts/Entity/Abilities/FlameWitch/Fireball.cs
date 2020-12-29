@@ -23,7 +23,6 @@ namespace Entity.Abilities.FlameWitch
         [SerializeField] private float _pathWidth;
 #pragma warning restore 0649
 
-
         /* Ground-Target Spell
          * Deals damage along path.
          * When OverHeating;
@@ -47,15 +46,13 @@ namespace Entity.Abilities.FlameWitch
             if (!_commonAbilityInfo.TrySpendMana())
                 return;
 
-            GroundTarget(hit.point);
+            CastGroundTarget(hit.point);
         }
 
-
-        public void GroundTarget(Vector3 worldPos)
+        public void CastGroundTarget(Vector3 worldPos)
         {
             var t = Self.transform.position;
             var p = worldPos;
-
             var dir = (p - t);
             var travelDistance = (_overheat.IsActive ? _overheatCastRange : _castRange);
             var center = t + dir.normalized * travelDistance / 2f;

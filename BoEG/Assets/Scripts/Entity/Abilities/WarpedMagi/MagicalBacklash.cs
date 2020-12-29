@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Entity.Abilities.FlameWitch;
 using Framework.Ability;
 using Framework.Core;
@@ -14,6 +15,7 @@ namespace Entity.Abilities.WarpedMagi
         [SerializeField] private float _damagePerManaSpent;
         [SerializeField] private float _aoeRange;
         private TriggerHelper<SphereCollider> _sphereCollider;
+        private List<IAbilitiable> _targetBuffer;
 #pragma warning restore 0649
 
 
@@ -21,12 +23,21 @@ namespace Entity.Abilities.WarpedMagi
          * Units who cast spells in an AOE take damage based on manacost.
          */
 
+        private void ClearTargets()
+        {
+            foreach (var target in _targetBuffer)
+                target.SpellCasted -= OnSpellCast;
+            _targetBuffer.Clear();
+        }
+        
+
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
             _sphereCollider = TriggerUtility.CreateTrigger<SphereCollider>(Self, "MagicalBacklash Trigger");
             _sphereCollider.Trigger.Enter += OnActorEnter;
             _sphereCollider.Trigger.Exit += OnActorExit;
+            _targetBuffer = new List<IAbilitiable>();
             actor.AddSteppable(this);
         }
 
@@ -38,6 +49,7 @@ namespace Entity.Abilities.WarpedMagi
             if (!go.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
             abilitiable.SpellCasted += OnSpellCast;
+            _targetBuffer.Add(abilitiable);
         }
 
         private void OnActorExit(object sender, TriggerEventArgs args)
@@ -48,6 +60,7 @@ namespace Entity.Abilities.WarpedMagi
             if (!go.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
             abilitiable.SpellCasted -= OnSpellCast;
+            _targetBuffer.Remove(abilitiable);
         }
 
 

@@ -6,61 +6,54 @@ using Framework.Core;
 using Framework.Core.Modules;
 using UnityEngine;
 
-public interface IAbilitiable
+namespace Framework.Ability
 {
-    int AbilityCount { get; }
-    bool FindAbility<T>(out T ability);
-    IAbility GetAbility(int index);
-    event EventHandler<SpellEventArgs> SpellCasted;
-
-    void NotifySpellCast(SpellEventArgs e);
-}
-
-public class Abilitiable : MonoBehaviour, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>
-{
-    private IAbility[] _abilities;
-
-    public bool FindAbility<T>(out T ability)
+    public class Abilitiable : MonoBehaviour, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>
     {
-        foreach (var temp in _abilities)
-            if (temp is T result)
-            {
-                ability = result;
-                return true;
-            }
+        private IAbility[] _abilities;
 
-        ability = default;
-        return false;
-    }
+        public bool FindAbility<T>(out T ability)
+        {
+            foreach (var temp in _abilities)
+                if (temp is T result)
+                {
+                    ability = result;
+                    return true;
+                }
 
-    public IAbility GetAbility(int index)
-    {
-        return _abilities[index];
-    }
+            ability = default;
+            return false;
+        }
 
-    public int AbilityCount => _abilities.Length;
+        public IAbility GetAbility(int index)
+        {
+            return _abilities[index];
+        }
 
-    public void Initialize(IReadOnlyList<IAbility> module)
-    {
-        var self = GetComponent<Actor>();
-        _abilities = new IAbility[module.Count];
-        for (var i = 0; i < _abilities.Length; i++) _abilities[i] = module[i];
+        public int AbilityCount => _abilities.Length;
 
-        foreach (var ab in _abilities) ab.Initialize(self);
-    }
+        public void Initialize(IReadOnlyList<IAbility> module)
+        {
+            var self = GetComponent<Actor>();
+            _abilities = new IAbility[module.Count];
+            for (var i = 0; i < _abilities.Length; i++) _abilities[i] = module[i];
 
-    private event EventHandler<SpellEventArgs> _spellCasted;
+            foreach (var ab in _abilities) ab.Initialize(self);
+        }
 
-    public event EventHandler<SpellEventArgs> SpellCasted
-    {
-        add => _spellCasted += value;
-        remove => _spellCasted -= value;
-    }
+        private event EventHandler<SpellEventArgs> _spellCasted;
 
-    public void NotifySpellCast(SpellEventArgs e) => OnSpellCast(e);
+        public event EventHandler<SpellEventArgs> SpellCasted
+        {
+            add => _spellCasted += value;
+            remove => _spellCasted -= value;
+        }
 
-    protected virtual void OnSpellCast(SpellEventArgs e)
-    {
-        _spellCasted?.Invoke(this, e);
+        public void NotifySpellCast(SpellEventArgs e) => OnSpellCast(e);
+
+        protected virtual void OnSpellCast(SpellEventArgs e)
+        {
+            _spellCasted?.Invoke(this, e);
+        }
     }
 }

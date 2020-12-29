@@ -1,18 +1,20 @@
 using UnityEngine;
 
-namespace Entity.Abilities.FlameWitch
+namespace Framework.Types
 {
     public class TickHelper
     {
+        
         public int TickCount { get; set; }
         public int TicksPerformed { get; set; }
         public int TicksLeft => TickCount - TicksPerformed;
         public bool IsDone => TicksLeft <= 0;
         public float TickInterval { get; set; }
-        public float InternalElapsedTime { get; set; }
-        public float ElapsedTime => InternalElapsedTime + TicksPerformed * TickInterval;
+        public float ElapsedTime { get; set; }
+        public float TotalElapsedTime => ElapsedTime + TicksPerformed * TickInterval;
         public float TotalTime => TickCount * TickInterval;
-        public float TimeNormal => ElapsedTime / TotalTime;
+        public float TimeNormal => TotalElapsedTime / TotalTime;
+
 
         /// <summary>
         ///     Advances tick time, and returns the number of ticks to perform.
@@ -23,9 +25,9 @@ namespace Entity.Abilities.FlameWitch
         /// <returns></returns>
         public virtual bool Advance(float deltaTime, out int ticks)
         {
-            InternalElapsedTime += deltaTime;
-            var ticksRequested = Mathf.FloorToInt(InternalElapsedTime / TickInterval);
-            InternalElapsedTime -= TickInterval * ticksRequested; //Doesnt matter if we fix before or after
+            ElapsedTime += deltaTime;
+            var ticksRequested = Mathf.FloorToInt(ElapsedTime / TickInterval);
+            ElapsedTime -= TickInterval * ticksRequested; //Doesnt matter if we fix before or after
             TicksPerformed += ticksRequested;
             if (ticksRequested > TicksLeft) ticksRequested = TicksLeft;
 

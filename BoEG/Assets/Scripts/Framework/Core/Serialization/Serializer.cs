@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.IO;
 
 namespace Framework.Core.Serialization
@@ -22,10 +23,10 @@ namespace Framework.Core.Serialization
 
         public void Write(bool value)
         {
-            //byte
-            Write(BitConverter.GetBytes(value));
+            _writer.Write(value);
+            // Write(BitConverter.GetBytes(value)); //WHY? to ensure the boolean only takes a bit?
         }
-
+        
         public void Write(byte value)
         {
             _writer.Write(value);
