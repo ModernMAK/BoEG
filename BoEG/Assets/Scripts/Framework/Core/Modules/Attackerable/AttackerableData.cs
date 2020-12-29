@@ -9,7 +9,9 @@ namespace Framework.Core.Modules
 #pragma warning disable 649
         [SerializeField] private float _attackRange;
         [SerializeField] private float _attackDamage;
+        [Tooltip("# of Attacks in an Attack Period")]
         [SerializeField] private float _attackSpeed;
+        [Tooltip("Time between Attack Periods")]
         [SerializeField] private float _attackInterval;
         [SerializeField] private bool _isRanged;
 #pragma warning restore 649

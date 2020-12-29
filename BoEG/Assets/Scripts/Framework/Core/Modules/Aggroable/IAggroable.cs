@@ -6,9 +6,8 @@ namespace Framework.Core.Modules
     public interface IAggroable
     {
         float AggroRange { get; }
-        bool InAggro(GameObject go);
-        IReadOnlyList<GameObject> GetAggroTargets();
-        GameObject GetAggroTarget(int index);
+        IReadOnlyList<Actor> GetAggroTargets();
+        Actor GetAggroTarget(int index);
         bool HasAggroTarget();
     }
 }

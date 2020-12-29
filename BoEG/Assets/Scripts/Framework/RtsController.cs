@@ -7,6 +7,12 @@ using Triggers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public static class InputActionHelper
+{
+    //
+    public static bool ButtonPressed(this InputAction action) => action.ReadValue<float>() >= 0.5f;
+
+}
 public class RtsController : MonoBehaviour
 {
 #pragma warning disable 0649
@@ -117,12 +123,26 @@ public class RtsController : MonoBehaviour
                 var unit = info.collider.GetComponentInParent<Actor>();
 
 
-                if (unit != null && !_controls.Movement.Move.ReadValue<bool>())
+                if (unit != null && _controls.Movement.Move.ButtonPressed()) // Follow
                     AddOrQueueCommand(GenerateFollow(unit.transform));
-                else if (!_controls.Movement.Follow.ReadValue<bool>())
+                else if (_controls.Movement.Follow.ButtonPressed()) // Move
+                    AddOrQueueCommand(GenerateMove(point));
+                else if (_controls.Movement.Attack.ButtonPressed()) //Attack pressed, do attack move
+                    // if(unit != null)
+                    //     AddOrQueueCommand(GenerateAttackMove());
+                    // else
+                    AddOrQueueCommand(GenerateAttackMove(point));
+                else if (unit != null) // Follow unit
+                    AddOrQueueCommand(GenerateFollow(unit.transform));
+                else //Move to target
                     AddOrQueueCommand(GenerateMove(point));
             }
         }
+    }
+
+    private ICommand GenerateAttackMove(Vector3 target)
+    {
+        return new AttackMoveCommand(_actor.gameObject, target);
     }
 
     private bool PerformCast(out RaycastHit info)
@@ -130,7 +150,7 @@ public class RtsController : MonoBehaviour
         var ray = CameraRay;
 
         // Debug.Log("RTS:\t" + ray);
-        return Physics.Raycast(ray, out info, 100f, (int)(LayerMaskHelper.Entity | LayerMaskHelper.World));
+        return Physics.Raycast(ray, out info, 100f, (int) (LayerMaskHelper.Entity | LayerMaskHelper.World));
     }
 
 

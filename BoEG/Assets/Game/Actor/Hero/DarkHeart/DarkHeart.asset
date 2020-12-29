@@ -21,11 +21,11 @@ MonoBehaviour:
   _armorableData:
     _physical:
       _block: 0
-      _resist: 0.01
+      _resist: 0.05
       _immune: 0
     _magical:
       _block: 0
-      _resist: 0.01
+      _resist: 0.05
       _immune: 0
   _attackerableData:
     _attackRange: 0

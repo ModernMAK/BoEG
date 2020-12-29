@@ -30,11 +30,10 @@ MonoBehaviour:
       _resist: 0.01
       _immune: 0
   _attackerableData:
-    _attackRange: 1.5
-    _attackDamage: 40
-    _attackSpeed: 1
-    _attackInterval: 1
-    _isRanged: 1
+    _attackRange: 1.25
+    _attackDamage: 30
+    _attackSpeed: 2
+    _attackInterval: 2
   _movableData:
     _moveSpeed: 2
     _turnSpeed: 360

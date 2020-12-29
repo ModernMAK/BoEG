@@ -141,6 +141,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""8b4df37c-e04b-455d-9666-81a5b2f2f767"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -198,6 +206,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""20a65fa2-b878-4bbb-a8b4-40c47b72c7ae"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -244,6 +263,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Movement_Queue = m_Movement.FindAction("Queue", throwIfNotFound: true);
         m_Movement_Select = m_Movement.FindAction("Select", throwIfNotFound: true);
         m_Movement_Action = m_Movement.FindAction("Action", throwIfNotFound: true);
+        m_Movement_Attack = m_Movement.FindAction("Attack", throwIfNotFound: true);
         // Cursor
         m_Cursor = asset.FindActionMap("Cursor", throwIfNotFound: true);
         m_Cursor_Pos = m_Cursor.FindAction("Pos", throwIfNotFound: true);
@@ -358,6 +378,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Movement_Queue;
     private readonly InputAction m_Movement_Select;
     private readonly InputAction m_Movement_Action;
+    private readonly InputAction m_Movement_Attack;
     public struct MovementActions
     {
         private @PlayerControls m_Wrapper;
@@ -367,6 +388,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Queue => m_Wrapper.m_Movement_Queue;
         public InputAction @Select => m_Wrapper.m_Movement_Select;
         public InputAction @Action => m_Wrapper.m_Movement_Action;
+        public InputAction @Attack => m_Wrapper.m_Movement_Attack;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -391,6 +413,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Action.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnAction;
                 @Action.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnAction;
                 @Action.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnAction;
+                @Attack.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
             }
             m_Wrapper.m_MovementActionsCallbackInterface = instance;
             if (instance != null)
@@ -410,6 +435,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Action.started += instance.OnAction;
                 @Action.performed += instance.OnAction;
                 @Action.canceled += instance.OnAction;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
             }
         }
     }
@@ -461,6 +489,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnQueue(InputAction.CallbackContext context);
         void OnSelect(InputAction.CallbackContext context);
         void OnAction(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
     public interface ICursorActions
     {

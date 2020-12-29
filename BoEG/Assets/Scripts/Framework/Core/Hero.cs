@@ -37,11 +37,11 @@ namespace Framework.Core
             if (TryGetInitializable<IArmorableData>(out var armorable))
                 armorable.Initialize(ArmorableData);
             else throw new MissingComponentException("IArmorable");
+            
 
-//            GetFrameworkComponent<IDamageTarget>().Initialize();
-
-
-            // GetInitializable<IAttackerableData>().Initialize(_attackerableData);
+            if (TryGetInitializable<IAttackerableData>(out var attackerable))
+                attackerable.Initialize(AttackerableData);
+            else throw new MissingComponentException("IAttackerable");
 
             if (TryGetInitializable<IMovableData>(out var movable))
                 movable.Initialize(MovableData);

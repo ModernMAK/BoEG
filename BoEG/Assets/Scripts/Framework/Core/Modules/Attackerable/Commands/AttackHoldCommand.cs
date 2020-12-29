@@ -24,19 +24,17 @@ namespace Framework.Core.Modules.Commands
             if (_attackerable.HasAttackTarget())
             {
                 _movable.StopMovement();
+                _movable.Anchor();
                 if (!_attackerable.IsAttackOnCooldown)
                 {
-                    _attackerable.Attack(_attackerable.GetAttackTarget(0));
+                    var target = _attackerable.GetAttackTarget(0);
+                    _attackerable.Attack(target);
                 }
             }
-            else if (_aggroable.HasAggroTarget())
+            //Aggroable is optional so we check for null
+            else if (_aggroable != null && _aggroable.HasAggroTarget()) 
             {
-                /*
-                 * BUG NullReferenceException happens here
-                 * Separated statements to get a better grasp of where the failure occurs.
-                 * Probable cause; the aggro target is destroyed, causing an exception when accessing transform
-                 *     To solve this, we'd need to subscribe to a unit's OnDie and remove it then
-                */
+                _movable.UnAnchor();
                 var target = _aggroable.GetAggroTarget(0);
                 var position = target.transform.position;
                 _movable.MoveTo(position);
@@ -44,9 +42,9 @@ namespace Framework.Core.Modules.Commands
             }
             else
             {
+                _movable.UnAnchor();
                 _movable.StartMovement();
                 _movable.MoveTo(_destenation);
-                ;
             }
         }
 
@@ -68,6 +66,7 @@ namespace Framework.Core.Modules.Commands
         }
     }
 
+    //TODO fix this
     public class AttackHoldCommand : EntityCommand
     {
         private readonly IAggroable _aggroable;
@@ -112,51 +111,4 @@ namespace Framework.Core.Modules.Commands
             return false;
         }
     }
-
-//    public class AttackMoveCommand : EntityCommand
-//    {
-//        protected IAttackerable Attackerable { get; private set; }
-//        protected IMovable Movable { get; private set; }
-//
-//        public AttackMoveCommand(GameObject entity) : base(entity)
-//        {
-//            Attackerable = GetComponent<IAttackerable>();
-//            Movable = GetComponent<IMovable>();
-//        }
-//
-//        private GameObject[] GetTargets()
-//        {
-//            var cols = Physics.OverlapSphere(Entity.transform.position, Attackerable.AttackRange);
-//            var gos = new List<GameObject>(cols.Select((c) => c.gameObject).Where((g) => (g != Entity)));
-//            gos.Sort((x, y) =>
-//            {
-//                Vector3 position = Entity.transform.position;
-//                return (x.transform.position - position).sqrMagnitude.CompareTo(
-//                    y.transform.position - (position));
-//            });
-//            return gos.ToArray();
-//        }
-//
-//
-//        protected override void Step(float delta)
-//        {
-//            base.Step(delta);
-//            if (Attackerable.CanAttack)
-//            {
-//                var targets = GetTargets();
-//                if (targets.Length > 0)
-//                {
-//                    Attackerable.Attack(targets[0]);
-//                    Movable.StopMovement();
-//                }                
-//            }
-//            Movable.StartMovement();
-//            
-//        }
-//
-//        protected override bool IsDone()
-//        {
-//            return mo;
-//        }
-//    }
 }

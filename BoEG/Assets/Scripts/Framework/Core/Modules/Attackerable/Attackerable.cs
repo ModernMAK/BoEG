@@ -40,7 +40,19 @@ namespace Framework.Core.Modules
             if (_teamable != null && go.TryGetComponent<ITeamable>(out var teamable))
                 if (_teamable.SameTeam(teamable))
                     return;
+
+
+            if (go.TryGetComponent<IHealthable>(out var healthble))
+                healthble.Died += TargetDied;
             Targets.Add(actor);
+        }
+
+
+        private void TargetDied(object sender, DeathEventArgs e)
+        {
+            var healthable = sender as IHealthable;
+            healthable.Died -= TargetDied;
+            Targets.Remove(e.Self);
         }
 
         private List<Actor> _targets;
@@ -66,17 +78,19 @@ namespace Framework.Core.Modules
 
 
         private void PutAttackOnCooldown() => _cooldownEnd = Time.time + AttackCooldown;
-        
+
         public void Attack(Actor actor)
         {
             if (IsAttackOnCooldown)
                 return;
-            
+
             if (_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
                 if (_teamable.SameTeam(teamable))
                     return;
+
             if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
                 return;
+
             var dmg = new Damage(AttackDamage, DamageType.Physical, DamageModifiers.Attack);
 
             var attackArgs = new AttackerableEventArgs();
@@ -109,6 +123,14 @@ namespace Framework.Core.Modules
             Attacked?.Invoke(this, e);
         }
 
+        private void OnDrawGizmos()
+        {
+            var color = Gizmos.color; //Do we still need to do this?
+            Gizmos.color = Color.Lerp(Color.black, Color.red, 0.5f);
+            Gizmos.DrawWireSphere(transform.position, AttackRange);
+            Gizmos.color = color;
+        }
+
         private void OnDrawGizmosSelected()
         {
             var color = Gizmos.color; //Do we still need to do this?
@@ -133,7 +155,7 @@ namespace Framework.Core.Modules
 
         private void OnPhysicsStep(float deltaTime)
         {
-            for(var i = 0; i < _targets.Count; i++)
+            for (var i = 0; i < _targets.Count; i++)
             {
                 var actor = _targets[i];
                 if (actor == null)
@@ -142,14 +164,15 @@ namespace Framework.Core.Modules
                     i--;
                     continue;
                 }
-                
+
                 if (!actor.gameObject.activeSelf)
                 {
                     _targets.RemoveAt(i);
                     i--;
                     continue;
                 }
-                if(_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
+
+                if (_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
                     if (_teamable.SameTeam(teamable))
                     {
                         _targets.RemoveAt(i);

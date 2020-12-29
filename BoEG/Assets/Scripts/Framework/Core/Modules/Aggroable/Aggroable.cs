@@ -17,7 +17,7 @@ namespace Framework.Core.Modules
             var actor = GetComponent<Actor>();
             _triggerHelper = TriggerUtility.CreateTrigger<SphereCollider>(actor, "Aggroable Trigger");
             _teamable = GetComponent<ITeamable>();
-            _aggroTarget = new List<GameObject>();
+            Targets = new List<Actor>();
             _triggerHelper.Trigger.Enter += TriggerOnEnter;
             _triggerHelper.Trigger.Exit += TriggerOnExit;
         }
@@ -25,7 +25,10 @@ namespace Framework.Core.Modules
         private void TriggerOnExit(object sender, TriggerEventArgs e)
         {
             var go = e.Collider.gameObject;
-            _aggroTarget.Remove(go);
+
+            if (!go.TryGetComponent<Actor>(out var actor))
+                return;
+            Targets.Remove(actor);
         }
 
         private void TriggerOnEnter(object sender, TriggerEventArgs e)
@@ -33,9 +36,10 @@ namespace Framework.Core.Modules
             var go = e.Collider.gameObject;
             if (go == gameObject)
                 return;
-            if (_aggroTarget.Contains(go))
+            if (!go.TryGetComponent<Actor>(out var actor))
                 return;
-            if (!go.TryGetComponent<Actor>(out _))
+
+            if (Targets.Contains(actor))
                 return;
             if (_teamable != null && go.TryGetComponent<ITeamable>(out var teamable))
             {
@@ -46,32 +50,29 @@ namespace Framework.Core.Modules
             if (go.TryGetComponent<IHealthable>(out var healthble))
                 healthble.Died += TargetDied;
 
-            _aggroTarget.Add(go);
+            Targets.Add(actor);
         }
 
         private void TargetDied(object sender, DeathEventArgs e)
         {
             var healthable = sender as IHealthable;
             healthable.Died -= TargetDied;
-            _aggroTarget.Remove(e.GameObject);
+            Targets.Remove(e.Self);
         }
 
 
         private float _aggroRange;
         public float AggroRange => _aggroRange;
-        private List<GameObject> _aggroTarget;
+        private List<Actor> Targets { get; set; }
+
         private ITeamable _teamable;
 
-        public bool InAggro(GameObject go)
-        {
-            return AbilityHelper.InRange(transform, go.transform.position, AggroRange);
-        }
 
-        public IReadOnlyList<GameObject> GetAggroTargets() => _aggroTarget;
+        public IReadOnlyList<Actor> GetAggroTargets() => Targets;
 
-        public GameObject GetAggroTarget(int index) => _aggroTarget[index];
+        public Actor GetAggroTarget(int index) => Targets[index];
 
-        public bool HasAggroTarget() => _aggroTarget.Count > 0;
+        public bool HasAggroTarget() => Targets.Count > 0;
 
         public void Initialize(IAggroableData module)
         {
@@ -87,19 +88,19 @@ namespace Framework.Core.Modules
         {
             if (_teamable == null)
                 return;
-            for (var i = 0; i < _aggroTarget.Count; i++)
+            for (var i = 0; i < Targets.Count; i++)
             {
-                var target = _aggroTarget[i];
+                var target = Targets[i];
                 if (target == null)
                 {
-                    _aggroTarget.RemoveAt(i);
+                    Targets.RemoveAt(i);
                     i--;
                     continue;
                 }
 
-                if (!target.activeSelf)
+                if (!target.gameObject.activeInHierarchy)
                 {
-                    _aggroTarget.RemoveAt(i);
+                    Targets.RemoveAt(i);
                     i--;
                     continue;
                 }
@@ -108,7 +109,7 @@ namespace Framework.Core.Modules
                 {
                     if (_teamable.SameTeam(teamable))
                     {
-                        _aggroTarget.RemoveAt(i);
+                        Targets.RemoveAt(i);
                         i--;
                         continue;
                     }

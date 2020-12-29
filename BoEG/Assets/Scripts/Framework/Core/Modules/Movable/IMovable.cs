@@ -12,6 +12,10 @@ namespace Framework.Core.Modules
         void WarpTo(Vector3 destenation);
         void Push(Vector3 direction);
 
+        void Anchor();
+        void UnAnchor();
+        
+        bool Anchored { get; }
         void StopMovement();
         void StartMovement();
         void CancelMovement();

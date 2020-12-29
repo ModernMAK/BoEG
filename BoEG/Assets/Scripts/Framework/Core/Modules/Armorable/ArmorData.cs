@@ -17,8 +17,11 @@ namespace Framework.Core.Modules
             _immune = immune;
         }
 
+        [Tooltip("Damage - Block")]
         [SerializeField] private float _block;
+        [Tooltip("Damage * (1 - Resist)")]
         [SerializeField] private float _resist;
+        [Tooltip("Damage * (Immune ? 0 : 1)")]
         [SerializeField] private bool _immune;
 
         public float Block

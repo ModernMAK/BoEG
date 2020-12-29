@@ -21,18 +21,18 @@ MonoBehaviour:
   _armorableData:
     _physical:
       _block: 0
-      _resist: 0.01
+      _resist: 0.05
       _immune: 0
     _magical:
       _block: 0
-      _resist: 0.01
+      _resist: 0.05
       _immune: 0
   _attackerableData:
-    _attackRange: 0
-    _attackDamage: 0
-    _attackSpeed: 0
-    _attackInterval: 0
-    _isRanged: 0
+    _attackRange: 2
+    _attackDamage: 50
+    _attackSpeed: 1
+    _attackInterval: 1
+    _isRanged: 1
   _movableData:
     _moveSpeed: 4
     _turnSpeed: 360
