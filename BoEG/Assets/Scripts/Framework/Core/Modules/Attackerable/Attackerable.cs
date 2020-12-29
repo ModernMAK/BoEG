@@ -153,6 +153,7 @@ namespace Framework.Core.Modules
             _triggerHelper.Collider.radius = AttackRange;
         }
 
+        //TODO drop this; use DeadEvent and a TeamChanged Event
         private void OnPhysicsStep(float deltaTime)
         {
             for (var i = 0; i < _targets.Count; i++)
