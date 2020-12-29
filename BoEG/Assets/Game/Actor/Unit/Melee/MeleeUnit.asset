@@ -34,6 +34,7 @@ MonoBehaviour:
     _attackDamage: 30
     _attackSpeed: 2
     _attackInterval: 2
+    _isRanged: 0
   _movableData:
     _moveSpeed: 2
     _turnSpeed: 360
