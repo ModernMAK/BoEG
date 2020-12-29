@@ -77,7 +77,7 @@ namespace Entity.Abilities.FlameWitch
             if (IsActive)
                 //Immediately start ticking
                 OnTick();
-            
+
             //Do not notify as a spell cast
         }
 
@@ -85,12 +85,13 @@ namespace Entity.Abilities.FlameWitch
         {
             if (IsActive && _commonAbilityInfo.TrySpendMana())
             {
-                var dotTargets = Physics.OverlapSphere(Self.transform.position, _dotRange, (int) LayerMaskHelper.Entity);
+                var dotTargets =
+                    Physics.OverlapSphere(Self.transform.position, _dotRange, (int) LayerMaskHelper.Entity);
                 foreach (var col in dotTargets)
                 {
-                    if (!col.gameObject.TryGetComponent<Actor>(out var actor))
+                    if (!AbilityHelper.TryGetActor(col, out var actor))
                         continue;
-                    if (actor == Self)
+                    if (IsSelf(actor))
                         continue;
                     if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
                         continue;

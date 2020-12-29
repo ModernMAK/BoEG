@@ -15,8 +15,10 @@ namespace Entity.Abilities.FlameWitch
         private Overheat _overheat;
         [Header("Mana")] [SerializeField] private float _manaCost;
         [Header("Damage")] [SerializeField] private float _damage;
+
         [Header("Cast Range")] [SerializeField]
         private float _castRange;
+
         [SerializeField] private float _overheatCastRange;
         [SerializeField] private float _pathWidth;
 #pragma warning restore 0649
@@ -37,7 +39,7 @@ namespace Entity.Abilities.FlameWitch
         public override void ConfirmCast()
         {
             var ray = AbilityHelper.GetScreenRay();
-            if (!Physics.Raycast(ray, out var hit, 100f, (int) LayerMaskHelper.World))
+            if (!AbilityHelper.TryGetWorld(ray, out var hit))
                 return;
             _commonAbilityInfo.Range = _overheat.IsActive ? _overheatCastRange : _castRange;
             if (!_commonAbilityInfo.InRange(hit.point))
@@ -65,12 +67,11 @@ namespace Entity.Abilities.FlameWitch
 
             foreach (var col in colliders)
             {
-                if (!col.gameObject.TryGetComponent<Actor>(out var actor))
+                if (!AbilityHelper.TryGetActor(col, out var actor))
                     continue; //Not an actor, ignore
 
-                if (actor == Self)
+                if (IsSelf(actor))
                     continue; //Always ignore self
-
 
                 if (_commonAbilityInfo.SameTeam(actor.gameObject))
                     continue; //Ignore if allies

@@ -77,7 +77,8 @@ namespace Framework.Ability
 #pragma warning disable 0649
 
         public Actor Self { get; private set; }
-        private bool IsSelf(GameObject gameObject) => gameObject == Self.gameObject;
+        protected bool IsSelf(GameObject gameObject) => gameObject == Self.gameObject;
+        protected bool IsSelf(Actor actor) => actor == Self;
 
         public virtual void Initialize(Actor actor)
         {

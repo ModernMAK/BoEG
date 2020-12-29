@@ -1,6 +1,7 @@
 using System;
 using Framework.Core;
 using Framework.Core.Modules;
+using Triggers;
 using UnityEngine;
 
 namespace Framework.Ability
@@ -31,7 +32,7 @@ namespace Framework.Ability
         }
 
         [Obsolete("Use ManaHelper class")]
-        public static bool CanSpendMana(IMagicable magicable, float mana)
+        public static bool CanSpendMana(this IMagicable magicable, float mana)
         {
             if (magicable == null)
                 return false;
@@ -39,7 +40,7 @@ namespace Framework.Ability
         }
 
         [Obsolete("Use ManaHelper class")]
-        public static void SpendMana(IMagicable magicable, float mana)
+        public static void SpendMana(this IMagicable magicable, float mana)
         {
             magicable.Magic -= mana;
         }
@@ -60,32 +61,49 @@ namespace Framework.Ability
             return result;
         }
 
-        public static Actor GetActor(RaycastHit hit)
-        {
-            var go = hit.collider.gameObject;
-            var actor = go.GetComponent<Actor>();
+        public static Actor GetActor(RaycastHit hit) => GetActor(hit.collider);
 
-            if (actor == null)
+        public static Actor GetActor(Collider collider)
+        {
+            return TryGetActor(collider, out var actor) ? actor : null;
+        }
+
+        public static bool TryGetActor(Collider collider, out Actor actor)
+        {
+            var go = collider.gameObject;
+            if (go.TryGetComponent(out actor))
+                return true;
+
+            //This should almost always be present, but who knows
+            if (collider.TryGetComponent<Rigidbody>(out var rb))
             {
-                var rb = hit.collider.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    go = rb.gameObject;
-                    actor = go.GetComponent<Actor>();
-                }
+                if (rb.gameObject.TryGetComponent(out actor))
+                    return true;
             }
 
-
-            if (actor == null)
-                actor = go.GetComponentInChildren<Actor>();
-
-            if (actor == null)
-                actor = go.GetComponentInParent<Actor>();
+            //
+            // if (actor == null)
+            //     actor = go.GetComponentInChildren<Actor>();
+            //
+            // if (actor == null)
+            //     actor = go.GetComponentInParent<Actor>();
 
 //            if (actor != null)
 //                return actor.gameObject;
 //            else return null;
-            return actor;
+            // return actor;
+            return false;
         }
+
+        private const float DefaultMaxDistance = 100f;
+
+        public static bool TryGetWorldOrEntity(Ray ray, out RaycastHit hit) => Physics.Raycast(ray, out hit,
+            DefaultMaxDistance, (int) (LayerMaskHelper.World | LayerMaskHelper.Entity));
+
+        public static bool TryGetEntity(Ray ray, out RaycastHit hit) =>
+            Physics.Raycast(ray, out hit, DefaultMaxDistance, (int) (LayerMaskHelper.Entity));
+
+        public static bool TryGetWorld(Ray ray, out RaycastHit hit) =>
+            Physics.Raycast(ray, out hit, DefaultMaxDistance, (int) (LayerMaskHelper.World));
     }
 }

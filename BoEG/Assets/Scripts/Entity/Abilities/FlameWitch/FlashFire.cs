@@ -1,9 +1,7 @@
-using System;
 using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
-using Modules.Teamable;
 using Triggers;
 using UnityEngine;
 
@@ -41,7 +39,7 @@ namespace Entity.Abilities.FlameWitch
         private Overheat _overheatAbility;
 #pragma warning restore 0649
 
-        
+
         public override void ConfirmCast()
         {
             if (!_commonAbilityInfo.TrySpendMana())
@@ -52,7 +50,6 @@ namespace Entity.Abilities.FlameWitch
 
         public void NoTarget()
         {
-            
             var targets = Physics.OverlapSphere(Self.transform.position, _aoeSearchRange, (int) LayerMaskHelper.Entity);
 
             var damage = new Damage(_aoeDamage, DamageType.Magical, DamageModifiers.Ability);
@@ -60,9 +57,9 @@ namespace Entity.Abilities.FlameWitch
             {
                 if (!target.TryGetComponent<Actor>(out var actor))
                     continue;
-                if(actor == Self)
+                if (actor == Self)
                     continue;
-                
+
                 if (!target.TryGetComponent<IDamageTarget>(out var damageTarget))
                     continue;
                 if (_commonAbilityInfo.SameTeam(target.gameObject))
@@ -70,8 +67,8 @@ namespace Entity.Abilities.FlameWitch
 
                 damageTarget.TakeDamage(Self.gameObject, damage);
             }
+
             _commonAbilityInfo.NotifySpellCast();
         }
-
     }
 }

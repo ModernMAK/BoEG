@@ -2,6 +2,9 @@ using System;
 
 namespace Framework.Types
 {
+    using IStepableListener = Framework.Core.Modules.IListener<Framework.Types.IStepableEvent>;
+
+    [Obsolete("Use IStepableEvent Instead", false)]
     public interface IStepable
     {
         void PreStep(float deltaTime);
@@ -9,6 +12,7 @@ namespace Framework.Types
         void PostStep(float deltaTime);
         void PhysicsStep(float deltaTime);
     }
+
 
     public interface IStepableEvent
     {

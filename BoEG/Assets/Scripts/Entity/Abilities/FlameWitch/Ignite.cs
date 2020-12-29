@@ -19,7 +19,7 @@ namespace Entity.Abilities.FlameWitch
 
 
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Ignite")]
-    public class Ignite : AbilityObject, IStepable, IObjectTargetAbility<Actor>
+    public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>
     {
 #pragma warning disable 0649
 
@@ -50,11 +50,7 @@ namespace Entity.Abilities.FlameWitch
 
         private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
 
-        public void PreStep(float deltaTime)
-        {
-        }
-
-        public void Step(float deltaTime)
+        public void OnStep(float deltaTime)
         {
             for (var i = 0; i < _ticks.Count; i++)
                 if (_ticks[i].Advance(deltaTime))
@@ -63,15 +59,7 @@ namespace Entity.Abilities.FlameWitch
                     i--;
                 }
         }
-
-        public void PostStep(float deltaTime)
-        {
-        }
-
-        public void PhysicsStep(float deltaTime)
-        {
-        }
-
+        
         public void ObjectTarget(Actor target)
         {
             //Deal damage
@@ -171,6 +159,17 @@ namespace Entity.Abilities.FlameWitch
         public override float GetManaCost()
         {
             return _manaCost;
+        }
+
+        public void Register(IStepableEvent source)
+        {
+            source.Step += OnStep;
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.Step -= OnStep;
+            
         }
     }
 }

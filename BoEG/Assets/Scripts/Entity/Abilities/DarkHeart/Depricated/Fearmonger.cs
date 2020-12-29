@@ -1,16 +1,14 @@
 // using System;
+// using Framework.Ability;
+// using Framework.Core.Modules;
 // using Framework.Types;
-// using Modules.Abilityable;
-// using Modules.Attackerable;
-// using Modules.Healthable;
 // using Modules.Teamable;
 // using UnityEngine;
-// using Util;
 //
 // namespace Entity.Abilities.DarkHeart
 // {
-//     [CreateAssetMenu(fileName = "DarkHeart_Fearmonger.asset", menuName = "Ability/DarkHeart/Fearmonger")]
-//     public class Fearmonger : Ability
+//     [CreateAssetMenu(menuName = "Ability/DarkHeart/Fearmonger")]
+//     public class Fearmonger : AbilityObject
 //     {
 //         private Nightmare _nightmareAbility;
 //         private IAttackable _attackable;
@@ -72,4 +70,4 @@
 //
 //     }
 // }
-
+//

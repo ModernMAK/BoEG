@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/MagicalBacklash")]
-    public class MagicalBacklash : AbilityObject, IStepable
+    public class MagicalBacklash : AbilityObject, IListener<IStepableEvent>
     {
 #pragma warning disable 0649
         [SerializeField] private float _damagePerManaSpent;
@@ -61,21 +61,19 @@ namespace Entity.Abilities.WarpedMagi
             damageTarget.TakeDamage(Self.gameObject, damage);
         }
 
-        public void PreStep(float deltaTime)
-        {
-        }
-
-        public void Step(float deltaTime)
-        {
-        }
-
-        public void PostStep(float deltaTime)
-        {
-        }
-
-        public void PhysicsStep(float deltaTime)
+        private void OnPhysicsStep(float deltaTime)
         {
             _sphereCollider.Collider.radius = _aoeRange;
+        }
+
+        public void Register(IStepableEvent source)
+        {
+            source.PhysicsStep += OnPhysicsStep;
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PhysicsStep -= OnPhysicsStep;
         }
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/MagicalInstability")]
-    public class MagicalInstability : AbilityObject, IStepable
+    public class MagicalInstability : AbilityObject, IListener<IStepableEvent>, INoTargetAbility
     {
         /* Self-Target Spell
          * Negates Magical Damage.
@@ -22,8 +22,8 @@ namespace Entity.Abilities.WarpedMagi
         private float _timeElapsed;
 
         private IArmorable _armorable;
-        private IMagicable _magicable;
-        private IAbilitiable _abilitiable;
+        // private IMagicable _magicable;
+        // private IAbilitiable _abilitiable;
 
         private bool _isActive;
 #pragma warning restore 0649
@@ -32,10 +32,10 @@ namespace Entity.Abilities.WarpedMagi
         {
             base.Initialize(actor);
             _armorable = Self.GetComponent<IArmorable>();
-            _magicable = Self.GetComponent<IMagicable>();
+            // _magicable = Self.GetComponent<IMagicable>();
             _armorable.Resisting += OnResisting;
 
-            _abilitiable = Self.GetComponent<IAbilitiable>();
+            // _abilitiable = Self.GetComponent<IAbilitiable>();
             actor.AddSteppable(this);
         }
 
@@ -50,8 +50,10 @@ namespace Entity.Abilities.WarpedMagi
             if (dmg.Type != DamageType.Magical)
                 return;
 
+            var magicable = _commonAbilityInfo.Magicable;
+
             //Mana Available (To Gain)
-            var manaAvailable = _magicable.MagicCapacity - _magicable.Magic;
+            var manaAvailable = magicable.MagicCapacity - magicable.Magic;
             //Calcualte Potential Block
             var availableDamageBlock = manaAvailable / _manaGainPerDamage;
             //Calculate Block
@@ -61,38 +63,28 @@ namespace Entity.Abilities.WarpedMagi
 
             //TODO consider adding a check to ensure manaGained is never negative
             //Gain mana
-            _magicable.Magic += manaGained;
+            magicable.Magic += manaGained;
             //Negate damage damage, we don't rely on buffs to do the negation
             e.OutgoingDamage = dmg.ModifyValue(-appliedDamageBlock);
         }
 
         public override void ConfirmCast()
         {
-            CastLogic();
-        }
-
-        void CastLogic()
-        {
             if (_isActive)
                 return;
-            if (!_magicable.HasMagic(_manaCost))
+            if (!_commonAbilityInfo.TrySpendMana())
                 return;
-            _magicable.SpendMagic(_manaCost);
+            NoTarget();
+        }
+
+        public void NoTarget()
+        {
             _isActive = true;
             _timeElapsed = 0f;
-            _abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCost});
+            _commonAbilityInfo.NotifySpellCast();
         }
-
-        public void PreStep(float deltaTime)
-        {
-        }
-
-
-        public void Step(float deltaTime)
-        {
-        }
-
-        public void PostStep(float deltaTime)
+        
+        public void OnPostStep(float deltaTime)
         {
             if (!_isActive)
                 return;
@@ -103,8 +95,14 @@ namespace Entity.Abilities.WarpedMagi
             }
         }
 
-        public void PhysicsStep(float deltaTime)
+        public void Register(IStepableEvent source)
         {
+            source.PostStep += OnPostStep;
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PostStep -= OnPostStep;
         }
     }
 }

@@ -60,6 +60,9 @@ namespace Framework.Core
             _steppable.Remove(steppable);
         }
 
+        public void AddSteppable(IListener<IStepableEvent> stepableEvent) => stepableEvent.Register(this);
+        public void RemoveSteppable(IListener<IStepableEvent> stepableEvent) => stepableEvent.Unregister(this);
+
         //Todo move to a more appropriate lcoation
         protected IInitializable<T> GetInitializable<T>()
         {
