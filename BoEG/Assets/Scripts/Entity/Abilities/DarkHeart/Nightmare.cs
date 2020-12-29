@@ -26,6 +26,7 @@ namespace Entity.Abilities.DarkHeart
             _commonAbilityInfo.ManaCost = _manaCost;
             _commonAbilityInfo.Range = _castRange;
             _ticks = new List<TickAction>();
+            Register(actor);
         }
 
         public override void ConfirmCast()

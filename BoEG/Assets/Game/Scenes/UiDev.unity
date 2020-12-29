@@ -1347,7 +1347,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 996075131}
   m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
-  m_LocalPosition: {x: 0, y: 24, z: -17}
+  m_LocalPosition: {x: 0, y: 21.5, z: -16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 277222714}
@@ -2075,26 +2075,6 @@ PrefabInstance:
         type: 2}
     - target: {fileID: 2422214919092905584, guid: c8c69dadf51f7254ab5d14707a6201a3,
         type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2422214919092905584, guid: c8c69dadf51f7254ab5d14707a6201a3,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2422214919092905584, guid: c8c69dadf51f7254ab5d14707a6201a3,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2422214919092905584, guid: c8c69dadf51f7254ab5d14707a6201a3,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2422214919092905584, guid: c8c69dadf51f7254ab5d14707a6201a3,
-        type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
@@ -2116,16 +2096,6 @@ PrefabInstance:
     - target: {fileID: 2557710902701700986, guid: c8c69dadf51f7254ab5d14707a6201a3,
         type: 3}
       propertyPath: m_Parameters.alignment
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5057605502417199700, guid: c8c69dadf51f7254ab5d14707a6201a3,
-        type: 3}
-      propertyPath: _initialWidth
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5057605502417199700, guid: c8c69dadf51f7254ab5d14707a6201a3,
-        type: 3}
-      propertyPath: _initialRadius
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5603037717475273472, guid: c8c69dadf51f7254ab5d14707a6201a3,

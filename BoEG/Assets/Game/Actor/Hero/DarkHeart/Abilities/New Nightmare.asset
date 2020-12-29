@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92616ea26f0d0f5408230acc951953a4, type: 3}
+  m_Name: New Nightmare
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 466719260560990742, guid: d3ad13f92c7d5c747b91223ebe5e3168, type: 3}
+  _manaCost: 100
+  _castRange: 4
+  _tickInterval: 0.1
+  _tickCount: 20
+  _tickDamage: 1

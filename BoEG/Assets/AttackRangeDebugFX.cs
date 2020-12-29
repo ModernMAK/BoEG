@@ -16,7 +16,6 @@ public class AttackRangeDebugFX : DebugUI
     {
         _go = go;
         _attackerable = _go != null ? _go.GetComponent<IAttackerable>() : null;
-        transform.LookAt(Vector3.up);
     }
 
     // Update is called once per frame

@@ -28,13 +28,14 @@ MonoBehaviour:
       _resist: 0.05
       _immune: 0
   _attackerableData:
-    _attackRange: 0
-    _attackDamage: 0
-    _attackSpeed: 0
-    _attackInterval: 0
+    _attackRange: 2
+    _attackDamage: 15
+    _attackSpeed: 1.05
+    _attackInterval: 1
     _isRanged: 0
   _movableData:
     _moveSpeed: 4
     _turnSpeed: 360
-  _abilities: []
+  _abilities:
+  - {fileID: 11400000, guid: 74930cfe629f1344db157f7de22e701c, type: 2}
   _icon: {fileID: 21300000, guid: 4b517529cf020a44493a8166662aa96e, type: 3}

@@ -33,6 +33,7 @@ namespace Entity.Abilities.WarpedMagi
             base.Initialize(actor);
             _timer = new DurationTimer(_duration);
             _armorable = Self.GetComponent<IArmorable>();
+            _commonAbilityInfo.ManaCost = _manaCost;
             // _magicable = Self.GetComponent<IMagicable>();
 // _abilitiable = Self.GetComponent<IAbilitiable>();
             actor.AddSteppable(this);
@@ -93,6 +94,7 @@ namespace Entity.Abilities.WarpedMagi
             {
                 _isActive = false;
                 _armorable.Resisting -= OnResisting;
+                _timer.Reset();
             }
         }
 
