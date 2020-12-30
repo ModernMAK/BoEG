@@ -26,6 +26,8 @@ namespace Entity.Abilities.WarpedMagi
         [Header("Damage")] [SerializeField] private float _damage;
         [Header("Jumps")] [SerializeField] private float _searchRange;
         [SerializeField] private int _additionalJumps;
+
+        [SerializeField] private GameObject _unstableMagicFX;
 #pragma warning restore 0649
 
         public override void Initialize(Actor actor)
@@ -87,8 +89,26 @@ namespace Entity.Abilities.WarpedMagi
             // targetable.AffectSpell();
             var damageable = target.GetComponent<IDamageTarget>();
             damageable.TakeDamage(target.gameObject, damage);
+            ApplyFX(target.transform);
         }
 
+        private void ApplyFX(Transform target)
+        {
+            
+            if (_unstableMagicFX == null)
+                return;
+            var instance = Instantiate(_unstableMagicFX, target.position, Quaternion.identity);
+            if (!instance.TryGetComponent<FollowTarget>(out var follow))
+                follow = instance.AddComponent<FollowTarget>();
+            if (!instance.TryGetComponent<DieAfterParticleCompletion>(out var die))
+                die = instance.AddComponent<DieAfterParticleCompletion>();
+            if (instance.TryGetComponent<ParticleSystem>(out var ps))
+                ps.Play();
+
+            follow.SetTarget(target);
+            die.AllowDeath();
+        }
+        
         private bool TrySearchTarget(Vector3 area, out Actor target) => TrySearchTarget(area, new Actor[0], out target);
 
         private bool TrySearchTarget(Vector3 area, ICollection<Actor> ignore, out Actor target)

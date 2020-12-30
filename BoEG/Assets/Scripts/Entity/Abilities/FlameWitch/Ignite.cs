@@ -6,6 +6,7 @@ using Framework.Core.Modules;
 using Framework.Types;
 using Triggers;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Entity.Abilities.FlameWitch
 {
@@ -34,17 +35,38 @@ namespace Entity.Abilities.FlameWitch
         [Header("OverHeat FX")] [SerializeField]
         private float _overheatSearchRange = 1f;
 
+        [Header("Damage Over Time")] [SerializeField]
+        private float _tickInterval;
+        
         [SerializeField] private int _tickCount;
 
         [SerializeField] private float _tickDamage;
 
-        [Header("Damage Over Time")] [SerializeField]
-        private float _tickInterval;
 
         private Overheat _overheatAbility;
 
         private List<TickAction> _ticks;
+        
+[SerializeField]
+        private GameObject _igniteFX;
 #pragma warning restore 0649
+
+        private void ApplyFX(Transform target, float duration)
+        {
+            
+            if (_igniteFX == null)
+                return;
+            var instance = Instantiate(_igniteFX, target.position, Quaternion.identity);
+            if (!instance.TryGetComponent<DieAfterDuration>(out var die))
+                die = instance.AddComponent<DieAfterDuration>();
+            if (!instance.TryGetComponent<FollowTarget>(out var follow))
+                follow = instance.AddComponent<FollowTarget>();
+            if (instance.TryGetComponent<ParticleSystem>(out var ps))
+                ps.Play();
+            follow.SetTarget(target);
+            die.SetDuration(duration);
+            die.StartTimer();
+        }
 
         private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
 
@@ -90,6 +112,7 @@ namespace Entity.Abilities.FlameWitch
                         TickInterval = _tickInterval
                     };
                     _ticks.Add(tickWrapper);
+                    ApplyFX(actor.transform,_tickCount * _tickInterval);
                 }
 
             _commonAbilityInfo.NotifySpellCast();

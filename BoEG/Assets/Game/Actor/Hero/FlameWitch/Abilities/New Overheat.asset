@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: New Overheat
   m_EditorClassIdentifier: 
   _icon: {fileID: 21300000, guid: f4a9205ed853cd84f872633767989f67, type: 3}
-  _manaCostPerSecond: 10
-  _dotRange: 1.5
   _damagePerSecond: 5
   _deathRange: 0
   _deathDamage: 0
+  _dotRange: 1.5
   _isActive: 0
+  _manaCostPerSecond: 10
+  _overheatFX: {fileID: 454556819236218460, guid: c55e619502b07814694d8fa1ac2255d9,
+    type: 3}

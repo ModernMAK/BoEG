@@ -18,3 +18,5 @@ MonoBehaviour:
   _damage: 100
   _searchRange: 3
   _additionalJumps: 4
+  _unstableMagicFX: {fileID: 6082316400841436982, guid: bf62d92c820b7bf41ab50f97e118d6e1,
+    type: 3}

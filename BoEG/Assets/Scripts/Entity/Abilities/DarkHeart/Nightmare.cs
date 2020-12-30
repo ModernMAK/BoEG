@@ -18,7 +18,25 @@ namespace Entity.Abilities.DarkHeart
         [SerializeField] private int _tickCount;
         [SerializeField] private float _tickDamage;
         private List<TickAction> _ticks;
+        [SerializeField] private GameObject _nightmareFX;
+
 #pragma warning restore 0649
+
+        private void ApplyFX(Transform target, float duration)
+        {
+            if (_nightmareFX == null)
+                return;
+            var instance = Instantiate(_nightmareFX, target.position, Quaternion.identity);
+            if (!instance.TryGetComponent<DieAfterDuration>(out var die))
+                die = instance.AddComponent<DieAfterDuration>();
+            if (!instance.TryGetComponent<FollowTarget>(out var follow))
+                follow = instance.AddComponent<FollowTarget>();
+            if (instance.TryGetComponent<ParticleSystem>(out var ps))
+                ps.Play();
+            follow.SetTarget(target);
+            die.SetDuration(duration);
+            die.StartTimer();
+        }
 
         public override void Initialize(Actor actor)
         {
@@ -76,6 +94,7 @@ namespace Entity.Abilities.DarkHeart
                 TickInterval = _tickInterval
             };
             _ticks.Add(tickWrapper);
+            ApplyFX(target.transform, _tickInterval * _tickCount);
             _commonAbilityInfo.NotifySpellCast();
         }
     }

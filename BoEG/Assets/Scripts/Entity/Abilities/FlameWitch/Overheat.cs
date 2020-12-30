@@ -17,10 +17,11 @@ namespace Entity.Abilities.FlameWitch
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Overheat")]
     public class Overheat : AbilityObject, IListener<IStepableEvent>, INoTargetAbility
     {
+#pragma warning disable 0649
         [SerializeField] public float _damagePerSecond;
-        [SerializeField] public float _deathDamage;
 
         [Header("Damage On Death")] public float _deathRange;
+        [SerializeField] public float _deathDamage;
 
         [Header("Damage Over Time")] [SerializeField]
         public float _dotRange;
@@ -29,6 +30,23 @@ namespace Entity.Abilities.FlameWitch
         [Header("Mana Cost")] [SerializeField] public float _manaCostPerSecond;
 
         private TickAction _tickHelper;
+
+        [SerializeField] private GameObject _overheatFX;
+        private ParticleSystem _particleSystemInstance;
+#pragma warning restore 0649
+
+        private ParticleSystem ApplyFX(Transform target)
+        {
+            if (_overheatFX == null)
+                return null;
+            var instance = Instantiate(_overheatFX, target.position, Quaternion.identity);
+            if (!instance.TryGetComponent<FollowTarget>(out var follow))
+                follow = instance.AddComponent<FollowTarget>();
+            if(instance.TryGetComponent<ParticleSystem>(out var ps))
+                ps.Stop();
+            follow.SetTarget(target);
+            return ps;
+        }
 
         public bool IsActive
         {
@@ -50,6 +68,8 @@ namespace Entity.Abilities.FlameWitch
             _tickHelper = new InfiniteTickAction {Callback = OnTick, TickInterval = 1f};
             _commonAbilityInfo.ManaCost = _manaCostPerSecond;
             actor.AddSteppable(this);
+            if (_particleSystemInstance == null)
+                _particleSystemInstance = ApplyFX(actor.transform);
         }
 
         public override void ConfirmCast()
@@ -57,13 +77,27 @@ namespace Entity.Abilities.FlameWitch
             CastNoTarget();
         }
 
+        public void UpdateParticleSystemState()
+        {
+            if (_particleSystemInstance != null)
+                if (IsActive)
+                    _particleSystemInstance.Play();
+                else
+                    _particleSystemInstance.Stop();
+        }
+
         public void CastNoTarget()
         {
             IsActive = !IsActive;
 
+            UpdateParticleSystemState();
+
             if (IsActive)
+            {
                 //Immediately start ticking
                 OnTick();
+            }
+
 
             //Do not notify as a spell cast
         }
@@ -92,6 +126,7 @@ namespace Entity.Abilities.FlameWitch
             else
             {
                 IsActive = false;
+                UpdateParticleSystemState();
             }
         }
 
