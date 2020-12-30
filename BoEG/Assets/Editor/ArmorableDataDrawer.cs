@@ -218,11 +218,11 @@
 //////
 //////        public float HealthPoints
 //////        {
-//////            get { return _healthRatio * HealthCapacity; }
-//////            set { _healthRatio = value / HealthCapacity; }
+//////            get { return _healthRatio * Capacity; }
+//////            set { _healthRatio = value / Capacity; }
 //////        }
 //////
-//////        public float HealthCapacity
+//////        public float Capacity
 //////        {
 //////            get { return _baseHealthCapacity + _gainHealthCapacity * (Level - 1); }
 //////        }

@@ -1,155 +1,187 @@
-﻿using Core;
-using Modules.Abilityable;
-using Modules.Healthable;
+using System;
+using System.Collections.Generic;
+using Framework.Ability;
+using Framework.Core;
+using Framework.Core.Modules;
+using Framework.Types;
 using Triggers;
 using UnityEngine;
-using Util;
+using UnityEngine.InputSystem;
 
 namespace Entity.Abilities.FlameWitch
 {
-    [CreateAssetMenu(fileName = "FlameWitch_Ignite.asset", menuName = "Ability/FlameWitch/Wildfire")]
-    public class Wildfire : BetterAbility
+    /* Unit-Target Spell
+        * Applies DOT
+        * Deals Damage on Cast
+        *
+        * When OverHeating;
+        *     Enemy heroes in an AOE also recieve DOT
+        */
+
+
+    [CreateAssetMenu(menuName = "Ability/FlameWitch/Ignite")]
+    public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>
     {
-        [SerializeField] private float _areaOfEffect;
-        [SerializeField] private TickData _tickInfo;
-        [SerializeField] private float _damage;
+#pragma warning disable 0649
+        [Header("Cast Range")] [SerializeField]
+        private float _castRange = 5f;
 
-        private WildfireTickAction _aeraOfEffectDamageOverTimeTicker;
-        private Trigger _trigger;
-        private SphereTriggerMethod _triggerMethod;
+        [Header("Initial Damage")] [SerializeField]
+        private float _damage = 100f;
 
 
-        public override void Initialize(GameObject go)
-        {
-            base.Initialize(go);
-            _trigger = new Trigger(_triggerMethod);
-            _triggerMethod = new SphereTriggerMethod();
-            _triggerMethod.SetRadius(_areaOfEffect).SetFollow(Self).SetLayerMask((int) LayerMaskHelper.Entity);
-            var damage = new Damage(_damage, DamageType.Pure, Self);
-            _aeraOfEffectDamageOverTimeTicker = new WildfireTickAction(_tickInfo.TicksRequired, _tickInfo.Duration, _trigger, damage);
-        }
+        [Header("Mana Cost")] [SerializeField] private float _manaCost = 100f;
+
+        [Header("OverHeat FX")] [SerializeField]
+        private float _overheatSearchRange = 1f;
+
+        [Header("Damage Over Time")] [SerializeField]
+        private float _tickInterval;
         
-        
-        private class WildfireTickAction : DotTickAction
-        {
-            public WildfireTickAction(int ticksRequired, float tickDuration, Trigger trigger, Damage damage) : base(ticksRequired, tickDuration)
-            {
-                _trigger = trigger;
-                _damage = damage;
-            }
+        [SerializeField] private int _tickCount;
 
-            public void SetDamage(Damage damage)
-            {
-                _damage = damage;
-            }
+        [SerializeField] private float _tickDamage;
+
+
+        private Overheat _overheatAbility;
+
+        private List<TickAction> _ticks;
+        
+[SerializeField]
+        private GameObject _igniteFX;
+#pragma warning restore 0649
+
+        private void ApplyFX(Transform target, float duration)
+        {
             
-            private Damage _damage;
-            private readonly Trigger _trigger;
+            if (_igniteFX == null)
+                return;
+            var instance = Instantiate(_igniteFX, target.position, Quaternion.identity);
+            if (!instance.TryGetComponent<DieAfterDuration>(out var die))
+                die = instance.AddComponent<DieAfterDuration>();
+            if (!instance.TryGetComponent<FollowTarget>(out var follow))
+                follow = instance.AddComponent<FollowTarget>();
+            if (instance.TryGetComponent<ParticleSystem>(out var ps))
+                ps.Play();
+            follow.SetTarget(target);
+            die.SetDuration(duration);
+            die.StartTimer();
+        }
 
-            protected override void Logic()
+        private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
+
+        public void OnStep(float deltaTime)
+        {
+            _ticks.AdvanceAllAndRemoveDone(deltaTime);
+        }
+
+        public void CastObjectTarget(Actor target)
+        {
+            //Deal damage
+            var damage = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
+//            var targetable = target.GetComponent<ITargetable>();
+            var damagable = target.GetComponent<IDamageTarget>();
+            damagable.TakeDamage(Self.gameObject, damage);
+            //TODO add DOT
+            //Gather DOT targets
+            var dotTargets = new List<Actor> {target};
+            if (IsInOverheat)
             {
-                _trigger.PhysicsStep();
-                foreach (var col in _trigger.Colliders)
+                var colliders = Physics.OverlapSphere(target.transform.position, _overheatSearchRange,
+                    (int) LayerMaskHelper.Entity);
+                foreach (var collider in colliders)
                 {
-                    var healthable = col.GetComponent<IHealthable>();
-                        
-                    ApplyDamageOverTime(healthable,_damage);
+                    var actor = collider.GetComponent<Actor>();
+                    if (actor == target) //Already added
+                        continue;
+                    if (actor == null) //Not an actor
+                        continue;
+                    if (_commonAbilityInfo.SameTeam(actor.gameObject))
+                        continue; //Skip allies
+                    dotTargets.Add(actor);
                 }
             }
-        }
-        
-        public override void Terminate()
-        {
-//            throw new System.NotImplementedException();            
-        }
 
-        public override void Step(float deltaTick)
-        {
-            _aeraOfEffectDamageOverTimeTicker.Tick(deltaTick);
-        }
-    }
+            foreach (var actor in dotTargets)
+                if (GetDotAction(actor, out var action))
+                {
+                    var tickWrapper = new TickAction
+                    {
+                        Callback = action,
+                        TickCount = _tickCount,
+                        TickInterval = _tickInterval
+                    };
+                    _ticks.Add(tickWrapper);
+                    ApplyFX(actor.transform,_tickCount * _tickInterval);
+                }
 
-    [CreateAssetMenu(fileName = "FlameWitch_Ignite.asset", menuName = "Ability/FlameWitch/Ignite")]
-    public class Ignite : BetterAbility
-    {
-        [SerializeField] private float _manaCost = 100f;
-        [SerializeField] private float _damage = 100f;
-        [SerializeField] private float _castRange = 5f;
-
-
-        public override float ManaCost
-        {
-            get { return _manaCost; }
+            _commonAbilityInfo.NotifySpellCast();
         }
 
-        public override float CastRange
+        public override void Initialize(Actor actor)
         {
-            get { return _castRange; }
+            base.Initialize(actor);
+
+            _commonAbilityInfo.Abilitiable.FindAbility(out _overheatAbility);
+            _commonAbilityInfo.ManaCost = _manaCost;
+            //Manually inject the ability as a stepable
+            actor.AddSteppable(this);
+            _ticks = new List<TickAction>();
         }
 
-        public override void Initialize(GameObject go)
-        {
-            base.Initialize(go);
-        }
 
-        public override void Terminate()
+        public override void ConfirmCast()
         {
-            //I'll Be Back
-            //To add stuff
-        }
-
-        protected override void Cast()
-        {
-            RaycastHit hit;
-            if (!RaycastCamera(out hit, LayerMaskHelper.Entity))
+            var ray = AbilityHelper.GetScreenRay();
+            if (!AbilityHelper.TryGetEntity(ray, out var hit))
+                return;
+            if (!AbilityHelper.InRange(Self.transform, hit.point, _castRange))
+                return;
+            if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
+                return;
+            if (IsSelf(actor))
+                return;
+            if (!AbilityHelper.HasAllComponents(actor.gameObject, typeof(IDamageTarget)))
+                return;
+            if (!_commonAbilityInfo.TrySpendMana())
                 return;
 
-            if (!InCastRange(hit.point))
-                return;
-
-            SpendMana();
-            UnitCast(GetEntity(hit));
+            CastObjectTarget(actor);
         }
 
-        protected override void Prepare()
+
+        private bool GetDotAction(Actor actor, out Action dotAction)
         {
+            dotAction = default;
+            var dmgTarget = actor.GetComponent<IDamageTarget>();
+            if (dmgTarget == null)
+                return false;
+
+            var source = Self.gameObject;
+            var damage = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
+
+            void internalFunc()
+            {
+                dmgTarget.TakeDamage(source, damage);
+            }
+
+            dotAction = internalFunc;
+            return true;
         }
 
-        public override void UnitCast(GameObject target)
+        public override float GetManaCost()
         {
-            var damage = new Damage(_damage, DamageType.Magical, Self);
-            var healthable = target.GetComponent<IHealthable>();
-            healthable.TakeDamage(damage);
+            return _manaCost;
         }
 
-        public static bool RaycastCamera(out RaycastHit hitinfo, LayerMaskHelper layerMask = (LayerMaskHelper) 0)
+        public void Register(IStepableEvent source)
         {
-            var lm = (int) layerMask;
-            if (lm == 0)
-                lm = (int) (LayerMaskHelper.Entity | LayerMaskHelper.Trigger | LayerMaskHelper.World);
-            return Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitinfo, lm);
+            source.Step += OnStep;
         }
 
-        public static GameObject GetEntity(RaycastHit hit)
+        public void Unregister(IStepableEvent source)
         {
-            var go = hit.collider.gameObject;
-            var rb = hit.collider.GetComponent<Rigidbody>();
-
-            if (rb != null)
-                go = rb.gameObject;
-
-            var entity = go.GetComponent<Entity>();
-
-
-            if (entity == null)
-                entity = go.GetComponentInChildren<Entity>();
-
-            if (entity == null)
-                entity = go.GetComponentInParent<Entity>();
-
-            if (entity != null)
-                return entity.gameObject;
-            else return null;
+            source.Step -= OnStep;
         }
     }
 }

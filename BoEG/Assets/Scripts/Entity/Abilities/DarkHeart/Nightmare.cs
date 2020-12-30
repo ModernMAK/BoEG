@@ -1,229 +1,101 @@
-using System;
-using Core;
-using Modules.Healthable;
-using Modules.Abilityable;
+using System.Collections.Generic;
+using Entity.Abilities.FlameWitch;
+using Framework.Ability;
+using Framework.Core;
+using Framework.Core.Modules;
+using Framework.Types;
 using UnityEngine;
-using Util;
 
 namespace Entity.Abilities.DarkHeart
 {
-    [CreateAssetMenu(fileName = "DarkHeart_Nightmare.asset", menuName = "Ability/DarkHeart/Nightmare")]
-    public class Nightmare : BetterAbility
+    [CreateAssetMenu(menuName = "Ability/DarkHeart/Nightmare")]
+    public class Nightmare : AbilityObject, IObjectTargetAbility<Actor>, IListener<IStepableEvent>
     {
-        [Serializable]
-        public struct NightmareData
-        {
-            [SerializeField] private float[] _manaCost;
-            [SerializeField] private float[] _castRange;
-            [SerializeField] private TickData[] _tickInfo;
-            [SerializeField] private float[] _totalDamage;
-
-            public int Length
-            {
-                //Just pick any, the property drawer ensures they should all be the same
-                get { return _manaCost.Length; }
-            }
-
-            public float[] ManaCost
-            {
-                get { return _manaCost; }
-            }
-
-            public float[] CastRange
-            {
-                get { return _castRange; }
-            }
-
-            public TickData[] TickInfo
-            {
-                get { return _tickInfo; }
-            }
-
-            public float[] TotalDamage
-            {
-                get { return _totalDamage; }
-            }
-        }
-
-        [SerializeField] private NightmareData _data;
-
-        public override float CastRange
-        {
-            get { return GetLeveledData(_data.CastRange); }
-        }
-
-        public override float ManaCost
-        {
-            get { return GetLeveledData(_data.ManaCost); }
-        }
-
-        private TickData TickInfo
-        {
-            get { return GetLeveledData(_data.TickInfo); }
-        }
-
-        private float TotalDamage
-        {
-            get { return GetLeveledData(_data.TotalDamage); }
-        }
-
-        protected override int MaxLevel
-        {
-            get { return _data.Length; }
-        }
-
+#pragma warning disable 0649
+        [SerializeField] private float _manaCost;
+        [SerializeField] private float _castRange;
+        [SerializeField] private float _tickInterval;
+        [SerializeField] private int _tickCount;
+        [SerializeField] private float _tickDamage;
+        private List<TickAction> _ticks;
         [SerializeField] private GameObject _nightmareFX;
 
-        [SerializeField] private GameObject _spellRangePrefab;
-        private GameObject _spellRangeGameobject;
+#pragma warning restore 0649
 
-        private SpellRangeVisualizer _spellRangeVisualizer;
-        //Nightmare AttackDamage On Completion
-
-
-        //Nightmare AttackDamage Threshold
-
-
-        public override void Terminate()
+        private void ApplyFX(Transform target, float duration)
         {
-            _nightmareInstances.Terminate();
-        }
-
-
-        public override void Initialize(GameObject go)
-        {
-            base.Initialize(go);
-            _nightmareInstances = new TickActionContainer<NightmareInstance>();
-            _spellRangeGameobject = Instantiate(_spellRangePrefab);
-            _spellRangeGameobject.SetActive(false);
-            _spellRangeVisualizer = _spellRangeGameobject.GetComponent<SpellRangeVisualizer>();
-//            throw new System.NotImplementedException();
-        }
-
-        protected override void CancelPrepare()
-        {
-            _spellRangeGameobject.SetActive(false);
-        }
-
-        public override void Step(float deltaTick)
-        {
-            if (Preparing && IsLeveled)
-            {
-                _spellRangeVisualizer.SetStart(Self.transform);
-                _spellRangeVisualizer.SetRange(CastRange);
-                RaycastHit hit;
-                if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
-                {
-//                    _spellAoeGameobject.SetActive(false);
-                }
-                else
-                {
-                    _spellRangeGameobject.SetActive(true);
-                    _spellRangeVisualizer.SetEnd(hit.point);
-                }
-            }
-        }
-
-        protected override void Cast()
-        {
-            RaycastHit hit;
-            if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) return;
-
-            if (!InCastRange(hit.point))
+            if (_nightmareFX == null)
                 return;
-
-            var col = hit.collider;
-            var go = col.gameObject;
-            if (col.attachedRigidbody != null)
-                go = col.attachedRigidbody.gameObject;
-
-            SpendMana();
-            UnitCast(go);
+            var instance = Instantiate(_nightmareFX, target.position, Quaternion.identity);
+            if (!instance.TryGetComponent<DieAfterDuration>(out var die))
+                die = instance.AddComponent<DieAfterDuration>();
+            if (!instance.TryGetComponent<FollowTarget>(out var follow))
+                follow = instance.AddComponent<FollowTarget>();
+            if (instance.TryGetComponent<ParticleSystem>(out var ps))
+                ps.Play();
+            follow.SetTarget(target);
+            die.SetDuration(duration);
+            die.StartTimer();
         }
 
-        public override void PhysicsStep(float deltaTick)
+        public override void Initialize(Actor actor)
         {
-            _nightmareInstances.Tick(deltaTick);
+            base.Initialize(actor);
+            _commonAbilityInfo.ManaCost = _manaCost;
+            _commonAbilityInfo.Range = _castRange;
+            _ticks = new List<TickAction>();
+            Register(actor);
         }
 
-        private TickActionContainer<NightmareInstance> _nightmareInstances;
-
-        public override void UnitCast(GameObject target)
+        public override void ConfirmCast()
         {
-            var iHealthable = target.GetComponent<IHealthable>();
-            if (iHealthable != null)
-            {
-                _nightmareInstances.Add(new NightmareInstance(this, Self, target));
-            }
+            var ray = AbilityHelper.GetScreenRay();
+            if (!AbilityHelper.TryGetEntity(ray, out var hit))
+                return;
+            if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
+                return;
+            if (!AbilityHelper.HasAllComponents(actor.gameObject, typeof(IDamageTarget)))
+                return;
+            if (!_commonAbilityInfo.TrySpendMana())
+                return;
+            CastObjectTarget(actor);
         }
 
-        private class NightmareInstance : DotTickAction
+        private void OnStep(float deltaTime)
         {
-            private readonly float _damage;
-            private readonly GameObject _target;
-            private readonly IHealthable _healthable;
-            private readonly GameObject _self;
-            private readonly GameObject _fx;
+            _ticks.AdvanceAllAndRemoveDone(deltaTime);
+        }
 
-            public NightmareInstance(Nightmare nightmare, GameObject self, GameObject target) :
-                base(nightmare.TickInfo.TicksRequired, nightmare.TickInfo.Duration)
+        public void Register(IStepableEvent source)
+        {
+            source.Step += OnStep;
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.Step += OnStep;
+        }
+
+        public void CastObjectTarget(Actor target)
+        {
+            //Deal damage
+            var damagePerTick = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
+            var damageable = target.GetComponent<IDamageTarget>();
+
+            void InternalTick()
             {
-                _self = self;
-                _damage = nightmare.TotalDamage / nightmare.TickInfo.Duration;
-                _target = target;
-                _healthable = target.GetComponent<IHealthable>();
-                _fx = Instantiate(nightmare._nightmareFX, _target.transform);
+                damageable.TakeDamage(Self.gameObject, damagePerTick);
             }
 
-
-            protected override void Logic()
+            var tickWrapper = new TickAction
             {
-                if (_healthable.HealthPercentage.SafeEquals(0f))
-                    return;
-                ApplyDamageOverTime(_healthable, new Damage(_damage, DamageType.Magical, _self));
-            }
-
-            public override void Terminate()
-            {
-                Destroy(_fx);
-            }
+                Callback = InternalTick,
+                TickCount = _tickCount,
+                TickInterval = _tickInterval
+            };
+            _ticks.Add(tickWrapper);
+            ApplyFX(target.transform, _tickInterval * _tickCount);
+            _commonAbilityInfo.NotifySpellCast();
         }
     }
-
-//    public class NightmareEffect : Effect
-//    {
-//        public NightmareEffect(float duration, float completionDamage)
-//        {
-//            _timeDuration = duration;
-//            _completionDamage = completionDamage;
-//        }
-//        private float _timeStarted, _timeDuration;
-//        private float _completionDamage;
-//        private IHealthable _targetHealthable;
-//        public override void Initialize(GameObject target)
-//        {
-//            base.Initialize(target);
-//            _timeStarted = Time.time;
-//            _targetHealthable = Target.GetComponent<IHealthable>();
-//        }
-//
-//        public override void PreStep()
-//        {
-//            _timeStarted
-//        }
-//
-//        public override void PostStep()
-//        {
-//            if (_timeStarted + _timeDuration <= Time.time)
-//            {
-//                
-//                Terminate();   
-//            }
-//        }
-//
-//        private void ApplyDamage()
-//        {
-//            _targetHealthable.TakeDamage(new ApplyDamageOverTime());
-//        }
-//    }
 }
