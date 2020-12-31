@@ -1,6 +1,6 @@
 using System;
 
-namespace FrameWork.Core.Networking
+namespace Framework.Core.Networking
 {
     public interface INetworkIdentifier
     {

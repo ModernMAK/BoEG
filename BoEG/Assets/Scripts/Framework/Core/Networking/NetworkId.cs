@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace FrameWork.Core.Networking
+namespace Framework.Core.Networking
 {
     public class NetworkId : MonoBehaviour, INetworkedUnityObject<GameObject>
     {

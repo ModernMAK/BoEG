@@ -1,4 +1,4 @@
-namespace FrameWork.Core.Networking
+namespace Framework.Core.Networking
 {
     public interface INetworkedValue<out T> : INetworkIdentifier
     {

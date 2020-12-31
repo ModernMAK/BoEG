@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FrameWork.Core.Networking
+namespace Framework.Core.Networking
 {
     public interface INetworkedDictionary<T> : IReadOnlyDictionary<Guid, T> where T : INetworkIdentifier
     {

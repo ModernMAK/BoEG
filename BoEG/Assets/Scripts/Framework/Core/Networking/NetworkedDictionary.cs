@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net.Configuration;
 
-namespace FrameWork.Core.Networking
+namespace Framework.Core.Networking
 {
     public class NetworkedDictionary<T> : INetworkedDictionary<T> where T : INetworkIdentifier
     {

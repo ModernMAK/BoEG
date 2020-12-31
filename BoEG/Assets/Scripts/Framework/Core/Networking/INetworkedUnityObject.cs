@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace FrameWork.Core.Networking
+namespace Framework.Core.Networking
 {
     public interface INetworkedUnityObject<out T> : INetworkedUnityObject where T : Object
     {

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace FrameWork.Core.Networking
+namespace Framework.Core.Networking
 {
     public class NetworkSceneManager : MonoBehaviour, INetworkedDictionary<INetworkedUnityObject>
     {
