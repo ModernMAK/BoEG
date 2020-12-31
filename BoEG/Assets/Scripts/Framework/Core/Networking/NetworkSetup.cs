@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -8,6 +10,7 @@ namespace Framework.Core.Networking
 {
     public class NetworkSetup : MonoBehaviour
     {
+        [SerializeField] private Text _input;
         // public static IPAddress[] GetLanIPs() => Dns.GetHostAddresses(Dns.GetHostName());
         // public static IPAddress[] GetMyIPs() => Dns.GetHostAddresses("localhost");
         //
@@ -88,9 +91,8 @@ namespace Framework.Core.Networking
         //     }
         // }
 
-        private TcpListener _server;
-        private TcpClient _client;
-        private List<TcpClient> _serverClients;
+        private NetworkServer _server;
+        private NetworkClient _client;
 
         public bool IsClient => _client != null;
         public bool IsServer => _server != null;
@@ -111,11 +113,14 @@ namespace Framework.Core.Networking
 
             var ep = serverInfo;
             _text.text += $"Started Client @ {ep.Address} : {ep.Port}\n";
-            _client = new TcpClient();
+            _client = new NetworkClient();
+            _client.ClientConnected += ClientOnClientConnected;
+            _client.ClientDisconnected += ClientOnClientDisconnected;
+            _client.MessageReceived += ClientOnMessageReceived;
+            _client.MessageSent += ClientOnMessageReceived;
             try
             {
                 _client.Connect(serverInfo);
-                _text.text += $"Client Connected @ {serverInfo.Address} : {serverInfo.Port}\n";
             }
             catch (SocketException exception)
             {
@@ -124,6 +129,24 @@ namespace Framework.Core.Networking
                 _client.Close();
                 _client = null;
             }
+        }
+
+        private void ClientOnClientConnected(object sender, Tuple<NetworkClient> e)
+        {
+            var serverInfo = (IPEndPoint) e.Item1.Client.Client.RemoteEndPoint;
+            _text.text += $"Client Connected @ {serverInfo.Address} : {serverInfo.Port}\n";
+        }
+
+        private void ClientOnClientDisconnected(object sender, Tuple<NetworkClient> e)
+        {
+            var serverInfo = (IPEndPoint) e.Item1.Client.Client.RemoteEndPoint;
+            _text.text += $"Client Disconnected @ {serverInfo.Address} : {serverInfo.Port}\n";
+        }
+
+        private void ClientOnMessageReceived(object sender, Tuple<NetworkClient, MemoryStream> e)
+        {
+            using (var reader = new StreamReader(e.Item2))
+                _text.text += $"{reader.ReadToEnd()}\n";
         }
 
         public void StartServer() => StartServer(DefaultEndPoint);
@@ -136,51 +159,97 @@ namespace Framework.Core.Networking
                 return;
             }
 
-            _server = new TcpListener(socketInfo);
+            _server = new NetworkServer(socketInfo);
+            _server.ServerStarted += ServerOnServerStarted;
+            _server.ServerStopped += ServerOnSeverStopped;
+            _server.MessageRecieved += ServerOnMessageRecieved;
             if (maxRequests <= 0)
                 _server.Start();
             else
                 _server.Start(maxRequests);
+        }
+
+        private void ServerOnMessageRecieved(object sender, Tuple<NetworkServer, Guid, TcpClient, MemoryStream> e)
+        {
+            e.Item4.Seek(0, SeekOrigin.Begin);
+            _server.WriteMessageToAll(e.Item4);
+        }
+
+        private void ServerOnServerStarted(object sender, Tuple<NetworkServer> e)
+        {
+            if (_text == null)
+                return;
+            var socketInfo = (IPEndPoint) e.Item1.Listener.LocalEndpoint;
             _text.text += $"Started Server @ {socketInfo.Address} : {socketInfo.Port}\n";
+        }
+
+        private void ServerOnSeverStopped(object sender, Tuple<NetworkServer> e)
+        {
+            if (_text == null)
+                return;
+            var socketInfo = (IPEndPoint) _server.Listener.LocalEndpoint;
+            _text.text += $"Killed Server @ {socketInfo.Address} : {socketInfo.Port}\n";
         }
 
         public void Stop()
         {
             if (_server != null)
             {
-                var socketInfo = (IPEndPoint) _server.LocalEndpoint;
-                _text.text += $"Killed Server @ {socketInfo.Address} : {socketInfo.Port}\n";
                 _server.Stop();
                 _server = null;
             }
 
             if (_client != null)
             {
-                var socketInfo = (IPEndPoint) _client.Client.RemoteEndPoint;
-                _text.text += $"Killed Client @ {socketInfo.Address} : {socketInfo.Port}\n";
                 _client.Close();
                 _client = null;
             }
         }
 
-        private void Awake()
+
+        public void SendTextMessage()
         {
-            _serverClients = new List<TcpClient>();
+            if(_input.text == "")
+                return;
+            
+            if (IsClient)
+            {
+                using(var memory = new MemoryStream())
+                using (var writer = new StreamWriter(memory))
+                {
+                    writer.WriteLine(_input.text);
+                    _input.text = "";
+                    _client.WriteMessage(memory);
+                }
+            }
+
+            else if (IsServer)
+            {
+                
+                using(var memory = new MemoryStream())
+                using (var writer = new StreamWriter(memory))
+                {
+                    writer.WriteLine(_input.text);
+                    _input.text = "";
+                    _server.WriteMessageToAll(memory);
+                }
+            }
+        }
+
+
+        private void RelayMessageToClients() => SendMessageToClients(null);
+
+        private void SendMessageToClients(MemoryStream stream)
+        {
+            stream.Seek(0, SeekOrigin.Begin);
+            _server.WriteMessageToAll(stream);
         }
 
         private void OnDestroy()
         {
             if (_server != null)
-            {
-                foreach (var client in _serverClients)
-                {
-                    if (client != null)
-                        client.Close();
-                }
-
-                _serverClients.Clear();
                 _server.Stop();
-            }
+
 
             if (_client != null)
                 _client.Close();
@@ -190,13 +259,12 @@ namespace Framework.Core.Networking
         {
             if (IsServer)
             {
-                if (_server.Pending())
-                {
-                    var client = _server.AcceptTcpClient();
-                    _serverClients.Add(client);
-                    var ep = ((IPEndPoint) client.Client.RemoteEndPoint);
-                    _text.text += $"Client Connected @ {ep.Address} : {ep.Port}\n";
-                }
+                _server.TryAcceptClient(out _, out _);
+                _server.ReadAllMessages();
+            }
+            else if (IsClient)
+            {
+                _client.ReadMessages();
             }
 
             // else if (IsClient)

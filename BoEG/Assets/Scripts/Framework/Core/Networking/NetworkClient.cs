@@ -87,16 +87,18 @@ namespace Framework.Core.Networking
 
         private bool ReadMessage(MemoryStream stream)
         {
+            if (!Client.Connected)
+                return false;
             using (var net = Client.GetStream())
             {
                 if (!TryReadMessage(net, stream))
                     return false;
-                OnMessageRecieved(new Tuple<NetworkClient, MemoryStream>(this, stream));
+                OnMessageReceived(new Tuple<NetworkClient, MemoryStream>(this, stream));
                 return true;
             }
         }
 
-        private void WriteMessage(MemoryStream stream)
+        public void WriteMessage(MemoryStream stream)
         {
             using (var netStream = Client.GetStream())
             {
@@ -108,14 +110,14 @@ namespace Framework.Core.Networking
         public event EventHandler<Tuple<NetworkClient>> ClientConnected;
         public event EventHandler<Tuple<NetworkClient>> ClientDisconnected;
 
-        public event EventHandler<Tuple<NetworkClient, MemoryStream>> MessageRecieved;
+        public event EventHandler<Tuple<NetworkClient, MemoryStream>> MessageReceived;
         public event EventHandler<Tuple<NetworkClient, MemoryStream>> MessageSent;
 
         
         
-        protected virtual void OnMessageRecieved(Tuple<NetworkClient, MemoryStream> e)
+        protected virtual void OnMessageReceived(Tuple<NetworkClient, MemoryStream> e)
         {
-            MessageRecieved?.Invoke(this, e);
+            MessageReceived?.Invoke(this, e);
         }
 
         protected virtual void OnMessageSent(Tuple<NetworkClient, MemoryStream> e)

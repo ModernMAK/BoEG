@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using UnityEditorInternal.VR;
 
 namespace Framework.Core.Networking
 {
@@ -26,9 +25,16 @@ namespace Framework.Core.Networking
 
         public bool Pending() => _listener.Pending();
 
+
         public void Start()
         {
             _listener.Start();
+            OnServerConnected(new Tuple<NetworkServer>(this));
+        }
+
+        public void Start(int maxRequests)
+        {
+            _listener.Start(maxRequests);
             OnServerConnected(new Tuple<NetworkServer>(this));
         }
 
@@ -74,9 +80,7 @@ namespace Framework.Core.Networking
             {
                 var guid = kvp.Key;
                 var client = kvp.Value;
-                client.Close();
-                client.Dispose();
-                OnClientDisconnected(new Tuple<NetworkServer, Guid, TcpClient>(this, guid, client));
+                DisconnectClient(guid, client);
             }
         }
 
@@ -120,23 +124,46 @@ namespace Framework.Core.Networking
             }
         }
 
-        public void ReadMessages()
+
+        public void ReadAllMessages()
+        {
+            foreach (var _ in ReadAndGetAllMessages())
+            {
+            }
+        }
+
+        public IEnumerable<MemoryStream> ReadAndGetAllMessages()
         {
             foreach (var kvp in Clients)
             {
                 var guid = kvp.Key;
                 var client = kvp.Value;
+                if (!client.Connected)
+                {
+                    DisconnectClient(guid, client);
+                }
+
                 using (var memory = new MemoryStream(MessageBufferSize))
                 {
                     ReadMessage(guid, client, memory);
+                    yield return memory;
                 }
             }
+        }
+
+        private void DisconnectClient(Guid guid, TcpClient client)
+        {
+            client.Close();
+            client.Dispose();
+            OnClientDisconnected(new Tuple<NetworkServer, Guid, TcpClient>(this, guid, client));
         }
 
         public bool ReadMessage(Guid guid, MemoryStream stream) => ReadMessage(guid, Clients[guid], stream);
 
         private bool ReadMessage(Guid guid, TcpClient client, MemoryStream stream)
         {
+            if (!client.Connected)
+                return false;
             using (var net = client.GetStream())
             {
                 if (!TryReadMessage(net, stream))
@@ -209,7 +236,7 @@ namespace Framework.Core.Networking
         {
             MessageSent?.Invoke(this, e);
         }
-        
+
         public void Dispose()
         {
             Stop();
