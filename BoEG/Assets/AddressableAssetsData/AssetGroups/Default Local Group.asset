@@ -16,7 +16,13 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 1a8678a7f01638242aa850dbdd4c634a
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 6f831ac78cf337147a21ee2227f4074f
+    m_Address: Assets/Game/Actor/Unit/Melee/MeleeUnit.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 830a2d7419ae37d48ade434e8c05cda2, type: 2}
   m_SchemaSet:

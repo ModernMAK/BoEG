@@ -32,6 +32,7 @@ namespace FrameWork.Core.Networking
         Object INetworkedUnityObject.Object => Object;
         public GameObject Object => gameObject;
 
+        #if UNITY_EDITOR 
         [MenuItem("BoEG/Networking/Generate Scene NetIds")]
         public static void GenerateSceneNetworkIds()
         {
@@ -40,7 +41,7 @@ namespace FrameWork.Core.Networking
                 if(netId.Id == Guid.Empty)
                     netId.GeneratedId();
         }
-        
+        #endif
         private void GeneratedId() => Id = Guid.NewGuid();
     }
 }
