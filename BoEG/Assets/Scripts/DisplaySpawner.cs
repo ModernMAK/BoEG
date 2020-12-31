@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Developer.PlayTesting
 {
+    #if UNITY_EDITOR
     [ExecuteInEditMode]
     public class DisplaySpawner : MonoBehaviour
     {
@@ -61,4 +62,5 @@ namespace Developer.PlayTesting
             }
         }
     }
+    #endif
 }
