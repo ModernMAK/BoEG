@@ -4,21 +4,13 @@ using System.IO;
 
 namespace Framework.Core.Serialization
 {
-    public class Serializer : ISerializer, IDisposable
+    public class BinarySerializer : ISerializer
     {
-        private readonly MemoryStream _stream;
         private readonly BinaryWriter _writer;
 
-        public Serializer()
+        public BinarySerializer(BinaryWriter writer)
         {
-            _stream = new MemoryStream();
-            _writer = new BinaryWriter(_stream);
-        }
-
-        public void Dispose()
-        {
-            _stream.Dispose();
-            ((IDisposable) _writer).Dispose();
+            _writer = writer;
         }
 
         public void Write(bool value)
@@ -112,9 +104,5 @@ namespace Framework.Core.Serialization
             _writer.Write(value);
         }
 
-        public byte[] Buffer()
-        {
-            return _stream.ToArray();
-        }
     }
 }

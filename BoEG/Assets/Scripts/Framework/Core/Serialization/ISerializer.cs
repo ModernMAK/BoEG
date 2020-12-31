@@ -24,7 +24,5 @@ namespace Framework.Core.Serialization
         void Write(long value);
         void Write(ulong value);
 
-
-        byte[] Buffer();
     }
 }

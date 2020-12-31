@@ -3,15 +3,13 @@ using System.IO;
 
 namespace Framework.Core.Serialization
 {
-    public class Deserializer : IDeserializer, IDisposable
+    public class BinaryDeserializer : IDeserializer
     {
         private readonly BinaryReader _reader;
-        private readonly MemoryStream _stream;
 
-        public Deserializer(byte[] values)
+        public BinaryDeserializer(BinaryReader reader)
         {
-            _stream = new MemoryStream(values);
-            _reader = new BinaryReader(_stream);
+            _reader = reader;
         }
 
 
@@ -97,10 +95,5 @@ namespace Framework.Core.Serialization
             return _reader.ReadUInt64();
         }
 
-        public void Dispose()
-        {
-            _stream.Dispose();
-            ((IDisposable) _reader).Dispose();
-        }
     }
 }
