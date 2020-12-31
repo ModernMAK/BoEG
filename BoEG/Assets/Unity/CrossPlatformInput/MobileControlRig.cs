@@ -1,8 +1,8 @@
-using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.EventSystems;
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.Build;
 #endif
 
 
