@@ -2,15 +2,13 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using Framework.Core.Networking;
 using UnityEngine;
 
 namespace Framework.Core.Networking
 {
-    public class NetworkClient
+    public class NetworkClient : NetworkTransport
     {
-        public static int MessageBufferSize => NetworkServer.MessageBufferSize;
-        private static readonly byte[] MessageBuffer = new byte[MessageBufferSize];
-        
         public NetworkClient() : this(new TcpClient())
         {
         }
@@ -21,7 +19,6 @@ namespace Framework.Core.Networking
         }
 
         private readonly TcpClient _client;
-        public TcpClient Client => _client;
 
 
         //This 
@@ -38,101 +35,82 @@ namespace Framework.Core.Networking
                 return false;
             }
         }
+
+        public EndPoint RemoteEndPoint => _client.Client.RemoteEndPoint;
+        public EndPoint LocalEndPoint => _client.Client.LocalEndPoint;
+
         public void Connect(IPEndPoint endPoint)
         {
             _client.Connect(endPoint);
-            OnClientConnected(new Tuple<NetworkClient>(this));
+            OnClientConnected();
         }
+
         public bool Connected => _client.Connected;
-        public void Close() => _client.Close();
-    
-        
-        public static void ReadMessage(NetworkStream netStream, MemoryStream memStream)
+
+        public void Close()
         {
-            while (netStream.DataAvailable)
-            {
-                var bytesRead = netStream.Read(MessageBuffer, 0, MessageBufferSize);
-                memStream.Write(MessageBuffer, 0, bytesRead);
-            }
+            _client.Close();
+            OnClientDisconnected();
         }
 
-        public static bool TryReadMessage(NetworkStream netStream, MemoryStream memStream)
-        {
-            var read = netStream.DataAvailable;
-            ReadMessage(netStream, memStream);
-            return read;
-        }
 
-        public static void WriteMessage(NetworkStream netStream, MemoryStream memStream)
-        {
-            while (true)
-            {
-                var bytesRead = memStream.Read(MessageBuffer, 0, MessageBufferSize);
-                if (bytesRead > 0)
-                    netStream.Write(MessageBuffer, 0, bytesRead);
-                else
-                    return;
-            }
-        }
-
-        public void ReadMessages()
+        public void ReadAllMessages()
         {
             using (var memory = new MemoryStream(MessageBufferSize))
             {
-                ReadMessage(memory);
+                while (ReadMessage(memory))
+                {
+                    memory.SetLength(0); //Clears memory stream
+                    memory.Seek(0, SeekOrigin.Begin); //Points stream to beginning
+                }
             }
-            
         }
 
 
-        private bool ReadMessage(MemoryStream stream)
+        private bool ReadMessage(Stream stream)
         {
-            if (!Client.Connected)
-                return false;
-            using (var net = Client.GetStream())
+            if (TryReadMessage(_client, stream, out var read))
             {
-                if (!TryReadMessage(net, stream))
-                    return false;
-                OnMessageReceived(new Tuple<NetworkClient, MemoryStream>(this, stream));
-                return true;
+                if (read)
+                    OnMessageReceived(new ReadOnlyStream(stream));
             }
+
+            return read;
         }
 
-        public void WriteMessage(MemoryStream stream)
+        public void WriteMessage(Stream stream)
         {
-            using (var netStream = Client.GetStream())
-            {
-                WriteMessage(netStream, stream);
-                OnMessageSent(new Tuple<NetworkClient, MemoryStream>(this, stream));
-            }
+            if (TryWriteMessage(_client, stream))
+                OnMessageSent(new ReadOnlyStream(stream));
         }
-        
-        public event EventHandler<Tuple<NetworkClient>> ClientConnected;
-        public event EventHandler<Tuple<NetworkClient>> ClientDisconnected;
 
-        public event EventHandler<Tuple<NetworkClient, MemoryStream>> MessageReceived;
-        public event EventHandler<Tuple<NetworkClient, MemoryStream>> MessageSent;
+        public event EventHandler ClientConnected;
+        public event EventHandler ClientDisconnected;
 
-        
-        
-        protected virtual void OnMessageReceived(Tuple<NetworkClient, MemoryStream> e)
+        public event EventHandler<Stream> MessageReceived;
+        public event EventHandler<Stream> MessageSent;
+
+
+        protected virtual void OnMessageReceived(Stream e)
         {
             MessageReceived?.Invoke(this, e);
         }
 
-        protected virtual void OnMessageSent(Tuple<NetworkClient, MemoryStream> e)
+        protected virtual void OnMessageSent(Stream e)
         {
             MessageSent?.Invoke(this, e);
         }
-        
-        protected virtual void OnClientConnected(Tuple<NetworkClient> e)
+
+        protected virtual void OnClientConnected()
         {
-            ClientConnected?.Invoke(this, e);
+            ClientConnected?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual void OnClientDisconnected(Tuple<NetworkClient> e)
+        protected virtual void OnClientDisconnected()
         {
-            ClientDisconnected?.Invoke(this, e);
+            ClientDisconnected?.Invoke(this, EventArgs.Empty);
         }
+
+        public bool CheckServer() => _client.Connected;
     }
 }

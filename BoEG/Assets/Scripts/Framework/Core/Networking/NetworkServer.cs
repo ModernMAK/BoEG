@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using UnityEngine;
 
 namespace Framework.Core.Networking
 {
-    public class NetworkServer : IDisposable
+    public class NetworkServer : NetworkTransport, IDisposable
     {
         public NetworkServer(IPEndPoint endPoint) : this(new TcpListener(endPoint))
         {
@@ -20,8 +22,8 @@ namespace Framework.Core.Networking
 
         private readonly TcpListener _listener;
         private readonly Dictionary<Guid, TcpClient> _clients;
-        public TcpListener Listener => _listener;
-        public IReadOnlyDictionary<Guid, TcpClient> Clients => _clients;
+        protected TcpListener Listener => _listener;
+        protected IReadOnlyDictionary<Guid, TcpClient> Clients => _clients;
 
         public bool Pending() => _listener.Pending();
 
@@ -93,37 +95,6 @@ namespace Framework.Core.Networking
         public event EventHandler<Tuple<NetworkServer>> ServerStarted;
         public event EventHandler<Tuple<NetworkServer>> ServerStopped;
 
-        public const int MessageBufferSize = 1024;
-        private static readonly byte[] MessageBuffer = new byte[MessageBufferSize];
-
-        public static void ReadMessage(NetworkStream netStream, MemoryStream memStream)
-        {
-            while (netStream.DataAvailable)
-            {
-                var bytesRead = netStream.Read(MessageBuffer, 0, MessageBufferSize);
-                memStream.Write(MessageBuffer, 0, bytesRead);
-            }
-        }
-
-        public static bool TryReadMessage(NetworkStream netStream, MemoryStream memStream)
-        {
-            var read = netStream.DataAvailable;
-            ReadMessage(netStream, memStream);
-            return read;
-        }
-
-        public static void WriteMessage(NetworkStream netStream, MemoryStream memStream)
-        {
-            while (true)
-            {
-                var bytesRead = memStream.Read(MessageBuffer, 0, MessageBufferSize);
-                if (bytesRead > 0)
-                    netStream.Write(MessageBuffer, 0, bytesRead);
-                else
-                    return;
-            }
-        }
-
 
         public void ReadAllMessages()
         {
@@ -139,9 +110,7 @@ namespace Framework.Core.Networking
                 var guid = kvp.Key;
                 var client = kvp.Value;
                 if (!client.Connected)
-                {
-                    DisconnectClient(guid, client);
-                }
+                    continue;
 
                 using (var memory = new MemoryStream(MessageBufferSize))
                 {
@@ -153,6 +122,7 @@ namespace Framework.Core.Networking
 
         private void DisconnectClient(Guid guid, TcpClient client)
         {
+            Debug.Log("Disconnect Client - Closed & Disposed");
             client.Close();
             client.Dispose();
             OnClientDisconnected(new Tuple<NetworkServer, Guid, TcpClient>(this, guid, client));
@@ -164,15 +134,31 @@ namespace Framework.Core.Networking
         {
             if (!client.Connected)
                 return false;
-            using (var net = client.GetStream())
+            // using (var net = client.GetStream())
+            // {
+            if (!TryReadMessage(client, stream, out var read))
+                return false;
+            if (read)
             {
-                if (!TryReadMessage(net, stream))
-                    return false;
                 OnMessageRecieved(new Tuple<NetworkServer, Guid, TcpClient, MemoryStream>(this, guid, client, stream));
-                return true;
             }
+
+            return read;
+
+            // }
         }
 
+        public void WriteMessageRelay(Guid sender, MemoryStream stream)
+        {
+            var pos = stream.Position;
+            foreach (var kvp in Clients)
+            {
+                if(kvp.Key == sender)
+                    continue;
+                stream.Seek(pos, SeekOrigin.Begin);
+                WriteMessage(kvp.Key, kvp.Value, stream);
+            }
+        }
         public void WriteMessageToAll(MemoryStream stream)
         {
             var pos = stream.Position;
@@ -197,11 +183,11 @@ namespace Framework.Core.Networking
 
         private void WriteMessage(Guid guid, TcpClient client, MemoryStream stream)
         {
-            using (var netStream = client.GetStream())
-            {
-                WriteMessage(netStream, stream);
+            // using (var netStream = client.GetStream())
+            // {
+            if (WriteMessage(client.GetStream(), stream))
                 OnMessageSent(new Tuple<NetworkServer, Guid, TcpClient, MemoryStream>(this, guid, client, stream));
-            }
+            // }
         }
 
 
@@ -239,7 +225,28 @@ namespace Framework.Core.Networking
 
         public void Dispose()
         {
+            Debug.Log("Disposed NetworkServer");
             Stop();
+        }
+
+        public void DropDisconnectedClients()
+        {
+            Queue<KeyValuePair<Guid, TcpClient>> _toDrop = new Queue<KeyValuePair<Guid, TcpClient>>();
+            foreach (var kvp in Clients)
+            {
+                if (kvp.Value.Connected)
+                    continue;
+                _toDrop.Enqueue(kvp);
+            }
+
+            while (_toDrop.Count > 0)
+            {
+                var kvp = _toDrop.Dequeue();
+                _clients.Remove(kvp.Key);
+                var c = kvp.Value;
+                c.Close();
+                c.Dispose();
+            }
         }
     }
 }
