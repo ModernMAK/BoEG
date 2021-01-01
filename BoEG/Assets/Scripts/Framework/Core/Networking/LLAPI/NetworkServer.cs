@@ -78,7 +78,8 @@ namespace Framework.Core.Networking
 
         public void DisconnectClients()
         {
-            foreach (var kvp in Clients)
+            var kvps = Clients.AsEnumerable().ToArray();
+            foreach (var kvp in kvps)
             {
                 var guid = kvp.Key;
                 var client = kvp.Value;

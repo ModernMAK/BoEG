@@ -40,7 +40,7 @@ namespace Framework.Core.Networking
             }
             catch (SocketException exception)
             {
-                //tODO log
+                //tODO log    
                 read = false;
             }
         }

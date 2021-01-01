@@ -22,6 +22,12 @@ namespace Framework.Core.Networking.MLAPI
             InternalStream = null;
             Stream = new ReadOnlyStream(stream);
         }
+        public Message(IConvertible code, Stream stream)
+        {
+            Code = Convert.ToInt32(code);
+            InternalStream = null;
+            Stream = new ReadOnlyStream(stream);
+        }
 
         public Message(int code, ReadOnlyStream stream)
         {
@@ -47,6 +53,8 @@ namespace Framework.Core.Networking.MLAPI
                 var read = stream.Read(Buffer, 0, BufferSize);
                 serializer.Write(Buffer, 0, read);
             }
+
+            stream.Seek(0, SeekOrigin.Begin);
         }
 
         public void Deserialize(IDeserializer deserializer)
