@@ -6,6 +6,7 @@ namespace Framework.Core.Serialization
         byte ReadByte();
         sbyte ReadSByte();
         byte[] ReadBytes(int len);
+        int ReadBytes(byte[] buffer, int offset, int len);
 
         char ReadChar();
         char[] ReadChars(int len);

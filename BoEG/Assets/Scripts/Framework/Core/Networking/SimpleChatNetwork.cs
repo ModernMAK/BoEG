@@ -8,40 +8,9 @@ using UnityEngine.UI;
 
 namespace Framework.Core.Networking
 {
-    public class NetworkSetup : MonoBehaviour
+    public class SimpleChatNetwork : MonoBehaviour
     {
         [SerializeField] private InputField _input;
-        // public static IPAddress[] GetLanIPs() => Dns.GetHostAddresses(Dns.GetHostName());
-        // public static IPAddress[] GetMyIPs() => Dns.GetHostAddresses("localhost");
-        //
-        // public static IEnumerable<IPEndPoint> ScanPorts(Socket socket, IEnumerable<IPAddress> addresses,
-        //     params int[] ports)
-        // {
-        //     foreach (var address in addresses)
-        //     {
-        //         foreach (var port in ports)f.c
-        //         {
-        //             bool success;
-        //             try
-        //             {
-        //                 socket.Connect(address, port);
-        //                 success = socket.Connected;
-        //                 socket.Disconnect(true);
-        //             }
-        //             catch (SocketException exception)
-        //             {
-        //                 success = false;
-        //             }
-        //
-        //             //Cant yield in try-catch statement
-        //             if (success)
-        //
-        //                 yield return new IPEndPoint(address, port);
-        //         }
-        //     }
-        // }
-
-
         public const string DefaultHost = "127.0.0.1";
         public const int DefaultPort = 8564;
 
@@ -54,50 +23,6 @@ namespace Framework.Core.Networking
             }
         }
 
-        // [MenuItem("Networking/Scan Ips & Ports")]
-        // public static void DebugScanIpAndPorts()
-        // {
-        //     var lanIps = GetLanIPs();
-        //     var selfIps = GetMyIPs();
-        //     var set = new HashSet<IPAddress>();
-        //     foreach (var ip in lanIps)
-        //         set.Add(ip);
-        //     foreach (var ip in selfIps)
-        //         set.Add(ip);
-        //     var ips = (IEnumerable<IPAddress>)set;
-        //     
-        //     var ports = new[] {DefaultPort};
-        //     using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-        //     {
-        //         var ipsAndPorts = ScanPorts(socket, ips, ports);
-        //         var counter = 0;
-        //         var log = "";
-        //         log += "IPs ===\n";
-        //
-        //         foreach (var ip in ips)
-        //         {
-        //             counter++;
-        //             log += $"[{counter}]\t{ip}\n";
-        //         }
-        //
-        //         if (counter == 0)
-        //             log += $"[-1]\tNo IPs";
-        //         log += "IP:Ports ===\n";
-        //         counter = 0;
-        //         foreach (var endPoint in ipsAndPorts)
-        //         {
-        //             var ip = endPoint.Address;
-        //             var port = endPoint.Port;
-        //             counter++;
-        //             log += $"[{counter}]\t{ip}\t{port}\n";
-        //         }
-        //
-        //         if (counter == 0)
-        //             log += $"[_]\tNo IPs on Ports";
-        //
-        //         Debug.Log(log);
-        //     }
-        // }
 
         private NetworkServer _server;
         private NetworkClient _client;
@@ -141,7 +66,7 @@ namespace Framework.Core.Networking
             {
                 e.Seek(0, SeekOrigin.Begin);
                 var msg = reader.ReadLine();
-                _text.text += "RECV:" + msg + "\n";
+                _text.text += "SENT:" + msg + "\n";
             }
 
         }
@@ -195,7 +120,7 @@ namespace Framework.Core.Networking
             _server.ServerStopped += ServerOnSeverStopped;
             _server.ClientConnected += ServerOnClientConnected;
             _server.ClientDisconnected += ServerOnClientDisconnected;
-            _server.MessageRecieved += ServerOnMessageRecieved;
+            _server.MessageReceived += ServerOnMessageReceived;
             _server.MessageSent += ServerOnMessageSent;
             if (maxRequests <= 0)
                 _server.Start();
@@ -203,23 +128,25 @@ namespace Framework.Core.Networking
                 _server.Start(maxRequests);
         }
 
-        private void ServerOnClientConnected(object sender, Tuple<NetworkServer, Guid, TcpClient> e)
+        private void ServerOnClientConnected(object sender, Guid guid)
         {
-            var msg = ConnectedMessage($"Client [{e.Item2.ToString()}]", true, true, e.Item3.Client.RemoteEndPoint);
+            var msg = ConnectedMessage($"Client [{guid}]", true, true, null);
             _text.text += msg;
         }
 
-        private void ServerOnClientDisconnected(object sender, Tuple<NetworkServer, Guid, TcpClient> e)
+        private void ServerOnClientDisconnected(object sender, Guid guid)
         {
-            var msg = ConnectedMessage($"Client [{e.Item2.ToString()}]", false, true, null);
+            var msg = ConnectedMessage($"Client [{guid}]", false, true, null);
             if (_text)
                 _text.text += msg;
         }
 
-        private void ServerOnMessageRecieved(object sender, Tuple<NetworkServer, Guid, TcpClient, MemoryStream> e)
+        private void ServerOnMessageReceived(object sender, Tuple<Guid, Stream> tuple)
         {
-            e.Item4.Seek(0, SeekOrigin.Begin);
-            var stream = e.Item4;
+            var guid = tuple.Item1;
+            var stream = tuple.Item2;
+            
+            stream.Seek(0, SeekOrigin.Begin);
             using (var reader = new StreamReader(new NonClosingStream(stream), Encoding.ASCII))
             {
                 stream.Seek(0, SeekOrigin.Begin);
@@ -228,12 +155,13 @@ namespace Framework.Core.Networking
             }
 
             stream.Seek(0, SeekOrigin.Begin);
-            _server.WriteMessageRelay(e.Item2, stream);
+            _server.WriteMessageRelay(guid, stream);
         }
 
-        private void ServerOnMessageSent(object sender, Tuple<NetworkServer, Guid, TcpClient, MemoryStream> e)
+        private void ServerOnMessageSent(object sender, Tuple<Guid, Stream> tuple)
         {
-            var stream = e.Item4;
+            var guid = tuple.Item1;
+            var stream = tuple.Item2;
             using (var reader = new StreamReader(new NonClosingStream(stream), Encoding.ASCII))
             {
                 stream.Seek(0, SeekOrigin.Begin);
@@ -243,7 +171,7 @@ namespace Framework.Core.Networking
             stream.Seek(0, SeekOrigin.Begin);
         }
 
-        private void ServerOnServerStarted(object sender, Tuple<NetworkServer> e)
+        private void ServerOnServerStarted(object sender, EventArgs eventArgs)
         {
             if (_text == null)
                 return;
@@ -251,7 +179,7 @@ namespace Framework.Core.Networking
             _text.text += $"Started Server\n";
         }
 
-        private void ServerOnSeverStopped(object sender, Tuple<NetworkServer> e)
+        private void ServerOnSeverStopped(object sender, EventArgs eventArgs)
         {
             if (_text == null)
                 return;
@@ -331,17 +259,6 @@ namespace Framework.Core.Networking
                 if(!_client.CheckServer())
                     Stop();
             }
-
-            // else if (IsClient)
-            // {
-            //     if (_client.Connected)
-            //     {
-            //         var ep = ((IPEndPoint) _client.Client.RemoteEndPoint);
-            //         _text.text += $"Client Disconnected @ {ep.Address} : {ep.Port}\n";
-            //         _client.Dispose();
-            //         _client = null;
-            //     }
-            // }
         }
     }
 }

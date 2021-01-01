@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Framework.Core.Networking
 {
-    public class NetworkClient : NetworkTransport
+    public class NetworkClient : NetworkStreamTransport
     {
         public NetworkClient() : this(new TcpClient())
         {
@@ -19,8 +19,7 @@ namespace Framework.Core.Networking
         }
 
         private readonly TcpClient _client;
-
-
+        
         //This 
         public bool TryConnect(IPEndPoint endPoint)
         {
@@ -36,8 +35,8 @@ namespace Framework.Core.Networking
             }
         }
 
-        public EndPoint RemoteEndPoint => _client.Client.RemoteEndPoint;
-        public EndPoint LocalEndPoint => _client.Client.LocalEndPoint;
+        public EndPoint RemoteEndPoint => _client.Connected ? _client.Client.RemoteEndPoint : null;
+        public EndPoint LocalEndPoint => _client.Connected ? _client.Client.LocalEndPoint : null;
 
         public void Connect(IPEndPoint endPoint)
         {
@@ -67,7 +66,7 @@ namespace Framework.Core.Networking
         }
 
 
-        private bool ReadMessage(Stream stream)
+        public bool ReadMessage(Stream stream)
         {
             if (TryReadMessage(_client, stream, out var read))
             {
@@ -78,10 +77,15 @@ namespace Framework.Core.Networking
             return read;
         }
 
-        public void WriteMessage(Stream stream)
+        public bool WriteMessage(Stream stream)
         {
             if (TryWriteMessage(_client, stream))
+            {
                 OnMessageSent(new ReadOnlyStream(stream));
+                return true;
+            }
+
+            return false;
         }
 
         public event EventHandler ClientConnected;

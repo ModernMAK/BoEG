@@ -33,6 +33,11 @@ namespace Framework.Core.Serialization
             return _reader.ReadBytes(len);
         }
 
+        public int ReadBytes(byte[] buffer, int offset, int len)
+        {
+            return _reader.Read(buffer, offset, len);
+        }
+
         public char ReadChar()
         {
             return _reader.ReadChar();
@@ -94,6 +99,5 @@ namespace Framework.Core.Serialization
         {
             return _reader.ReadUInt64();
         }
-
     }
 }

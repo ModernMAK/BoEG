@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Framework.Core.Networking
 {
-    public class NetworkServer : NetworkTransport, IDisposable
+    public class NetworkServer : NetworkStreamTransport, IDisposable
     {
         public NetworkServer(IPEndPoint endPoint) : this(new TcpListener(endPoint))
         {
@@ -23,7 +23,7 @@ namespace Framework.Core.Networking
         private readonly TcpListener _listener;
         private readonly Dictionary<Guid, TcpClient> _clients;
         protected TcpListener Listener => _listener;
-        protected IReadOnlyDictionary<Guid, TcpClient> Clients => _clients;
+        public IReadOnlyDictionary<Guid, TcpClient> Clients => _clients;
 
         public bool Pending() => _listener.Pending();
 
@@ -31,13 +31,13 @@ namespace Framework.Core.Networking
         public void Start()
         {
             _listener.Start();
-            OnServerConnected(new Tuple<NetworkServer>(this));
+            OnServerConnected();
         }
 
         public void Start(int maxRequests)
         {
             _listener.Start(maxRequests);
-            OnServerConnected(new Tuple<NetworkServer>(this));
+            OnServerConnected();
         }
 
         public void Stop()
@@ -45,14 +45,14 @@ namespace Framework.Core.Networking
             _listener.Stop();
             DisconnectClients();
             _clients.Clear();
-            OnServerDisconnected(new Tuple<NetworkServer>(this));
+            OnServerDisconnected();
         }
 
         public TcpClient AcceptClient(out Guid guid)
         {
             var client = Listener.AcceptTcpClient();
             RegisterClient(client, out guid);
-            OnClientConnected(new Tuple<NetworkServer, Guid, TcpClient>(this, guid, client));
+            OnClientConnected(guid);
             return client;
         }
 
@@ -86,14 +86,14 @@ namespace Framework.Core.Networking
             }
         }
 
-        public event EventHandler<Tuple<NetworkServer, Guid, TcpClient>> ClientConnected;
-        public event EventHandler<Tuple<NetworkServer, Guid, TcpClient>> ClientDisconnected;
+        public event EventHandler<Guid> ClientConnected;
+        public event EventHandler<Guid> ClientDisconnected;
 
-        public event EventHandler<Tuple<NetworkServer, Guid, TcpClient, MemoryStream>> MessageRecieved;
-        public event EventHandler<Tuple<NetworkServer, Guid, TcpClient, MemoryStream>> MessageSent;
+        public event EventHandler<Tuple<Guid, Stream>> MessageReceived;
+        public event EventHandler<Tuple<Guid, Stream>> MessageSent;
 
-        public event EventHandler<Tuple<NetworkServer>> ServerStarted;
-        public event EventHandler<Tuple<NetworkServer>> ServerStopped;
+        public event EventHandler ServerStarted;
+        public event EventHandler ServerStopped;
 
 
         public void ReadAllMessages()
@@ -123,9 +123,10 @@ namespace Framework.Core.Networking
         private void DisconnectClient(Guid guid, TcpClient client)
         {
             Debug.Log("Disconnect Client - Closed & Disposed");
+            _clients.Remove(guid);
             client.Close();
             client.Dispose();
-            OnClientDisconnected(new Tuple<NetworkServer, Guid, TcpClient>(this, guid, client));
+            OnClientDisconnected(guid);
         }
 
         public bool ReadMessage(Guid guid, MemoryStream stream) => ReadMessage(guid, Clients[guid], stream);
@@ -140,7 +141,7 @@ namespace Framework.Core.Networking
                 return false;
             if (read)
             {
-                OnMessageRecieved(new Tuple<NetworkServer, Guid, TcpClient, MemoryStream>(this, guid, client, stream));
+                OnMessageReceived(new Tuple<Guid, Stream>(guid, new ReadOnlyStream(stream)));
             }
 
             return read;
@@ -148,18 +149,19 @@ namespace Framework.Core.Networking
             // }
         }
 
-        public void WriteMessageRelay(Guid sender, MemoryStream stream)
+        public void WriteMessageRelay(Guid sender, Stream stream)
         {
             var pos = stream.Position;
             foreach (var kvp in Clients)
             {
-                if(kvp.Key == sender)
+                if (kvp.Key == sender)
                     continue;
                 stream.Seek(pos, SeekOrigin.Begin);
                 WriteMessage(kvp.Key, kvp.Value, stream);
             }
         }
-        public void WriteMessageToAll(MemoryStream stream)
+
+        public void WriteMessageToAll(Stream stream)
         {
             var pos = stream.Position;
             foreach (var kvp in Clients)
@@ -169,7 +171,7 @@ namespace Framework.Core.Networking
             }
         }
 
-        public void WriteMessageToMany(MemoryStream stream, params Guid[] guids)
+        public void WriteMessageToMany(Stream stream, params Guid[] guids)
         {
             var pos = stream.Position;
             foreach (var guid in guids)
@@ -179,46 +181,52 @@ namespace Framework.Core.Networking
             }
         }
 
-        public void WriteMessage(Guid guid, MemoryStream stream) => WriteMessage(guid, Clients[guid], stream);
+        public bool WriteMessage(Guid guid, Stream stream) => WriteMessage(guid, Clients[guid], stream);
 
-        private void WriteMessage(Guid guid, TcpClient client, MemoryStream stream)
+        private bool WriteMessage(Guid guid, TcpClient client, Stream stream)
         {
             // using (var netStream = client.GetStream())
             // {
             if (WriteMessage(client.GetStream(), stream))
-                OnMessageSent(new Tuple<NetworkServer, Guid, TcpClient, MemoryStream>(this, guid, client, stream));
+            {
+                OnMessageSent(new Tuple<Guid, Stream>(guid, new ReadOnlyStream(stream)));
+                return true;
+            }
+
+            return false;
+
             // }
         }
 
 
-        protected virtual void OnServerConnected(Tuple<NetworkServer> e)
+        protected virtual void OnServerConnected()
         {
-            ServerStarted?.Invoke(this, e);
+            ServerStarted?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual void OnServerDisconnected(Tuple<NetworkServer> e)
+        protected virtual void OnServerDisconnected()
         {
-            ServerStopped?.Invoke(this, e);
+            ServerStopped?.Invoke(this, EventArgs.Empty);
         }
 
 
-        protected virtual void OnClientDisconnected(Tuple<NetworkServer, Guid, TcpClient> e)
+        protected virtual void OnClientDisconnected(Guid e)
         {
             ClientDisconnected?.Invoke(this, e);
         }
 
-        protected virtual void OnClientConnected(Tuple<NetworkServer, Guid, TcpClient> e)
+        protected virtual void OnClientConnected(Guid e)
         {
             ClientConnected?.Invoke(this, e);
         }
 
 
-        protected virtual void OnMessageRecieved(Tuple<NetworkServer, Guid, TcpClient, MemoryStream> e)
+        protected virtual void OnMessageReceived(Tuple<Guid, Stream> e)
         {
-            MessageRecieved?.Invoke(this, e);
+            MessageReceived?.Invoke(this, e);
         }
 
-        protected virtual void OnMessageSent(Tuple<NetworkServer, Guid, TcpClient, MemoryStream> e)
+        protected virtual void OnMessageSent(Tuple<Guid, Stream> e)
         {
             MessageSent?.Invoke(this, e);
         }
@@ -242,10 +250,7 @@ namespace Framework.Core.Networking
             while (_toDrop.Count > 0)
             {
                 var kvp = _toDrop.Dequeue();
-                _clients.Remove(kvp.Key);
-                var c = kvp.Value;
-                c.Close();
-                c.Dispose();
+                DisconnectClient(kvp.Key, kvp.Value);
             }
         }
     }

@@ -5,11 +5,10 @@ using System.Text;
 
 namespace Framework.Core.Networking
 {
-    public abstract class NetworkTransport
+    public abstract class NetworkStreamTransport
     {
         public const int MessageBufferSize = 1024;
         private static readonly byte[] MessageBuffer = new byte[MessageBufferSize];
-
 
         public static void ReadMessage(NetworkStream netStream, Stream memStream, out bool read)
         {
@@ -25,7 +24,7 @@ namespace Framework.Core.Networking
         {
             if (client.Connected)
             {
-                ReadMessage(client.GetStream(), memoryStream, out read);
+                TryReadMessage(client.GetStream(), memoryStream, out read);
                 return true;
             }
 
@@ -33,14 +32,40 @@ namespace Framework.Core.Networking
             return false;
         }
 
+        public static void TryReadMessage(NetworkStream netStream, Stream memoryStream, out bool read)
+        {
+            try
+            {
+                ReadMessage(netStream, memoryStream, out read);
+            }
+            catch (SocketException exception)
+            {
+                //tODO log
+                read = false;
+            }
+        }
+
         public static bool TryWriteMessage(TcpClient client, Stream memoryStream)
         {
             if (client.Connected)
             {
-                return WriteMessage(client.GetStream(), memoryStream);
+                return TryWriteMessage(client.GetStream(), memoryStream);
             }
 
             return false;
+        }
+
+        public static bool TryWriteMessage(NetworkStream netStream, Stream memStream)
+        {
+            try
+            {
+                return WriteMessage(netStream, memStream);
+            }
+            catch (SocketException e)
+            {
+                //TODO log exception
+                return false;
+            }
         }
 
         //Returns false if nothing was written
@@ -60,7 +85,7 @@ namespace Framework.Core.Networking
             }
         }
 
-        protected NetworkTransport()
+        protected NetworkStreamTransport()
         {
         }
     }
