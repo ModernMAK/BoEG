@@ -15,7 +15,7 @@ namespace Entity.Abilities.FlameWitch
      * Drains mana.
     */
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Overheat")]
-    public class Overheat : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbility
+    public class Overheat : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbility, IToggleableAbility
     {
 #pragma warning disable 0649
         [SerializeField] public float _damagePerSecond;
@@ -34,6 +34,8 @@ namespace Entity.Abilities.FlameWitch
         [SerializeField] private GameObject _overheatFX;
         private ParticleSystem _particleSystemInstance;
 #pragma warning restore 0649
+
+        public bool Active => _isActive;
 
         private ParticleSystem ApplyFX(Transform target)
         {

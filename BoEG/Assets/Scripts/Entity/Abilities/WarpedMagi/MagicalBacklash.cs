@@ -44,7 +44,7 @@ namespace Entity.Abilities.WarpedMagi
         private void OnActorEnter(object sender, TriggerEventArgs args)
         {
             var collider = args.Collider;
-            if(AbilityHelper.TryGetActor(collider, out var actor))
+            if(!AbilityHelper.TryGetActor(collider, out var actor))
                 return;
             if (!actor.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
@@ -55,7 +55,7 @@ namespace Entity.Abilities.WarpedMagi
         private void OnActorExit(object sender, TriggerEventArgs args)
         {
             var collider = args.Collider;
-            if(AbilityHelper.TryGetActor(collider, out var actor))
+            if(!AbilityHelper.TryGetActor(collider, out var actor))
                 return;
             if (!actor.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;

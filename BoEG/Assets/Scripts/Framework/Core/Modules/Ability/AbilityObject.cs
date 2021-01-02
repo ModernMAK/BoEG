@@ -69,11 +69,11 @@ namespace Framework.Ability
             return 1f;
         }
 
-        public virtual ICooldownAbility Cooldown => (ICooldownAbility) this;
+        public virtual ICooldownAbility Cooldown => this as ICooldownAbility;
 
-        public virtual IStatCostAbility StatCost => (IStatCostAbility) this;
+        public virtual IStatCostAbility StatCost => this as IStatCostAbility;
 
-        public virtual IToggleableAbility Toggleable => (IToggleableAbility) this;
+        public virtual IToggleableAbility Toggleable => this as IToggleableAbility;
 
         [Obsolete]
         public virtual float GetManaCost()

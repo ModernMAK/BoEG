@@ -40,7 +40,13 @@ public class AbilitiablePanel : DebugUI
 
             if (_abilitiable != null)
                 for (var i = 0; i < _abilityPanels.Count; i++)
+                {
+                    //BUG aspect ratio not resizing icon?
+                    //Toggling on and off fixes this, but its not a good solution imo
+                    _abilityPanels[i].gameObject.SetActive(false);
                     _abilityPanels[i].SetAbility(_abilitiable.GetAbility(i));
+                    _abilityPanels[i].gameObject.SetActive(true);
+                }
         }
     }
     public override void SetTarget(GameObject go)
