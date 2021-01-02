@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using Framework.Core.Networking.MLAPI;
 using Framework.Core.Serialization;
@@ -31,6 +30,7 @@ namespace Framework.Core.Networking
         {
             for (var i = 0; i < count; i++)
             {
+                //This essentialy grabs the last X messages from the end; from first received to last;
                 var j = (_messages.Count - 1) - (count - i - 1);
                 if (j >= 0 && j < _messages.Count)
                     yield return _messages[j];

@@ -21,7 +21,7 @@ namespace Framework.Core.Networking
         public override void Flush()
         {
             //TODO figure out if this is a read only operation?
-            throw new InvalidOperationException();
+            throw new InvalidOperationException(ReadOnlyError);
         }
 
         public override void SetLength(long value)

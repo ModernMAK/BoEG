@@ -5,10 +5,13 @@ namespace Framework.Core.Networking
     /// <summary>
     /// Stream Wrapper wraps a stream, exposing it as a base stream type.
     /// This class isn't intended to do anything special, so underlying types inherit this and perform their actions.
+    ///
+    /// It does 'unintentionally' prevent the underlying stream from closing.
     /// </summary>
     public abstract class StreamWrapper : Stream
     {
         private readonly Stream _stream;
+        protected Stream UnderlyingStream => _stream;
         protected StreamWrapper(Stream stream)
         {
             _stream = stream;
