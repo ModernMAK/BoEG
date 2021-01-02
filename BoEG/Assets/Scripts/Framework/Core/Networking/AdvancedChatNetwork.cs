@@ -20,12 +20,14 @@ namespace Framework.Core.Networking
             UpdateUsername,
             UserMessage,
         }
-
+#pragma warning disable 0649
         [SerializeField] private InputField _input;
+        private List<Tuple<Guid, string>> _messages;
+#pragma warning restore 0649
+
         public const string DefaultHost = "127.0.0.1";
         public const int DefaultPort = SimpleChatNetwork.DefaultPort + 1; //To avoid connections from similar apps
 
-        private List<Tuple<Guid, string>> _messages;
 
         private IEnumerable<Tuple<Guid, string>> LastMessages(int count)
         {

@@ -43,10 +43,10 @@ namespace Entity.Abilities.WarpedMagi
 
         private void OnActorEnter(object sender, TriggerEventArgs args)
         {
-            var go = args.Collider.gameObject;
-            if (!go.TryGetComponent<Actor>(out _))
+            var collider = args.Collider;
+            if(AbilityHelper.TryGetActor(collider, out var actor))
                 return;
-            if (!go.TryGetComponent<IAbilitiable>(out var abilitiable))
+            if (!actor.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
             abilitiable.SpellCasted += OnSpellCast;
             _targetBuffer.Add(abilitiable);
@@ -54,10 +54,10 @@ namespace Entity.Abilities.WarpedMagi
 
         private void OnActorExit(object sender, TriggerEventArgs args)
         {
-            var go = args.Collider.gameObject;
-            if (!go.TryGetComponent<Actor>(out _))
+            var collider = args.Collider;
+            if(AbilityHelper.TryGetActor(collider, out var actor))
                 return;
-            if (!go.TryGetComponent<IAbilitiable>(out var abilitiable))
+            if (!actor.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
             abilitiable.SpellCasted -= OnSpellCast;
             _targetBuffer.Remove(abilitiable);

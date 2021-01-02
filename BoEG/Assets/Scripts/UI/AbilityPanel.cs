@@ -11,23 +11,24 @@ using UnityEngine.UI;
 public class AbilityPanel : DebugUI
 {
     private IAbilityView _view;
-    private IMagicable _magicable;
 
     public override void SetTarget(GameObject go)
     {
-        _magicable = go.GetComponent<IMagicable>();
     }
+
+    private bool _updateCooldown;
 
     public void SetAbility(IAbility ability)
     {
         _view = ability.GetAbilityView();
         _iconFX.sprite = _icon.sprite = _view.GetIcon();
+        _updateCooldown = _view.Cooldown != null;
     }
 
     private void Update()
     {
-        
-        UpdateImageFill(1f-_view.GetCooldownProgress(), _iconFX, 3);
+        if (_updateCooldown)
+            UpdateImageFill(1f - _view.Cooldown.CooldownNormal, _iconFX, 3);
     }
 
 

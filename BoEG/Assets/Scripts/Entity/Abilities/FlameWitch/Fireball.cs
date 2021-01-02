@@ -2,14 +2,13 @@
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
-using Modules.Teamable;
 using Triggers;
 using UnityEngine;
 
 namespace Entity.Abilities.FlameWitch
 {
     [CreateAssetMenu(menuName = "Ability/FlameWitch/FireBall")]
-    public class Fireball : AbilityObject, IGroundTargetAbility
+    public class Fireball : AbilityObject, IGroundTargetAbility, IStatCostAbility
     {
 #pragma warning disable 0649
         private Overheat _overheat;
@@ -31,8 +30,7 @@ namespace Entity.Abilities.FlameWitch
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _commonAbilityInfo.Abilitiable.FindAbility(out _overheat);
-            _commonAbilityInfo.ManaCost = _manaCost;
+            Modules.Abilitiable.FindAbility(out _overheat);
         }
 
         public override void ConfirmCast()
@@ -40,10 +38,10 @@ namespace Entity.Abilities.FlameWitch
             var ray = AbilityHelper.GetScreenRay();
             if (!AbilityHelper.TryGetWorld(ray, out var hit))
                 return;
-            _commonAbilityInfo.Range = _overheat.IsActive ? _overheatCastRange : _castRange;
-            if (!_commonAbilityInfo.InRange(hit.point))
+            var range = _overheat.IsActive ? _overheatCastRange : _castRange;
+            if (!AbilityHelper.InRange(Self.transform,hit.point,range))
                 return;
-            if (!_commonAbilityInfo.TrySpendMana())
+            if (!AbilityHelper.TrySpendMagic(this,Modules.Magicable))
                 return;
 
             CastGroundTarget(hit.point);
@@ -70,7 +68,7 @@ namespace Entity.Abilities.FlameWitch
                 if (IsSelf(actor))
                     continue; //Always ignore self
 
-                if (_commonAbilityInfo.SameTeam(actor.gameObject))
+                if (AbilityHelper.SameTeam(Modules.Teamable,actor.gameObject))
                     continue; //Ignore if allies
 
                 if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
@@ -79,7 +77,11 @@ namespace Entity.Abilities.FlameWitch
                 damageTarget.TakeDamage(Self.gameObject, dmg);
             }
 
-            _commonAbilityInfo.NotifySpellCast();
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs(){Caster = Self, ManaSpent = Cost});
         }
+
+        public float Cost => _manaCost;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
     }
 }

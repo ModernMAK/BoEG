@@ -14,4 +14,15 @@ namespace Framework.Core.Modules
         void SpendMagic(float mana);
         event EventHandler<float> MagicChanged;
     }
+
+    public static class IMagicableExtensions
+    {
+        public static bool TrySpendMagic(this IMagicable magicable, float mana)
+        {
+            if (!magicable.HasMagic(mana)) return false;
+            magicable.SpendMagic(mana);
+            return true;
+
+        }
+    }
 }

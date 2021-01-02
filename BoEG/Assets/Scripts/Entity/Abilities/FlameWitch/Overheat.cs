@@ -15,7 +15,7 @@ namespace Entity.Abilities.FlameWitch
      * Drains mana.
     */
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Overheat")]
-    public class Overheat : AbilityObject, IListener<IStepableEvent>, INoTargetAbility
+    public class Overheat : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbility
     {
 #pragma warning disable 0649
         [SerializeField] public float _damagePerSecond;
@@ -42,7 +42,7 @@ namespace Entity.Abilities.FlameWitch
             var instance = Instantiate(_overheatFX, target.position, Quaternion.identity);
             if (!instance.TryGetComponent<FollowTarget>(out var follow))
                 follow = instance.AddComponent<FollowTarget>();
-            if(instance.TryGetComponent<ParticleSystem>(out var ps))
+            if (instance.TryGetComponent<ParticleSystem>(out var ps))
                 ps.Stop();
             follow.SetTarget(target);
             return ps;
@@ -66,7 +66,6 @@ namespace Entity.Abilities.FlameWitch
         {
             base.Initialize(actor);
             _tickHelper = new InfiniteTickAction {Callback = OnTick, TickInterval = 1f};
-            _commonAbilityInfo.ManaCost = _manaCostPerSecond;
             actor.AddSteppable(this);
             if (_particleSystemInstance == null)
                 _particleSystemInstance = ApplyFX(actor.transform);
@@ -104,7 +103,7 @@ namespace Entity.Abilities.FlameWitch
 
         private void OnTick()
         {
-            if (IsActive && _commonAbilityInfo.TrySpendMana())
+            if (IsActive && Modules.Magicable.TrySpendMagic(Cost))
             {
                 var dotTargets =
                     Physics.OverlapSphere(Self.transform.position, _dotRange, (int) LayerMaskHelper.Entity);
@@ -116,8 +115,9 @@ namespace Entity.Abilities.FlameWitch
                         continue;
                     if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
                         continue;
-                    if (_commonAbilityInfo.SameTeam(actor.gameObject))
-                        continue;
+                    if (actor.TryGetComponent<ITeamable>(out var teamable))
+                        if (Modules.Teamable?.SameTeam(teamable) ?? false)
+                            continue;
 
                     var damage = new Damage(_damagePerSecond, DamageType.Magical, DamageModifiers.Ability);
                     damageTarget.TakeDamage(Self.gameObject, damage);
@@ -139,5 +139,9 @@ namespace Entity.Abilities.FlameWitch
         {
             source.Step -= OnStep;
         }
+
+        public float Cost => _manaCostPerSecond;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
     }
 }

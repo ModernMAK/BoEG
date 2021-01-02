@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/UnstableMagic")]
-    public class UnstableMagic : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>
+    public class UnstableMagic : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>, IStatCostAbility
     {
         // [Header("Mana Cost")]
         /* Ground Target Spell
@@ -30,13 +30,6 @@ namespace Entity.Abilities.WarpedMagi
         [SerializeField] private GameObject _unstableMagicFX;
 #pragma warning restore 0649
 
-        public override void Initialize(Actor actor)
-        {
-            base.Initialize(actor);
-            _commonAbilityInfo.Range = _castRange;
-            _commonAbilityInfo.ManaCost = _manaCost;
-        }
-
         public override void ConfirmCast()
         {
             var ray = AbilityHelper.GetScreenRay();
@@ -44,12 +37,12 @@ namespace Entity.Abilities.WarpedMagi
                 return;
 
             var isGround = !hit.collider.TryGetComponent<Actor>(out var actor);
-            if (isGround && !_commonAbilityInfo.InRange(hit.point))
+            if (isGround && !AbilityHelper.InRange(Self.transform, hit.point, _castRange))
                 return;
-            if (!isGround && !_commonAbilityInfo.InRange(actor.transform))
+            if (!isGround && !AbilityHelper.InRange(Self.transform, actor.transform, _castRange))
                 return;
 
-            if (!_commonAbilityInfo.TrySpendMana())
+            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
 
             if (isGround)
@@ -94,7 +87,6 @@ namespace Entity.Abilities.WarpedMagi
 
         private void ApplyFX(Transform target)
         {
-            
             if (_unstableMagicFX == null)
                 return;
             var instance = Instantiate(_unstableMagicFX, target.position, Quaternion.identity);
@@ -108,7 +100,7 @@ namespace Entity.Abilities.WarpedMagi
             follow.SetTarget(target);
             die.AllowDeath();
         }
-        
+
         private bool TrySearchTarget(Vector3 area, out Actor target) => TrySearchTarget(area, new Actor[0], out target);
 
         private bool TrySearchTarget(Vector3 area, ICollection<Actor> ignore, out Actor target)
@@ -116,16 +108,15 @@ namespace Entity.Abilities.WarpedMagi
             var potentialTargets = Physics.OverlapSphere(area, _searchRange, (int) LayerMaskHelper.Entity);
             foreach (var potentialTarget in potentialTargets)
             {
-                if (!potentialTarget.TryGetComponent<Actor>(out var actor))
+                if (!AbilityHelper.TryGetActor(potentialTarget, out var actor))
                     continue;
-                if (actor == Self)
+                if (IsSelf(actor))
                     continue;
                 if (ignore.Contains(actor))
                     continue;
-                if (_commonAbilityInfo.Teamable != null)
-                    if (actor.TryGetComponent<ITeamable>(out var teamable))
-                        if (_commonAbilityInfo.SameTeam(teamable))
-                            continue;
+                if(AbilityHelper.SameTeam(Modules.Teamable,actor))
+                    continue;
+
                 //TODO when targetable works, add this
                 // if (!actor.TryGetComponent<ITargetable>(out _))
                 // continue;
@@ -139,5 +130,9 @@ namespace Entity.Abilities.WarpedMagi
             target = default;
             return false;
         }
+
+        public float Cost => _manaCost;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
     }
 }

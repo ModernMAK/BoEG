@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Entity.Abilities.FlameWitch;
 using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
@@ -9,7 +8,7 @@ using UnityEngine;
 namespace Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(menuName = "Ability/DarkHeart/Nightmare")]
-    public class Nightmare : AbilityObject, IObjectTargetAbility<Actor>, IListener<IStepableEvent>
+    public class Nightmare : AbilityObject, IObjectTargetAbility<Actor>, IListener<IStepableEvent>, IStatCostAbility
     {
 #pragma warning disable 0649
         [SerializeField] private float _manaCost;
@@ -41,8 +40,6 @@ namespace Entity.Abilities.DarkHeart
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _commonAbilityInfo.ManaCost = _manaCost;
-            _commonAbilityInfo.Range = _castRange;
             _ticks = new List<TickAction>();
             Register(actor);
         }
@@ -54,9 +51,11 @@ namespace Entity.Abilities.DarkHeart
                 return;
             if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
                 return;
+            if (!AbilityHelper.InRange(Self.transform,actor.transform,_castRange))
+                return;
             if (!AbilityHelper.HasAllComponents(actor.gameObject, typeof(IDamageTarget)))
                 return;
-            if (!_commonAbilityInfo.TrySpendMana())
+            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable)) 
                 return;
             CastObjectTarget(actor);
         }
@@ -95,7 +94,11 @@ namespace Entity.Abilities.DarkHeart
             };
             _ticks.Add(tickWrapper);
             ApplyFX(target.transform, _tickInterval * _tickCount);
-            _commonAbilityInfo.NotifySpellCast();
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs(){Caster = Self,ManaSpent = Cost});
         }
+
+        public float Cost => _manaCost;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
     }
 }

@@ -1,14 +1,16 @@
+using System;
 using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
+using Modules.Teamable;
 using Triggers;
 using UnityEngine;
 
 namespace Entity.Abilities.FlameWitch
 {
     [CreateAssetMenu(menuName = "Ability/FlameWitch/FlashFire")]
-    public class FlashFire : AbilityObject, INoTargetAbility
+    public class FlashFire : AbilityObject, INoTargetAbility, IStatCostAbility
     {
         /* Channeling Spell
          * Deals damage in an AOE around FlameWitch
@@ -20,8 +22,7 @@ namespace Entity.Abilities.FlameWitch
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _commonAbilityInfo.ManaCost = _manaCost;
-            _commonAbilityInfo.Abilitiable.FindAbility<Overheat>(out _overheatAbility);
+            Modules.Abilitiable.FindAbility<Overheat>(out _overheatAbility);
         }
 
 #pragma warning disable 0649
@@ -42,7 +43,7 @@ namespace Entity.Abilities.FlameWitch
 
         public override void ConfirmCast()
         {
-            if (!_commonAbilityInfo.TrySpendMana())
+            if (Modules.Magicable.HasMagic(Cost))
                 return;
 
             CastNoTarget();
@@ -62,13 +63,17 @@ namespace Entity.Abilities.FlameWitch
 
                 if (!target.TryGetComponent<IDamageTarget>(out var damageTarget))
                     continue;
-                if (_commonAbilityInfo.SameTeam(target.gameObject))
+                if (AbilityHelper.SameTeam(Modules.Teamable, target))
                     continue;
 
                 damageTarget.TakeDamage(Self.gameObject, damage);
             }
 
-            _commonAbilityInfo.NotifySpellCast();
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
+
+        public float Cost => _manaCost;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
     }
 }

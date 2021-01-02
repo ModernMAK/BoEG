@@ -1,18 +1,25 @@
+using System;
 using Entity.Abilities.FlameWitch;
 using Framework.Core;
+using Framework.Core.Modules;
+using Modules.Teamable;
 using UnityEngine;
 
 namespace Framework.Ability
 {
+
     public class AbilityObject : ScriptableObject, IAbility, IAbilityView
     {
 #pragma warning disable 0649
 
         [SerializeField] private Sprite _icon;
-        protected CommonAbilityInfo _commonAbilityInfo;
+        [Obsolete("Use Actor Module Cache")] protected CommonAbilityInfo _commonAbilityInfo;
+
+        private ModuleCache _cache;
 #pragma warning disable 0649
 
-        protected CommonAbilityInfo Helper => _commonAbilityInfo;
+        protected ModuleCache Modules => _cache;
+
         public Actor Self { get; private set; }
         protected bool IsSelf(GameObject gameObject) => gameObject == Self.gameObject;
         protected bool IsSelf(Actor actor) => actor == Self;
@@ -21,7 +28,7 @@ namespace Framework.Ability
         {
             Self = actor;
             AbilityHelper.Initialize(); //HACK TODO make this not a hack
-            _commonAbilityInfo = new CommonAbilityInfo(actor);
+            _cache = new ModuleCache(actor.gameObject);
         }
 
 
@@ -56,11 +63,19 @@ namespace Framework.Ability
             return _icon;
         }
 
+        [Obsolete]
         public virtual float GetCooldownProgress()
         {
             return 1f;
         }
 
+        public virtual ICooldownAbility Cooldown => (ICooldownAbility) this;
+
+        public virtual IStatCostAbility StatCost => (IStatCostAbility) this;
+
+        public virtual IToggleableAbility Toggleable => (IToggleableAbility) this;
+
+        [Obsolete]
         public virtual float GetManaCost()
         {
             return 0f;

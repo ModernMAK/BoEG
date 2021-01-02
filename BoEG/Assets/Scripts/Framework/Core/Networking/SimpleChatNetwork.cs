@@ -10,7 +10,11 @@ namespace Framework.Core.Networking
 {
     public class SimpleChatNetwork : MonoBehaviour
     {
+#pragma warning disable 0649
+
         [SerializeField] private InputField _input;
+#pragma warning restore 0649
+
         public const string DefaultHost = "127.0.0.1";
         public const int DefaultPort = 8564;
 

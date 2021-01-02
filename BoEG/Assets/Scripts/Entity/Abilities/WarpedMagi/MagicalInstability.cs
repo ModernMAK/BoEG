@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/MagicalInstability")]
-    public class MagicalInstability : AbilityObject, IListener<IStepableEvent>, INoTargetAbility
+    public class MagicalInstability : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbility
     {
         /* Self-Target Spell
          * Negates Magical Damage.
@@ -33,7 +33,6 @@ namespace Entity.Abilities.WarpedMagi
             base.Initialize(actor);
             _timer = new DurationTimer(_duration);
             _armorable = Self.GetComponent<IArmorable>();
-            _commonAbilityInfo.ManaCost = _manaCost;
             // _magicable = Self.GetComponent<IMagicable>();
 // _abilitiable = Self.GetComponent<IAbilitiable>();
             actor.AddSteppable(this);
@@ -50,7 +49,7 @@ namespace Entity.Abilities.WarpedMagi
             if (dmg.Type != DamageType.Magical)
                 return;
 
-            var magicable = _commonAbilityInfo.Magicable;
+            var magicable = Modules.Magicable;
 
             //Mana Available (To Gain)
             var manaAvailable = magicable.MagicCapacity - magicable.Magic;
@@ -72,7 +71,7 @@ namespace Entity.Abilities.WarpedMagi
         {
             if (_isActive)
                 return;
-            if (!_commonAbilityInfo.TrySpendMana())
+            if (!AbilityHelper.TrySpendMagic(this,Modules.Magicable))
                 return;
             CastNoTarget();
         }
@@ -83,7 +82,7 @@ namespace Entity.Abilities.WarpedMagi
             _isActive = true;
             _armorable.Resisting += OnResisting;
             _timer.Reset();
-            _commonAbilityInfo.NotifySpellCast();
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs(){Caster = Self,ManaSpent = Cost});
         }
 
         public void OnPostStep(float deltaTime)
@@ -107,5 +106,9 @@ namespace Entity.Abilities.WarpedMagi
         {
             source.PostStep -= OnPostStep;
         }
+
+        public float Cost => _manaCost;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
     }
 }

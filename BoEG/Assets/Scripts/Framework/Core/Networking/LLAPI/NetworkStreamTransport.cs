@@ -38,7 +38,7 @@ namespace Framework.Core.Networking
             {
                 ReadMessage(netStream, memoryStream, out read);
             }
-            catch (SocketException exception)
+            catch (SocketException)
             {
                 //tODO log    
                 read = false;
@@ -61,7 +61,7 @@ namespace Framework.Core.Networking
             {
                 return WriteMessage(netStream, memStream);
             }
-            catch (SocketException e)
+            catch (SocketException)
             {
                 //TODO log exception
                 return false;

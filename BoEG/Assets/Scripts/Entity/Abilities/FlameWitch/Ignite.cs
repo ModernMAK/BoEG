@@ -20,7 +20,7 @@ namespace Entity.Abilities.FlameWitch
 
 
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Ignite")]
-    public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>
+    public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>, IStatCostAbility
     {
 #pragma warning disable 0649
         [Header("Cast Range")] [SerializeField]
@@ -37,7 +37,7 @@ namespace Entity.Abilities.FlameWitch
 
         [Header("Damage Over Time")] [SerializeField]
         private float _tickInterval;
-        
+
         [SerializeField] private int _tickCount;
 
         [SerializeField] private float _tickDamage;
@@ -46,14 +46,12 @@ namespace Entity.Abilities.FlameWitch
         private Overheat _overheatAbility;
 
         private List<TickAction> _ticks;
-        
-[SerializeField]
-        private GameObject _igniteFX;
+
+        [SerializeField] private GameObject _igniteFX;
 #pragma warning restore 0649
 
         private void ApplyFX(Transform target, float duration)
         {
-            
             if (_igniteFX == null)
                 return;
             var instance = Instantiate(_igniteFX, target.position, Quaternion.identity);
@@ -91,12 +89,11 @@ namespace Entity.Abilities.FlameWitch
                     (int) LayerMaskHelper.Entity);
                 foreach (var collider in colliders)
                 {
-                    var actor = collider.GetComponent<Actor>();
+                    if(!AbilityHelper.TryGetActor(collider, out var actor))
+                        continue;
                     if (actor == target) //Already added
                         continue;
-                    if (actor == null) //Not an actor
-                        continue;
-                    if (_commonAbilityInfo.SameTeam(actor.gameObject))
+                    if (AbilityHelper.SameTeam(Modules.Teamable, actor.gameObject))
                         continue; //Skip allies
                     dotTargets.Add(actor);
                 }
@@ -112,18 +109,17 @@ namespace Entity.Abilities.FlameWitch
                         TickInterval = _tickInterval
                     };
                     _ticks.Add(tickWrapper);
-                    ApplyFX(actor.transform,_tickCount * _tickInterval);
+                    ApplyFX(actor.transform, _tickCount * _tickInterval);
                 }
 
-            _commonAbilityInfo.NotifySpellCast();
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs(){Caster = Self, ManaSpent = _manaCost});
         }
 
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
 
-            _commonAbilityInfo.Abilitiable.FindAbility(out _overheatAbility);
-            _commonAbilityInfo.ManaCost = _manaCost;
+            Modules.Abilitiable.FindAbility(out _overheatAbility);
             //Manually inject the ability as a stepable
             actor.AddSteppable(this);
             _ticks = new List<TickAction>();
@@ -143,7 +139,7 @@ namespace Entity.Abilities.FlameWitch
                 return;
             if (!AbilityHelper.HasAllComponents(actor.gameObject, typeof(IDamageTarget)))
                 return;
-            if (!_commonAbilityInfo.TrySpendMana())
+            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
 
             CastObjectTarget(actor);
@@ -169,10 +165,6 @@ namespace Entity.Abilities.FlameWitch
             return true;
         }
 
-        public override float GetManaCost()
-        {
-            return _manaCost;
-        }
 
         public void Register(IStepableEvent source)
         {
@@ -183,5 +175,9 @@ namespace Entity.Abilities.FlameWitch
         {
             source.Step -= OnStep;
         }
+
+        public float Cost => _manaCost;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
     }
 }
