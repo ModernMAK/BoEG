@@ -31,8 +31,8 @@ namespace Framework.Core.Networking
         {
             for (var i = 0; i < count; i++)
             {
-                var j = _messages.Count - i;
-                if (j > 0)
+                var j = (_messages.Count - 1) - (count - i - 1);
+                if (j >= 0 && j < _messages.Count)
                     yield return _messages[j];
             }
         }
@@ -48,7 +48,7 @@ namespace Framework.Core.Networking
                 {
                     if (guid == Guid.Empty)
                         userName = "SERVER";
-                    if (guid == _myId)
+                    else if (guid == _myId)
                         userName = "LOCAL";
                     else
                         userName = guid.ToString("N");
@@ -118,6 +118,8 @@ namespace Framework.Core.Networking
             }
         }
 
+
+        
         private void ClientOnUpdateUsernameSent(object sender, Message e)
         {
             e.Stream.Seek(0, SeekOrigin.Begin);
@@ -235,6 +237,7 @@ namespace Framework.Core.Networking
             if (IsOnline)
             {
                 _messages.Add(new Tuple<Guid, string>(Guid.Empty, "Cannot Start Server While Online"));
+                UpdateText();
                 return;
             }
 
@@ -309,12 +312,9 @@ namespace Framework.Core.Networking
         private void ServerOnClientConnected(object sender, Guid guid)
         {
             _messages.Add(new Tuple<Guid, string>(guid, "[Client Connected]"));
-        }
-
-        private void ServerOnClientDisconnected(object sender, Guid guid)
-        {
-            _messages.Add(new Tuple<Guid, string>(guid, "[Client Disconnected]"));
-
+            
+            UpdateText();
+            
             using (var memStream = new MemoryStream())
             using (var writer = new BinaryWriter(new NonClosingStream(memStream)))
             {
@@ -322,6 +322,13 @@ namespace Framework.Core.Networking
                 var newMessage = new Message(NetCode.GuidNotification, memStream);
                 _messageServer.WriteMessage(guid, newMessage);
             }
+        }
+
+        private void ServerOnClientDisconnected(object sender, Guid guid)
+        {
+            _messages.Add(new Tuple<Guid, string>(guid, "[Client Disconnected]"));
+            UpdateText();
+
         }
 
         private void ServerOnUserMessageReceived(object sender, MessageSenderEventArgs e)
@@ -335,6 +342,7 @@ namespace Framework.Core.Networking
                 stream.Seek(0, SeekOrigin.Begin);
                 var msg = reader.ReadLine();
                 _messages.Add(new Tuple<Guid, string>(guid, msg));
+                UpdateText();
 
                 using (var memStream = new MemoryStream())
                 using (var writer = new BinaryWriter(new NonClosingStream(memStream)))
@@ -355,11 +363,13 @@ namespace Framework.Core.Networking
         private void ServerOnServerStarted(object sender, EventArgs eventArgs)
         {
             _messages.Add(new Tuple<Guid, string>(Guid.Empty, "Started Server"));
+            UpdateText();
         }
 
         private void ServerOnSeverStopped(object sender, EventArgs eventArgs)
         {
             _messages.Add(new Tuple<Guid, string>(Guid.Empty, "Closed Server"));
+            UpdateText();
         }
 
         public void Stop()
@@ -412,6 +422,8 @@ namespace Framework.Core.Networking
                     else if (IsServer)
                     {
                         _messageServer.WriteMessageAll(message);
+                        _messages.Add(new Tuple<Guid, string>(Guid.Empty, chatText));
+                        UpdateText();
                     }
                 }
             }
