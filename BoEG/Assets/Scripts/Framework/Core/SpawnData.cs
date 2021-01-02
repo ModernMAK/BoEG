@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 namespace Framework.Core
 {
     [Serializable]
-    public class SpawnData
+    public class  SpawnData
     {
         public float Interval;
         public float LastSpawn;

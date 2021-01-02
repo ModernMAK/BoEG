@@ -26,6 +26,7 @@ public class RingRenderer : MonoBehaviour
         Local,
     }
 
+#pragma warning disable 0649
     [SerializeField] private int _initialPoints = 16;
     [SerializeField] private float _initialRadius = 0f;
     [SerializeField] private float _initialWidth = 0.1f;
@@ -34,13 +35,13 @@ public class RingRenderer : MonoBehaviour
     [SerializeField] private Axis _initialAxis = Axis.Y;
     [SerializeField] private Space _initialSpace = Space.World;
 
-    private bool _prevUseAxis;
     private Axis _prevAxis;
     private Space _prevSpace;
     private float _prevRad;
 
     [SerializeField] private LineRenderer _renderer;
 
+#pragma warning restore 0649
 
     private void Awake()
     {
@@ -121,7 +122,6 @@ public class RingRenderer : MonoBehaviour
 
     public void SetAxis(Axis axis, bool redraw = false)
     {
-        _prevUseAxis = true;
         _prevAxis = axis;
         if (redraw)
             Redraw();

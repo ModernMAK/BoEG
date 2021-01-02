@@ -8,7 +8,7 @@ namespace Framework.Types
         }
 
         public float ElapsedTime { get; set; }
-        public float Duration { get; }
+        public float Duration { get; set; }
         public float RemainingTime => Duration - ElapsedTime;
         public bool Done => RemainingTime <= 0f;
 

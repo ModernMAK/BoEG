@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Entity.Abilities.FlameWitch;
+using Framework.Ability;
 using Framework.Core.Modules;
 using UI;
 using UnityEngine;
