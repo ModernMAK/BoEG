@@ -81,6 +81,8 @@ namespace Entity.Abilities.DarkHeart
             var damagePerTick = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
             var damageable = target.GetComponent<IDamageTarget>();
 
+            
+            
             void InternalTick()
             {
                 damageable.TakeDamage(Self.gameObject, damagePerTick);
@@ -92,6 +94,17 @@ namespace Entity.Abilities.DarkHeart
                 TickCount = _tickCount,
                 TickInterval = _tickInterval
             };
+
+            if (target.TryGetComponent<IHealthable>(out var healthable))
+                healthable.Died += RemoveTick;
+
+            void RemoveTick(object sender, DeathEventArgs args)
+            {
+                healthable.Died -= RemoveTick;
+                _ticks.Remove(tickWrapper);
+            }
+
+            
             _ticks.Add(tickWrapper);
             ApplyFX(target.transform, _tickInterval * _tickCount);
             Modules.Abilitiable.NotifySpellCast(new SpellEventArgs(){Caster = Self,ManaSpent = Cost});

@@ -88,7 +88,7 @@ namespace Entity.Abilities.FlameWitch
                     (int) LayerMaskHelper.Entity);
                 foreach (var collider in colliders)
                 {
-                    if(!AbilityHelper.TryGetActor(collider, out var actor))
+                    if (!AbilityHelper.TryGetActor(collider, out var actor))
                         continue;
                     if (actor == target) //Already added
                         continue;
@@ -99,26 +99,47 @@ namespace Entity.Abilities.FlameWitch
             }
 
             foreach (var actor in dotTargets)
-                if (GetDotAction(actor, out var action))
+            {
+                if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
+                    continue;
+                var source = Self.gameObject;
+                var dotDamage = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
+
+                void internalFunc()
                 {
-                    var tickWrapper = new TickAction
-                    {
-                        Callback = action,
-                        TickCount = _tickCount,
-                        TickInterval = _tickInterval
-                    };
-                    _ticks.Add(tickWrapper);
-                    ApplyFX(actor.transform, _tickCount * _tickInterval);
+                    damageTarget.TakeDamage(source, dotDamage);
                 }
 
-            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs(){Caster = Self, ManaSpent = _manaCost});
+                var tickWrapper = new TickAction
+                {
+                    Callback = internalFunc,
+                    TickCount = _tickCount,
+                    TickInterval = _tickInterval
+                };
+
+                if (!actor.TryGetComponent<IHealthable>(out var healthable))
+                    healthable.Died += RemoveTick;
+
+                void RemoveTick(object sender, DeathEventArgs args)
+                {
+                    healthable.Died -= RemoveTick;
+                    _ticks.Remove(tickWrapper);
+                }
+
+
+                _ticks.Add(tickWrapper);
+                ApplyFX(actor.transform, _tickCount * _tickInterval);
+            }
+
+
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCost});
         }
 
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-
             Modules.Abilitiable.FindAbility(out _overheatAbility);
+
             //Manually inject the ability as a stepable
             actor.AddSteppable(this);
             _ticks = new List<TickAction>();
@@ -140,28 +161,7 @@ namespace Entity.Abilities.FlameWitch
                 return;
             if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
-
             CastObjectTarget(actor);
-        }
-
-
-        private bool GetDotAction(Actor actor, out Action dotAction)
-        {
-            dotAction = default;
-            var dmgTarget = actor.GetComponent<IDamageTarget>();
-            if (dmgTarget == null)
-                return false;
-
-            var source = Self.gameObject;
-            var damage = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
-
-            void internalFunc()
-            {
-                dmgTarget.TakeDamage(source, damage);
-            }
-
-            dotAction = internalFunc;
-            return true;
         }
 
 
