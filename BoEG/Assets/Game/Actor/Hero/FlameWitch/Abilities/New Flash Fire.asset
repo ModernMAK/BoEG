@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: New Flash Fire
   m_EditorClassIdentifier: 
   _icon: {fileID: 21300000, guid: eb132399bb058f94ca23581865a103f2, type: 3}
-  _channelTime: 0
+  _channelTime: 5
   _manaCost: 50
+  _cooldown: 20
   _aoeSearchRange: 5
   _aoeDamage: 30

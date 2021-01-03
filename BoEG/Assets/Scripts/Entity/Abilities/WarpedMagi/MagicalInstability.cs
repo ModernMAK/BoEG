@@ -8,7 +8,8 @@ using UnityEngine;
 namespace Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/MagicalInstability")]
-    public class MagicalInstability : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbility
+    public class MagicalInstability : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbility,
+        ICooldownAbility, IToggleableAbility
     {
         /* Self-Target Spell
          * Negates Magical Damage.
@@ -19,7 +20,9 @@ namespace Entity.Abilities.WarpedMagi
         [Header("Mana Cost")] [SerializeField] private float _manaCost;
         [SerializeField] private float _manaGainPerDamage;
         [SerializeField] private float _duration;
-        private DurationTimer _timer;
+        private DurationTimer _activeTimer;
+        [Header("Cooldown")] private float _cooldown;
+        private DurationTimer _cooldownTimer;
 
         private IArmorable _armorable;
         // private IMagicable _magicable;
@@ -31,7 +34,8 @@ namespace Entity.Abilities.WarpedMagi
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _timer = new DurationTimer(_duration);
+            _activeTimer = new DurationTimer(_duration);
+            _cooldownTimer = new DurationTimer(_cooldown, true);
             _armorable = Self.GetComponent<IArmorable>();
             // _magicable = Self.GetComponent<IMagicable>();
 // _abilitiable = Self.GetComponent<IAbilitiable>();
@@ -59,7 +63,7 @@ namespace Entity.Abilities.WarpedMagi
             var appliedDamageBlock = Mathf.Min(e.OutgoingDamage.Value, availableDamageBlock);
             //Calculate mana to gain
             var manaGained = appliedDamageBlock * _manaGainPerDamage;
-            
+
             //Gain mana
             magicable.Magic += manaGained;
             //Negate damage damage, we don't rely on buffs to do the negation
@@ -68,46 +72,54 @@ namespace Entity.Abilities.WarpedMagi
 
         public override void ConfirmCast()
         {
-            if (_isActive)
+            if (Active)
                 return;
+            if (!_cooldownTimer.Done)
+                return;
+
             if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
+            _isActive = true;
             CastNoTarget();
+            _activeTimer.Reset();
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
 
 
         public void CastNoTarget()
         {
-            _isActive = true;
             _armorable.Resisting += OnResisting;
-            _timer.Reset();
-            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
 
-        public void OnPostStep(float deltaTime)
+        public void OnPreStep(float deltaTime)
         {
-            if (!_isActive)
-                return;
-            if (_timer.AdvanceTime(deltaTime))
+            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime); //Advance first, otherwise cooldown is started too early
+            if (_activeTimer.AdvanceTimeIfNotDone(deltaTime))
             {
                 _isActive = false;
+                _cooldownTimer.Reset();
                 _armorable.Resisting -= OnResisting;
-                _timer.Reset();
             }
         }
 
         public void Register(IStepableEvent source)
         {
-            source.PostStep += OnPostStep;
+            source.PreStep += OnPreStep;
         }
 
         public void Unregister(IStepableEvent source)
         {
-            source.PostStep -= OnPostStep;
+            source.PreStep -= OnPreStep;
         }
 
         public float Cost => _manaCost;
 
         public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
+
+        public float Cooldown => _cooldownTimer.Duration;
+        public float CooldownRemaining => _cooldownTimer.RemainingTime;
+        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
+
+        public bool Active => _isActive;
     }
 }

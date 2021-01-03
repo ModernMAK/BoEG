@@ -15,12 +15,14 @@ namespace Entity.Abilities.LastHunter
          * Blink To target
          * Deal damage to units between origin and target
          */
+#pragma warning disable 0649
         private const float _pathWidth = 1f;
         [SerializeField] private float _bonusDamage;
         [SerializeField] private float _castRange;
         [SerializeField] private float _manaCost;
         [SerializeField] private float _cooldown;
         private DurationTimer _cooldownHelper;
+#pragma warning restore 0649
 
         public override void Initialize(Actor actor)
         {
@@ -32,13 +34,14 @@ namespace Entity.Abilities.LastHunter
 
         public override void ConfirmCast()
         {
-            if(!_cooldownHelper.Done)
+            if (!_cooldownHelper.Done)
                 return;
-            
+
             var ray = AbilityHelper.GetScreenRay();
             if (!AbilityHelper.TryGetWorldOrEntity(ray, out var hit))
                 return;
-            var position = AbilityHelper.TryGetActor(hit.collider, out var actor)
+            var unitCast = AbilityHelper.TryGetActor(hit.collider, out var actor);
+            var position = unitCast
                 ? actor.transform.position
                 : hit.point;
             if (!AbilityHelper.InRange(Self.transform, position, _castRange))
@@ -48,7 +51,10 @@ namespace Entity.Abilities.LastHunter
 
             _cooldownHelper.Reset();
 
-            CastGroundTarget(position);
+            if (unitCast)
+                CastObjectTarget(actor);
+            else
+                CastGroundTarget(position);
             Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
 
@@ -71,9 +77,9 @@ namespace Entity.Abilities.LastHunter
             {
                 if (!AbilityHelper.TryGetActor(col, out var actor))
                     continue;
-                if(IsSelf(actor))
+                if (IsSelf(actor))
                     continue;
-                
+
                 if (AbilityHelper.SameTeam(Modules.Teamable, actor))
                     continue;
                 if (!actor.TryGetComponent<IDamageTarget>(out var target))
@@ -86,9 +92,14 @@ namespace Entity.Abilities.LastHunter
             Modules.Commandable.ClearCommands();
         }
 
+        //We jump behind them
         public void CastObjectTarget(Actor target)
         {
-            CastGroundTarget(target.transform.position);
+            var origin = Self.transform.position;
+            var dest = target.transform.position;
+            var offset = dest - origin;
+            const float JumpDistance = 0.5f;
+            CastGroundTarget(dest + offset.normalized * JumpDistance);
         }
 
         public float Cooldown => _cooldownHelper.Duration;

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Framework.Ability;
 using UI;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class AbilitiablePanel : DebugUI
 {
@@ -12,16 +14,15 @@ public class AbilitiablePanel : DebugUI
     private List<AbilityPanel> _abilityPanels;
     private GameObject _go;
 #pragma warning restore 0649
-    
+
     private void Awake()
     {
         _abilityPanels = new List<AbilityPanel>();
     }
 
-    // Update is called once per frame
-    private void Update()
+    private void UpdatePanels()
     {
-        var abilityCount = _abilitiable == null ? 0 : _abilitiable.AbilityCount;
+        var abilityCount = _abilitiable?.AbilityCount ?? 0;
         if (_abilityPanels.Count != abilityCount)
         {
             for (var i = _abilityPanels.Count; i < abilityCount; i++)
@@ -37,21 +38,35 @@ public class AbilitiablePanel : DebugUI
                 _abilityPanels.RemoveAt(i);
                 i--;
             }
-
-            if (_abilitiable != null)
-                for (var i = 0; i < _abilityPanels.Count; i++)
-                {
-                    //BUG aspect ratio not resizing icon?
-                    //Toggling on and off fixes this, but its not a good solution imo
-                    _abilityPanels[i].gameObject.SetActive(false);
-                    _abilityPanels[i].SetAbility(_abilitiable.GetAbility(i));
-                    _abilityPanels[i].gameObject.SetActive(true);
-                }
         }
+
+        if (_abilitiable != null)
+            for (var i = 0; i < _abilityPanels.Count; i++)
+            {
+                //BUG aspect ratio not resizing icon?
+                //Toggling on and off fixes this, but its not a good solution imo
+                _abilityPanels[i].gameObject.SetActive(false);
+                _abilityPanels[i].SetAbility(_abilitiable.GetAbility(i));
+                _abilityPanels[i].gameObject.SetActive(true);
+            }
     }
+
+
     public override void SetTarget(GameObject go)
     {
+        if (_abilitiable != null)
+            _abilitiable.AbilitiesChanged -= OnAbilitiesChanged;
+
         _go = go;
         _abilitiable = _go != null ? _go.GetComponent<IAbilitiable>() : null;
+        UpdatePanels();
+
+        if (_abilitiable != null)
+            _abilitiable.AbilitiesChanged += OnAbilitiesChanged;
+    }
+
+    private void OnAbilitiesChanged(object sender, EventArgs e)
+    {
+        UpdatePanels();
     }
 }

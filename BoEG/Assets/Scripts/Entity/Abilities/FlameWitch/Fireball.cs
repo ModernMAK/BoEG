@@ -8,12 +8,16 @@ using UnityEngine;
 namespace Entity.Abilities.FlameWitch
 {
     [CreateAssetMenu(menuName = "Ability/FlameWitch/FireBall")]
-    public class Fireball : AbilityObject, IGroundTargetAbility, IStatCostAbility
+    public class Fireball : AbilityObject, IGroundTargetAbility, IStatCostAbility, ICooldownAbility,
+        IListener<IStepableEvent>
     {
 #pragma warning disable 0649
         private Overheat _overheat;
         [Header("Mana")] [SerializeField] private float _manaCost;
         [Header("Damage")] [SerializeField] private float _damage;
+
+        [Header("Cooldown")] [SerializeField] private float _cooldown;
+        private DurationTimer _cooldownTimer;
 
         [Header("Cast Range")] [SerializeField]
         private float _castRange;
@@ -32,11 +36,15 @@ namespace Entity.Abilities.FlameWitch
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
+            _cooldownTimer = new DurationTimer(_cooldown,true);
             Modules.Abilitiable.FindAbility(out _overheat);
+            Register(actor);
         }
 
         public override void ConfirmCast()
         {
+            if (!_cooldownTimer.Done)
+                return;
             var ray = AbilityHelper.GetScreenRay();
             if (!AbilityHelper.TryGetWorld(ray, out var hit))
                 return;
@@ -46,7 +54,9 @@ namespace Entity.Abilities.FlameWitch
             if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
 
+            _cooldownTimer.Reset();
             CastGroundTarget(hit.point);
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
 
         public void CastGroundTarget(Vector3 worldPos)
@@ -77,12 +87,31 @@ namespace Entity.Abilities.FlameWitch
 
                 damageTarget.TakeDamage(Self.gameObject, dmg);
             }
-
-            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
 
         public float Cost => _manaCost;
 
         public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
+
+        public float Cooldown => _cooldownTimer.Duration;
+
+        public float CooldownRemaining => _cooldownTimer.RemainingTime;
+
+        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
+
+        public void Register(IStepableEvent source)
+        {
+            source.PreStep += OnPreStep;
+        }
+
+        private void OnPreStep(float deltaTime)
+        {
+            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PreStep += OnPreStep;
+        }
     }
 }

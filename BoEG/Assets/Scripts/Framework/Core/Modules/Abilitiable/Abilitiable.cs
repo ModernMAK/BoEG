@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Entity.Abilities.FlameWitch;
 using Framework.Core;
 using Framework.Core.Modules;
 using UnityEngine;
@@ -11,6 +9,12 @@ namespace Framework.Ability
     public class Abilitiable : MonoBehaviour, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>
     {
         private IAbility[] _abilities;
+
+        private void Awake()
+        {
+            _abilities ??= new IAbility[0];
+            OnAbilitiesChanged();
+        }
 
         public bool FindAbility<T>(out T ability)
         {
@@ -36,10 +40,21 @@ namespace Framework.Ability
         {
             var self = GetComponent<Actor>();
             _abilities = new IAbility[module.Count];
-            for (var i = 0; i < _abilities.Length; i++) _abilities[i] = module[i];
+            for (var i = 0; i < _abilities.Length; i++)
+                _abilities[i] = module[i];
 
-            foreach (var ab in _abilities) ab.Initialize(self);
+            foreach (var ab in _abilities)
+                ab.Initialize(self);
+            OnAbilitiesChanged();
         }
+
+        public event EventHandler AbilitiesChanged
+        {
+            add => _abilitiesChanged += value;
+            remove => _abilitiesChanged -= value;
+        }
+
+        private event EventHandler _abilitiesChanged;
 
         private event EventHandler<SpellEventArgs> _spellCasted;
 
@@ -54,6 +69,11 @@ namespace Framework.Ability
         protected virtual void OnSpellCast(SpellEventArgs e)
         {
             _spellCasted?.Invoke(this, e);
+        }
+
+        protected virtual void OnAbilitiesChanged()
+        {
+            _abilitiesChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

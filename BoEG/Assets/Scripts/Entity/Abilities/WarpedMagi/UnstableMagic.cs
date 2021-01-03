@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/UnstableMagic")]
-    public class UnstableMagic : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>, IStatCostAbility
+    public class UnstableMagic : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>, IStatCostAbility, ICooldownAbility, IListener<IStepableEvent>
     {
         // [Header("Mana Cost")]
         /* Ground Target Spell
@@ -27,11 +27,24 @@ namespace Entity.Abilities.WarpedMagi
         [Header("Jumps")] [SerializeField] private float _searchRange;
         [SerializeField] private int _additionalJumps;
 
+        [Header("Cooldown")] [SerializeField] private float _cooldown;
+        private DurationTimer _cooldownTimer;
+        
         [SerializeField] private GameObject _unstableMagicFX;
 #pragma warning restore 0649
 
+        public override void Initialize(Actor actor)
+        {
+            base.Initialize(actor);
+            Register(actor);
+            _cooldownTimer = new DurationTimer(_cooldown,true);
+        }
+
         public override void ConfirmCast()
         {
+            
+            if(!_cooldownTimer.Done)
+                return;
             var ray = AbilityHelper.GetScreenRay();
             if (!Physics.Raycast(ray, out var hit, 100f, (int) (LayerMaskHelper.World | LayerMaskHelper.Entity)))
                 return;
@@ -45,10 +58,14 @@ namespace Entity.Abilities.WarpedMagi
             if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
 
+            
+            _cooldownTimer.Reset();
             if (isGround)
                 CastGroundTarget(hit.point);
             else
                 CastObjectTarget(actor);
+            
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs(){Caster = Self,ManaSpent = Cost});
         }
 
         public void CastGroundTarget(Vector3 worldPos)
@@ -134,5 +151,24 @@ namespace Entity.Abilities.WarpedMagi
         public float Cost => _manaCost;
 
         public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
+        
+        public float Cooldown => _cooldownTimer.Duration;
+        public float CooldownRemaining => _cooldownTimer.RemainingTime;
+        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
+
+        public void OnStep(float deltaTime)
+        {
+            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
+        }
+        public void Register(IStepableEvent source)
+        {
+            source.PreStep += OnStep;
+
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PreStep -= OnStep;
+        }
     }
 }

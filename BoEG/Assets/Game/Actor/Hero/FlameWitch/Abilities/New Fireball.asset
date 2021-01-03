@@ -15,6 +15,7 @@ MonoBehaviour:
   _icon: {fileID: 21300000, guid: 9f74dca6926afcd4f975b2e23cd27bdc, type: 3}
   _manaCost: 10
   _damage: 50
+  _cooldown: 8
   _castRange: 8
   _overheatCastRange: 10
   _pathWidth: 2

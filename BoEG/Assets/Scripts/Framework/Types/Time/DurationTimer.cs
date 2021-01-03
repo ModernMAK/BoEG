@@ -2,9 +2,10 @@ namespace Framework.Types
 {
     public class DurationTimer
     {
-        public DurationTimer(float duration)
+        public DurationTimer(float duration, bool startDone = false)
         {
             Duration = duration;
+            ElapsedTime = startDone ? Duration : 0f;
         }
 
         public float ElapsedTime { get; set; }
@@ -21,5 +22,7 @@ namespace Framework.Types
             ElapsedTime += deltaTime;
             return Done;
         }
+
+        public bool AdvanceTimeIfNotDone(float deltaTime) => Done || AdvanceTime(deltaTime);
     }
 }

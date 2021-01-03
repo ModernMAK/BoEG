@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Framework.Ability;
 using Framework.Core;
@@ -6,7 +5,6 @@ using Framework.Core.Modules;
 using Framework.Types;
 using Triggers;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Entity.Abilities.FlameWitch
 {
@@ -20,7 +18,8 @@ namespace Entity.Abilities.FlameWitch
 
 
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Ignite")]
-    public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>, IStatCostAbility
+    public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>, IStatCostAbility,
+        ICooldownAbility
     {
 #pragma warning disable 0649
         [Header("Cast Range")] [SerializeField]
@@ -29,6 +28,9 @@ namespace Entity.Abilities.FlameWitch
         [Header("Initial Damage")] [SerializeField]
         private float _damage = 100f;
 
+
+        [Header("Cooldown")] [SerializeField] private float _cooldown;
+        private DurationTimer _cooldownTimer;
 
         [Header("Mana Cost")] [SerializeField] private float _manaCost = 100f;
 
@@ -90,6 +92,8 @@ namespace Entity.Abilities.FlameWitch
                 {
                     if (!AbilityHelper.TryGetActor(collider, out var actor))
                         continue;
+                    if (IsSelf(actor))
+                        continue;
                     if (actor == target) //Already added
                         continue;
                     if (AbilityHelper.SameTeam(Modules.Teamable, actor.gameObject))
@@ -130,16 +134,13 @@ namespace Entity.Abilities.FlameWitch
                 _ticks.Add(tickWrapper);
                 ApplyFX(actor.transform, _tickCount * _tickInterval);
             }
-
-
-            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCost});
         }
 
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
             Modules.Abilitiable.FindAbility(out _overheatAbility);
-
+            _cooldownTimer = new DurationTimer(_cooldown, true);
             //Manually inject the ability as a stepable
             actor.AddSteppable(this);
             _ticks = new List<TickAction>();
@@ -148,35 +149,51 @@ namespace Entity.Abilities.FlameWitch
 
         public override void ConfirmCast()
         {
+            if (!_cooldownTimer.Done)
+                return;
+
             var ray = AbilityHelper.GetScreenRay();
             if (!AbilityHelper.TryGetEntity(ray, out var hit))
-                return;
-            if (!AbilityHelper.InRange(Self.transform, hit.point, _castRange))
                 return;
             if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
                 return;
             if (IsSelf(actor))
                 return;
+            if (!AbilityHelper.InRange(Self.transform, actor.transform.position, _castRange))
+                return;
             if (!AbilityHelper.HasAllComponents(actor.gameObject, typeof(IDamageTarget)))
                 return;
             if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
+            _cooldownTimer.Reset();
             CastObjectTarget(actor);
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCost});
         }
 
 
         public void Register(IStepableEvent source)
         {
+            source.PreStep += OnPreStep;
             source.Step += OnStep;
+        }
+
+        private void OnPreStep(float deltaTime)
+        {
+            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
         }
 
         public void Unregister(IStepableEvent source)
         {
+            source.PreStep -= OnPreStep;
             source.Step -= OnStep;
         }
 
         public float Cost => _manaCost;
 
         public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
+
+        public float Cooldown => _cooldownTimer.Duration;
+        public float CooldownRemaining => _cooldownTimer.RemainingTime;
+        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
     }
 }
