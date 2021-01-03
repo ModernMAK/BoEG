@@ -5,16 +5,39 @@ using Framework.Ability;
 using Triggers;
 using UnityEngine;
 
+[Serializable]
+public class CursorPack : ScriptableObject
+{
+    [Serializable]
+    public class VariantInfo
+    {
+        [SerializeField] private Texture2D _default;
+        [SerializeField] private Texture2D _hover;
+        public Texture2D Default => _default;
+        public Texture2D Hover => _hover;
+    }
+
+#pragma warning disable 0649
+    [SerializeField] private VariantInfo _plain;
+    public VariantInfo Plain => _plain;
+    [SerializeField] private VariantInfo _enemy;
+    public VariantInfo Enemy => _enemy;
+    [SerializeField] private VariantInfo _ally;
+    public VariantInfo Ally => _ally;
+#pragma warning restore 0649
+}
+
 public class CustomCursor : MonoBehaviour
 {
 #pragma warning disable 0649
+    // [SerializeField] private CursorPack _cursor;
     [SerializeField] private Texture2D _default;
 
     [SerializeField] private Texture2D _hoverUnit;
 #pragma warning restore 0649
 
     // ReSharper disable twice PossibleLossOfFraction
-    private Vector2 GetCenter(Texture2D tex) => new Vector2(tex.width / 2, tex.height / 2);
+    private Vector2 GetCenter(Texture tex) => new Vector2(tex.width / 2, tex.height / 2);
 
     public const float MaxDistance = 128;
 
