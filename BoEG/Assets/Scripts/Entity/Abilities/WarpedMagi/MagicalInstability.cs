@@ -59,8 +59,7 @@ namespace Entity.Abilities.WarpedMagi
             var appliedDamageBlock = Mathf.Min(e.OutgoingDamage.Value, availableDamageBlock);
             //Calculate mana to gain
             var manaGained = appliedDamageBlock * _manaGainPerDamage;
-
-            //TODO consider adding a check to ensure manaGained is never negative
+            
             //Gain mana
             magicable.Magic += manaGained;
             //Negate damage damage, we don't rely on buffs to do the negation
@@ -71,7 +70,7 @@ namespace Entity.Abilities.WarpedMagi
         {
             if (_isActive)
                 return;
-            if (!AbilityHelper.TrySpendMagic(this,Modules.Magicable))
+            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
             CastNoTarget();
         }
@@ -82,7 +81,7 @@ namespace Entity.Abilities.WarpedMagi
             _isActive = true;
             _armorable.Resisting += OnResisting;
             _timer.Reset();
-            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs(){Caster = Self,ManaSpent = Cost});
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
 
         public void OnPostStep(float deltaTime)

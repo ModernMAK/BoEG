@@ -94,6 +94,7 @@ namespace Framework.Ability
 
         public static bool SameTeam(ITeamable teamable, GameObject gameObject, bool nullValue = false) =>
             SameTeam(teamable, gameObject, out _, nullValue);
+
         public static bool SameTeam(ITeamable teamable, GameObject gameObject, out ITeamable otherTeamable,
             bool nullValue = false)
         {
@@ -104,6 +105,7 @@ namespace Framework.Ability
 
         public static bool SameTeam(ITeamable teamable, Component component, bool nullValue = false) =>
             SameTeam(teamable, component, out _, nullValue);
+
         public static bool SameTeam(ITeamable teamable, Component component, out ITeamable otherTeamable,
             bool nullValue = false) =>
             SameTeam(teamable, component.gameObject, out otherTeamable, nullValue);
@@ -160,5 +162,17 @@ namespace Framework.Ability
 
         public static bool TryGetWorld(Ray ray, out RaycastHit hit) =>
             Physics.Raycast(ray, out hit, DefaultMaxDistance, (int) (LayerMaskHelper.World));
+
+        public static Quaternion GetRotation(Vector3 start, Vector3 target) => Quaternion.LookRotation(target - start);
+
+        public static Vector3 GetBoxCenter(Vector3 origin, Vector3 halfSize, Quaternion rotation) =>
+            origin + rotation * halfSize;
+
+        public static float GetLineLength(Vector3 start, Vector3 target) => (target - start).magnitude;
+        public static Vector3 GetLineBox(Vector3 start, Vector3 target, Vector2 size)
+        {
+            var z = (target - start).magnitude;
+            return new Vector3(size.x, size.y, z);
+        }
     }
 }

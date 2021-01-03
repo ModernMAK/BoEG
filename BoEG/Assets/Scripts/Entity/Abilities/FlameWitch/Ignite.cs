@@ -80,7 +80,6 @@ namespace Entity.Abilities.FlameWitch
 //            var targetable = target.GetComponent<ITargetable>();
             var damagable = target.GetComponent<IDamageTarget>();
             damagable.TakeDamage(Self.gameObject, damage);
-            //TODO add DOT
             //Gather DOT targets
             var dotTargets = new List<Actor> {target};
             if (IsInOverheat)

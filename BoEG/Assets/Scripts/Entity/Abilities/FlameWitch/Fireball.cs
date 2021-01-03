@@ -22,6 +22,8 @@ namespace Entity.Abilities.FlameWitch
         [SerializeField] private float _pathWidth;
 #pragma warning restore 0649
 
+        private float CurrentCastRange => _overheat.Active ? _overheatCastRange : _castRange;
+
         /* Ground-Target Spell
          * Deals damage along path.
          * When OverHeating;
@@ -39,9 +41,9 @@ namespace Entity.Abilities.FlameWitch
             if (!AbilityHelper.TryGetWorld(ray, out var hit))
                 return;
             var range = _overheat.IsActive ? _overheatCastRange : _castRange;
-            if (!AbilityHelper.InRange(Self.transform,hit.point,range))
+            if (!AbilityHelper.InRange(Self.transform, hit.point, range))
                 return;
-            if (!AbilityHelper.TrySpendMagic(this,Modules.Magicable))
+            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
 
             CastGroundTarget(hit.point);
@@ -49,15 +51,14 @@ namespace Entity.Abilities.FlameWitch
 
         public void CastGroundTarget(Vector3 worldPos)
         {
-            var t = Self.transform.position;
-            var p = worldPos;
-            var dir = (p - t);
-            var travelDistance = (_overheat.IsActive ? _overheatCastRange : _castRange);
-            var center = t + dir.normalized * travelDistance / 2f;
-            var bound = new Vector3(_pathWidth, 2, travelDistance);
-            var halfBound = bound / 2;
-            var rotation = Quaternion.LookRotation(dir);
-            var colliders = Physics.OverlapBox(center, halfBound, rotation, (int) LayerMaskHelper.Entity);
+            var origin = Self.transform.position;
+            var boxBaseSize = new Vector2(_pathWidth, 2);
+            var length = AbilityHelper.GetLineLength(origin, worldPos);
+            length = Mathf.Min(length, CurrentCastRange);
+            var boxHalfExtents = new Vector3(boxBaseSize.x, boxBaseSize.y, length) / 2;
+            var rotation = AbilityHelper.GetRotation(origin, worldPos);
+            var center = AbilityHelper.GetBoxCenter(origin, boxHalfExtents, rotation);
+            var colliders = Physics.OverlapBox(center, boxHalfExtents, rotation, (int) LayerMaskHelper.Entity);
             var dmg = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
 
             foreach (var col in colliders)
@@ -68,7 +69,7 @@ namespace Entity.Abilities.FlameWitch
                 if (IsSelf(actor))
                     continue; //Always ignore self
 
-                if (AbilityHelper.SameTeam(Modules.Teamable,actor.gameObject))
+                if (AbilityHelper.SameTeam(Modules.Teamable, actor.gameObject))
                     continue; //Ignore if allies
 
                 if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
@@ -77,7 +78,7 @@ namespace Entity.Abilities.FlameWitch
                 damageTarget.TakeDamage(Self.gameObject, dmg);
             }
 
-            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs(){Caster = Self, ManaSpent = Cost});
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
 
         public float Cost => _manaCost;

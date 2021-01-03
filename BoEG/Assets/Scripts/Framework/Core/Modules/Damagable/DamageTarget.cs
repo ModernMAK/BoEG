@@ -32,6 +32,8 @@ namespace Framework.Core.Modules
             OnDamaged(dmgArg);
         }
 
+        public void TakeDamage(SourcedDamage<GameObject> damage) => TakeDamage(damage.Source, damage.Damage);
+
         public event EventHandler<DamageEventArgs> Damaged
         {
             add => _damaged += value;

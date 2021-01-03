@@ -81,6 +81,12 @@ namespace Framework.Ability
         public IAbilitiable Abilitiable => GetCached<IAbilitiable>();
         public ITeamable Teamable => GetCached<ITeamable>();
 
+        public IMovable Movable => GetCached<IMovable>();
+
+        public IAttackerable Attackerable => GetCached<IAttackerable>();
+
+        public ICommandable Commandable => GetCached<ICommandable>();
+
         public ModuleCache(GameObject gameObject) : base(gameObject)
         {
         }
