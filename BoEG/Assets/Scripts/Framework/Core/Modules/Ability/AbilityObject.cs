@@ -7,7 +7,6 @@ using UnityEngine;
 
 namespace Framework.Ability
 {
-
     public class AbilityObject : ScriptableObject, IAbility, IAbilityView
     {
 #pragma warning disable 0649
@@ -63,22 +62,11 @@ namespace Framework.Ability
             return _icon;
         }
 
-        [Obsolete]
-        public virtual float GetCooldownProgress()
-        {
-            return 1f;
-        }
 
-        public virtual ICooldownAbility Cooldown => this as ICooldownAbility;
+        ICooldownAbility IAbilityView.Cooldown => this as ICooldownAbility;
 
-        public virtual IStatCostAbility StatCost => this as IStatCostAbility;
+        IStatCostAbility IAbilityView.StatCost => this as IStatCostAbility;
 
-        public virtual IToggleableAbility Toggleable => this as IToggleableAbility;
-
-        [Obsolete]
-        public virtual float GetManaCost()
-        {
-            return 0f;
-        }
+        IToggleableAbility IAbilityView.Toggleable => this as IToggleableAbility;
     }
 }
