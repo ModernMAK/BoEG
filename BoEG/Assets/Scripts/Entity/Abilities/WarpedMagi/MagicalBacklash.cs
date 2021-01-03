@@ -4,6 +4,7 @@ using Framework.Ability;
 using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Types;
+using Modules.Teamable;
 using UnityEngine;
 
 namespace Entity.Abilities.WarpedMagi
@@ -29,7 +30,7 @@ namespace Entity.Abilities.WarpedMagi
                 target.SpellCasted -= OnSpellCast;
             _targetBuffer.Clear();
         }
-        
+
 
         public override void Initialize(Actor actor)
         {
@@ -44,7 +45,9 @@ namespace Entity.Abilities.WarpedMagi
         private void OnActorEnter(object sender, TriggerEventArgs args)
         {
             var collider = args.Collider;
-            if(!AbilityHelper.TryGetActor(collider, out var actor))
+            if (!AbilityHelper.TryGetActor(collider, out var actor))
+                return;
+            if (IsSelf(actor))
                 return;
             if (!actor.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
@@ -55,7 +58,7 @@ namespace Entity.Abilities.WarpedMagi
         private void OnActorExit(object sender, TriggerEventArgs args)
         {
             var collider = args.Collider;
-            if(!AbilityHelper.TryGetActor(collider, out var actor))
+            if (!AbilityHelper.TryGetActor(collider, out var actor))
                 return;
             if (!actor.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
@@ -67,6 +70,11 @@ namespace Entity.Abilities.WarpedMagi
         private void OnSpellCast(object sender, SpellEventArgs args)
         {
             var caster = args.Caster;
+            if (caster.TryGetComponent<ITeamable>(out var teamable))
+                if (Modules.Teamable?.SameTeam(teamable) ?? false)
+                    return;
+
+
             var damageTarget = caster.GetComponent<IDamageTarget>();
             var damageValue = _damagePerManaSpent * args.ManaSpent;
             damageValue = Mathf.Max(damageValue, 0f);

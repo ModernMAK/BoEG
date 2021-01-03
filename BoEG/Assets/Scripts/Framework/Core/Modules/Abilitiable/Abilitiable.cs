@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Framework.Core;
-using Framework.Core.Modules;
+using Framework.Ability;
 using UnityEngine;
 
-namespace Framework.Ability
+namespace Framework.Core.Modules.Abilitiable
 {
     public class Abilitiable : MonoBehaviour, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>
     {

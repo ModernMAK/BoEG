@@ -1,7 +1,6 @@
-using UI;
 using UnityEngine;
 
-namespace System
+namespace UI
 {
     public class ActorPanel : MonoBehaviour
     {

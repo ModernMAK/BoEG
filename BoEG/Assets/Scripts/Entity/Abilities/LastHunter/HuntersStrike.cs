@@ -41,6 +41,8 @@ namespace Entity.Abilities.LastHunter
             if (!AbilityHelper.TryGetWorldOrEntity(ray, out var hit))
                 return;
             var unitCast = AbilityHelper.TryGetActor(hit.collider, out var actor);
+            if(actor == Self)
+                return;
             var position = unitCast
                 ? actor.transform.position
                 : hit.point;

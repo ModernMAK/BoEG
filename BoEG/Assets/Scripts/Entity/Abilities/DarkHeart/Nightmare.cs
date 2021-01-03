@@ -56,6 +56,8 @@ namespace Entity.Abilities.DarkHeart
                 return;
             if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
                 return;
+            if(actor == Self)
+                return;
             if (!AbilityHelper.InRange(Self.transform, actor.transform, _castRange))
                 return;
             if (!AbilityHelper.HasAllComponents(actor.gameObject, typeof(IDamageTarget)))

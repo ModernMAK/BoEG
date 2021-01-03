@@ -14,9 +14,11 @@ public interface IRespawnable
 
 public class HeroSpawner : MonoBehaviour
 {
+#pragma warning disable 0649
     [SerializeField] private float _deathCooldown;
 
     [SerializeField] private Transform[] _spawnPoints;
+#pragma warning restore 0649
     private Transform GetRandomTransform() => _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Length)];
     private List<Tuple<Actor, DurationTimer>> _deadTracker;
 

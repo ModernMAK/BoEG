@@ -4,6 +4,7 @@ using Framework.Core;
 using Framework.Core.Modules;
 using Framework.Core.Modules.Commands;
 using Triggers;
+using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
