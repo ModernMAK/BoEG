@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Framework.Core.Modules
 {
-    public class Commandable : MonoBehaviour, ICommandable
+    public class Commandable : MonoBehaviour, ICommandable, IRespawnable
     {
         private readonly LinkedList<ICommand> _commandQueue;
         private ICommand _activeCommand;
@@ -96,6 +96,11 @@ namespace Framework.Core.Modules
                 _activeCommand.Stop();
                 _activeCommand = null;
             }
+        }
+
+        public void Respawn()
+        {
+            ClearCommands();
         }
     }
 }

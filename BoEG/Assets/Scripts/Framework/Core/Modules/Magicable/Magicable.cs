@@ -11,7 +11,7 @@ namespace Framework.Core.Modules
 
     [DisallowMultipleComponent]
     public class Magicable : Statable,
-        IInitializable<IMagicableData>, IMagicable, IListener<IStepableEvent>
+        IInitializable<IMagicableData>, IMagicable, IListener<IStepableEvent>, IRespawnable
     {
         public void Initialize(IMagicableData module)
         {
@@ -83,6 +83,11 @@ namespace Framework.Core.Modules
         public void Unregister(IStepableEvent source)
         {
             source.PreStep -= OnPreStep;
+        }
+
+        public void Respawn()
+        {
+            _percentage = 1f;
         }
     }
 }

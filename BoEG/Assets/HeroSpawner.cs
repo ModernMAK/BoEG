@@ -69,10 +69,14 @@ public class HeroSpawner : MonoBehaviour
             }
 
             var spawn = GetRandomTransform();
-            if(actor.TryGetComponent<IMovable>(out var movable))
-                movable.WarpTo(spawn.position);
-            actor.transform.position = spawn.transform.position;
+            var pos = spawn.position;
+            actor.transform.position = pos;
             actor.gameObject.SetActive(true);
+            if (actor.TryGetComponent<IMovable>(out var movable))
+            {
+                var slightOffset = pos + UnityEngine.Random.onUnitSphere * 0.01f;
+                movable.WarpTo(slightOffset);
+            }
         }
     }
 }

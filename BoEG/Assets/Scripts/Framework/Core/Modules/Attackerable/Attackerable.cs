@@ -61,12 +61,17 @@ namespace Framework.Core.Modules
             if (Targets.Contains(actor))
                 return;
 
+            if (!actor.TryGetComponent<IDamageTarget>(out _))
+                return;
 
             if (actor.TryGetComponent<IHealthable>(out var healthable))
                 healthable.Died += TargetDied;
 
             if (actor.TryGetComponent<ITeamable>(out var teamable))
                 teamable.TeamChanged += OnTargetTeamChanged;
+
+            if (_teamable?.SameTeam(teamable) ?? false)
+                return;
 
             _targets.Add(actor);
         }
