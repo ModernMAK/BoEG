@@ -14,6 +14,7 @@ namespace Framework.Types
 
 
         public void Reset() => ElapsedTime = 0;
+        public void SetDone() => ElapsedTime = Duration;
 
         public bool AdvanceTime(float deltaTime)
         {
