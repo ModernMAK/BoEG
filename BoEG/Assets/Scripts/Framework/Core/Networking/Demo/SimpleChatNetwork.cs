@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using MobaGame.Framework.Core.Networking.IO;
 using MobaGame.Framework.Core.Networking.LLAPI;
-using MobaGame.Framework.Core.Networking.Stream;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -64,7 +64,7 @@ namespace MobaGame.Framework.Core.Networking.Demo
             }
         }
 
-        private void ClientOnMessageSent(object sender, System.IO.Stream e)
+        private void ClientOnMessageSent(object sender, Stream e)
         {
             
             using (var reader = new StreamReader(new NonClosingStream(e), Encoding.ASCII))
@@ -100,7 +100,7 @@ namespace MobaGame.Framework.Core.Networking.Demo
             _text.text += msg;
         }
 
-        private void ClientOnMessageReceived(object sender, System.IO.Stream stream)
+        private void ClientOnMessageReceived(object sender, Stream stream)
         {
             using (var reader = new StreamReader(new NonClosingStream(stream), Encoding.ASCII))
             {
@@ -146,7 +146,7 @@ namespace MobaGame.Framework.Core.Networking.Demo
                 _text.text += msg;
         }
 
-        private void ServerOnMessageReceived(object sender, Tuple<Guid, System.IO.Stream> tuple)
+        private void ServerOnMessageReceived(object sender, Tuple<Guid, Stream> tuple)
         {
             var guid = tuple.Item1;
             var stream = tuple.Item2;
@@ -163,7 +163,7 @@ namespace MobaGame.Framework.Core.Networking.Demo
             _server.WriteMessageRelay(guid, stream);
         }
 
-        private void ServerOnMessageSent(object sender, Tuple<Guid, System.IO.Stream> tuple)
+        private void ServerOnMessageSent(object sender, Tuple<Guid, Stream> tuple)
         {
             var guid = tuple.Item1;
             var stream = tuple.Item2;

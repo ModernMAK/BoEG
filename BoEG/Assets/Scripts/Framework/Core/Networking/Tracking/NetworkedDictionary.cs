@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -6,37 +5,37 @@ namespace MobaGame.Framework.Core.Networking.Tracking
 {
     public class NetworkedDictionary<T> : INetworkedDictionary<T> where T : INetworkIdentifier
     {
-        private readonly Dictionary<Guid, T> _networked;
+        private readonly Dictionary<SerializableGuid, T> _networked;
 
-        public NetworkedDictionary() : this(new Dictionary<Guid, T>())
+        public NetworkedDictionary() : this(new Dictionary<SerializableGuid, T>())
         {
         }
 
-        public NetworkedDictionary(Dictionary<Guid, T> networked)
+        public NetworkedDictionary(Dictionary<SerializableGuid, T> networked)
         {
             _networked = networked;
         }
 
-        public IEnumerator<KeyValuePair<Guid, T>> GetEnumerator() => _networked.GetEnumerator();
+        public IEnumerator<KeyValuePair<SerializableGuid, T>> GetEnumerator() => _networked.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public int Count => _networked.Count;
 
-        public bool ContainsKey(Guid key) => _networked.ContainsKey(key);
+        public bool ContainsKey(SerializableGuid key) => _networked.ContainsKey(key);
         public bool ContainsKey(T value) => _networked.ContainsKey(value.Id);
 
-        public bool TryGetValue(Guid key, out T value) => _networked.TryGetValue(key, out value);
+        public bool TryGetValue(SerializableGuid key, out T value) => _networked.TryGetValue(key, out value);
 
-        public T this[Guid key] => _networked[key];
+        public T this[SerializableGuid key] => _networked[key];
 
-        public IEnumerable<Guid> Keys => _networked.Keys;
+        public IEnumerable<SerializableGuid> Keys => _networked.Keys;
 
         public IEnumerable<T> Values => _networked.Values;
 
-        public Guid RequestId()
+        public SerializableGuid RequestId()
         {
-            return Guid.NewGuid();
+            return SerializableGuid.NewGuid();
         }
 
         public bool TryAdd(T value)

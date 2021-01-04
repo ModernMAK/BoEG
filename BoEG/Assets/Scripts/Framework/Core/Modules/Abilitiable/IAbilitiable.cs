@@ -1,5 +1,4 @@
 using System;
-using MobaGame.Entity.Abilities;
 using MobaGame.Framework.Core.Modules.Ability;
 
 namespace MobaGame.Framework.Core.Modules

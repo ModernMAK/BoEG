@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using MobaGame.Framework.Core.Networking.Stream;
+using MobaGame.Framework.Core.Networking.IO;
 using MobaGame.Framework.Core.Serialization;
 
 namespace MobaGame.Framework.Core.Networking.MLAPI
@@ -17,13 +17,13 @@ namespace MobaGame.Framework.Core.Networking.MLAPI
             Stream = new ReadOnlyStream(InternalStream);
         }
 
-        public Message(int code, System.IO.Stream stream)
+        public Message(int code, Stream stream)
         {
             Code = code;
             InternalStream = null;
             Stream = new ReadOnlyStream(stream);
         }
-        public Message(IConvertible code, System.IO.Stream stream)
+        public Message(IConvertible code, Stream stream)
         {
             Code = Convert.ToInt32(code);
             InternalStream = null;
@@ -39,7 +39,7 @@ namespace MobaGame.Framework.Core.Networking.MLAPI
 
         public int Code { get; private set; }
 
-        private System.IO.Stream InternalStream { get; }
+        private Stream InternalStream { get; }
         public ReadOnlyStream Stream { get; }
         private bool OwnStream => InternalStream != null;
 

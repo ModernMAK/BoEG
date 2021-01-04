@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +13,8 @@ namespace MobaGame.Framework.Core.Networking.Tracking
             _networkedDictionary = new NetworkedDictionary<INetworkedUnityObject>();
         }
 
-        public IEnumerator<KeyValuePair<Guid, INetworkedUnityObject>> GetEnumerator()
+
+        public IEnumerator<KeyValuePair<SerializableGuid, INetworkedUnityObject>> GetEnumerator()
         {
             return _networkedDictionary.GetEnumerator();
         }
@@ -26,23 +26,23 @@ namespace MobaGame.Framework.Core.Networking.Tracking
 
         public int Count => _networkedDictionary.Count;
 
-        public bool ContainsKey(Guid key)
+        public bool ContainsKey(SerializableGuid key)
         {
             return _networkedDictionary.ContainsKey(key);
         }
 
-        public bool TryGetValue(Guid key, out INetworkedUnityObject value)
+        public bool TryGetValue(SerializableGuid key, out INetworkedUnityObject value)
         {
             return _networkedDictionary.TryGetValue(key, out value);
         }
 
-        public INetworkedUnityObject this[Guid key] => _networkedDictionary[key];
+        public INetworkedUnityObject this[SerializableGuid key] => _networkedDictionary[key];
 
-        public IEnumerable<Guid> Keys => _networkedDictionary.Keys;
+        public IEnumerable<SerializableGuid> Keys => _networkedDictionary.Keys;
 
         public IEnumerable<INetworkedUnityObject> Values => _networkedDictionary.Values;
 
-        public Guid RequestId()
+        public SerializableGuid RequestId()
         {
             return _networkedDictionary.RequestId();
         }

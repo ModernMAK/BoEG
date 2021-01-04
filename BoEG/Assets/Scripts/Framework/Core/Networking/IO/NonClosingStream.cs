@@ -1,4 +1,4 @@
-namespace MobaGame.Framework.Core.Networking.Stream
+namespace MobaGame.Framework.Core.Networking.IO
 {
     /// <summary>
     /// Wraps a stream.

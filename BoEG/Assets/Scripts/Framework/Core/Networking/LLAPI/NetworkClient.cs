@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using MobaGame.Framework.Core.Networking.Stream;
+using MobaGame.Framework.Core.Networking.IO;
 
 namespace MobaGame.Framework.Core.Networking.LLAPI
 {
@@ -65,7 +65,7 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
         }
 
 
-        public bool ReadMessage(System.IO.Stream stream)
+        public bool ReadMessage(Stream stream)
         {
             if (TryReadMessage(_client, stream, out var read))
             {
@@ -76,7 +76,7 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
             return read;
         }
 
-        public bool WriteMessage(System.IO.Stream stream)
+        public bool WriteMessage(Stream stream)
         {
             if (TryWriteMessage(_client, stream))
             {
@@ -90,16 +90,16 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
         public event EventHandler ClientConnected;
         public event EventHandler ClientDisconnected;
 
-        public event EventHandler<System.IO.Stream> MessageReceived;
-        public event EventHandler<System.IO.Stream> MessageSent;
+        public event EventHandler<Stream> MessageReceived;
+        public event EventHandler<Stream> MessageSent;
 
 
-        protected virtual void OnMessageReceived(System.IO.Stream e)
+        protected virtual void OnMessageReceived(Stream e)
         {
             MessageReceived?.Invoke(this, e);
         }
 
-        protected virtual void OnMessageSent(System.IO.Stream e)
+        protected virtual void OnMessageSent(Stream e)
         {
             MessageSent?.Invoke(this, e);
         }

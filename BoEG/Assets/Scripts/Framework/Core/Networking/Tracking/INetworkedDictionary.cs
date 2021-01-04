@@ -1,14 +1,15 @@
-using System;
 using System.Collections.Generic;
 
 namespace MobaGame.Framework.Core.Networking.Tracking
 {
-    public interface INetworkedDictionary<T> : IReadOnlyDictionary<Guid, T> where T : INetworkIdentifier
-    {
-        public Guid RequestId();
-        public bool TryAdd(T value);
-        public bool TryRemove(T value);
 
-        public bool ContainsKey(T value);
+
+    public interface INetworkedDictionary<TValue> : IReadOnlyDictionary<SerializableGuid, TValue> where TValue : INetworkIdentifier
+    {
+        public SerializableGuid RequestId();
+        public bool TryAdd(TValue value);
+        public bool TryRemove(TValue value);
+        public bool ContainsKey(TValue value);
     }
+
 }

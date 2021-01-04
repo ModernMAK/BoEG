@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using MobaGame.Framework.Core.Networking.Stream;
+using MobaGame.Framework.Core.Networking.IO;
 
 namespace MobaGame.Framework.Core.Networking.LLAPI
 {
@@ -90,8 +90,8 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
         public event EventHandler<Guid> ClientConnected;
         public event EventHandler<Guid> ClientDisconnected;
 
-        public event EventHandler<Tuple<Guid, System.IO.Stream>> MessageReceived;
-        public event EventHandler<Tuple<Guid, System.IO.Stream>> MessageSent;
+        public event EventHandler<Tuple<Guid, Stream>> MessageReceived;
+        public event EventHandler<Tuple<Guid, Stream>> MessageSent;
 
         public event EventHandler ServerStarted;
         public event EventHandler ServerStopped;
@@ -142,7 +142,7 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
                 return false;
             if (read)
             {
-                OnMessageReceived(new Tuple<Guid, System.IO.Stream>(guid, new ReadOnlyStream(stream)));
+                OnMessageReceived(new Tuple<Guid, Stream>(guid, new ReadOnlyStream(stream)));
             }
 
             return read;
@@ -150,7 +150,7 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
             // }
         }
 
-        public void WriteMessageRelay(Guid sender, System.IO.Stream stream)
+        public void WriteMessageRelay(Guid sender, Stream stream)
         {
             var pos = stream.Position;
             foreach (var kvp in Clients)
@@ -162,7 +162,7 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
             }
         }
 
-        public void WriteMessageToAll(System.IO.Stream stream)
+        public void WriteMessageToAll(Stream stream)
         {
             var pos = stream.Position;
             foreach (var kvp in Clients)
@@ -172,7 +172,7 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
             }
         }
 
-        public void WriteMessageToMany(System.IO.Stream stream, params Guid[] guids)
+        public void WriteMessageToMany(Stream stream, params Guid[] guids)
         {
             var pos = stream.Position;
             foreach (var guid in guids)
@@ -182,15 +182,15 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
             }
         }
 
-        public bool WriteMessage(Guid guid, System.IO.Stream stream) => WriteMessage(guid, Clients[guid], stream);
+        public bool WriteMessage(Guid guid, Stream stream) => WriteMessage(guid, Clients[guid], stream);
 
-        private bool WriteMessage(Guid guid, TcpClient client, System.IO.Stream stream)
+        private bool WriteMessage(Guid guid, TcpClient client, Stream stream)
         {
             // using (var netStream = client.GetStream())
             // {
             if (WriteMessage(client.GetStream(), stream))
             {
-                OnMessageSent(new Tuple<Guid, System.IO.Stream>(guid, new ReadOnlyStream(stream)));
+                OnMessageSent(new Tuple<Guid, Stream>(guid, new ReadOnlyStream(stream)));
                 return true;
             }
 
@@ -222,12 +222,12 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
         }
 
 
-        protected virtual void OnMessageReceived(Tuple<Guid, System.IO.Stream> e)
+        protected virtual void OnMessageReceived(Tuple<Guid, Stream> e)
         {
             MessageReceived?.Invoke(this, e);
         }
 
-        protected virtual void OnMessageSent(Tuple<Guid, System.IO.Stream> e)
+        protected virtual void OnMessageSent(Tuple<Guid, Stream> e)
         {
             MessageSent?.Invoke(this, e);
         }

@@ -1,47 +1,100 @@
 using System;
+using MobaGame.Framework.Core.Networking.IO;
+using MobaGame.Framework.Core.Serialization;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace MobaGame.Framework.Core.Networking.Tracking
 {
-    public class NetworkId : MonoBehaviour, INetworkedUnityObject<GameObject>
+    public static class NetworkExtensions
     {
-        
-        
-        public bool Register(INetworkedDictionary<INetworkIdentifier> networkedDictionary)
-        {
-            if (Id == Guid.Empty)
-                Id = networkedDictionary.RequestId();
-            return networkedDictionary.TryAdd(this);
-        }
+        public static void GenerateId<T>(this T identifier)
+            where T : INetworkIdentifier
+            => identifier.SetId(Guid.NewGuid());
 
-        //Should make readonly, its only meant to be viewed
-        [SerializeField] private string _debug;
-        private Guid _guid;
+        public static void GenerateId<T>(this T identifier, INetworkedDictionary<T> dictionary)
+            where T : INetworkIdentifier
+            => identifier.SetId(dictionary.RequestId());
 
-        public Guid Id
+        public static void ClearId<T>(this T identifier)
+            where T : INetworkIdentifier
+            => identifier.SetId(Guid.Empty);
+
+        public static bool TryAdd<T>(this T identifier, INetworkedDictionary<T> dictionary)
+            where T : INetworkIdentifier
+            => dictionary.TryAdd(identifier);
+
+
+        public static bool TryRemove<T>(this T identifier, INetworkedDictionary<T> dictionary)
+            where T : INetworkIdentifier
+            => dictionary.TryRemove(identifier);
+
+        public static bool TryGetAs<T,U>(this INetworkedDictionary<T> dictionary, SerializableGuid guid, out U result)
+            where T : INetworkIdentifier
         {
-            get => _guid;
-            set
+            result = default;
+            if (!dictionary.TryGetValue(guid, out var data)) return false;
+            if (data is U value)
             {
-                _guid = value;
-                _debug = value.ToString();
+                result = value;
+                return true;
             }
-        }
-        Object INetworkedUnityObject.Object => Object;
-        public GameObject Object => gameObject;
 
-        #if UNITY_EDITOR 
+            return false;
+
+        }
+
+        public static bool TrySerialize<T>(this INetworkedDictionary<T> dictionary, SerializableGuid guid, WriteOnlyStream stream) where T : INetworkIdentifier
+        {
+            if (!dictionary.TryGetAs<T, INetworkedSerializable>(guid, out var result)) return false;
+            result.Serialize(stream);
+            return true;
+        }
+        public static bool TryDeserialize<T>(this INetworkedDictionary<T> dictionary, SerializableGuid guid, ReadOnlyStream stream) where T : INetworkIdentifier
+        {
+            if (!dictionary.TryGetAs<T, INetworkedSerializable>(guid, out var result)) return false;
+            result.Deserialize(stream);
+            return true;
+        }
+    }
+
+
+    public interface INetworkedSerializable
+    {
+        void Serialize(WriteOnlyStream stream);
+        void Deserialize(ReadOnlyStream stream);
+    }
+
+    
+
+    public class NetworkId : MonoBehaviour, INetworkedUnityObject<NetworkId>
+    {
+        [SerializeField] private NetworkedUnityObject<NetworkId> _netObject;
+        private NetworkedDictionary<INetworkedUnityObject<Component>> _components;
+        public NetworkedDictionary<INetworkedUnityObject<Component>> Components => _components;
+        public SerializableGuid Id => _netObject.Id;
+        public void SetId(SerializableGuid id) => _netObject.SetId(id);
+
+        Object INetworkedUnityObject.Object => _netObject.Object;
+        public NetworkId Object => _netObject.Object;
+
+
+        private void Awake()
+        {
+            _components = new NetworkedDictionary<INetworkedUnityObject<Component>>();
+            _netObject = new NetworkedUnityObject<NetworkId>(this);
+        }
+
+#if UNITY_EDITOR
         [MenuItem("BoEG/Networking/Generate Scene NetIds")]
         public static void GenerateSceneNetworkIds()
         {
             var allNetIds = FindObjectsOfType<NetworkId>();
             foreach (var netId in allNetIds)
-                if(netId.Id == Guid.Empty)
-                    netId.GeneratedId();
+                if (netId.Id == Guid.Empty)
+                    netId.GenerateId();
         }
-        #endif
-        private void GeneratedId() => Id = Guid.NewGuid();
+#endif
     }
 }
