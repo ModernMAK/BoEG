@@ -18,5 +18,6 @@ MonoBehaviour:
   _tickInterval: 0.25
   _tickCount: 20
   _tickDamage: 5
+  _cooldown: 4
   _nightmareFX: {fileID: 3394095563542465827, guid: f6d11a4b0c281c94cb917246f78d3743,
     type: 3}

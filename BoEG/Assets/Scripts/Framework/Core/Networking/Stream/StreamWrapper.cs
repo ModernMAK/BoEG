@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Stream
 {
     /// <summary>
     /// Stream Wrapper wraps a stream, exposing it as a base stream type.
@@ -8,11 +8,12 @@ namespace Framework.Core.Networking
     ///
     /// It does 'unintentionally' prevent the underlying stream from closing.
     /// </summary>
-    public abstract class StreamWrapper : Stream
+    public abstract class StreamWrapper : System.IO.Stream
     {
         private readonly Stream _stream;
         protected Stream UnderlyingStream => _stream;
         protected StreamWrapper(Stream stream)
+
         {
             _stream = stream;
         }

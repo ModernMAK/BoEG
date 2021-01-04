@@ -1,9 +1,8 @@
 using System;
+using MobaGame.Framework.Core;
 
-namespace Framework.Types
+namespace MobaGame.Framework.Types
 {
-    using IStepableListener = Framework.Core.Modules.IListener<Framework.Types.IStepableEvent>;
-
     [Obsolete("Use IStepableEvent Instead", false)]
     public interface IStepable
     {

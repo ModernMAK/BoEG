@@ -1,23 +1,94 @@
 using System;
 using System.Collections.Generic;
-using Framework.Types;
-using Modules.Teamable;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Core.Trigger;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     [DisallowMultipleComponent]
     public class Attackerable : MonoBehaviour, IAttackerable, IInitializable<IAttackerableData>,
-        IListener<IStepableEvent>
+        IListener<IStepableEvent>, IRespawnable
     {
+        private Actor _actor;
+
+        public const string AttackerableTrigger = "Attackerable Trigger";
+
         private void Awake()
         {
-            var actor = GetComponent<Actor>();
+            _actor = GetComponent<Actor>();
             _teamable = GetComponent<ITeamable>();
-            _triggerHelper = TriggerUtility.CreateTrigger<SphereCollider>(actor, "Attackerable Trigger");
+            _triggerHelper = TriggerUtility.CreateTrigger<SphereCollider>(_actor, AttackerableTrigger);
             _targets = new List<Actor>();
             _triggerHelper.Trigger.Enter += TriggerOnEnter;
             _triggerHelper.Trigger.Exit += TriggerOnExit;
+            if (_teamable != null)
+            {
+                _teamable.TeamChanged += OnMyTeamChanged;
+            }
+
+            _attackCooldown = new DurationTimer(0f);
+            _attackCooldown.SetDone();
+        }
+
+        private void OnMyTeamChanged(object sender, TeamData e)
+        {
+            InstantlyRebuildTargets();
+        }
+
+        private void InstantlyRebuildTargets()
+        {
+            while (_targets.Count > 0)
+            {
+                InternalRemoveActor(_targets[0]);
+            }
+
+            var colliders = _triggerHelper.Trigger.OverlapCollider((int) LayerMaskHelper.Entity);
+            foreach (var col in colliders)
+            {
+                if (AbilityHelper.TryGetActor(col, out var actor))
+                    InternalAddActor(actor);
+            }
+        }
+
+
+        void InternalAddActor(Actor actor)
+        {
+            if (actor == _actor)
+                return;
+            if (Targets.Contains(actor))
+                return;
+
+            if (!actor.TryGetComponent<IDamageTarget>(out _))
+                return;
+
+            if (actor.TryGetComponent<IHealthable>(out var healthable))
+                healthable.Died += TargetDied;
+
+            if (actor.TryGetComponent<ITeamable>(out var teamable))
+                teamable.TeamChanged += OnTargetTeamChanged;
+
+            if (_teamable?.SameTeam(teamable) ?? false)
+                return;
+
+            _targets.Add(actor);
+        }
+
+        void InternalRemoveActor(Actor actor)
+        {
+            if (actor.TryGetComponent<IHealthable>(out var healthble))
+                healthble.Died -= TargetDied;
+
+            if (actor.TryGetComponent<ITeamable>(out var teamable))
+                teamable.TeamChanged -= OnTargetTeamChanged;
+
+            _targets.Remove(actor);
+        }
+
+        private void OnTargetTeamChanged(object sender, TeamData e)
+        {
+            InstantlyRebuildTargets();
         }
 
 
@@ -25,9 +96,11 @@ namespace Framework.Core.Modules
         {
             var go = e.Collider.gameObject;
 
+
             if (!go.TryGetComponent<Actor>(out var actor))
                 return;
-            _targets.Remove(actor);
+
+            InternalRemoveActor(actor);
         }
 
         private void TriggerOnEnter(object sender, TriggerEventArgs e)
@@ -35,31 +108,20 @@ namespace Framework.Core.Modules
             var go = e.Collider.gameObject;
             if (!go.TryGetComponent<Actor>(out var actor))
                 return;
-            if (Targets.Contains(actor))
-                return;
-            if (_teamable != null && go.TryGetComponent<ITeamable>(out var teamable))
-                if (_teamable.SameTeam(teamable))
-                    return;
 
-
-            if (go.TryGetComponent<IHealthable>(out var healthble))
-                healthble.Died += TargetDied;
-            Targets.Add(actor);
+            InternalAddActor(actor);
         }
 
 
         private void TargetDied(object sender, DeathEventArgs e)
         {
-            var healthable = sender as IHealthable;
-            healthable.Died -= TargetDied;
-            Targets.Remove(e.Self);
+            InternalRemoveActor(e.Self);
         }
 
         private List<Actor> _targets;
         private IList<Actor> Targets => _targets;
 
-
-        private float _cooldownEnd = float.MinValue;
+        private DurationTimer _attackCooldown;
         private TriggerHelper<SphereCollider> _triggerHelper;
         private ITeamable _teamable;
 
@@ -74,10 +136,14 @@ namespace Framework.Core.Modules
 
         public bool IsRanged { get; protected set; }
 
-        public bool IsAttackOnCooldown => (Time.time <= _cooldownEnd);
+        public bool IsAttackOnCooldown => !_attackCooldown.Done;
 
 
-        private void PutAttackOnCooldown() => _cooldownEnd = Time.time + AttackCooldown;
+        private void PutAttackOnCooldown()
+        {
+            _attackCooldown.Duration = AttackCooldown;
+            _attackCooldown.Reset();
+        }
 
         public void Attack(Actor actor)
         {
@@ -151,49 +217,26 @@ namespace Framework.Core.Modules
         private void OnPreStep(float deltaTime)
         {
             _triggerHelper.Collider.radius = AttackRange;
-        }
-
-        //TODO drop this; use DeadEvent and a TeamChanged Event
-        private void OnPhysicsStep(float deltaTime)
-        {
-            for (var i = 0; i < _targets.Count; i++)
-            {
-                var actor = _targets[i];
-                if (actor == null)
-                {
-                    _targets.RemoveAt(i);
-                    i--;
-                    continue;
-                }
-
-                if (!actor.gameObject.activeSelf)
-                {
-                    _targets.RemoveAt(i);
-                    i--;
-                    continue;
-                }
-
-                if (_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
-                    if (_teamable.SameTeam(teamable))
-                    {
-                        _targets.RemoveAt(i);
-                        i--;
-                        continue;
-                    }
-            }
+            if (!_attackCooldown.Done)
+                _attackCooldown.AdvanceTime(deltaTime);
         }
 
 
         public void Register(IStepableEvent source)
         {
             source.PreStep += OnPreStep;
-            source.PhysicsStep += OnPhysicsStep;
+            // source.PhysicsStep += OnPhysicsStep;
         }
 
         public void Unregister(IStepableEvent source)
         {
             source.PreStep -= OnPreStep;
-            source.PhysicsStep -= OnPhysicsStep;
+            // source.PhysicsStep -= OnPhysicsStep;
+        }
+
+        public void Respawn()
+        {
+            _attackCooldown.SetDone();
         }
     }
 }

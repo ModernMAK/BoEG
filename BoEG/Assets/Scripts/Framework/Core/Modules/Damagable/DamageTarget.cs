@@ -1,8 +1,8 @@
 using System;
-using Framework.Types;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(IHealthable))]
@@ -31,6 +31,8 @@ namespace Framework.Core.Modules
             _healthable.Health -= dmgArg.Damage.Value;
             OnDamaged(dmgArg);
         }
+
+        public void TakeDamage(SourcedDamage<GameObject> damage) => TakeDamage(damage.Source, damage.Damage);
 
         public event EventHandler<DamageEventArgs> Damaged
         {

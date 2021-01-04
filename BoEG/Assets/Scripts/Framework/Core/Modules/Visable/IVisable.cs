@@ -1,4 +1,4 @@
-﻿namespace Old.Modules.Visable
+﻿namespace MobaGame.Framework.Core.Modules
 {
     public interface IVisable
     {

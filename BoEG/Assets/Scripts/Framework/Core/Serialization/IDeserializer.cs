@@ -1,4 +1,4 @@
-namespace Framework.Core.Serialization
+namespace MobaGame.Framework.Core.Serialization
 {
     public interface IDeserializer
     {

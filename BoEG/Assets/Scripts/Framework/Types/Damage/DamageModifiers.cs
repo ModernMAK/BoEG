@@ -1,6 +1,6 @@
 using System;
 
-namespace Framework.Types
+namespace MobaGame.Framework.Types
 {
     [Flags]
     public enum DamageModifiers

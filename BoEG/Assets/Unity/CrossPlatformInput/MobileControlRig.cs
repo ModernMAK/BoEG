@@ -1,12 +1,13 @@
+using UnityEditor;
+using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.EventSystems;
 #if UNITY_EDITOR
-using UnityEditor;
-using UnityEditor.Build;
+
 #endif
 
 
-namespace UnityStandardAssets.CrossPlatformInput
+namespace Unity.CrossPlatformInput
 {
     [ExecuteInEditMode]
     public class MobileControlRig : MonoBehaviour

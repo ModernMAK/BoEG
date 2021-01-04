@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     [RequireComponent(typeof(IMovable))]
     public class MovableTester : MonoBehaviour

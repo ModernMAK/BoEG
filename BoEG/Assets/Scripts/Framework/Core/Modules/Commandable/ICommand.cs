@@ -1,6 +1,6 @@
-using Framework.Types;
+using MobaGame.Framework.Types;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     public interface ICommand : IStepable
     {

@@ -1,15 +1,16 @@
 using System.Collections.Generic;
-using Entity.Abilities.FlameWitch;
-using Framework.Ability;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Types;
+using MobaGame.FX;
 using UnityEngine;
 
-namespace Entity.Abilities.DarkHeart
+namespace MobaGame.Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(menuName = "Ability/DarkHeart/Nightmare")]
-    public class Nightmare : AbilityObject, IObjectTargetAbility<Actor>, IListener<IStepableEvent>
+    public class Nightmare : AbilityObject, IObjectTargetAbility<Actor>, IListener<IStepableEvent>, IStatCostAbility,
+        ICooldownAbility
     {
 #pragma warning disable 0649
         [SerializeField] private float _manaCost;
@@ -18,8 +19,9 @@ namespace Entity.Abilities.DarkHeart
         [SerializeField] private int _tickCount;
         [SerializeField] private float _tickDamage;
         private List<TickAction> _ticks;
+        [SerializeField] private float _cooldown;
         [SerializeField] private GameObject _nightmareFX;
-
+        private DurationTimer _cooldownTimer;
 #pragma warning restore 0649
 
         private void ApplyFX(Transform target, float duration)
@@ -41,29 +43,37 @@ namespace Entity.Abilities.DarkHeart
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _commonAbilityInfo.ManaCost = _manaCost;
-            _commonAbilityInfo.Range = _castRange;
             _ticks = new List<TickAction>();
+            _cooldownTimer = new DurationTimer(_cooldown,true);
             Register(actor);
         }
 
         public override void ConfirmCast()
         {
             var ray = AbilityHelper.GetScreenRay();
+            if (!_cooldownTimer.Done)
+                return;
             if (!AbilityHelper.TryGetEntity(ray, out var hit))
                 return;
             if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
                 return;
+            if(actor == Self)
+                return;
+            if (!AbilityHelper.InRange(Self.transform, actor.transform, _castRange))
+                return;
             if (!AbilityHelper.HasAllComponents(actor.gameObject, typeof(IDamageTarget)))
                 return;
-            if (!_commonAbilityInfo.TrySpendMana())
+            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
+            _cooldownTimer.Reset();
             CastObjectTarget(actor);
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
 
         private void OnStep(float deltaTime)
         {
             _ticks.AdvanceAllAndRemoveDone(deltaTime);
+            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
         }
 
         public void Register(IStepableEvent source)
@@ -82,6 +92,7 @@ namespace Entity.Abilities.DarkHeart
             var damagePerTick = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
             var damageable = target.GetComponent<IDamageTarget>();
 
+
             void InternalTick()
             {
                 damageable.TakeDamage(Self.gameObject, damagePerTick);
@@ -93,9 +104,29 @@ namespace Entity.Abilities.DarkHeart
                 TickCount = _tickCount,
                 TickInterval = _tickInterval
             };
+
+            if (target.TryGetComponent<IHealthable>(out var healthable))
+                healthable.Died += RemoveTick;
+
+            void RemoveTick(object sender, DeathEventArgs args)
+            {
+                healthable.Died -= RemoveTick;
+                _ticks.Remove(tickWrapper);
+            }
+
+
             _ticks.Add(tickWrapper);
             ApplyFX(target.transform, _tickInterval * _tickCount);
-            _commonAbilityInfo.NotifySpellCast();
         }
+
+        public float Cost => _manaCost;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
+
+        public float Cooldown => _cooldownTimer.Duration;
+
+        public float CooldownRemaining => _cooldownTimer.RemainingTime;
+
+        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
     }
 }

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Framework.Core.Trigger
+namespace MobaGame.Framework.Core.Trigger
 {
     public abstract class Pool<T> : IPool<T>
     {

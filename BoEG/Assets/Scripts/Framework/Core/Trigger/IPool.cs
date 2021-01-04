@@ -1,4 +1,4 @@
-namespace Framework.Core.Trigger
+namespace MobaGame.Framework.Core.Trigger
 {
     public interface IPool<T>
     {

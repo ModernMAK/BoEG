@@ -1,6 +1,6 @@
-using Framework.Types;
+using MobaGame.Framework.Types;
 
-namespace Framework.Core.Modules.Commands
+namespace MobaGame.Framework.Core.Modules.Commands
 {
     public abstract class BaseCommand : ICommand
     {

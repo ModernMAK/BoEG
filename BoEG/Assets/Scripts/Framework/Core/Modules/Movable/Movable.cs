@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     [DisallowMultipleComponent]
     //We use stationary on navmesh obstacle, which means we dont need to use it here

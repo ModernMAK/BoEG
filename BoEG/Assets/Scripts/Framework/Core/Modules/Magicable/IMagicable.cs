@@ -1,6 +1,6 @@
 using System;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     public interface IMagicable
     {
@@ -13,5 +13,16 @@ namespace Framework.Core.Modules
         bool HasMagic(float mana);
         void SpendMagic(float mana);
         event EventHandler<float> MagicChanged;
+    }
+
+    public static class IMagicableExtensions
+    {
+        public static bool TrySpendMagic(this IMagicable magicable, float mana)
+        {
+            if (!magicable.HasMagic(mana)) return false;
+            magicable.SpendMagic(mana);
+            return true;
+
+        }
     }
 }

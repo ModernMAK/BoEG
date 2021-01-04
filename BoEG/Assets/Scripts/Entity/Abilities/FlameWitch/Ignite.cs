@@ -1,14 +1,12 @@
-using System;
 using System.Collections.Generic;
-using Framework.Ability;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
-using Triggers;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Types;
+using MobaGame.FX;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-namespace Entity.Abilities.FlameWitch
+namespace MobaGame.Entity.Abilities.FlameWitch
 {
     /* Unit-Target Spell
         * Applies DOT
@@ -20,7 +18,8 @@ namespace Entity.Abilities.FlameWitch
 
 
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Ignite")]
-    public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>
+    public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>, IStatCostAbility,
+        ICooldownAbility
     {
 #pragma warning disable 0649
         [Header("Cast Range")] [SerializeField]
@@ -30,6 +29,9 @@ namespace Entity.Abilities.FlameWitch
         private float _damage = 100f;
 
 
+        [Header("Cooldown")] [SerializeField] private float _cooldown;
+        private DurationTimer _cooldownTimer;
+
         [Header("Mana Cost")] [SerializeField] private float _manaCost = 100f;
 
         [Header("OverHeat FX")] [SerializeField]
@@ -37,7 +39,7 @@ namespace Entity.Abilities.FlameWitch
 
         [Header("Damage Over Time")] [SerializeField]
         private float _tickInterval;
-        
+
         [SerializeField] private int _tickCount;
 
         [SerializeField] private float _tickDamage;
@@ -46,14 +48,12 @@ namespace Entity.Abilities.FlameWitch
         private Overheat _overheatAbility;
 
         private List<TickAction> _ticks;
-        
-[SerializeField]
-        private GameObject _igniteFX;
+
+        [SerializeField] private GameObject _igniteFX;
 #pragma warning restore 0649
 
         private void ApplyFX(Transform target, float duration)
         {
-            
             if (_igniteFX == null)
                 return;
             var instance = Instantiate(_igniteFX, target.position, Quaternion.identity);
@@ -82,7 +82,6 @@ namespace Entity.Abilities.FlameWitch
 //            var targetable = target.GetComponent<ITargetable>();
             var damagable = target.GetComponent<IDamageTarget>();
             damagable.TakeDamage(Self.gameObject, damage);
-            //TODO add DOT
             //Gather DOT targets
             var dotTargets = new List<Actor> {target};
             if (IsInOverheat)
@@ -91,39 +90,57 @@ namespace Entity.Abilities.FlameWitch
                     (int) LayerMaskHelper.Entity);
                 foreach (var collider in colliders)
                 {
-                    var actor = collider.GetComponent<Actor>();
+                    if (!AbilityHelper.TryGetActor(collider, out var actor))
+                        continue;
+                    if (IsSelf(actor))
+                        continue;
                     if (actor == target) //Already added
                         continue;
-                    if (actor == null) //Not an actor
-                        continue;
-                    if (_commonAbilityInfo.SameTeam(actor.gameObject))
+                    if (AbilityHelper.SameTeam(Modules.Teamable, actor.gameObject))
                         continue; //Skip allies
                     dotTargets.Add(actor);
                 }
             }
 
             foreach (var actor in dotTargets)
-                if (GetDotAction(actor, out var action))
+            {
+                if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
+                    continue;
+                var source = Self.gameObject;
+                var dotDamage = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
+
+                void internalFunc()
                 {
-                    var tickWrapper = new TickAction
-                    {
-                        Callback = action,
-                        TickCount = _tickCount,
-                        TickInterval = _tickInterval
-                    };
-                    _ticks.Add(tickWrapper);
-                    ApplyFX(actor.transform,_tickCount * _tickInterval);
+                    damageTarget.TakeDamage(source, dotDamage);
                 }
 
-            _commonAbilityInfo.NotifySpellCast();
+                var tickWrapper = new TickAction
+                {
+                    Callback = internalFunc,
+                    TickCount = _tickCount,
+                    TickInterval = _tickInterval
+                };
+
+                if (!actor.TryGetComponent<IHealthable>(out var healthable))
+                    healthable.Died += RemoveTick;
+
+                void RemoveTick(object sender, DeathEventArgs args)
+                {
+                    healthable.Died -= RemoveTick;
+                    _ticks.Remove(tickWrapper);
+                }
+
+
+                _ticks.Add(tickWrapper);
+                ApplyFX(actor.transform, _tickCount * _tickInterval);
+            }
         }
 
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-
-            _commonAbilityInfo.Abilitiable.FindAbility(out _overheatAbility);
-            _commonAbilityInfo.ManaCost = _manaCost;
+            Modules.Abilitiable.FindAbility(out _overheatAbility);
+            _cooldownTimer = new DurationTimer(_cooldown, true);
             //Manually inject the ability as a stepable
             actor.AddSteppable(this);
             _ticks = new List<TickAction>();
@@ -132,56 +149,51 @@ namespace Entity.Abilities.FlameWitch
 
         public override void ConfirmCast()
         {
+            if (!_cooldownTimer.Done)
+                return;
+
             var ray = AbilityHelper.GetScreenRay();
             if (!AbilityHelper.TryGetEntity(ray, out var hit))
-                return;
-            if (!AbilityHelper.InRange(Self.transform, hit.point, _castRange))
                 return;
             if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
                 return;
             if (IsSelf(actor))
                 return;
+            if (!AbilityHelper.InRange(Self.transform, actor.transform.position, _castRange))
+                return;
             if (!AbilityHelper.HasAllComponents(actor.gameObject, typeof(IDamageTarget)))
                 return;
-            if (!_commonAbilityInfo.TrySpendMana())
+            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
-
+            _cooldownTimer.Reset();
             CastObjectTarget(actor);
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCost});
         }
 
-
-        private bool GetDotAction(Actor actor, out Action dotAction)
-        {
-            dotAction = default;
-            var dmgTarget = actor.GetComponent<IDamageTarget>();
-            if (dmgTarget == null)
-                return false;
-
-            var source = Self.gameObject;
-            var damage = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
-
-            void internalFunc()
-            {
-                dmgTarget.TakeDamage(source, damage);
-            }
-
-            dotAction = internalFunc;
-            return true;
-        }
-
-        public override float GetManaCost()
-        {
-            return _manaCost;
-        }
 
         public void Register(IStepableEvent source)
         {
+            source.PreStep += OnPreStep;
             source.Step += OnStep;
+        }
+
+        private void OnPreStep(float deltaTime)
+        {
+            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
         }
 
         public void Unregister(IStepableEvent source)
         {
+            source.PreStep -= OnPreStep;
             source.Step -= OnStep;
         }
+
+        public float Cost => _manaCost;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
+
+        public float Cooldown => _cooldownTimer.Duration;
+        public float CooldownRemaining => _cooldownTimer.RemainingTime;
+        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
     }
 }

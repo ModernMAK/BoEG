@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Tracking
 {
     public class NetworkId : MonoBehaviour, INetworkedUnityObject<GameObject>
     {

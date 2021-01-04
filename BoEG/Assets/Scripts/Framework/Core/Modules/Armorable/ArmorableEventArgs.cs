@@ -1,8 +1,7 @@
 using System;
-using Framework.Types;
-using UnityEngine;
+using MobaGame.Framework.Types;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     public static class ArmorableEventArgsUtilities
     {

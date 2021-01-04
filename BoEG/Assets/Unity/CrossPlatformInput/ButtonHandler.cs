@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UnityStandardAssets.CrossPlatformInput
+namespace Unity.CrossPlatformInput
 {
     public class ButtonHandler : MonoBehaviour
     {

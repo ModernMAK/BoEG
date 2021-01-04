@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Framework.Core.Modules.Commands
+namespace MobaGame.Framework.Core.Modules.Commands
 {
     public abstract class EntityCommand : BaseCommand
     {

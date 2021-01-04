@@ -1,20 +1,22 @@
-﻿using Framework.Ability;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
-using Modules.Teamable;
-using Triggers;
+﻿using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Entity.Abilities.FlameWitch
+namespace MobaGame.Entity.Abilities.FlameWitch
 {
     [CreateAssetMenu(menuName = "Ability/FlameWitch/FireBall")]
-    public class Fireball : AbilityObject, IGroundTargetAbility
+    public class Fireball : AbilityObject, IGroundTargetAbility, IStatCostAbility, ICooldownAbility,
+        IListener<IStepableEvent>
     {
 #pragma warning disable 0649
         private Overheat _overheat;
         [Header("Mana")] [SerializeField] private float _manaCost;
         [Header("Damage")] [SerializeField] private float _damage;
+
+        [Header("Cooldown")] [SerializeField] private float _cooldown;
+        private DurationTimer _cooldownTimer;
 
         [Header("Cast Range")] [SerializeField]
         private float _castRange;
@@ -22,6 +24,8 @@ namespace Entity.Abilities.FlameWitch
         [SerializeField] private float _overheatCastRange;
         [SerializeField] private float _pathWidth;
 #pragma warning restore 0649
+
+        private float CurrentCastRange => _overheat.Active ? _overheatCastRange : _castRange;
 
         /* Ground-Target Spell
          * Deals damage along path.
@@ -31,35 +35,39 @@ namespace Entity.Abilities.FlameWitch
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _commonAbilityInfo.Abilitiable.FindAbility(out _overheat);
-            _commonAbilityInfo.ManaCost = _manaCost;
+            _cooldownTimer = new DurationTimer(_cooldown,true);
+            Modules.Abilitiable.FindAbility(out _overheat);
+            Register(actor);
         }
 
         public override void ConfirmCast()
         {
+            if (!_cooldownTimer.Done)
+                return;
             var ray = AbilityHelper.GetScreenRay();
             if (!AbilityHelper.TryGetWorld(ray, out var hit))
                 return;
-            _commonAbilityInfo.Range = _overheat.IsActive ? _overheatCastRange : _castRange;
-            if (!_commonAbilityInfo.InRange(hit.point))
+            var range = _overheat.IsActive ? _overheatCastRange : _castRange;
+            if (!AbilityHelper.InRange(Self.transform, hit.point, range))
                 return;
-            if (!_commonAbilityInfo.TrySpendMana())
+            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
 
+            _cooldownTimer.Reset();
             CastGroundTarget(hit.point);
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
 
         public void CastGroundTarget(Vector3 worldPos)
         {
-            var t = Self.transform.position;
-            var p = worldPos;
-            var dir = (p - t);
-            var travelDistance = (_overheat.IsActive ? _overheatCastRange : _castRange);
-            var center = t + dir.normalized * travelDistance / 2f;
-            var bound = new Vector3(_pathWidth, 2, travelDistance);
-            var halfBound = bound / 2;
-            var rotation = Quaternion.LookRotation(dir);
-            var colliders = Physics.OverlapBox(center, halfBound, rotation, (int) LayerMaskHelper.Entity);
+            var origin = Self.transform.position;
+            var boxBaseSize = new Vector2(_pathWidth, 2);
+            var length = AbilityHelper.GetLineLength(origin, worldPos);
+            length = Mathf.Min(length, CurrentCastRange);
+            var boxHalfExtents = new Vector3(boxBaseSize.x, boxBaseSize.y, length) / 2;
+            var rotation = AbilityHelper.GetRotation(origin, worldPos);
+            var center = AbilityHelper.GetBoxCenter(origin, boxHalfExtents, rotation);
+            var colliders = Physics.OverlapBox(center, boxHalfExtents, rotation, (int) LayerMaskHelper.Entity);
             var dmg = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
 
             foreach (var col in colliders)
@@ -70,7 +78,7 @@ namespace Entity.Abilities.FlameWitch
                 if (IsSelf(actor))
                     continue; //Always ignore self
 
-                if (_commonAbilityInfo.SameTeam(actor.gameObject))
+                if (AbilityHelper.SameTeam(Modules.Teamable, actor.gameObject))
                     continue; //Ignore if allies
 
                 if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
@@ -78,8 +86,31 @@ namespace Entity.Abilities.FlameWitch
 
                 damageTarget.TakeDamage(Self.gameObject, dmg);
             }
+        }
 
-            _commonAbilityInfo.NotifySpellCast();
+        public float Cost => _manaCost;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
+
+        public float Cooldown => _cooldownTimer.Duration;
+
+        public float CooldownRemaining => _cooldownTimer.RemainingTime;
+
+        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
+
+        public void Register(IStepableEvent source)
+        {
+            source.PreStep += OnPreStep;
+        }
+
+        private void OnPreStep(float deltaTime)
+        {
+            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PreStep += OnPreStep;
         }
     }
 }

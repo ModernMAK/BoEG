@@ -1,7 +1,6 @@
-using UI;
 using UnityEngine;
 
-namespace System
+namespace MobaGame.UI
 {
     public class ActorPanel : MonoBehaviour
     {
@@ -18,6 +17,10 @@ namespace System
             _setTarget = false;
             _recollectUi = false;
             _uis = GetComponentsInChildren<DebugUI>();
+        }
+
+        private void Start()
+        {
             SetTargets();
         }
 

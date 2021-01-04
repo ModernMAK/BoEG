@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 
-public class SpellAoeVisualizer : MonoBehaviour
+namespace MobaGame.Framework.Core.Util
 {
-    public void SetAoeSize(float radius)
+    public class SpellAoeVisualizer : MonoBehaviour
     {
-        transform.localScale = Vector3.one * radius;
-    }
+        public void SetAoeSize(float radius)
+        {
+            transform.localScale = Vector3.one * radius;
+        }
 
-    public void SetPoint(Vector3 point)
-    {
-        transform.position = point + Vector3.up / 100f;
+        public void SetPoint(Vector3 point)
+        {
+            transform.position = point + Vector3.up / 100f;
+        }
     }
 }

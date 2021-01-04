@@ -1,4 +1,4 @@
-namespace Entity.Abilities.LastHunter
+namespace MobaGame.Entity.Abilities.LastHunter
 {
     public class ReleasingTheHounds
     {

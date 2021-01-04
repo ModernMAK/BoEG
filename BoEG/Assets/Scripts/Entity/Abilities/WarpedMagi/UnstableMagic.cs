@@ -1,17 +1,16 @@
 using System.Collections.Generic;
-using Entity.Abilities.FlameWitch;
-using Framework.Ability;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
-using Modules.Teamable;
-using Triggers;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Types;
+using MobaGame.FX;
 using UnityEngine;
 
-namespace Entity.Abilities.WarpedMagi
+namespace MobaGame.Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/UnstableMagic")]
-    public class UnstableMagic : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>
+    public class UnstableMagic : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>, IStatCostAbility,
+        ICooldownAbility, IListener<IStepableEvent>
     {
         // [Header("Mana Cost")]
         /* Ground Target Spell
@@ -27,35 +26,47 @@ namespace Entity.Abilities.WarpedMagi
         [Header("Jumps")] [SerializeField] private float _searchRange;
         [SerializeField] private int _additionalJumps;
 
+        [Header("Cooldown")] [SerializeField] private float _cooldown;
+        private DurationTimer _cooldownTimer;
+
         [SerializeField] private GameObject _unstableMagicFX;
 #pragma warning restore 0649
 
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _commonAbilityInfo.Range = _castRange;
-            _commonAbilityInfo.ManaCost = _manaCost;
+            Register(actor);
+            _cooldownTimer = new DurationTimer(_cooldown, true);
         }
 
         public override void ConfirmCast()
         {
+            if (!_cooldownTimer.Done)
+                return;
             var ray = AbilityHelper.GetScreenRay();
-            if (!Physics.Raycast(ray, out var hit, 100f, (int) (LayerMaskHelper.World | LayerMaskHelper.Entity)))
+            if (!AbilityHelper.TryGetWorldOrEntity(ray, out var hit))
                 return;
 
-            var isGround = !hit.collider.TryGetComponent<Actor>(out var actor);
-            if (isGround && !_commonAbilityInfo.InRange(hit.point))
-                return;
-            if (!isGround && !_commonAbilityInfo.InRange(actor.transform))
+            var unitTarget = AbilityHelper.TryGetActor(hit.collider, out var actor);
+            if (actor == Self)
                 return;
 
-            if (!_commonAbilityInfo.TrySpendMana())
+            if (!unitTarget && !AbilityHelper.InRange(Self.transform, hit.point, _castRange))
+                return;
+            if (unitTarget && !AbilityHelper.InRange(Self.transform, actor.transform, _castRange))
                 return;
 
-            if (isGround)
+            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
+                return;
+
+
+            _cooldownTimer.Reset();
+            if (!unitTarget)
                 CastGroundTarget(hit.point);
             else
                 CastObjectTarget(actor);
+
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
 
         public void CastGroundTarget(Vector3 worldPos)
@@ -94,7 +105,6 @@ namespace Entity.Abilities.WarpedMagi
 
         private void ApplyFX(Transform target)
         {
-            
             if (_unstableMagicFX == null)
                 return;
             var instance = Instantiate(_unstableMagicFX, target.position, Quaternion.identity);
@@ -108,7 +118,7 @@ namespace Entity.Abilities.WarpedMagi
             follow.SetTarget(target);
             die.AllowDeath();
         }
-        
+
         private bool TrySearchTarget(Vector3 area, out Actor target) => TrySearchTarget(area, new Actor[0], out target);
 
         private bool TrySearchTarget(Vector3 area, ICollection<Actor> ignore, out Actor target)
@@ -116,16 +126,15 @@ namespace Entity.Abilities.WarpedMagi
             var potentialTargets = Physics.OverlapSphere(area, _searchRange, (int) LayerMaskHelper.Entity);
             foreach (var potentialTarget in potentialTargets)
             {
-                if (!potentialTarget.TryGetComponent<Actor>(out var actor))
+                if (!AbilityHelper.TryGetActor(potentialTarget, out var actor))
                     continue;
-                if (actor == Self)
+                if (IsSelf(actor))
                     continue;
                 if (ignore.Contains(actor))
                     continue;
-                if (_commonAbilityInfo.Teamable != null)
-                    if (actor.TryGetComponent<ITeamable>(out var teamable))
-                        if (_commonAbilityInfo.SameTeam(teamable))
-                            continue;
+                if (AbilityHelper.SameTeam(Modules.Teamable, actor))
+                    continue;
+
                 //TODO when targetable works, add this
                 // if (!actor.TryGetComponent<ITargetable>(out _))
                 // continue;
@@ -138,6 +147,29 @@ namespace Entity.Abilities.WarpedMagi
 
             target = default;
             return false;
+        }
+
+        public float Cost => _manaCost;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
+
+        public float Cooldown => _cooldownTimer.Duration;
+        public float CooldownRemaining => _cooldownTimer.RemainingTime;
+        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
+
+        public void OnStep(float deltaTime)
+        {
+            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
+        }
+
+        public void Register(IStepableEvent source)
+        {
+            source.PreStep += OnStep;
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PreStep -= OnStep;
         }
     }
 }

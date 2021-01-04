@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Framework.Utility
+namespace MobaGame.Framework.Utility
 {
     public static class FloatUtil
     {

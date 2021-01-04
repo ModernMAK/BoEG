@@ -1,14 +1,14 @@
-using Framework.Ability;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
-using Triggers;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Entity.Abilities.FlameWitch
+namespace MobaGame.Entity.Abilities.FlameWitch
 {
     [CreateAssetMenu(menuName = "Ability/FlameWitch/FlashFire")]
-    public class FlashFire : AbilityObject, INoTargetAbility
+    public class FlashFire : AbilityObject, INoTargetAbility, IStatCostAbility, IListener<IStepableEvent>,
+        IToggleableAbility, ICooldownAbility
     {
         /* Channeling Spell
          * Deals damage in an AOE around FlameWitch
@@ -20,15 +20,23 @@ namespace Entity.Abilities.FlameWitch
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            _commonAbilityInfo.ManaCost = _manaCost;
-            _commonAbilityInfo.Abilitiable.FindAbility<Overheat>(out _overheatAbility);
+            _isActive = false;
+            Register(actor);
+            _channelTimer = new DurationTimer(_channelTime);
+            _cooldownTimer = new DurationTimer(_cooldown, true);
+            Modules.Abilitiable.FindAbility(out _overheatAbility);
         }
 
 #pragma warning disable 0649
         [Header("Channel Time")] [SerializeField]
         private float _channelTime;
 
+        private DurationTimer _channelTimer;
+
         [Header("Mana Cost")] [SerializeField] private float _manaCost;
+
+        [Header("Cooldown")] [SerializeField] private float _cooldown;
+        private DurationTimer _cooldownTimer;
 
         [Header("Area Of Effect")] [SerializeField]
         private float _aoeSearchRange;
@@ -42,14 +50,25 @@ namespace Entity.Abilities.FlameWitch
 
         public override void ConfirmCast()
         {
-            if (!_commonAbilityInfo.TrySpendMana())
+            if (Active)
                 return;
 
+            if (!_cooldownTimer.Done)
+                return;
+
+            if (!Modules.Magicable.TrySpendMagic(Cost))
+                return;
+
+            _isActive = true;
+            _channelTimer.Reset();
             CastNoTarget();
+            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
         }
 
         public void CastNoTarget()
         {
+            //TODO channel
+
             var targets = Physics.OverlapSphere(Self.transform.position, _aoeSearchRange, (int) LayerMaskHelper.Entity);
 
             var damage = new Damage(_aoeDamage, DamageType.Magical, DamageModifiers.Ability);
@@ -62,13 +81,46 @@ namespace Entity.Abilities.FlameWitch
 
                 if (!target.TryGetComponent<IDamageTarget>(out var damageTarget))
                     continue;
-                if (_commonAbilityInfo.SameTeam(target.gameObject))
+                if (AbilityHelper.SameTeam(Modules.Teamable, target))
                     continue;
 
                 damageTarget.TakeDamage(Self.gameObject, damage);
             }
-
-            _commonAbilityInfo.NotifySpellCast();
         }
+
+        public float Cost => _manaCost;
+
+        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
+
+        public void Register(IStepableEvent source)
+        {
+            source.PreStep += OnPreStep;
+        }
+
+        private void OnPreStep(float deltaTime)
+        {
+            if (Active)
+                if (_channelTimer.AdvanceTimeIfNotDone(deltaTime))
+                {
+                    _isActive = false;
+                    _cooldownTimer.Reset();
+                }
+
+            if (!Active)
+            {
+                _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
+            }
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PreStep -= OnPreStep;
+        }
+
+        private bool _isActive;
+        public bool Active => _isActive;
+        public float Cooldown => _cooldownTimer.Duration;
+        public float CooldownRemaining => _cooldownTimer.RemainingTime;
+        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
     }
 }

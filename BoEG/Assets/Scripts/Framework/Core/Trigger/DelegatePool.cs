@@ -1,6 +1,6 @@
 using System;
 
-namespace Framework.Core.Trigger
+namespace MobaGame.Framework.Core.Trigger
 {
     public class DelegatePool<T> : Pool<T>
     {

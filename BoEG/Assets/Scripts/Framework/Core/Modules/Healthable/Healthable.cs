@@ -1,9 +1,9 @@
 using System;
-using Framework.Types;
-using Framework.Utility;
+using MobaGame.Framework.Types;
+using MobaGame.Framework.Utility;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     //Im overcomplicating this for myself
     //Stop overthinking this. Do what unity does best
@@ -11,7 +11,7 @@ namespace Framework.Core.Modules
 
     [DisallowMultipleComponent]
     public class Healthable : Statable,
-        IInitializable<IHealthableData>, IHealthable, IListener<IStepableEvent>
+        IInitializable<IHealthableData>, IHealthable, IListener<IStepableEvent>, IRespawnable
     {
         private event EventHandler<DeathEventArgs> _died;
 
@@ -114,6 +114,12 @@ namespace Framework.Core.Modules
         protected virtual void OnDied(DeathEventArgs e)
         {
             _died?.Invoke(this, e);
+        }
+
+        public void Respawn()
+        {
+            _isDead = false;
+            _percentage = 1f;
         }
     }
 }

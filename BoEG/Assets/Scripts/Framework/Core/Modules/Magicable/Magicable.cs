@@ -1,9 +1,8 @@
 using System;
-using Framework.Types;
-using Framework.Utility;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     //Im overcomplicating this for myself
     //Stop overthinking this. Do what unity does best
@@ -11,7 +10,7 @@ namespace Framework.Core.Modules
 
     [DisallowMultipleComponent]
     public class Magicable : Statable,
-        IInitializable<IMagicableData>, IMagicable, IListener<IStepableEvent>
+        IInitializable<IMagicableData>, IMagicable, IListener<IStepableEvent>, IRespawnable
     {
         public void Initialize(IMagicableData module)
         {
@@ -83,6 +82,11 @@ namespace Framework.Core.Modules
         public void Unregister(IStepableEvent source)
         {
             source.PreStep -= OnPreStep;
+        }
+
+        public void Respawn()
+        {
+            _percentage = 1f;
         }
     }
 }

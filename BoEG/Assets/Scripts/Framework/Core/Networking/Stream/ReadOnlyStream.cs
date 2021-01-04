@@ -1,7 +1,6 @@
 using System;
-using System.IO;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Stream
 {
     /// <summary>
     /// Wraps a stream so that write operations are disabled without recreating the steam.
@@ -11,7 +10,7 @@ namespace Framework.Core.Networking
     {
         private const string ReadOnlyError = "The Stream is Read-Only!";
 
-        public ReadOnlyStream(Stream stream) : base(stream)
+        public ReadOnlyStream(System.IO.Stream stream) : base(stream)
         {
         }
 

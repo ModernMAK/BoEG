@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56b57da634da4cbdadb9a09ebfb3b435, type: 3}
+  m_Name: LastHunter
+  m_EditorClassIdentifier: 
+  _healthableData:
+    _healthGeneration: 1
+    _healthCapacity: 500
+  _magicableData:
+    _magicGeneration: 1
+    _magicCapacity: 300
+    _magicGenerationGain: 0
+    _magicCapacityGain: 0
+  _armorableData:
+    _physical:
+      _block: 0
+      _resist: 0.05
+      _immune: 0
+    _magical:
+      _block: 0
+      _resist: 0.05
+      _immune: 0
+  _attackerableData:
+    _attackRange: 2
+    _attackDamage: 50
+    _attackSpeed: 1
+    _attackInterval: 1
+    _isRanged: 1
+  _movableData:
+    _moveSpeed: 4
+    _turnSpeed: 360
+  _abilities:
+  - {fileID: 11400000, guid: 17eb59ec07896814d9306783f1a04d09, type: 2}
+  _icon: {fileID: 21300000, guid: d881f24b643a44144be3b1a11db44896, type: 3}

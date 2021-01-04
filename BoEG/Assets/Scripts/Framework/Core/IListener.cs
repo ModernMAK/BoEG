@@ -1,4 +1,4 @@
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core
 {
     public interface IListener<in T>
     {

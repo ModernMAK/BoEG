@@ -1,12 +1,12 @@
 using System.Collections.Generic;
-using Entity.Abilities.FlameWitch;
-using Framework.Ability;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Core.Trigger;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Entity.Abilities.WarpedMagi
+namespace MobaGame.Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/MagicalBacklash")]
     public class MagicalBacklash : AbilityObject, IListener<IStepableEvent>
@@ -29,7 +29,7 @@ namespace Entity.Abilities.WarpedMagi
                 target.SpellCasted -= OnSpellCast;
             _targetBuffer.Clear();
         }
-        
+
 
         public override void Initialize(Actor actor)
         {
@@ -43,10 +43,12 @@ namespace Entity.Abilities.WarpedMagi
 
         private void OnActorEnter(object sender, TriggerEventArgs args)
         {
-            var go = args.Collider.gameObject;
-            if (!go.TryGetComponent<Actor>(out _))
+            var collider = args.Collider;
+            if (!AbilityHelper.TryGetActor(collider, out var actor))
                 return;
-            if (!go.TryGetComponent<IAbilitiable>(out var abilitiable))
+            if (IsSelf(actor))
+                return;
+            if (!actor.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
             abilitiable.SpellCasted += OnSpellCast;
             _targetBuffer.Add(abilitiable);
@@ -54,10 +56,10 @@ namespace Entity.Abilities.WarpedMagi
 
         private void OnActorExit(object sender, TriggerEventArgs args)
         {
-            var go = args.Collider.gameObject;
-            if (!go.TryGetComponent<Actor>(out _))
+            var collider = args.Collider;
+            if (!AbilityHelper.TryGetActor(collider, out var actor))
                 return;
-            if (!go.TryGetComponent<IAbilitiable>(out var abilitiable))
+            if (!actor.TryGetComponent<IAbilitiable>(out var abilitiable))
                 return;
             abilitiable.SpellCasted -= OnSpellCast;
             _targetBuffer.Remove(abilitiable);
@@ -67,6 +69,11 @@ namespace Entity.Abilities.WarpedMagi
         private void OnSpellCast(object sender, SpellEventArgs args)
         {
             var caster = args.Caster;
+            if (caster.TryGetComponent<ITeamable>(out var teamable))
+                if (Modules.Teamable?.SameTeam(teamable) ?? false)
+                    return;
+
+
             var damageTarget = caster.GetComponent<IDamageTarget>();
             var damageValue = _damagePerManaSpent * args.ManaSpent;
             damageValue = Mathf.Max(damageValue, 0f);

@@ -1,8 +1,8 @@
 using System;
-using Framework.Types;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     public interface IDamageTarget
     {
@@ -10,6 +10,7 @@ namespace Framework.Core.Modules
         void TakeDamage(Damage damage);
 
         void TakeDamage(GameObject gameObject, Damage damage);
+        void TakeDamage(SourcedDamage<GameObject> damage);
         event EventHandler<DamageEventArgs> Damaged;
         event EventHandler<DamageEventArgs> Damaging;
     }

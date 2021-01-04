@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Tracking
 {
     public interface INetworkedUnityObject<out T> : INetworkedUnityObject where T : Object
     {

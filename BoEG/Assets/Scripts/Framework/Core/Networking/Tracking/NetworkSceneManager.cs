@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Tracking
 {
     public class NetworkSceneManager : MonoBehaviour, INetworkedDictionary<INetworkedUnityObject>
     {

@@ -1,8 +1,8 @@
 using System;
+using Unity.CrossPlatformInput;
 using UnityEngine;
-using UnityStandardAssets.CrossPlatformInput;
 
-namespace UnityStandardAssets.Characters.FirstPerson
+namespace Unity.FirstPersonCharacter
 {
     [Serializable]
     public class MouseLook

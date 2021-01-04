@@ -1,8 +1,8 @@
-﻿using Framework.Core.Modules;
+﻿using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI
+namespace MobaGame.UI
 {
     public class ArmorablePanel : DebugUI
     {

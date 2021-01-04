@@ -1,4 +1,4 @@
-namespace Framework.Core.Modules.Controllable
+namespace MobaGame.Framework.Core.Moduless
 {
     public class Controllable
     {

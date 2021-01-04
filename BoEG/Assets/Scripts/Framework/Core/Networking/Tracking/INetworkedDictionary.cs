@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Tracking
 {
     public interface INetworkedDictionary<T> : IReadOnlyDictionary<Guid, T> where T : INetworkIdentifier
     {
