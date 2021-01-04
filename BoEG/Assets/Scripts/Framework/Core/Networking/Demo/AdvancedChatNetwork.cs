@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using Framework.Core.Networking.MLAPI;
-using Framework.Core.Serialization;
+using MobaGame.Framework.Core.Networking.LLAPI;
+using MobaGame.Framework.Core.Networking.MLAPI;
+using MobaGame.Framework.Core.Networking.Stream;
+using MobaGame.Framework.Core.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Demo
 {
     public class AdvancedChatNetwork : MonoBehaviour
     {

@@ -1,12 +1,13 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
+using MobaGame.Framework.Core.Networking.LLAPI;
+using MobaGame.Framework.Core.Networking.Stream;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Demo
 {
     public class SimpleChatNetwork : MonoBehaviour
     {
@@ -63,7 +64,7 @@ namespace Framework.Core.Networking
             }
         }
 
-        private void ClientOnMessageSent(object sender, Stream e)
+        private void ClientOnMessageSent(object sender, System.IO.Stream e)
         {
             
             using (var reader = new StreamReader(new NonClosingStream(e), Encoding.ASCII))
@@ -99,7 +100,7 @@ namespace Framework.Core.Networking
             _text.text += msg;
         }
 
-        private void ClientOnMessageReceived(object sender, Stream stream)
+        private void ClientOnMessageReceived(object sender, System.IO.Stream stream)
         {
             using (var reader = new StreamReader(new NonClosingStream(stream), Encoding.ASCII))
             {
@@ -145,7 +146,7 @@ namespace Framework.Core.Networking
                 _text.text += msg;
         }
 
-        private void ServerOnMessageReceived(object sender, Tuple<Guid, Stream> tuple)
+        private void ServerOnMessageReceived(object sender, Tuple<Guid, System.IO.Stream> tuple)
         {
             var guid = tuple.Item1;
             var stream = tuple.Item2;
@@ -162,7 +163,7 @@ namespace Framework.Core.Networking
             _server.WriteMessageRelay(guid, stream);
         }
 
-        private void ServerOnMessageSent(object sender, Tuple<Guid, Stream> tuple)
+        private void ServerOnMessageSent(object sender, Tuple<Guid, System.IO.Stream> tuple)
         {
             var guid = tuple.Item1;
             var stream = tuple.Item2;
@@ -212,7 +213,7 @@ namespace Framework.Core.Networking
             if (!IsOnline)
             {
                 _text.text += "[LOG]: Not Online!\n";
-                Debug.Log("Not online!");
+                UnityEngine.Debug.Log("Not online!");
                 return;
             }
 
@@ -221,7 +222,7 @@ namespace Framework.Core.Networking
             if (msg == "")
             {
                 _text.text += "[LOG]: No Text To Send\n";
-                Debug.Log("No Text To Send");
+                UnityEngine.Debug.Log("No Text To Send");
                 return;
             }
 

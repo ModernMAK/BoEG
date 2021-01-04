@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Modules
+namespace MobaGame.Framework.DeleteMe
 {
     public class Effect : IEffect
     {

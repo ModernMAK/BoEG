@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace Framework.Ability
+namespace MobaGame.Framework.Core.Modules.Ability
 {
     public interface IAbilityView
     {

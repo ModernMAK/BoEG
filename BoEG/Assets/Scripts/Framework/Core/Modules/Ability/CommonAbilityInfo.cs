@@ -1,19 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Framework.Core;
-using Framework.Core.Modules;
-using Modules.Teamable;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
-namespace Framework.Ability
+namespace MobaGame.Framework.Core.Modules.Ability
 {
     public interface IProxy<out T>
     {
         T Proxy { get; }
     }
-    
+
     public class ComponentCache
     {
         public ComponentCache(GameObject gameObject)
@@ -22,6 +17,7 @@ namespace Framework.Ability
             _transform = gameObject.transform;
             _cache = new Dictionary<Type, object>();
         }
+
         public ComponentCache(Transform transform)
         {
             _gameObject = transform.gameObject;
@@ -45,6 +41,7 @@ namespace Framework.Ability
                 value = (T) resultObj;
                 return true;
             }
+
             if (_gameObject.TryGetComponent(type, out var resultComp))
             {
                 _cache[type] = resultComp;
@@ -69,12 +66,10 @@ namespace Framework.Ability
         }
 
         public T GetCached<T>() => TryGetCached<T>(out var value) ? value : default;
-        
     }
 
     public class ModuleCache : ComponentCache
     {
-        
         //Helper functions
         public IHealthable Healthable => GetCached<IHealthable>();
         public IMagicable Magicable => GetCached<IMagicable>();
@@ -96,7 +91,7 @@ namespace Framework.Ability
         }
     }
 
-    
+
     public class CommonAbilityInfo
     {
         private readonly Actor _actor;

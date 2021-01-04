@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using Entity.Abilities.FlameWitch;
-using Framework.Ability;
-using Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
 using UnityEngine;
 
-namespace Framework.Core
+namespace MobaGame.Entity.UnitArchtypes
 {
     [RequireComponent(typeof(Healthable))]
     [RequireComponent(typeof(Magicable))]
@@ -12,8 +11,9 @@ namespace Framework.Core
     [RequireComponent(typeof(DamageTarget))]
     [RequireComponent(typeof(Attackerable))]
     [RequireComponent(typeof(Movable))]
-    public class Hero : Actor
+    public class Hero : Framework.Core.Actor
     {
+        
         private Sprite _icon;
         public override Sprite GetIcon() => _icon;
 

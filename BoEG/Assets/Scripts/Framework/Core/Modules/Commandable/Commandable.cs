@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     public class Commandable : MonoBehaviour, ICommandable, IRespawnable
     {

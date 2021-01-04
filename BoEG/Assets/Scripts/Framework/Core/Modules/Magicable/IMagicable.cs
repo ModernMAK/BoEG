@@ -1,6 +1,6 @@
 using System;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     public interface IMagicable
     {

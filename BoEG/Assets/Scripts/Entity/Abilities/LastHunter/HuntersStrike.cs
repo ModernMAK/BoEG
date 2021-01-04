@@ -1,11 +1,10 @@
-using Framework.Ability;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
-using Triggers;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Entity.Abilities.LastHunter
+namespace MobaGame.Entity.Abilities.LastHunter
 {
     [CreateAssetMenu(menuName = "Ability/LastHunter/HunterStrike")]
     public class HuntersStrike : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>, ICooldownAbility,

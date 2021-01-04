@@ -1,12 +1,11 @@
-using Framework.Ability;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
-using Modules.Teamable;
-using Triggers;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Types;
+using MobaGame.FX;
 using UnityEngine;
 
-namespace Entity.Abilities.FlameWitch
+namespace MobaGame.Entity.Abilities.FlameWitch
 {
     /* Transformation Spell
      * Applies DOT around FlameWitch (Melee Range)

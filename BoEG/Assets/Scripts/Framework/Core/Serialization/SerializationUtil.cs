@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Framework.Core.Serialization
+namespace MobaGame.Framework.Core.Serialization
 {
     public static class SerializationUtil
     {

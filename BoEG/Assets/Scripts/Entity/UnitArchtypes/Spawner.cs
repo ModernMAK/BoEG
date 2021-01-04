@@ -1,9 +1,10 @@
-using Modules.Teamable;
+using MobaGame.Entity.AI;
+using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 
-namespace Framework.Core
+namespace MobaGame.Entity.UnitArchtypes
 {
-    public class Spawner : Actor
+    public class Spawner : Framework.Core.Actor
     {
 #pragma warning disable 0649
         [SerializeField] private TeamData _team;

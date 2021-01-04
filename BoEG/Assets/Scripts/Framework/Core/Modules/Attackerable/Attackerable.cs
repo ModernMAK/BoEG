@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Framework.Ability;
-using Framework.Types;
-using Modules.Teamable;
-using Triggers;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Core.Trigger;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     [DisallowMultipleComponent]
     public class Attackerable : MonoBehaviour, IAttackerable, IInitializable<IAttackerableData>,

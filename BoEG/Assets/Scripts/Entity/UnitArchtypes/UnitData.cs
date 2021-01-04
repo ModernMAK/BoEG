@@ -1,7 +1,7 @@
-using Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 
-namespace Framework.Core
+namespace MobaGame.Entity.UnitArchtypes
 {
     [CreateAssetMenu(menuName = "Actor/Unit")]
     public class UnitData : ScriptableObject

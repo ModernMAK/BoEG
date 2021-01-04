@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
-using Entity.Abilities.FlameWitch;
-using Framework.Ability;
-using Framework.Types;
-using Modules.Teamable;
+using MobaGame.Entity.Abilities;
+using MobaGame.Framework.Core.Trigger;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     public class Aggroable : MonoBehaviour, IAggroable, IInitializable<IAggroableData>, IListener<IStepableEvent>
     {

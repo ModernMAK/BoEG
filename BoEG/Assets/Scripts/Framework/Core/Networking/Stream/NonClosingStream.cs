@@ -1,6 +1,4 @@
-using System.IO;
-
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Stream
 {
     /// <summary>
     /// Wraps a stream.
@@ -8,7 +6,7 @@ namespace Framework.Core.Networking
     /// </summary>
     public class NonClosingStream : StreamWrapper
     {
-        public NonClosingStream(Stream stream) : base(stream)
+        public NonClosingStream(System.IO.Stream stream) : base(stream)
         {
         }
     }

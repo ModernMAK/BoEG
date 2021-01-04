@@ -1,12 +1,10 @@
 using System;
 using System.Linq;
-using Framework.Core;
-using Framework.Core.Modules;
-using Modules.Teamable;
-using Triggers;
+using MobaGame.Framework.Types;
+using MobaGame.Input;
 using UnityEngine;
 
-namespace Framework.Ability
+namespace MobaGame.Framework.Core.Modules.Ability
 {
     public static class AbilityHelper
     {

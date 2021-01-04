@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Triggers
+namespace MobaGame.Framework.Types
 {
     [Flags]
     public enum LayerMaskHelper

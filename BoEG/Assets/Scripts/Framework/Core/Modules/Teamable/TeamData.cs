@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Modules.Teamable
+namespace MobaGame.Framework.Core.Modules
 {
     [CreateAssetMenu(fileName = "TeamData.asset", menuName = "Module/TeamData")]
     public class TeamData : ScriptableObject

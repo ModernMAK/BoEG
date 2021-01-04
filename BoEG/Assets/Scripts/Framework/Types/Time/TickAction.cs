@@ -1,6 +1,6 @@
 using System;
 
-namespace Framework.Types
+namespace MobaGame.Framework.Types
 {
     public class TickAction : TickHelper
     {

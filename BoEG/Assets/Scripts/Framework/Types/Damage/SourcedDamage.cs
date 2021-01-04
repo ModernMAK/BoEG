@@ -1,4 +1,4 @@
-namespace Framework.Types
+namespace MobaGame.Framework.Types
 {
     public readonly struct SourcedDamage<TSource>
     {

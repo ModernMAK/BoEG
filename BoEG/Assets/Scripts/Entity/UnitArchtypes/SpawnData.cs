@@ -4,7 +4,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-namespace Framework.Core
+namespace MobaGame.Entity.UnitArchtypes
 {
     [Serializable]
     public class  SpawnData

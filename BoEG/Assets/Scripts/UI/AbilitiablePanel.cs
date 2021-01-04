@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Framework.Ability;
+using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 
-namespace UI
+namespace MobaGame.UI
 {
     public class AbilitiablePanel : DebugUI
     {

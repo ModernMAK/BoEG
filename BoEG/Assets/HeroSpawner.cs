@@ -1,83 +1,86 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
+using MobaGame.Entity.UnitArchtypes;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Types;
 using UnityEngine;
-using Random = System.Random;
 
-public interface IRespawnable
+namespace MobaGame
 {
-    void Respawn();
-}
+    public interface IRespawnable
+    {
+        void Respawn();
+    }
 
-public class HeroSpawner : MonoBehaviour
-{
+    public class HeroSpawner : MonoBehaviour
+    {
 #pragma warning disable 0649
-    [SerializeField] private float _deathCooldown;
+        [SerializeField] private float _deathCooldown;
 
-    [SerializeField] private Transform[] _spawnPoints;
+        [SerializeField] private Transform[] _spawnPoints;
 #pragma warning restore 0649
-    private Transform GetRandomTransform() => _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Length)];
-    private List<Tuple<Actor, DurationTimer>> _deadTracker;
+        private Transform GetRandomTransform() => _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Length)];
+        private List<Tuple<Actor, DurationTimer>> _deadTracker;
 
-    private List<Actor> _heroTracker;
+        private List<Actor> _heroTracker;
 
-    private void Awake()
-    {
-        _heroTracker = new List<Actor>();
-        _deadTracker = new List<Tuple<Actor, DurationTimer>>();
-
-        _notDead = new Queue<Tuple<Actor, DurationTimer>>();
-        var heroes = GameObject.FindObjectsOfType<Hero>();
-        _heroTracker.AddRange(heroes);
-        foreach (var hero in heroes)
+        private void Awake()
         {
-            var healthable = hero.GetComponent<IHealthable>();
-            healthable.Died += HealthableOnDied;
-        }
-    }
+            _heroTracker = new List<Actor>();
+            _deadTracker = new List<Tuple<Actor, DurationTimer>>();
 
-    private void HealthableOnDied(object sender, DeathEventArgs e)
-    {
-        var cd = new DurationTimer(_deathCooldown);
-        _deadTracker.Add(new Tuple<Actor, DurationTimer>(e.Self, cd));
-    }
-
-    private Queue<Tuple<Actor, DurationTimer>> _notDead;
-
-    // Update is called once per frame
-    void Update()
-    {
-        foreach (var dead in _deadTracker)
-        {
-            if (dead.Item2.AdvanceTime(Time.deltaTime))
+            _notDead = new Queue<Tuple<Actor, DurationTimer>>();
+            var heroes = FindObjectsOfType<Hero>();
+            _heroTracker.AddRange(heroes);
+            foreach (var hero in heroes)
             {
-                _notDead.Enqueue(dead);
+                var healthable = hero.GetComponent<IHealthable>();
+                healthable.Died += HealthableOnDied;
             }
         }
 
-        while (_notDead.Count > 0)
+        private void HealthableOnDied(object sender, DeathEventArgs e)
         {
-            var dead = _notDead.Dequeue();
-            _deadTracker.Remove(dead);
-            var actor = dead.Item1;
-            var respawnables = actor.GetComponents<IRespawnable>();
+            var cd = new DurationTimer(_deathCooldown);
+            _deadTracker.Add(new Tuple<Actor, DurationTimer>(e.Self, cd));
+        }
 
-            foreach (var respawnable in respawnables)
+        private Queue<Tuple<Actor, DurationTimer>> _notDead;
+
+        // Update is called once per frame
+        void Update()
+        {
+            foreach (var dead in _deadTracker)
             {
-                respawnable.Respawn();
+                if (dead.Item2.AdvanceTime(Time.deltaTime))
+                {
+                    _notDead.Enqueue(dead);
+                }
             }
 
-            var spawn = GetRandomTransform();
-            var pos = spawn.position;
-            actor.transform.position = pos;
-            actor.gameObject.SetActive(true);
-            if (actor.TryGetComponent<IMovable>(out var movable))
+            while (_notDead.Count > 0)
             {
-                var slightOffset = pos + UnityEngine.Random.onUnitSphere * 0.01f;
-                movable.WarpTo(slightOffset);
+                var dead = _notDead.Dequeue();
+                _deadTracker.Remove(dead);
+                var actor = dead.Item1;
+                var respawnables = actor.GetComponents<IRespawnable>();
+
+                foreach (var respawnable in respawnables)
+                {
+                    respawnable.Respawn();
+                }
+
+                var spawn = GetRandomTransform();
+                var pos = spawn.position;
+                actor.transform.position = pos;
+                actor.gameObject.SetActive(true);
+                if (actor.TryGetComponent<IMovable>(out var movable))
+                {
+                    var slightOffset = pos + UnityEngine.Random.onUnitSphere * 0.01f;
+                    movable.WarpTo(slightOffset);
+                }
             }
         }
     }

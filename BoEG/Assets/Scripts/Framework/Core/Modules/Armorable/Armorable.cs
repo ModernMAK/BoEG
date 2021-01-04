@@ -1,8 +1,8 @@
 using System;
-using Framework.Types;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     public class Armorable : MonoBehaviour, IArmorable, IInitializable<IArmorableData>
     {

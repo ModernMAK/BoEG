@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Stream
 {
     /// <summary>
     /// Wraps a stream so that operations are local to a section of the stream.
@@ -9,7 +9,7 @@ namespace Framework.Core.Networking
     /// </summary>
     public class SubStream : NonClosingStream
     {
-        public SubStream(Stream stream, long start, long end) : base(stream)
+        public SubStream(System.IO.Stream stream, long start, long end) : base(stream)
         {
             _start = start;
             _end = end;

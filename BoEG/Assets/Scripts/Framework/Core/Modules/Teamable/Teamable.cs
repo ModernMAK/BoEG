@@ -1,8 +1,7 @@
 ﻿using System;
-using Framework.Core.Modules;
 using UnityEngine;
 
-namespace Modules.Teamable
+namespace MobaGame.Framework.Core.Modules
 {
     [Serializable]
     public class Teamable : MonoBehaviour, ITeamable, IInitializable<TeamData>

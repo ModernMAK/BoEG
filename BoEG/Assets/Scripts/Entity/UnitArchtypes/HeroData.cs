@@ -1,9 +1,8 @@
-using Entity.Abilities.FlameWitch;
-using Framework.Ability;
-using Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
 using UnityEngine;
 
-namespace Framework.Core
+namespace MobaGame.Entity.UnitArchtypes
 {
     [CreateAssetMenu(menuName = "Actor/Hero")]
     public class HeroData : ScriptableObject

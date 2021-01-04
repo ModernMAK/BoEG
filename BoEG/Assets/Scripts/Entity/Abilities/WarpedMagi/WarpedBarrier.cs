@@ -1,4 +1,4 @@
-namespace Entity.Abilities.WarpedMagi
+namespace MobaGame.Entity.Abilities.WarpedMagi
 {
     public class WarpedBarrier
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UI
+namespace MobaGame.UI
 {
     public class ActorPanel : MonoBehaviour
     {

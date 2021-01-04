@@ -1,8 +1,8 @@
 using System;
-using Entity.Abilities.FlameWitch;
-using Framework.Core.Modules;
+using MobaGame.Entity.Abilities;
+using MobaGame.Framework.Core.Modules.Ability;
 
-namespace Framework.Ability
+namespace MobaGame.Framework.Core.Modules
 {
     public interface IAbilitiable
     {

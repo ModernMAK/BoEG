@@ -1,9 +1,10 @@
 using System;
 using System.IO;
 using System.Text;
-using Framework.Core.Serialization;
+using MobaGame.Framework.Core.Networking.LLAPI;
+using MobaGame.Framework.Core.Serialization;
 
-namespace Framework.Core.Networking.MLAPI
+namespace MobaGame.Framework.Core.Networking.MLAPI
 {
     public class MessageServer
     {

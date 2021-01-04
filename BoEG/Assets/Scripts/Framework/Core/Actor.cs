@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Framework.Core.Modules;
-using Framework.Types;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Framework.Core
+namespace MobaGame.Framework.Core
 {
     public class Actor : MonoBehaviour, IStepableEvent
     {

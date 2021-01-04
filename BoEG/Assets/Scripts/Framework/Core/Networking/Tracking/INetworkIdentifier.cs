@@ -1,6 +1,6 @@
 using System;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Tracking
 {
     public interface INetworkIdentifier
     {

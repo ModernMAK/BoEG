@@ -2,10 +2,9 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using Framework.Core.Networking;
-using UnityEngine;
+using MobaGame.Framework.Core.Networking.Stream;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.LLAPI
 {
     public class NetworkClient : NetworkStreamTransport
     {
@@ -30,7 +29,7 @@ namespace Framework.Core.Networking
             }
             catch (SocketException ex)
             {
-                Debug.Log(ex.Message);
+                UnityEngine.Debug.Log(ex.Message);
                 return false;
             }
         }
@@ -66,7 +65,7 @@ namespace Framework.Core.Networking
         }
 
 
-        public bool ReadMessage(Stream stream)
+        public bool ReadMessage(System.IO.Stream stream)
         {
             if (TryReadMessage(_client, stream, out var read))
             {
@@ -77,7 +76,7 @@ namespace Framework.Core.Networking
             return read;
         }
 
-        public bool WriteMessage(Stream stream)
+        public bool WriteMessage(System.IO.Stream stream)
         {
             if (TryWriteMessage(_client, stream))
             {
@@ -91,16 +90,16 @@ namespace Framework.Core.Networking
         public event EventHandler ClientConnected;
         public event EventHandler ClientDisconnected;
 
-        public event EventHandler<Stream> MessageReceived;
-        public event EventHandler<Stream> MessageSent;
+        public event EventHandler<System.IO.Stream> MessageReceived;
+        public event EventHandler<System.IO.Stream> MessageSent;
 
 
-        protected virtual void OnMessageReceived(Stream e)
+        protected virtual void OnMessageReceived(System.IO.Stream e)
         {
             MessageReceived?.Invoke(this, e);
         }
 
-        protected virtual void OnMessageSent(Stream e)
+        protected virtual void OnMessageSent(System.IO.Stream e)
         {
             MessageSent?.Invoke(this, e);
         }

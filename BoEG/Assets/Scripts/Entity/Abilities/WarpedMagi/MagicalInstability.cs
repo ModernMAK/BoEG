@@ -1,11 +1,10 @@
-using Entity.Abilities.FlameWitch;
-using Framework.Ability;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Entity.Abilities.WarpedMagi
+namespace MobaGame.Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/MagicalInstability")]
     public class MagicalInstability : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbility,

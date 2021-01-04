@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Trigger
 {
     [RequireComponent(typeof(Collider))]
     public class Trigger : MonoBehaviour

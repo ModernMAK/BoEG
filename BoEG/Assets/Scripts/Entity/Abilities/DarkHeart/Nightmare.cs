@@ -1,11 +1,12 @@
 using System.Collections.Generic;
-using Framework.Ability;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Types;
+using MobaGame.FX;
 using UnityEngine;
 
-namespace Entity.Abilities.DarkHeart
+namespace MobaGame.Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(menuName = "Ability/DarkHeart/Nightmare")]
     public class Nightmare : AbilityObject, IObjectTargetAbility<Actor>, IListener<IStepableEvent>, IStatCostAbility,

@@ -1,8 +1,6 @@
-using System;
-using System.Collections;
 using System.IO;
 
-namespace Framework.Core.Serialization
+namespace MobaGame.Framework.Core.Serialization
 {
     public class BinarySerializer : ISerializer
     {

@@ -1,39 +1,42 @@
 ﻿using System;
-using Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 
-public class DeathLogic : MonoBehaviour
+namespace MobaGame
 {
-    public enum DeathType
+    public class DeathLogic : MonoBehaviour
     {
-        None,
-        Destroy,
-        Disable
-    }
-
-    public DeathType deathType;
-    private IHealthable _healthable;
-
-    private void Awake()
-    {
-        _healthable = GetComponent<IHealthable>();
-        _healthable.Died += HealthableOnDied;
-    }
-
-    private void HealthableOnDied(object sender, EventArgs e)
-    {
-        switch (deathType)
+        public enum DeathType
         {
-            case DeathType.None:
-                break;
-            case DeathType.Destroy:
-                Destroy(gameObject);
-                break;
-            case DeathType.Disable:
-                gameObject.SetActive(false);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
+            None,
+            Destroy,
+            Disable
+        }
+
+        public DeathType deathType;
+        private IHealthable _healthable;
+
+        private void Awake()
+        {
+            _healthable = GetComponent<IHealthable>();
+            _healthable.Died += HealthableOnDied;
+        }
+
+        private void HealthableOnDied(object sender, EventArgs e)
+        {
+            switch (deathType)
+            {
+                case DeathType.None:
+                    break;
+                case DeathType.Destroy:
+                    Destroy(gameObject);
+                    break;
+                case DeathType.Disable:
+                    gameObject.SetActive(false);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }

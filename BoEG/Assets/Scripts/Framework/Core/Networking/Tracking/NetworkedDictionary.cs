@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Tracking
 {
     public class NetworkedDictionary<T> : INetworkedDictionary<T> where T : INetworkIdentifier
     {

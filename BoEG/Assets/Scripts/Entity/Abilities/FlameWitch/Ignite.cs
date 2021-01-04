@@ -1,12 +1,12 @@
 using System.Collections.Generic;
-using Framework.Ability;
-using Framework.Core;
-using Framework.Core.Modules;
-using Framework.Types;
-using Triggers;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Types;
+using MobaGame.FX;
 using UnityEngine;
 
-namespace Entity.Abilities.FlameWitch
+namespace MobaGame.Entity.Abilities.FlameWitch
 {
     /* Unit-Target Spell
         * Applies DOT

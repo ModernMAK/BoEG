@@ -1,6 +1,6 @@
 using System;
 
-namespace DeleteMe
+namespace MobaGame.Framework.DeleteMe
 {
     public class Effectable : IEffectable
     {
@@ -15,9 +15,9 @@ namespace DeleteMe
         }
     }
 
-    public class Effect
-    {
-    }
+    // public class Effect
+    // {
+    // }
 
     public interface IEffectable
     {

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     public interface IAggroable
     {

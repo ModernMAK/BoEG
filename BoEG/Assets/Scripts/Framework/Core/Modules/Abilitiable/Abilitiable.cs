@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Framework.Ability;
+using MobaGame.Framework.Core.Modules.Ability;
 using UnityEngine;
 
-namespace Framework.Core.Modules.Abilitiable
+namespace MobaGame.Framework.Core.Modules
 {
     public class Abilitiable : MonoBehaviour, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>
     {

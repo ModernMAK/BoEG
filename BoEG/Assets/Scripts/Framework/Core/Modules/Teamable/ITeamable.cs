@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Modules.Teamable
+namespace MobaGame.Framework.Core.Modules
 {
     public interface ITeamable
     {

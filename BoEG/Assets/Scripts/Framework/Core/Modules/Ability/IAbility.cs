@@ -1,7 +1,4 @@
-using Framework.Core;
-using Framework.Core.Modules;
-
-namespace Framework.Ability
+namespace MobaGame.Framework.Core.Modules.Ability
 {
     public interface IAbility : IInitializable<Actor>
     {

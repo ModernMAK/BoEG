@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Trigger
 {
     public static class ColliderExtensions
     {
@@ -28,6 +28,7 @@ namespace Framework.Core.Modules
 
         private static void GetCapsulePoints(this CapsuleCollider col, out Vector3 p0, out Vector3 p1, out float radius)
         {
+            var transform = col.transform;
             Vector3 axis;
             switch (col.direction)
             {
@@ -49,10 +50,10 @@ namespace Framework.Core.Modules
             p1 = col.center + col.height * axis / 2;
             radius = col.radius;
 
-            var rot = col.transform.rotation;
+            var rot = transform.rotation;
             p0 = rot * p0;
             p1 = rot * p1;
-            var pos = col.transform.position;
+            var pos = transform.position;
             p0 += pos;
             p1 += pos;
         }

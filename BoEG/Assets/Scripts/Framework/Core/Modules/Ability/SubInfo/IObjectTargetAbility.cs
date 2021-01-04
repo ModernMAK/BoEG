@@ -1,6 +1,6 @@
-namespace Framework.Ability
+namespace MobaGame.Framework.Core.Modules.Ability
 {
-    public interface IObjectTargetAbility<TObject> : IAbility
+    public interface IObjectTargetAbility<in TObject> : IAbility
     {
         void CastObjectTarget(TObject target);
     }

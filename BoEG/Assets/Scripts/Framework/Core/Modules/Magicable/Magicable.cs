@@ -1,9 +1,8 @@
 using System;
-using Framework.Types;
-using Framework.Utility;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     //Im overcomplicating this for myself
     //Stop overthinking this. Do what unity does best

@@ -1,11 +1,7 @@
 using System;
-using Entity.Abilities.FlameWitch;
-using Framework.Core;
-using Framework.Core.Modules;
-using Modules.Teamable;
 using UnityEngine;
 
-namespace Framework.Ability
+namespace MobaGame.Framework.Core.Modules.Ability
 {
     public class AbilityObject : ScriptableObject, IAbility, IAbilityView
     {

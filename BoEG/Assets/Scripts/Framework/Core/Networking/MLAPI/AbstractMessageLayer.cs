@@ -1,3 +1,3 @@
-namespace Framework.Core.Networking.MLAPI
+namespace MobaGame.Framework.Core.Networking.MLAPI
 {
 }

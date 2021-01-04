@@ -1,7 +1,7 @@
-using Triggers;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Trigger
 {
     public class TriggerHelper<T> where T : Collider
     {

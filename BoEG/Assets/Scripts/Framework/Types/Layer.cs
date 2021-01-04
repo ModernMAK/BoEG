@@ -1,4 +1,4 @@
-﻿namespace Triggers
+﻿namespace MobaGame.Framework.Types
 {
     public enum Layer
     {

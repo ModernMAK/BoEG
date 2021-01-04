@@ -1,16 +1,13 @@
-using System;
-using System.IO;
 using System.Net.Sockets;
-using System.Text;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.LLAPI
 {
     public abstract class NetworkStreamTransport
     {
         public const int MessageBufferSize = 1024;
         private static readonly byte[] MessageBuffer = new byte[MessageBufferSize];
 
-        public static void ReadMessage(NetworkStream netStream, Stream memStream, out bool read)
+        public static void ReadMessage(NetworkStream netStream, System.IO.Stream memStream, out bool read)
         {
             read = netStream.DataAvailable;
             while (netStream.DataAvailable)
@@ -20,7 +17,7 @@ namespace Framework.Core.Networking
             }
         }
 
-        public static bool TryReadMessage(TcpClient client, Stream memoryStream, out bool read)
+        public static bool TryReadMessage(TcpClient client, System.IO.Stream memoryStream, out bool read)
         {
             if (client.Connected)
             {
@@ -32,7 +29,7 @@ namespace Framework.Core.Networking
             return false;
         }
 
-        public static void TryReadMessage(NetworkStream netStream, Stream memoryStream, out bool read)
+        public static void TryReadMessage(NetworkStream netStream, System.IO.Stream memoryStream, out bool read)
         {
             try
             {
@@ -45,7 +42,7 @@ namespace Framework.Core.Networking
             }
         }
 
-        public static bool TryWriteMessage(TcpClient client, Stream memoryStream)
+        public static bool TryWriteMessage(TcpClient client, System.IO.Stream memoryStream)
         {
             if (client.Connected)
             {
@@ -55,7 +52,7 @@ namespace Framework.Core.Networking
             return false;
         }
 
-        public static bool TryWriteMessage(NetworkStream netStream, Stream memStream)
+        public static bool TryWriteMessage(NetworkStream netStream, System.IO.Stream memStream)
         {
             try
             {
@@ -69,7 +66,7 @@ namespace Framework.Core.Networking
         }
 
         //Returns false if nothing was written
-        public static bool WriteMessage(NetworkStream netStream, Stream memStream)
+        public static bool WriteMessage(NetworkStream netStream, System.IO.Stream memStream)
         {
             var hasRun = false;
             while (true)

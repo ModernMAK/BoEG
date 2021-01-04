@@ -1,19 +1,22 @@
 using UnityEngine;
 
-public class LookAtCamera : MonoBehaviour
+namespace MobaGame.FX
 {
-    [SerializeField] private Camera _camera;
-
-    private void Awake()
+    public class LookAtCamera : MonoBehaviour
     {
-        if (_camera == null)
-            _camera = Camera.main;
-    }
+        [SerializeField] private Camera _camera;
+
+        private void Awake()
+        {
+            if (_camera == null)
+                _camera = Camera.main;
+        }
 
 
-    void Update()
-    {
-        if (_camera != null)
-            transform.LookAt(_camera.transform);
+        void Update()
+        {
+            if (_camera != null)
+                transform.LookAt(_camera.transform);
+        }
     }
 }

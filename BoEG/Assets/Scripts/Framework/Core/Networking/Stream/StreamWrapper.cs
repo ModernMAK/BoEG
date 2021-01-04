@@ -1,15 +1,15 @@
 using System.IO;
 
-namespace Framework.Core.Networking
+namespace MobaGame.Framework.Core.Networking.Stream
 {
     /// <summary>
     /// Stream Wrapper wraps a stream, exposing it as a base stream type.
     /// This class isn't intended to do anything special, so underlying types inherit this and perform their actions.
     /// </summary>
-    public abstract class StreamWrapper : Stream
+    public abstract class StreamWrapper : System.IO.Stream
     {
-        private readonly Stream _stream;
-        protected StreamWrapper(Stream stream)
+        private readonly System.IO.Stream _stream;
+        protected StreamWrapper(System.IO.Stream stream)
         {
             _stream = stream;
         }

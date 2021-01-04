@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
     [Serializable]
     public struct MagicableData : IMagicableData

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Framework.Types
+namespace MobaGame.Framework.Types
 {
     public class TickHelper
     {
