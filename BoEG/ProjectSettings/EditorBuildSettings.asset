@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Game/Scenes/UiDev.unity
+    path: Assets/Game/Scenes/MobaPrototype.unity
     guid: 62c1a95c21678da408d0e9d144afa83c
   - enabled: 1
     path: Assets/Game/Scenes/NetworkingChatExample.unity

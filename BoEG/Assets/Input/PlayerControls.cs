@@ -6,14 +6,12 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace MobaGame.Input
+public class @PlayerControls : IInputActionCollection, IDisposable
 {
-    public class @PlayerControls : IInputActionCollection, IDisposable
+    public InputActionAsset asset { get; }
+    public @PlayerControls()
     {
-        public InputActionAsset asset { get; }
-        public @PlayerControls()
-        {
-            asset = InputActionAsset.FromJson(@"{
+        asset = InputActionAsset.FromJson(@"{
     ""name"": ""PlayerControls"",
     ""maps"": [
         {
@@ -252,250 +250,249 @@ namespace MobaGame.Input
     ],
     ""controlSchemes"": []
 }");
-            // Ability
-            m_Ability = asset.FindActionMap("Ability", throwIfNotFound: true);
-            m_Ability_Alpha = m_Ability.FindAction("Alpha", throwIfNotFound: true);
-            m_Ability_Beta = m_Ability.FindAction("Beta", throwIfNotFound: true);
-            m_Ability_Charlie = m_Ability.FindAction("Charlie", throwIfNotFound: true);
-            m_Ability_Delta = m_Ability.FindAction("Delta", throwIfNotFound: true);
-            // Movement
-            m_Movement = asset.FindActionMap("Movement", throwIfNotFound: true);
-            m_Movement_Follow = m_Movement.FindAction("Follow", throwIfNotFound: true);
-            m_Movement_Move = m_Movement.FindAction("Move", throwIfNotFound: true);
-            m_Movement_Queue = m_Movement.FindAction("Queue", throwIfNotFound: true);
-            m_Movement_Select = m_Movement.FindAction("Select", throwIfNotFound: true);
-            m_Movement_Action = m_Movement.FindAction("Action", throwIfNotFound: true);
-            m_Movement_Attack = m_Movement.FindAction("Attack", throwIfNotFound: true);
-            // Cursor
-            m_Cursor = asset.FindActionMap("Cursor", throwIfNotFound: true);
-            m_Cursor_Pos = m_Cursor.FindAction("Pos", throwIfNotFound: true);
-        }
-
-        public void Dispose()
-        {
-            UnityEngine.Object.Destroy(asset);
-        }
-
-        public InputBinding? bindingMask
-        {
-            get => asset.bindingMask;
-            set => asset.bindingMask = value;
-        }
-
-        public ReadOnlyArray<InputDevice>? devices
-        {
-            get => asset.devices;
-            set => asset.devices = value;
-        }
-
-        public ReadOnlyArray<InputControlScheme> controlSchemes => asset.controlSchemes;
-
-        public bool Contains(InputAction action)
-        {
-            return asset.Contains(action);
-        }
-
-        public IEnumerator<InputAction> GetEnumerator()
-        {
-            return asset.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public void Enable()
-        {
-            asset.Enable();
-        }
-
-        public void Disable()
-        {
-            asset.Disable();
-        }
-
         // Ability
-        private readonly InputActionMap m_Ability;
-        private IAbilityActions m_AbilityActionsCallbackInterface;
-        private readonly InputAction m_Ability_Alpha;
-        private readonly InputAction m_Ability_Beta;
-        private readonly InputAction m_Ability_Charlie;
-        private readonly InputAction m_Ability_Delta;
-        public struct AbilityActions
-        {
-            private @PlayerControls m_Wrapper;
-            public AbilityActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Alpha => m_Wrapper.m_Ability_Alpha;
-            public InputAction @Beta => m_Wrapper.m_Ability_Beta;
-            public InputAction @Charlie => m_Wrapper.m_Ability_Charlie;
-            public InputAction @Delta => m_Wrapper.m_Ability_Delta;
-            public InputActionMap Get() { return m_Wrapper.m_Ability; }
-            public void Enable() { Get().Enable(); }
-            public void Disable() { Get().Disable(); }
-            public bool enabled => Get().enabled;
-            public static implicit operator InputActionMap(AbilityActions set) { return set.Get(); }
-            public void SetCallbacks(IAbilityActions instance)
-            {
-                if (m_Wrapper.m_AbilityActionsCallbackInterface != null)
-                {
-                    @Alpha.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAlpha;
-                    @Alpha.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAlpha;
-                    @Alpha.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAlpha;
-                    @Beta.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnBeta;
-                    @Beta.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnBeta;
-                    @Beta.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnBeta;
-                    @Charlie.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCharlie;
-                    @Charlie.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCharlie;
-                    @Charlie.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCharlie;
-                    @Delta.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDelta;
-                    @Delta.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDelta;
-                    @Delta.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDelta;
-                }
-                m_Wrapper.m_AbilityActionsCallbackInterface = instance;
-                if (instance != null)
-                {
-                    @Alpha.started += instance.OnAlpha;
-                    @Alpha.performed += instance.OnAlpha;
-                    @Alpha.canceled += instance.OnAlpha;
-                    @Beta.started += instance.OnBeta;
-                    @Beta.performed += instance.OnBeta;
-                    @Beta.canceled += instance.OnBeta;
-                    @Charlie.started += instance.OnCharlie;
-                    @Charlie.performed += instance.OnCharlie;
-                    @Charlie.canceled += instance.OnCharlie;
-                    @Delta.started += instance.OnDelta;
-                    @Delta.performed += instance.OnDelta;
-                    @Delta.canceled += instance.OnDelta;
-                }
-            }
-        }
-        public AbilityActions @Ability => new AbilityActions(this);
-
+        m_Ability = asset.FindActionMap("Ability", throwIfNotFound: true);
+        m_Ability_Alpha = m_Ability.FindAction("Alpha", throwIfNotFound: true);
+        m_Ability_Beta = m_Ability.FindAction("Beta", throwIfNotFound: true);
+        m_Ability_Charlie = m_Ability.FindAction("Charlie", throwIfNotFound: true);
+        m_Ability_Delta = m_Ability.FindAction("Delta", throwIfNotFound: true);
         // Movement
-        private readonly InputActionMap m_Movement;
-        private IMovementActions m_MovementActionsCallbackInterface;
-        private readonly InputAction m_Movement_Follow;
-        private readonly InputAction m_Movement_Move;
-        private readonly InputAction m_Movement_Queue;
-        private readonly InputAction m_Movement_Select;
-        private readonly InputAction m_Movement_Action;
-        private readonly InputAction m_Movement_Attack;
-        public struct MovementActions
-        {
-            private @PlayerControls m_Wrapper;
-            public MovementActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Follow => m_Wrapper.m_Movement_Follow;
-            public InputAction @Move => m_Wrapper.m_Movement_Move;
-            public InputAction @Queue => m_Wrapper.m_Movement_Queue;
-            public InputAction @Select => m_Wrapper.m_Movement_Select;
-            public InputAction @Action => m_Wrapper.m_Movement_Action;
-            public InputAction @Attack => m_Wrapper.m_Movement_Attack;
-            public InputActionMap Get() { return m_Wrapper.m_Movement; }
-            public void Enable() { Get().Enable(); }
-            public void Disable() { Get().Disable(); }
-            public bool enabled => Get().enabled;
-            public static implicit operator InputActionMap(MovementActions set) { return set.Get(); }
-            public void SetCallbacks(IMovementActions instance)
-            {
-                if (m_Wrapper.m_MovementActionsCallbackInterface != null)
-                {
-                    @Follow.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnFollow;
-                    @Follow.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnFollow;
-                    @Follow.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnFollow;
-                    @Move.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
-                    @Move.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
-                    @Move.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
-                    @Queue.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnQueue;
-                    @Queue.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnQueue;
-                    @Queue.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnQueue;
-                    @Select.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnSelect;
-                    @Select.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnSelect;
-                    @Select.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnSelect;
-                    @Action.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnAction;
-                    @Action.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnAction;
-                    @Action.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnAction;
-                    @Attack.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
-                    @Attack.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
-                    @Attack.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
-                }
-                m_Wrapper.m_MovementActionsCallbackInterface = instance;
-                if (instance != null)
-                {
-                    @Follow.started += instance.OnFollow;
-                    @Follow.performed += instance.OnFollow;
-                    @Follow.canceled += instance.OnFollow;
-                    @Move.started += instance.OnMove;
-                    @Move.performed += instance.OnMove;
-                    @Move.canceled += instance.OnMove;
-                    @Queue.started += instance.OnQueue;
-                    @Queue.performed += instance.OnQueue;
-                    @Queue.canceled += instance.OnQueue;
-                    @Select.started += instance.OnSelect;
-                    @Select.performed += instance.OnSelect;
-                    @Select.canceled += instance.OnSelect;
-                    @Action.started += instance.OnAction;
-                    @Action.performed += instance.OnAction;
-                    @Action.canceled += instance.OnAction;
-                    @Attack.started += instance.OnAttack;
-                    @Attack.performed += instance.OnAttack;
-                    @Attack.canceled += instance.OnAttack;
-                }
-            }
-        }
-        public MovementActions @Movement => new MovementActions(this);
-
+        m_Movement = asset.FindActionMap("Movement", throwIfNotFound: true);
+        m_Movement_Follow = m_Movement.FindAction("Follow", throwIfNotFound: true);
+        m_Movement_Move = m_Movement.FindAction("Move", throwIfNotFound: true);
+        m_Movement_Queue = m_Movement.FindAction("Queue", throwIfNotFound: true);
+        m_Movement_Select = m_Movement.FindAction("Select", throwIfNotFound: true);
+        m_Movement_Action = m_Movement.FindAction("Action", throwIfNotFound: true);
+        m_Movement_Attack = m_Movement.FindAction("Attack", throwIfNotFound: true);
         // Cursor
-        private readonly InputActionMap m_Cursor;
-        private ICursorActions m_CursorActionsCallbackInterface;
-        private readonly InputAction m_Cursor_Pos;
-        public struct CursorActions
+        m_Cursor = asset.FindActionMap("Cursor", throwIfNotFound: true);
+        m_Cursor_Pos = m_Cursor.FindAction("Pos", throwIfNotFound: true);
+    }
+
+    public void Dispose()
+    {
+        UnityEngine.Object.Destroy(asset);
+    }
+
+    public InputBinding? bindingMask
+    {
+        get => asset.bindingMask;
+        set => asset.bindingMask = value;
+    }
+
+    public ReadOnlyArray<InputDevice>? devices
+    {
+        get => asset.devices;
+        set => asset.devices = value;
+    }
+
+    public ReadOnlyArray<InputControlScheme> controlSchemes => asset.controlSchemes;
+
+    public bool Contains(InputAction action)
+    {
+        return asset.Contains(action);
+    }
+
+    public IEnumerator<InputAction> GetEnumerator()
+    {
+        return asset.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+
+    public void Enable()
+    {
+        asset.Enable();
+    }
+
+    public void Disable()
+    {
+        asset.Disable();
+    }
+
+    // Ability
+    private readonly InputActionMap m_Ability;
+    private IAbilityActions m_AbilityActionsCallbackInterface;
+    private readonly InputAction m_Ability_Alpha;
+    private readonly InputAction m_Ability_Beta;
+    private readonly InputAction m_Ability_Charlie;
+    private readonly InputAction m_Ability_Delta;
+    public struct AbilityActions
+    {
+        private @PlayerControls m_Wrapper;
+        public AbilityActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Alpha => m_Wrapper.m_Ability_Alpha;
+        public InputAction @Beta => m_Wrapper.m_Ability_Beta;
+        public InputAction @Charlie => m_Wrapper.m_Ability_Charlie;
+        public InputAction @Delta => m_Wrapper.m_Ability_Delta;
+        public InputActionMap Get() { return m_Wrapper.m_Ability; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(AbilityActions set) { return set.Get(); }
+        public void SetCallbacks(IAbilityActions instance)
         {
-            private @PlayerControls m_Wrapper;
-            public CursorActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Pos => m_Wrapper.m_Cursor_Pos;
-            public InputActionMap Get() { return m_Wrapper.m_Cursor; }
-            public void Enable() { Get().Enable(); }
-            public void Disable() { Get().Disable(); }
-            public bool enabled => Get().enabled;
-            public static implicit operator InputActionMap(CursorActions set) { return set.Get(); }
-            public void SetCallbacks(ICursorActions instance)
+            if (m_Wrapper.m_AbilityActionsCallbackInterface != null)
             {
-                if (m_Wrapper.m_CursorActionsCallbackInterface != null)
-                {
-                    @Pos.started -= m_Wrapper.m_CursorActionsCallbackInterface.OnPos;
-                    @Pos.performed -= m_Wrapper.m_CursorActionsCallbackInterface.OnPos;
-                    @Pos.canceled -= m_Wrapper.m_CursorActionsCallbackInterface.OnPos;
-                }
-                m_Wrapper.m_CursorActionsCallbackInterface = instance;
-                if (instance != null)
-                {
-                    @Pos.started += instance.OnPos;
-                    @Pos.performed += instance.OnPos;
-                    @Pos.canceled += instance.OnPos;
-                }
+                @Alpha.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAlpha;
+                @Alpha.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAlpha;
+                @Alpha.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAlpha;
+                @Beta.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnBeta;
+                @Beta.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnBeta;
+                @Beta.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnBeta;
+                @Charlie.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCharlie;
+                @Charlie.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCharlie;
+                @Charlie.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCharlie;
+                @Delta.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDelta;
+                @Delta.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDelta;
+                @Delta.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDelta;
+            }
+            m_Wrapper.m_AbilityActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Alpha.started += instance.OnAlpha;
+                @Alpha.performed += instance.OnAlpha;
+                @Alpha.canceled += instance.OnAlpha;
+                @Beta.started += instance.OnBeta;
+                @Beta.performed += instance.OnBeta;
+                @Beta.canceled += instance.OnBeta;
+                @Charlie.started += instance.OnCharlie;
+                @Charlie.performed += instance.OnCharlie;
+                @Charlie.canceled += instance.OnCharlie;
+                @Delta.started += instance.OnDelta;
+                @Delta.performed += instance.OnDelta;
+                @Delta.canceled += instance.OnDelta;
             }
         }
-        public CursorActions @Cursor => new CursorActions(this);
-        public interface IAbilityActions
+    }
+    public AbilityActions @Ability => new AbilityActions(this);
+
+    // Movement
+    private readonly InputActionMap m_Movement;
+    private IMovementActions m_MovementActionsCallbackInterface;
+    private readonly InputAction m_Movement_Follow;
+    private readonly InputAction m_Movement_Move;
+    private readonly InputAction m_Movement_Queue;
+    private readonly InputAction m_Movement_Select;
+    private readonly InputAction m_Movement_Action;
+    private readonly InputAction m_Movement_Attack;
+    public struct MovementActions
+    {
+        private @PlayerControls m_Wrapper;
+        public MovementActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Follow => m_Wrapper.m_Movement_Follow;
+        public InputAction @Move => m_Wrapper.m_Movement_Move;
+        public InputAction @Queue => m_Wrapper.m_Movement_Queue;
+        public InputAction @Select => m_Wrapper.m_Movement_Select;
+        public InputAction @Action => m_Wrapper.m_Movement_Action;
+        public InputAction @Attack => m_Wrapper.m_Movement_Attack;
+        public InputActionMap Get() { return m_Wrapper.m_Movement; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(MovementActions set) { return set.Get(); }
+        public void SetCallbacks(IMovementActions instance)
         {
-            void OnAlpha(InputAction.CallbackContext context);
-            void OnBeta(InputAction.CallbackContext context);
-            void OnCharlie(InputAction.CallbackContext context);
-            void OnDelta(InputAction.CallbackContext context);
+            if (m_Wrapper.m_MovementActionsCallbackInterface != null)
+            {
+                @Follow.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnFollow;
+                @Follow.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnFollow;
+                @Follow.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnFollow;
+                @Move.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
+                @Move.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
+                @Move.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
+                @Queue.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnQueue;
+                @Queue.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnQueue;
+                @Queue.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnQueue;
+                @Select.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnSelect;
+                @Select.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnSelect;
+                @Select.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnSelect;
+                @Action.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnAction;
+                @Action.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnAction;
+                @Action.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnAction;
+                @Attack.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
+            }
+            m_Wrapper.m_MovementActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Follow.started += instance.OnFollow;
+                @Follow.performed += instance.OnFollow;
+                @Follow.canceled += instance.OnFollow;
+                @Move.started += instance.OnMove;
+                @Move.performed += instance.OnMove;
+                @Move.canceled += instance.OnMove;
+                @Queue.started += instance.OnQueue;
+                @Queue.performed += instance.OnQueue;
+                @Queue.canceled += instance.OnQueue;
+                @Select.started += instance.OnSelect;
+                @Select.performed += instance.OnSelect;
+                @Select.canceled += instance.OnSelect;
+                @Action.started += instance.OnAction;
+                @Action.performed += instance.OnAction;
+                @Action.canceled += instance.OnAction;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
+            }
         }
-        public interface IMovementActions
+    }
+    public MovementActions @Movement => new MovementActions(this);
+
+    // Cursor
+    private readonly InputActionMap m_Cursor;
+    private ICursorActions m_CursorActionsCallbackInterface;
+    private readonly InputAction m_Cursor_Pos;
+    public struct CursorActions
+    {
+        private @PlayerControls m_Wrapper;
+        public CursorActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Pos => m_Wrapper.m_Cursor_Pos;
+        public InputActionMap Get() { return m_Wrapper.m_Cursor; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CursorActions set) { return set.Get(); }
+        public void SetCallbacks(ICursorActions instance)
         {
-            void OnFollow(InputAction.CallbackContext context);
-            void OnMove(InputAction.CallbackContext context);
-            void OnQueue(InputAction.CallbackContext context);
-            void OnSelect(InputAction.CallbackContext context);
-            void OnAction(InputAction.CallbackContext context);
-            void OnAttack(InputAction.CallbackContext context);
+            if (m_Wrapper.m_CursorActionsCallbackInterface != null)
+            {
+                @Pos.started -= m_Wrapper.m_CursorActionsCallbackInterface.OnPos;
+                @Pos.performed -= m_Wrapper.m_CursorActionsCallbackInterface.OnPos;
+                @Pos.canceled -= m_Wrapper.m_CursorActionsCallbackInterface.OnPos;
+            }
+            m_Wrapper.m_CursorActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Pos.started += instance.OnPos;
+                @Pos.performed += instance.OnPos;
+                @Pos.canceled += instance.OnPos;
+            }
         }
-        public interface ICursorActions
-        {
-            void OnPos(InputAction.CallbackContext context);
-        }
+    }
+    public CursorActions @Cursor => new CursorActions(this);
+    public interface IAbilityActions
+    {
+        void OnAlpha(InputAction.CallbackContext context);
+        void OnBeta(InputAction.CallbackContext context);
+        void OnCharlie(InputAction.CallbackContext context);
+        void OnDelta(InputAction.CallbackContext context);
+    }
+    public interface IMovementActions
+    {
+        void OnFollow(InputAction.CallbackContext context);
+        void OnMove(InputAction.CallbackContext context);
+        void OnQueue(InputAction.CallbackContext context);
+        void OnSelect(InputAction.CallbackContext context);
+        void OnAction(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
+    }
+    public interface ICursorActions
+    {
+        void OnPos(InputAction.CallbackContext context);
     }
 }

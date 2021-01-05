@@ -11,7 +11,6 @@ namespace MobaGame.Framework.Core.Modules
     {
         private NavMeshAgent _agent;
         private NavMeshObstacle _obstacle;
-        private IMovable _movable;
 
         public void Initialize(IMovableData module)
         {

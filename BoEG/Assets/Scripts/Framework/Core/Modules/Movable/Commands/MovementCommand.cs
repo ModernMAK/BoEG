@@ -14,6 +14,7 @@ namespace MobaGame.Framework.Core.Modules.Commands
 
         protected override void PreStep(float deltaTime)
         {
+            //BUG Calling Movable on Disabled NavMesh?
             Movable.MoveTo(Target);
         }
 

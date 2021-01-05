@@ -102,6 +102,8 @@ namespace MobaGame.Framework.Core.Networking.Tracking
             return _guid.GetHashCode();
         }
 
+        public byte[] ToByteArray() => _guid.ToByteArray();
+        
         public static implicit operator Guid(SerializableGuid guid) => guid._guid;
         public static implicit operator SerializableGuid(Guid guid) => new SerializableGuid(guid);
     }

@@ -60,14 +60,6 @@ namespace MobaGame.Framework.Core.Networking.Tracking
     }
 
 
-    public interface INetworkedSerializable
-    {
-        void Serialize(WriteOnlyStream stream);
-        void Deserialize(ReadOnlyStream stream);
-    }
-
-    
-
     public class NetworkId : MonoBehaviour, INetworkedUnityObject<NetworkId>
     {
         [SerializeField] private NetworkedUnityObject<NetworkId> _netObject;
