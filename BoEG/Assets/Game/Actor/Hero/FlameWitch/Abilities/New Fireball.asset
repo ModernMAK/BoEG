@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62fe88ed623a4a4c8831f70b2d204fff, type: 3}
   m_Name: New Fireball
   m_EditorClassIdentifier: 
-  _icon: {fileID: 21300000, guid: 9f74dca6926afcd4f975b2e23cd27bdc, type: 3}
+  _icon: {fileID: -5235442506467519129, guid: d0005ed378e3ba04ca522b86a6014818, type: 3}
   _manaCost: 10
   _damage: 50
   _cooldown: 8
