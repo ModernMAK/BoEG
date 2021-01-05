@@ -4,17 +4,17 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Networking.Tracking
 {
-    public class NetworkSceneManager : MonoBehaviour, INetworkedDictionary<INetworkedUnityObject>
+    public abstract class NetworkDictionary<T> : MonoBehaviour, INetworkedDictionary<T> where T : INetworkIdentifier
     {
-        private NetworkedDictionary<INetworkedUnityObject> _networkedDictionary;
+        private NetworkedDictionary<T> _networkedDictionary;
 
-        public void Awake()
+        protected virtual void Awake()
         {
-            _networkedDictionary = new NetworkedDictionary<INetworkedUnityObject>();
+            _networkedDictionary = new NetworkedDictionary<T>();
         }
 
 
-        public IEnumerator<KeyValuePair<SerializableGuid, INetworkedUnityObject>> GetEnumerator()
+        public IEnumerator<KeyValuePair<SerializableGuid, T>> GetEnumerator()
         {
             return _networkedDictionary.GetEnumerator();
         }
@@ -31,33 +31,33 @@ namespace MobaGame.Framework.Core.Networking.Tracking
             return _networkedDictionary.ContainsKey(key);
         }
 
-        public bool TryGetValue(SerializableGuid key, out INetworkedUnityObject value)
+        public bool TryGetValue(SerializableGuid key, out T value)
         {
             return _networkedDictionary.TryGetValue(key, out value);
         }
 
-        public INetworkedUnityObject this[SerializableGuid key] => _networkedDictionary[key];
+        public T this[SerializableGuid key] => _networkedDictionary[key];
 
         public IEnumerable<SerializableGuid> Keys => _networkedDictionary.Keys;
 
-        public IEnumerable<INetworkedUnityObject> Values => _networkedDictionary.Values;
+        public IEnumerable<T> Values => _networkedDictionary.Values;
 
         public SerializableGuid RequestId()
         {
             return _networkedDictionary.RequestId();
         }
 
-        public bool TryAdd(INetworkedUnityObject value)
+        public bool TryAdd(T value)
         {
             return _networkedDictionary.TryAdd(value);
         }
 
-        public bool TryRemove(INetworkedUnityObject value)
+        public bool TryRemove(T value)
         {
             return _networkedDictionary.TryRemove(value);
         }
 
-        public bool ContainsKey(INetworkedUnityObject value)
+        public bool ContainsKey(T value)
         {
             return _networkedDictionary.ContainsKey(value);
         }
