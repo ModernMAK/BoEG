@@ -10,14 +10,40 @@ namespace MobaGame.Framework.Core.Modules
 
     public class Statable : MonoBehaviour, IListener<ILevelable>, IListener<IModifiable>
     {
-        protected float _capacity;
+        private float _capacity;
+        protected virtual float RawStatCapacity
+        {
+            get => _capacity;
+            set => _capacity = value;
+        }
+        
 
+        private float _capacityGain;
+        protected virtual float RawStatCapacityGain
+        {
+            get => _capacityGain;
+            set => _capacityGain = value;
+        }
+        private float _generation;
+        protected virtual float RawStatGeneration
+        {
+            get => _generation;
+            set => _generation = value;
+        }
+        private float _generationGain;
+        protected virtual float RawStatGenerationGain
+        {
+            get => _generationGain;
+            set => _generationGain = value;
+        }
+        
+        private float _percentage;
+        protected virtual float RawStatPercentage
+        {
+            get => _percentage;
+            set => _percentage = value;
+        }
 
-        protected float _capacityGain;
-        protected float _generation;
-        protected float _generationGain;
-
-        protected float _percentage;
 
 //        private List<IStatableModifier> _modifiers;
 
@@ -29,13 +55,13 @@ namespace MobaGame.Framework.Core.Modules
 
         protected virtual float StatPercentage
         {
-            get => _percentage;
+            get => RawStatPercentage;
             set
             {
                 value = Mathf.Clamp01(value);
-                if (!_percentage.SafeEquals(value))
+                if (!RawStatPercentage.SafeEquals(value))
                     OnStatChanged(default);
-                _percentage = value;
+                RawStatPercentage = value;
             }
         }
 

@@ -37,6 +37,7 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
         public EndPoint RemoteEndPoint => _client.Connected ? _client.Client.RemoteEndPoint : null;
         public EndPoint LocalEndPoint => _client.Connected ? _client.Client.LocalEndPoint : null;
 
+        public bool Online => _client.Connected;
         public void Connect(IPEndPoint endPoint)
         {
             _client.Connect(endPoint);

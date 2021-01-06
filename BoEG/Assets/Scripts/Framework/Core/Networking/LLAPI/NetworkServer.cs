@@ -20,13 +20,15 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
             _clients = new Dictionary<Guid, TcpClient>();
         }
 
-        private readonly TcpListener _listener;
+        private TcpListener _listener;
         private readonly Dictionary<Guid, TcpClient> _clients;
+        private bool _listening;
         protected TcpListener Listener => _listener;
         public IReadOnlyDictionary<Guid, TcpClient> Clients => _clients;
 
         public bool Pending() => _listener.Pending();
 
+        public bool Online => _listening;
 
         public void Start()
         {
@@ -36,12 +38,14 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
 
         public void Start(int maxRequests)
         {
+            _listening = true;
             _listener.Start(maxRequests);
             OnServerConnected();
         }
 
         public void Stop()
         {
+            _listening = false;
             _listener.Stop();
             DisconnectClients();
             _clients.Clear();
@@ -253,6 +257,15 @@ namespace MobaGame.Framework.Core.Networking.LLAPI
                 var kvp = _toDrop.Dequeue();
                 DisconnectClient(kvp.Key, kvp.Value);
             }
+        }
+
+        public void Rebind(IPEndPoint endPoint)
+        {
+            if (_listening)
+                _listener.Stop();
+            _listener = new TcpListener(endPoint);
+            if(_listening)
+                _listener.Start();
         }
     }
 }

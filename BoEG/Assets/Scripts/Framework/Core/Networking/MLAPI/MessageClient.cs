@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 using System.Text;
 using MobaGame.Framework.Core.Networking.LLAPI;
 using MobaGame.Framework.Core.Serialization;
@@ -12,7 +13,7 @@ namespace MobaGame.Framework.Core.Networking.MLAPI
         public MessageEventList Received { get; }
 
         private readonly NetworkClient _client;
-        private readonly Encoding _encoding;
+        private Encoding _encoding;
 
         public MessageClient() : this(new NetworkClient())
         {
@@ -31,7 +32,13 @@ namespace MobaGame.Framework.Core.Networking.MLAPI
             Received = new MessageEventList();
         }
 
-        public Encoding Encoding => _encoding;
+        public Encoding Encoding
+        {
+            get => _encoding;
+            set => _encoding = value;
+        }
+
+        public NetworkClient InternalClient => _client;
 
         public event EventHandler Started
         {
@@ -97,5 +104,9 @@ namespace MobaGame.Framework.Core.Networking.MLAPI
             {
             }
         }
+
+        public bool TryConnect(IPEndPoint endPoint) => InternalClient.TryConnect(endPoint);
+        public void Connect(IPEndPoint endPoint) => InternalClient.Connect(endPoint);
+        public void Close() => InternalClient.Close();
     }
 }

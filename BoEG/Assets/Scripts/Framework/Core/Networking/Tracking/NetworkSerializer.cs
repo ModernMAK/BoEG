@@ -11,7 +11,7 @@ namespace MobaGame.Framework.Core.Networking.Tracking
     [RequireComponent(typeof(NetworkId))]
     public class NetworkSerializer : MonoBehaviour
     {
-        [SerializeField] private NetworkId _networkId;
+        private NetworkId _networkId;
 
         private void Awake()
         {
@@ -128,6 +128,7 @@ namespace MobaGame.Framework.Core.Networking.Tracking
                 failures = int.MaxValue;
                 return false;
             }
+
             //READ
             var netId = netIdObj.Object;
             var startPos = stream.Position;
@@ -139,6 +140,7 @@ namespace MobaGame.Framework.Core.Networking.Tracking
                 read += (endRead - startRead);
                 failures += failed ? 1 : 0;
             }
+
             //Validate
             if (read != length)
             {
@@ -146,6 +148,7 @@ namespace MobaGame.Framework.Core.Networking.Tracking
                 stream.Position = startPos + length;
                 //Technically not a failure
             }
+
             return true;
         }
 
@@ -157,7 +160,6 @@ namespace MobaGame.Framework.Core.Networking.Tracking
                 var deserializer = new BinaryDeserializer(reader);
                 return Deserialize(readOnly, stream, lookup, deserializer);
             }
-
         }
 
         public static bool Serialize(Stream stream, SerializableGuid id,
@@ -205,14 +207,14 @@ namespace MobaGame.Framework.Core.Networking.Tracking
             }
         }
 
-        public bool Serialize(Stream stream)
+        public bool Serialize(Stream stream, bool forceSerialize = false)
         {
-            return Serialize(stream, _networkId.Id, GetAllSerializable());
+            return (forceSerialize || _networkId.Owned) && Serialize(stream, _networkId.Id, GetAllSerializable());
         }
 
-        public bool Deserialize(Stream stream)
+        public bool Deserialize(Stream stream, bool forceDeserialize = false)
         {
-            return Deserialize(stream, _networkId.Components);
+            return (forceDeserialize || !_networkId.Owned) && Deserialize(stream, _networkId.Components);
         }
     }
 }

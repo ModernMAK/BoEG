@@ -9,7 +9,7 @@ namespace MobaGame.Framework.Core.Modules
     //Stop overthinking this. Do what unity does best
 
 
-    [DisallowMultipleComponent]
+    // [DisallowMultipleComponent]
     public class Healthable : Statable,
         IInitializable<IHealthableData>, IHealthable, IListener<IStepableEvent>, IRespawnable
     {
@@ -18,8 +18,9 @@ namespace MobaGame.Framework.Core.Modules
         /// <summary>
         /// A flag set once died has been called.
         /// </summary>
-        private bool _isDead;
+        protected bool _isDead;
 
+        
         public float Health
         {
             get => Stat;
@@ -59,9 +60,9 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Initialize(IHealthableData module)
         {
-            _capacity = module.HealthCapacity;
-            _percentage = 1f;
-            _generation = module.HealthGeneration;
+            StatCapacity = module.HealthCapacity;
+            RawStatPercentage = 1f;
+            StatGeneration = module.HealthGeneration;
         }
 
 
@@ -81,7 +82,7 @@ namespace MobaGame.Framework.Core.Modules
             }
         }
 
-        private void OnPreStep(float deltaTime)
+        protected virtual void OnPreStep(float deltaTime)
         {
             if (!HealthPercentage.SafeEquals(0f))
             {
@@ -90,7 +91,7 @@ namespace MobaGame.Framework.Core.Modules
             }
         }
 
-        private void OnPostStep(float deltaTime)
+        protected virtual  void OnPostStep(float deltaTime)
         {
             if (!_isDead && HealthPercentage.SafeEquals(0f))
             {
@@ -99,13 +100,13 @@ namespace MobaGame.Framework.Core.Modules
             }
         }
 
-        public void Register(IStepableEvent source)
+        public virtual void Register(IStepableEvent source)
         {
             source.PreStep += OnPreStep;
             source.PostStep += OnPostStep;
         }
 
-        public void Unregister(IStepableEvent source)
+        public virtual void Unregister(IStepableEvent source)
         {
             source.PreStep -= OnPreStep;
             source.PostStep -= OnPostStep;
@@ -119,7 +120,7 @@ namespace MobaGame.Framework.Core.Modules
         public void Respawn()
         {
             _isDead = false;
-            _percentage = 1f;
+            RawStatPercentage = 1f;
         }
     }
 }

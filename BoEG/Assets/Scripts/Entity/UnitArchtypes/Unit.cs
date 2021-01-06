@@ -3,12 +3,13 @@ using UnityEngine;
 
 namespace MobaGame.Entity.UnitArchtypes
 {
-    [RequireComponent(typeof(Healthable))]
-    [RequireComponent(typeof(Magicable))]
-    [RequireComponent(typeof(Armorable))]
-    [RequireComponent(typeof(DamageTarget))]
-    [RequireComponent(typeof(Attackerable))]
-    [RequireComponent(typeof(Movable))]
+    [RequireComponent(typeof(IHealthable))]
+    [RequireComponent(typeof(IMagicable))]
+    [RequireComponent(typeof(IArmorable))]
+    [RequireComponent(typeof(IAggroable))]
+    [RequireComponent(typeof(IDamageTarget))]
+    [RequireComponent(typeof(IAttackerable))]
+    [RequireComponent(typeof(IMovable))]
     public class Unit : Framework.Core.Actor
     {
         private Sprite _icon;

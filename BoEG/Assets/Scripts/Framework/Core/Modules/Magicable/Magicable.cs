@@ -14,9 +14,9 @@ namespace MobaGame.Framework.Core.Modules
     {
         public void Initialize(IMagicableData module)
         {
-            _capacity = module.MagicCapacity;
-            _percentage = 1f;
-            _generation = module.MagicGeneration;
+            RawStatCapacity = module.MagicCapacity;
+            RawStatPercentage = 1f;
+            RawStatGeneration = module.MagicGeneration;
         }
 
         public float Magic
@@ -86,7 +86,7 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Respawn()
         {
-            _percentage = 1f;
+            RawStatPercentage = 1f;
         }
     }
 }

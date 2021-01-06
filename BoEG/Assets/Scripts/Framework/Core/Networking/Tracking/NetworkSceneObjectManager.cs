@@ -17,5 +17,6 @@ namespace MobaGame.Framework.Core.Networking.Tracking
             else
                 UnityEngine.Debug.Log($"Multiple {SingletonName}!");
         }
+        
     }
 }
