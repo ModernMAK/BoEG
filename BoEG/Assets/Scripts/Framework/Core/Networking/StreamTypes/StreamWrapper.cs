@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace MobaGame.Framework.Core.Networking.Stream
+namespace MobaGame.Framework.Core.Networking.StreamTypes
 {
     /// <summary>
     /// Stream Wrapper wraps a stream, exposing it as a base stream type.

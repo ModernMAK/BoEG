@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using MobaGame.Framework.Core.Networking.Stream;
+using MobaGame.Framework.Core.Networking.StreamTypes;
 using MobaGame.Framework.Core.Serialization;
 
 namespace MobaGame.Framework.Core.Networking.MLAPI

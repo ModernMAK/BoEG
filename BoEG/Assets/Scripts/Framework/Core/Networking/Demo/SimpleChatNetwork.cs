@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using MobaGame.Framework.Core.Networking.LLAPI;
-using MobaGame.Framework.Core.Networking.Stream;
+using MobaGame.Framework.Core.Networking.StreamTypes;
 using UnityEngine;
 using UnityEngine.UI;
 

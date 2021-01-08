@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using MobaGame.Framework.Core.Networking.Stream;
+using MobaGame.Framework.Core.Networking.StreamTypes;
 
 namespace MobaGame.Framework.Core.Networking.LLAPI
 {

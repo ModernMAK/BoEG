@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using MobaGame.Framework.Core.Networking.LLAPI;
 using MobaGame.Framework.Core.Networking.MLAPI;
-using MobaGame.Framework.Core.Networking.Stream;
+using MobaGame.Framework.Core.Networking.StreamTypes;
 using MobaGame.Framework.Core.Serialization;
 using UnityEngine;
 using UnityEngine.UI;

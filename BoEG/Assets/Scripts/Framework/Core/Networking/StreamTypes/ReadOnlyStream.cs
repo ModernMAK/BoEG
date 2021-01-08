@@ -1,6 +1,6 @@
 using System;
 
-namespace MobaGame.Framework.Core.Networking.Stream
+namespace MobaGame.Framework.Core.Networking.StreamTypes
 {
     /// <summary>
     /// Wraps a stream so that write operations are disabled without recreating the steam.

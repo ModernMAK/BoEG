@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace MobaGame.Framework.Core.Networking.Stream
+namespace MobaGame.Framework.Core.Networking.StreamTypes
 {
     /// <summary>
     /// Wraps a stream so that operations are local to a section of the stream.
