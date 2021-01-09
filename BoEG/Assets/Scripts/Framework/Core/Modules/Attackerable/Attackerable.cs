@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Framework.Core;
 using MobaGame.Framework.Core.Trigger;
 using MobaGame.Framework.Types;
 using UnityEngine;
@@ -54,11 +55,11 @@ namespace MobaGame.Framework.Core.Modules
             if (IsAttackOnCooldown)
                 return;
 
-            if (_teamable != null && actor.TryGetComponent<ITeamable>(out var teamable))
+            if (_teamable != null && actor.TryGetModule<ITeamable>(out var teamable))
                 if (_teamable.SameTeam(teamable))
                     return;
 
-            if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
+            if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
                 return;
 
             var dmg = new Damage(AttackDamage, DamageType.Physical, DamageModifiers.Attack);
@@ -131,4 +132,5 @@ namespace MobaGame.Framework.Core.Modules
             _attackCooldown.SetDone();
         }
     }
+
 }

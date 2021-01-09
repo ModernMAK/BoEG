@@ -8,7 +8,7 @@ namespace MobaGame.Entity.UnitArchtypes
     [RequireComponent(typeof(ArmorableModule))]
     [RequireComponent(typeof(DamageTarget))]
     [RequireComponent(typeof(AttackerableModule))]
-    [RequireComponent(typeof(Movable))]
+    [RequireComponent(typeof(MovableModule))]
     public class Unit : Framework.Core.Actor
     {
         private Sprite _icon;

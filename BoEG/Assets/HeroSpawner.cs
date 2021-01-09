@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Framework.Core;
 using MobaGame.Entity.UnitArchtypes;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
@@ -76,7 +77,7 @@ namespace MobaGame
                 var pos = spawn.position;
                 actor.transform.position = pos;
                 actor.gameObject.SetActive(true);
-                if (actor.TryGetComponent<IMovable>(out var movable))
+                if (actor.TryGetModule<IMovable>(out var movable))
                 {
                     var slightOffset = pos + UnityEngine.Random.onUnitSphere * 0.01f;
                     movable.WarpTo(slightOffset);

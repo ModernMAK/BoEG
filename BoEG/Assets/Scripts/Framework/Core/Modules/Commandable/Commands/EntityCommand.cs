@@ -1,3 +1,4 @@
+using Framework.Core;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules.Commands
@@ -11,14 +12,14 @@ namespace MobaGame.Framework.Core.Modules.Commands
 
         protected GameObject Entity { get; }
 
-        protected T GetComponent<T>()
+        protected T GetModule<T>()
         {
-            return Entity.GetComponent<T>();
+            return Entity.GetModule<T>();
         }
 
-        protected void GetComponent<T>(out T component)
+        protected void GetModule<T>(out T component)
         {
-            component = GetComponent<T>();
+            component = GetModule<T>();
         }
     }
 }

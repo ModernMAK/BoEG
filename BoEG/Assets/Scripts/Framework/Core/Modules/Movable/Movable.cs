@@ -1,24 +1,24 @@
+using MobaGame.Framework.Types;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    [DisallowMultipleComponent]
-    //We use stationary on navmesh obstacle, which means we dont need to use it here
-    [RequireComponent(typeof(NavMeshObstacle))]
-    [RequireComponent(typeof(NavMeshAgent))]
-    public class Movable : MonoBehaviour, IInitializable<IMovableData>, IMovable
+    public class Movable : ActorModule, IInitializable<IMovableData>, IMovable, IListener<IStepableEvent>
     {
         private NavMeshAgent _agent;
         private NavMeshObstacle _obstacle;
-        private IMovable _movable;
+
+        public Movable(Actor actor, NavMeshAgent agent, NavMeshObstacle obstacle) : base(actor)
+        {
+            _agent = agent;
+            _obstacle = obstacle;
+        }
 
         public void Initialize(IMovableData module)
         {
             MoveSpeed = module.MoveSpeed;
             TurnSpeed = module.TurnSpeed;
-            _agent = GetComponent<NavMeshAgent>();
-            _obstacle = GetComponent<NavMeshObstacle>();
             _obstacle.enabled = false;
         }
 
@@ -87,7 +87,7 @@ namespace MobaGame.Framework.Core.Modules
         {
             //Disable first
             _obstacle.carving = false;
-            _obstacle.enabled = false; 
+            _obstacle.enabled = false;
             //Then enable
             _agent.enabled = true;
             _agent.updatePosition = true;
@@ -127,16 +127,22 @@ namespace MobaGame.Framework.Core.Modules
 
         public bool HasReachedDestination => (_agent.destination - _agent.nextPosition).sqrMagnitude <= Mathf.Epsilon;
 
-        public void UpdateMover()
+        public void OnPreStep(float deltaTime)
         {
             _agent.speed = MoveSpeed;
             _agent.acceleration = MoveSpeed * 1000;
             _agent.angularSpeed = TurnSpeed;
         }
 
-        private void LateUpdate()
+
+        public void Register(IStepableEvent source)
         {
-            UpdateMover();
+            source.PreStep += OnPreStep;
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PreStep -= OnPreStep;
         }
     }
 }

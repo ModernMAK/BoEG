@@ -12,9 +12,9 @@ namespace MobaGame.Framework.Core.Modules.Commands
 
         public AttackMoveCommand(GameObject entity, Vector3 destenation) : base(entity)
         {
-            GetComponent(out _aggroable);
-            GetComponent(out _attackerable);
-            GetComponent(out _movable);
+            GetModule(out _aggroable);
+            GetModule(out _attackerable);
+            GetModule(out _movable);
             _destenation = destenation;
         }
 
@@ -74,8 +74,8 @@ namespace MobaGame.Framework.Core.Modules.Commands
 
         public AttackHoldCommand(GameObject entity) : base(entity)
         {
-            GetComponent(out _attackerable);
-            GetComponent(out _aggroable);
+            GetModule(out _attackerable);
+            GetModule(out _aggroable);
         }
 
         protected IAttackerable Attackerable => _attackerable;

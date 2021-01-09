@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ namespace MobaGame
             foreach (var smr in GetComponentsInChildren<SkinnedMeshRenderer>())
                 _materials.Add(smr.material);
 
-            _teamable = GetComponent<ITeamable>();
+            _teamable = this.GetModule<ITeamable>();
             _teamable.TeamChanged += TeamableOnChanged;
             if (_teamable.Team != null)
                 Apply(_teamable.Team.GetTint());

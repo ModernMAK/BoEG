@@ -3,17 +3,14 @@ using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace MobaGame.Entity.UnitArchtypes
 {
-    [RequireComponent(typeof(HealthableModule))]
-    [RequireComponent(typeof(MagicableModule))]
     [RequireComponent(typeof(DamageTarget))]
-    [RequireComponent(typeof(AttackerableModule))]
-    [RequireComponent(typeof(Movable))]
     public sealed class Hero : Actor, IInitializable<IHeroData>,
         IProxy<IAbilitiable>, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>, IProxy<IAttackerable>,
-        IProxy<ITeamable>
+        IProxy<ITeamable>, IProxy<IMovable>
     {
         private Abilitiable _abilitiable;
         private Attackerable _attackerable;
@@ -21,6 +18,7 @@ namespace MobaGame.Entity.UnitArchtypes
         private Healthable _healthable;
         private Magicable _magicable;
         private Teamable _teamable;
+        private Movable _movable;
 
         IAbilitiable IProxy<IAbilitiable>.Value => _abilitiable;
         IArmorable IProxy<IArmorable>.Value => _armorable;
@@ -28,6 +26,7 @@ namespace MobaGame.Entity.UnitArchtypes
         IMagicable IProxy<IMagicable>.Value => _magicable;
         IAttackerable IProxy<IAttackerable>.Value => _attackerable;
         ITeamable IProxy<ITeamable>.Value => _teamable;
+        IMovable IProxy<IMovable>.Value => _movable;
 
         protected override void CreateComponents()
         {
@@ -37,6 +36,9 @@ namespace MobaGame.Entity.UnitArchtypes
             _magicable = new Magicable(this);
             _teamable = new Teamable(this);
             _attackerable = new Attackerable(this, _teamable);
+            var agent = GetComponent<NavMeshAgent>();
+            var obstacle = GetComponent<NavMeshObstacle>();
+            _movable = new Movable(this, agent, obstacle);
         }
 
         private Sprite _icon;
@@ -49,13 +51,7 @@ namespace MobaGame.Entity.UnitArchtypes
             _magicable.Initialize(module.MagicableData);
             _armorable.Initialize(module.ArmorableData);
             _attackerable.Initialize(module.AttackerableData);
-
-            //Movable is still a component, because it uses the NavMeshAgent,
-            if (TryGetInitializable<IMovableData>(out var movable))
-                movable.Initialize(module.MovableData);
-            else throw new MissingComponentException("IMovable");
-
-
+            _movable.Initialize(module.MovableData);
             var instanceAbilities = new AbilityObject[module.Abilities.Count];
             for (var i = 0; i < module.Abilities.Count; i++) instanceAbilities[i] = Instantiate(module.Abilities[i]);
             _abilitiable.Initialize(instanceAbilities);

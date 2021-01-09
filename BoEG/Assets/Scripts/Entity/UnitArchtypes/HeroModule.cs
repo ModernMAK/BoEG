@@ -12,7 +12,7 @@ namespace MobaGame.Entity.UnitArchtypes
     [RequireComponent(typeof(ArmorableModule))]
     [RequireComponent(typeof(DamageTarget))]
     [RequireComponent(typeof(AttackerableModule))]
-    [RequireComponent(typeof(Movable))]
+    [RequireComponent(typeof(MovableModule))]
     public class HeroModule : Actor
     {
         private Sprite _icon;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Framework.Core;
 using MobaGame.Framework.Core.Modules.Ability;
 using MobaGame.Framework.Core.Trigger;
 using MobaGame.Framework.Types;
@@ -62,13 +63,13 @@ namespace MobaGame.Framework.Core.Modules
             if (_targets.Contains(actor))
                 return;
 
-            if (!actor.TryGetComponent<IDamageTarget>(out _))
+            if (!actor.TryGetModule<IDamageTarget>(out _))
                 return;
 
-            if (actor.TryGetComponent<IHealthable>(out var healthable))
+            if (actor.TryGetModule<IHealthable>(out var healthable))
                 healthable.Died += TargetDied;
 
-            if (actor.TryGetComponent<ITeamable>(out var teamable))
+            if (actor.TryGetModule<ITeamable>(out var teamable))
                 teamable.TeamChanged += OnTargetTeamChanged;
 
             if (Teamable?.SameTeam(teamable) ?? false)
@@ -79,10 +80,10 @@ namespace MobaGame.Framework.Core.Modules
 
         void InternalRemoveActor(Actor actor)
         {
-            if (actor.TryGetComponent<IHealthable>(out var healthble))
+            if (actor.TryGetModule<IHealthable>(out var healthble))
                 healthble.Died -= TargetDied;
 
-            if (actor.TryGetComponent<ITeamable>(out var teamable))
+            if (actor.TryGetModule<ITeamable>(out var teamable))
                 teamable.TeamChanged -= OnTargetTeamChanged;
 
             _targets.Remove(actor);
@@ -94,7 +95,7 @@ namespace MobaGame.Framework.Core.Modules
             var go = e.Collider.gameObject;
 
 
-            if (!go.TryGetComponent<Actor>(out var actor))
+            if (!go.TryGetModule<Actor>(out var actor))
                 return;
 
             InternalRemoveActor(actor);
@@ -103,7 +104,7 @@ namespace MobaGame.Framework.Core.Modules
         private void TriggerOnEnter(object sender, TriggerEventArgs e)
         {
             var go = e.Collider.gameObject;
-            if (!go.TryGetComponent<Actor>(out var actor))
+            if (!go.TryGetModule<Actor>(out var actor))
                 return;
 
             InternalAddActor(actor);

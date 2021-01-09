@@ -1,24 +1,16 @@
 using System;
 using System.Collections.Generic;
-using MobaGame.Framework.Core.Modules.Ability;
+using Framework.Core;
 using MobaGame.Framework.Core.Trigger;
 using MobaGame.Framework.Types;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    [DisallowMultipleComponent]
     public class AttackerableModule : MonoBehaviour, IAttackerable, IInitializable<IAttackerableData>,
         IListener<IStepableEvent>, IRespawnable
     {
         private Attackerable _attackerable;
-
-        private void Awake()
-        {
-            var actor = GetComponent<Actor>();
-            var teamable = GetComponent<ITeamable>();
-            _attackerable = new Attackerable(actor, teamable);
-        }
 
 
         public float AttackDamage => _attackerable.AttackDamage;
@@ -57,22 +49,6 @@ namespace MobaGame.Framework.Core.Modules
 
         public int AttackTargetCounts => _attackerable.AttackTargetCounts;
 
-
-        private void OnDrawGizmos()
-        {
-            var color = Gizmos.color; //Do we still need to do this?
-            Gizmos.color = Color.Lerp(Color.black, Color.red, 0.5f);
-            Gizmos.DrawWireSphere(transform.position, AttackRange);
-            Gizmos.color = color;
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            var color = Gizmos.color; //Do we still need to do this?
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, AttackRange);
-            Gizmos.color = color;
-        }
 
         public void Initialize(IAttackerableData module) => _attackerable.Initialize(module);
 

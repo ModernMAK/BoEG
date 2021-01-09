@@ -6,7 +6,7 @@ namespace MobaGame.Framework.Core.Modules.Commands
     {
         protected MovementCommand(GameObject entity) : base(entity)
         {
-            Movable = GetComponent<IMovable>();
+            Movable = GetModule<IMovable>();
         }
 
         protected abstract Vector3 Target { get; }

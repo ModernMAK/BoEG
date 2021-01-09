@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
@@ -69,7 +70,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         private void OnSpellCast(object sender, SpellEventArgs args)
         {
             var caster = args.Caster;
-            if (caster.TryGetComponent<ITeamable>(out var teamable))
+            if (caster.TryGetModule<ITeamable>(out var teamable))
                 if (Modules.Teamable?.SameTeam(teamable) ?? false)
                     return;
 

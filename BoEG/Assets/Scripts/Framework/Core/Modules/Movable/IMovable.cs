@@ -19,6 +19,5 @@ namespace MobaGame.Framework.Core.Modules
         void StopMovement();
         void StartMovement();
         void CancelMovement();
-        void UpdateMover();
     }
 }

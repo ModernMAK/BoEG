@@ -105,9 +105,9 @@ namespace MobaGame.Framework.Core.Modules.Ability
 
         public CommonAbilityInfo(Actor actor)
         {
-            _magicable = actor.GetComponent<IMagicable>();
-            _teamable = actor.GetComponent<ITeamable>();
-            _abilitiable = actor.GetComponent<IAbilitiable>();
+            _magicable = actor.GetModule<IMagicable>();
+            _teamable = actor.GetModule<ITeamable>();
+            _abilitiable = actor.GetModule<IAbilitiable>();
             _transform = actor.transform;
             _actor = actor;
         }

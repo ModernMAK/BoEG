@@ -1,8 +1,8 @@
+using Framework.Core;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    [RequireComponent(typeof(IMovable))]
     public class MovableTester : MonoBehaviour
     {
         private IMovable _movable;
@@ -16,7 +16,7 @@ namespace MobaGame.Framework.Core.Modules
 
         private void Awake()
         {
-            _movable = GetComponent<IMovable>();
+            _movable = this.GetModule<IMovable>();
         }
 
         private void Update()
