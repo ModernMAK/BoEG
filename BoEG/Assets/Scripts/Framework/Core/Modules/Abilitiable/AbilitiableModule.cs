@@ -7,72 +7,34 @@ namespace MobaGame.Framework.Core.Modules
 {
     public class AbilitiableModule : MonoBehaviour, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>
     {
-        private IAbility[] _abilities;
+        [SerializeField] private Abilitiable _abilitiable;
 
         private void Awake()
         {
-            _abilities ??= new IAbility[0];
-            OnAbilitiesChanged();
+            _abilitiable = new Abilitiable(GetComponent<Actor>());
         }
 
-        public bool FindAbility<T>(out T ability)
-        {
-            foreach (var temp in _abilities)
-                if (temp is T result)
-                {
-                    ability = result;
-                    return true;
-                }
+        public bool FindAbility<T>(out T ability) => _abilitiable.FindAbility(out ability);
 
-            ability = default;
-            return false;
-        }
 
-        public IAbility GetAbility(int index)
-        {
-            return _abilities[index];
-        }
+        public IAbility GetAbility(int index) => _abilitiable.GetAbility(index);
 
-        public int AbilityCount => _abilities.Length;
+        public int AbilityCount => _abilitiable.AbilityCount;
 
-        public void Initialize(IReadOnlyList<IAbility> module)
-        {
-            var self = GetComponent<Actor>();
-            _abilities = new IAbility[module.Count];
-            for (var i = 0; i < _abilities.Length; i++)
-                _abilities[i] = module[i];
-
-            foreach (var ab in _abilities)
-                ab.Initialize(self);
-            OnAbilitiesChanged();
-        }
+        public void Initialize(IReadOnlyList<IAbility> module) => _abilitiable.Initialize(module);
 
         public event EventHandler AbilitiesChanged
         {
-            add => _abilitiesChanged += value;
-            remove => _abilitiesChanged -= value;
+            add => _abilitiable.AbilitiesChanged += value;
+            remove => _abilitiable.AbilitiesChanged -= value;
         }
-
-        private event EventHandler _abilitiesChanged;
-
-        private event EventHandler<SpellEventArgs> _spellCasted;
 
         public event EventHandler<SpellEventArgs> SpellCasted
         {
-            add => _spellCasted += value;
-            remove => _spellCasted -= value;
+            add => _abilitiable.SpellCasted += value;
+            remove => _abilitiable.SpellCasted -= value;
         }
 
-        public void NotifySpellCast(SpellEventArgs e) => OnSpellCast(e);
-
-        protected virtual void OnSpellCast(SpellEventArgs e)
-        {
-            _spellCasted?.Invoke(this, e);
-        }
-
-        protected virtual void OnAbilitiesChanged()
-        {
-            _abilitiesChanged?.Invoke(this, EventArgs.Empty);
-        }
+        public void NotifySpellCast(SpellEventArgs e) => _abilitiable.NotifySpellCast(e);
     }
 }
