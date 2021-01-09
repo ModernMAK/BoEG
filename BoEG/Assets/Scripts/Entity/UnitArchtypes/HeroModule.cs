@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
+using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Core.Modules.Ability;
 using UnityEngine;
 
 namespace MobaGame.Entity.UnitArchtypes
@@ -9,10 +13,11 @@ namespace MobaGame.Entity.UnitArchtypes
     [RequireComponent(typeof(DamageTarget))]
     [RequireComponent(typeof(AttackerableModule))]
     [RequireComponent(typeof(Movable))]
-    public class Unit : Framework.Core.Actor
+    public class HeroModule : Actor
     {
         private Sprite _icon;
         public override Sprite GetIcon() => _icon;
+
 
         protected override void SetupComponents()
         {
@@ -35,11 +40,6 @@ namespace MobaGame.Entity.UnitArchtypes
                 armorable.Initialize(ArmorableData);
             else throw new MissingComponentException("IArmorable");
 
-//            GetFrameworkComponent<IDamageTarget>().Initialize();
-
-            if (TryGetInitializable<IAggroableData>(out var aggroable))
-                aggroable.Initialize(AggroableData);
-            else throw new MissingComponentException("IAggroable");
 
             if (TryGetInitializable<IAttackerableData>(out var attackerable))
                 attackerable.Initialize(AttackerableData);
@@ -48,13 +48,20 @@ namespace MobaGame.Entity.UnitArchtypes
             if (TryGetInitializable<IMovableData>(out var movable))
                 movable.Initialize(MovableData);
             else throw new MissingComponentException("IMovable");
+
+
+            var instanceAbilities = new AbilityObject[AbilityData.Count];
+            for (var i = 0; i < AbilityData.Count; i++) instanceAbilities[i] = Instantiate(AbilityData[i]);
+
+            if (TryGetInitializable<IReadOnlyList<IAbility>>(out var abilitiable))
+                abilitiable.Initialize(instanceAbilities);
+            else throw new MissingComponentException("IAbilitiable");
         }
 #pragma warning disable 649
 
-        [SerializeField] private UnitData _data;
+        [SerializeField] private HeroData _data;
 
         protected IHealthableData HealthableData => _data._healthableData;
-        protected IAggroableData AggroableData => _data._aggroableData;
         protected IMagicableData MagicableData => _data._magicableData;
         protected IArmorableData ArmorableData => _data._armorableData;
 
@@ -62,6 +69,7 @@ namespace MobaGame.Entity.UnitArchtypes
 
         protected IAttackerableData AttackerableData => _data._attackerableData;
         protected IMovableData MovableData => _data._movableData;
+        protected IReadOnlyList<AbilityObject> AbilityData => _data._abilities;
 #pragma warning restore 649
     }
 }

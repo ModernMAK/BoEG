@@ -22,7 +22,7 @@ namespace MobaGame
                 _materials.Add(smr.material);
 
             _teamable = GetComponent<ITeamable>();
-            _teamable.TeamChanged += TeamableOnTeamChanged;
+            _teamable.TeamChanged += TeamableOnChanged;
             if (_teamable.Team != null)
                 Apply(_teamable.Team.GetTint());
         }
@@ -33,9 +33,9 @@ namespace MobaGame
                 mat.SetColor(TeamTint, color);
         }
 
-        private void TeamableOnTeamChanged(object sender, TeamData e)
+        private void TeamableOnChanged(object sender, ChangedEventArgs<TeamData> e)
         {
-            Apply(e != null ? e.GetTint() : Color.white);
+            Apply(e?.After.GetTint() ?? Color.white);
         }
     }
 }

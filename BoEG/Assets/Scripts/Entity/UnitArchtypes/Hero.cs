@@ -1,73 +1,78 @@
-using System.Collections.Generic;
+using Framework.Core;
+using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
 using UnityEngine;
 
 namespace MobaGame.Entity.UnitArchtypes
 {
-    [RequireComponent(typeof(Healthable))]
-    [RequireComponent(typeof(Magicable))]
-    [RequireComponent(typeof(Armorable))]
+    [RequireComponent(typeof(HealthableModule))]
+    [RequireComponent(typeof(MagicableModule))]
     [RequireComponent(typeof(DamageTarget))]
-    [RequireComponent(typeof(Attackerable))]
+    [RequireComponent(typeof(AttackerableModule))]
     [RequireComponent(typeof(Movable))]
-    public class Hero : Framework.Core.Actor
+    public sealed class Hero : Actor, IInitializable<IHeroData>,
+        IProxy<IAbilitiable>, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>, IProxy<IAttackerable>,
+        IProxy<ITeamable>
     {
-        
+        private Abilitiable _abilitiable;
+        private Attackerable _attackerable;
+        private Armorable _armorable;
+        private Healthable _healthable;
+        private Magicable _magicable;
+        private Teamable _teamable;
+
+        IAbilitiable IProxy<IAbilitiable>.Value => _abilitiable;
+        IArmorable IProxy<IArmorable>.Value => _armorable;
+        IHealthable IProxy<IHealthable>.Value => _healthable;
+        IMagicable IProxy<IMagicable>.Value => _magicable;
+        IAttackerable IProxy<IAttackerable>.Value => _attackerable;
+        ITeamable IProxy<ITeamable>.Value => _teamable;
+
+        protected override void CreateComponents()
+        {
+            _abilitiable = new Abilitiable(this);
+            _armorable = new Armorable(this);
+            _healthable = new Healthable(this);
+            _magicable = new Magicable(this);
+            _teamable = new Teamable(this);
+            _attackerable = new Attackerable(this, _teamable);
+        }
+
         private Sprite _icon;
-        public override Sprite GetIcon() => _icon;
+
+
+        public void Initialize(IHeroData module)
+        {
+            _icon = module.Icon;
+            _healthable.Initialize(module.HealthableData);
+            _magicable.Initialize(module.MagicableData);
+            _armorable.Initialize(module.ArmorableData);
+            _attackerable.Initialize(module.AttackerableData);
+
+            //Movable is still a component, because it uses the NavMeshAgent,
+            if (TryGetInitializable<IMovableData>(out var movable))
+                movable.Initialize(module.MovableData);
+            else throw new MissingComponentException("IMovable");
+
+
+            var instanceAbilities = new AbilityObject[module.Abilities.Count];
+            for (var i = 0; i < module.Abilities.Count; i++) instanceAbilities[i] = Instantiate(module.Abilities[i]);
+            _abilitiable.Initialize(instanceAbilities);
+        }
 
         protected override void SetupComponents()
         {
             base.SetupComponents();
 //            var buffable = new Buffable();
 //            GetFrameworkComponent<IBuffable>().Initialize(buffable);
-
-            _icon = Icon;
-            if (TryGetInitializable<IHealthableData>(out var healthable))
-                healthable.Initialize(HealthableData);
-            else throw new MissingComponentException("IHealthable");
-
-
-            if (TryGetInitializable<IMagicableData>(out var magicable))
-                magicable.Initialize(MagicableData);
-            else throw new MissingComponentException("IMagicable");
-
-
-            if (TryGetInitializable<IArmorableData>(out var armorable))
-                armorable.Initialize(ArmorableData);
-            else throw new MissingComponentException("IArmorable");
-            
-
-            if (TryGetInitializable<IAttackerableData>(out var attackerable))
-                attackerable.Initialize(AttackerableData);
-            else throw new MissingComponentException("IAttackerable");
-
-            if (TryGetInitializable<IMovableData>(out var movable))
-                movable.Initialize(MovableData);
-            else throw new MissingComponentException("IMovable");
-
-
-            var instanceAbilities = new AbilityObject[AbilityData.Count];
-            for (var i = 0; i < AbilityData.Count; i++) instanceAbilities[i] = Instantiate(AbilityData[i]);
-
-            if (TryGetInitializable<IReadOnlyList<IAbility>>(out var abilitiable))
-                abilitiable.Initialize(instanceAbilities);
-            else throw new MissingComponentException("IAbilitiable");
+            if (_data != null)
+                Initialize(_data);
         }
 #pragma warning disable 649
 
         [SerializeField] private HeroData _data;
 
-        protected IHealthableData HealthableData => _data._healthableData;
-        protected IMagicableData MagicableData => _data._magicableData;
-        protected IArmorableData ArmorableData => _data._armorableData;
-
-        protected Sprite Icon => _data._icon;
-
-        protected IAttackerableData AttackerableData => _data._attackerableData;
-        protected IMovableData MovableData => _data._movableData;
-        protected IReadOnlyList<AbilityObject> AbilityData => _data._abilities;
 #pragma warning restore 649
     }
 }

@@ -1,18 +1,15 @@
 using System;
 using MobaGame.Framework.Types;
 using MobaGame.Framework.Utility;
-using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    //Im overcomplicating this for myself
-    //Stop overthinking this. Do what unity does best
-
-
-    [DisallowMultipleComponent]
-    public class Healthable : Statable,
-        IInitializable<IHealthableData>, IHealthable, IListener<IStepableEvent>, IRespawnable
+    public class Healthable : Statable, IInitializable<IHealthableData>, IHealthable, IListener<IStepableEvent>, IRespawnable
     {
+        public Healthable(Actor actor) : base(actor)
+        {
+            _isDead = default;
+        }
         private event EventHandler<DeathEventArgs> _died;
 
         /// <summary>
@@ -95,7 +92,7 @@ namespace MobaGame.Framework.Core.Modules
             if (!_isDead && HealthPercentage.SafeEquals(0f))
             {
                 _isDead = true;
-                OnDied(new DeathEventArgs(gameObject));
+                OnDied(new DeathEventArgs(GameObject));
             }
         }
 
@@ -121,5 +118,6 @@ namespace MobaGame.Framework.Core.Modules
             _isDead = false;
             _percentage = 1f;
         }
+
     }
 }

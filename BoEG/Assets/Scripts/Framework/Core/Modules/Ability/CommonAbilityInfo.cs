@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Framework.Core;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules.Ability
 {
-    public interface IProxy<out T>
-    {
-        T Proxy { get; }
-    }
-
     public class ComponentCache
     {
         public ComponentCache(GameObject gameObject)
@@ -55,8 +51,8 @@ namespace MobaGame.Framework.Core.Modules.Ability
                 if (_gameObject.TryGetComponent(proxyType, out resultComp))
                 {
                     var proxyComp = (IProxy<T>) resultComp;
-                    _cache[type] = proxyComp.Proxy;
-                    value = proxyComp.Proxy;
+                    _cache[type] = proxyComp.Value;
+                    value = proxyComp.Value;
                     return true;
                 }
             }

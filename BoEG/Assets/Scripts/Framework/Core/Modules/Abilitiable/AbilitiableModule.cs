@@ -1,33 +1,17 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MobaGame.Framework.Core.Modules.Ability;
+using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class Abilitiable : ActorModule, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>
+    public class AbilitiableModule : MonoBehaviour, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>
     {
         private IAbility[] _abilities;
 
-        public Abilitiable(Actor actor) : base(actor)
+        private void Awake()
         {
-            _abilities = new IAbility[0];
-        }
-
-        public Abilitiable(Actor actor, IReadOnlyList<IAbility> abilities) : this(actor)
-        {
-            _abilities = new IAbility[abilities.Count];
-            Initialize(abilities);
-        }
-
-
-        public void Initialize(IReadOnlyList<IAbility> abilities)
-        {
-            _abilities = new IAbility[abilities.Count];
-            for (var i = 0; i < _abilities.Length; i++)
-                _abilities[i] = abilities[i];
-
-            foreach (var ab in _abilities)
-                ab.Initialize(Actor);
+            _abilities ??= new IAbility[0];
             OnAbilitiesChanged();
         }
 
@@ -50,6 +34,18 @@ namespace MobaGame.Framework.Core.Modules
         }
 
         public int AbilityCount => _abilities.Length;
+
+        public void Initialize(IReadOnlyList<IAbility> module)
+        {
+            var self = GetComponent<Actor>();
+            _abilities = new IAbility[module.Count];
+            for (var i = 0; i < _abilities.Length; i++)
+                _abilities[i] = module[i];
+
+            foreach (var ab in _abilities)
+                ab.Initialize(self);
+            OnAbilitiesChanged();
+        }
 
         public event EventHandler AbilitiesChanged
         {

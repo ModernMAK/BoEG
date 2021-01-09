@@ -1,69 +1,26 @@
 using System.Collections.Generic;
-using MobaGame.Entity.Abilities;
 using MobaGame.Framework.Core.Trigger;
 using MobaGame.Framework.Types;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class Aggroable : MonoBehaviour, IAggroable, IInitializable<IAggroableData>, IListener<IStepableEvent>
+    public class Aggroable : ActorModule, IAggroable, IInitializable<IAggroableData>, IListener<IStepableEvent>
     {
-        private TriggerHelper<SphereCollider> _triggerHelper;
-
-        private void Awake()
-        {
-            var actor = GetComponent<Actor>();
-            _triggerHelper = TriggerUtility.CreateTrigger<SphereCollider>(actor, "Aggroable Trigger");
-            _teamable = GetComponent<ITeamable>();
-            Targets = new List<Actor>();
-            _triggerHelper.Trigger.Enter += TriggerOnEnter;
-            _triggerHelper.Trigger.Exit += TriggerOnExit;
-        }
-
-        private void TriggerOnExit(object sender, TriggerEventArgs e)
-        {
-            var go = e.Collider.gameObject;
-
-            if (!go.TryGetComponent<Actor>(out var actor))
-                return;
-            Targets.Remove(actor);
-        }
-
-        private void TriggerOnEnter(object sender, TriggerEventArgs e)
-        {
-            var go = e.Collider.gameObject;
-            if (go == gameObject)
-                return;
-            if (!go.TryGetComponent<Actor>(out var actor))
-                return;
-
-            if (Targets.Contains(actor))
-                return;
-            if (_teamable != null && go.TryGetComponent<ITeamable>(out var teamable))
-            {
-                if (_teamable.SameTeam(teamable))
-                    return;
-            }
-
-            if (go.TryGetComponent<IHealthable>(out var healthble))
-                healthble.Died += TargetDied;
-
-            Targets.Add(actor);
-        }
-
-        private void TargetDied(object sender, DeathEventArgs e)
-        {
-            var healthable = sender as IHealthable;
-            healthable.Died -= TargetDied;
-            Targets.Remove(e.Self);
-        }
+        public const string AggroableTriggerName = "Aggroable Trigger";
 
 
         private float _aggroRange;
-        public float AggroRange => _aggroRange;
-        private List<Actor> Targets { get; set; }
 
-        private ITeamable _teamable;
+        public float AggroRange => _aggroRange;
+        private readonly TargetTrigger<SphereCollider> _triggerLogic;
+        private IReadOnlyList<Actor> Targets => _triggerLogic.Targets;
+
+        public Aggroable(Actor actor, ITeamable teamable = default) : base(actor)
+        {
+            var helper = TriggerUtility.CreateTrigger<SphereCollider>(actor, AggroableTriggerName);
+            _triggerLogic = new TargetTrigger<SphereCollider>(Actor, helper, teamable);
+        }
 
 
         public IReadOnlyList<Actor> GetAggroTargets() => Targets;
@@ -77,53 +34,18 @@ namespace MobaGame.Framework.Core.Modules
             _aggroRange = module.AggroRange;
         }
 
-        private void OnPreStep(float deltaStep)
-        {
-            _triggerHelper.Collider.radius = AggroRange;
-        }
-
         private void OnPhysicsStep(float deltaStep)
         {
-            if (_teamable == null)
-                return;
-            for (var i = 0; i < Targets.Count; i++)
-            {
-                var target = Targets[i];
-                if (target == null)
-                {
-                    Targets.RemoveAt(i);
-                    i--;
-                    continue;
-                }
-
-                if (!target.gameObject.activeInHierarchy)
-                {
-                    Targets.RemoveAt(i);
-                    i--;
-                    continue;
-                }
-
-                if (target.TryGetComponent<ITeamable>(out var teamable))
-                {
-                    if (_teamable.SameTeam(teamable))
-                    {
-                        Targets.RemoveAt(i);
-                        i--;
-                        continue;
-                    }
-                }
-            }
+            _triggerLogic.Trigger.Collider.radius = AggroRange;
         }
 
         public void Register(IStepableEvent source)
         {
             source.PhysicsStep += OnPhysicsStep;
-            source.PreStep += OnPreStep;
         }
 
         public void Unregister(IStepableEvent source)
         {
-            source.PreStep -= OnPreStep;
             source.PhysicsStep -= OnPhysicsStep;
         }
     }

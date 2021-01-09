@@ -15,7 +15,12 @@ namespace MobaGame.Framework.Core
         protected virtual void Awake()
         {
             _steppable = new List<IStepable>();
+            CreateComponents();
             SetupComponents();
+        }
+
+        protected virtual void CreateComponents()
+        {
         }
 
         protected virtual void SetupComponents()

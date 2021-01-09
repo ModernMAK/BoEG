@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace MobaGame.Entity.UnitArchtypes
 {
-    [RequireComponent(typeof(Healthable))]
-    [RequireComponent(typeof(Armorable))]
+    [RequireComponent(typeof(HealthableModule))]
+    [RequireComponent(typeof(ArmorableModule))]
     [RequireComponent(typeof(DamageTarget))]
-    [RequireComponent(typeof(Attackerable))]
+    [RequireComponent(typeof(AttackerableModule))]
     public class Building : Framework.Core.Actor
     {
         private Sprite _icon;
