@@ -33,8 +33,6 @@ namespace MobaGame
             _deadTracker = new List<Tuple<Actor, DurationTimer>>();
 
             _notDead = new Queue<Tuple<Actor, DurationTimer>>();
-            var heroModules = FindObjectsOfType<HeroModule>();
-            _heroTracker.AddRange(heroModules);
             var heroes = FindObjectsOfType<Hero>();
             _heroTracker.AddRange(heroes);
             foreach (var hero in _heroTracker)

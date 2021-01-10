@@ -49,7 +49,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
                 return;
             if (IsSelf(actor))
                 return;
-            if (!actor.TryGetComponent<IAbilitiable>(out var abilitiable))
+            if (!actor.TryGetModule<IAbilitiable>(out var abilitiable))
                 return;
             abilitiable.SpellCasted += OnSpellCast;
             _targetBuffer.Add(abilitiable);
@@ -60,7 +60,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             var collider = args.Collider;
             if (!AbilityHelper.TryGetActor(collider, out var actor))
                 return;
-            if (!actor.TryGetComponent<IAbilitiable>(out var abilitiable))
+            if (!actor.TryGetModule<IAbilitiable>(out var abilitiable))
                 return;
             abilitiable.SpellCasted -= OnSpellCast;
             _targetBuffer.Remove(abilitiable);

@@ -5,38 +5,6 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    [DisallowMultipleComponent]
-    [RequireComponent(typeof(IHealthable))]
-    public class DamageTargetModule : MonoBehaviour, IDamageTarget
-    {
-        private DamageTarget _damageTarget;
-
-        public void Awake()
-        {
-            var actor = GetComponent<Actor>();
-            var armorable = this.GetModule<IArmorable>();
-            var healthable = this.GetModule<IHealthable>();
-            _damageTarget = new DamageTarget(actor, healthable, armorable);
-        }
-
-
-        public void TakeDamage(GameObject source, Damage damage) => _damageTarget.TakeDamage(source, damage);
-
-        public void TakeDamage(SourcedDamage<GameObject> damage) => _damageTarget.TakeDamage(damage);
-
-        public event EventHandler<DamageEventArgs> Damaged
-        {
-            add => _damageTarget.Damaged += value;
-            remove => _damageTarget.Damaged -= value;
-        }
-
-        public event EventHandler<DamageEventArgs> Damaging
-        {
-            add => _damageTarget.Damaging += value;
-            remove => _damageTarget.Damaging -= value;
-        }
-    }
-
     public class DamageTarget : ActorModule, IDamageTarget
     {
         private IArmorable _armorable;
