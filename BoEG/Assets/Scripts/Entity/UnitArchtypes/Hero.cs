@@ -11,7 +11,7 @@ namespace MobaGame.Entity.UnitArchtypes
 {
     public sealed class Hero : Actor, IInitializable<IHeroData>,
         IProxy<IAbilitiable>, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>, IProxy<IAttackerable>,
-        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IRespawnable
+        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IRespawnable, IProxy<ITargetable>
     {
 #pragma warning disable 649
         private Sprite _icon;
@@ -27,6 +27,7 @@ namespace MobaGame.Entity.UnitArchtypes
         [SerializeField] private Teamable _teamable;
         [SerializeField] private Movable _movable;
         [SerializeField] private DamageTarget _damageTarget;
+        [SerializeField] private Targetable _targetable;
 
         [Header("Data")] [SerializeField] private HeroData _data;
         [SerializeField] private TeamData _initialTeam;
@@ -40,7 +41,8 @@ namespace MobaGame.Entity.UnitArchtypes
         ITeamable IProxy<ITeamable>.Value => _teamable;
         IMovable IProxy<IMovable>.Value => _movable;
         IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
-
+        ITargetable IProxy<ITargetable>.Value => _targetable;
+        
         protected override IEnumerable<IListener<IStepableEvent>> ChildSteppables
         {
             get
@@ -69,7 +71,7 @@ namespace MobaGame.Entity.UnitArchtypes
             var agent = GetComponent<NavMeshAgent>();
             var obstacle = GetComponent<NavMeshObstacle>();
             _movable = new Movable(this, agent, obstacle);
-
+            _targetable = new Targetable(this);
             _damageTarget = new DamageTarget(this, _healthable, _armorable);
         }
 

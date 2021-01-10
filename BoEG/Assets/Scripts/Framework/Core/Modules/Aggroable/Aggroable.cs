@@ -13,13 +13,13 @@ namespace MobaGame.Framework.Core.Modules
         private float _aggroRange;
 
         public float AggroRange => _aggroRange;
-        private readonly TargetTrigger<SphereCollider> _triggerLogic;
+        private readonly AttackTargetTrigger<SphereCollider> _triggerLogic;
         private IReadOnlyList<Actor> Targets => _triggerLogic.Targets;
 
         public Aggroable(Actor actor, ITeamable teamable = default) : base(actor)
         {
             var helper = TriggerUtility.CreateTrigger<SphereCollider>(actor, AggroableTriggerName);
-            _triggerLogic = new TargetTrigger<SphereCollider>(Actor, helper, teamable);
+            _triggerLogic = new AttackTargetTrigger<SphereCollider>(Actor, helper, teamable);
         }
 
 

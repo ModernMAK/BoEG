@@ -6,6 +6,10 @@ namespace MobaGame.Framework.Core.Modules
     {
         bool AllowAttackTargets { get; }
         bool AllowSpellTargets { get; }
+        bool AllowAttackAffects { get; }
+        bool AllowSpellAffects { get; }
+        event EventHandler AttackTargetingChanged;
+        event EventHandler SpellTargetingChanged;
         event EventHandler<AttackTargetEventArgs> AttackTargeting;
         event EventHandler<AttackTargetEventArgs> AttackTargeted;
         event EventHandler<SpellTargetEventArgs> SpellTargeting;
@@ -14,13 +18,14 @@ namespace MobaGame.Framework.Core.Modules
         /// <summary>
         ///     Gates an attack behind whether the target can be targeted for attacks.
         /// </summary>
-        void TargetAttack(Actor attacker, Action attackCallback, bool forceTargeting = false);
+        void TargetAttack(Action attackCallback, AttackTargetEventArgs args, bool forceTargeting = false);
+        void AffectAttack(Action attackCallback, bool forceTargeting = false);
 
         /// <summary>
         ///     Gates a spell cast behind whether the target can be targeted for spells.
         ///     This differs from affect, which captures all spell effects.
         /// </summary>
-        void TargetSpell(Action spellCallback, bool forceTargeting = false);
+        void TargetSpell(Action spellCallback, SpellTargetEventArgs args, bool forceTargeting = false);
 
         /// <summary>
         ///     Gates a spell behind whether the target can be affected by spells.

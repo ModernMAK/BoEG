@@ -8,16 +8,17 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class TargetTrigger<T> : IDisposable where T : Collider
+    //Named becuse it uses the 'Targetable.AllowAttackTargets' this also works for Aggroable 
+    public class AttackTargetTrigger<T> : IDisposable where T : Collider
     {
         public Actor Actor { get; }
         public ITeamable Teamable { get; }
         public TriggerHelper<T> Trigger { get; }
 
-        private List<Actor> _targets;
+        private readonly List<Actor> _targets;
         public IReadOnlyList<Actor> Targets => _targets;
 
-        public TargetTrigger(Actor actor, TriggerHelper<T> helper, ITeamable teamable = default)
+        public AttackTargetTrigger(Actor actor, TriggerHelper<T> helper, ITeamable teamable = default)
         {
             _targets = new List<Actor>();
             Trigger = helper;
@@ -30,12 +31,12 @@ namespace MobaGame.Framework.Core.Modules
         }
 
 
-        private void OnMyTeamChanged(object sender,  ChangedEventArgs<TeamData> e)
+        private void OnMyTeamChanged(object sender, ChangedEventArgs<TeamData> e)
         {
             InstantlyRebuildTargets();
         }
 
-        private void OnTargetTeamChanged(object sender,  ChangedEventArgs<TeamData> e)
+        private void OnTargetTeamChanged(object sender, ChangedEventArgs<TeamData> e)
         {
             InstantlyRebuildTargets();
         }
@@ -60,6 +61,7 @@ namespace MobaGame.Framework.Core.Modules
         {
             if (actor == Actor)
                 return;
+
             if (_targets.Contains(actor))
                 return;
 
@@ -72,10 +74,22 @@ namespace MobaGame.Framework.Core.Modules
             if (actor.TryGetModule<ITeamable>(out var teamable))
                 teamable.TeamChanged += OnTargetTeamChanged;
 
+            if (actor.TryGetModule<ITargetable>(out var targetable))
+                targetable.AttackTargetingChanged += OnTargetAttackTargetingChanged;
+
+            //Because of event registration, we hold off on actually uisng the vriable until now
+            if (targetable?.AllowAttackTargets ?? false)
+                return;
+
             if (Teamable?.SameTeam(teamable) ?? false)
                 return;
 
             _targets.Add(actor);
+        }
+
+        private void OnTargetAttackTargetingChanged(object sender, EventArgs e)
+        {
+            InstantlyRebuildTargets();
         }
 
         void InternalRemoveActor(Actor actor)
@@ -85,6 +99,9 @@ namespace MobaGame.Framework.Core.Modules
 
             if (actor.TryGetModule<ITeamable>(out var teamable))
                 teamable.TeamChanged -= OnTargetTeamChanged;
+
+            if (actor.TryGetModule<ITargetable>(out var targetable))
+                targetable.AttackTargetingChanged -= OnTargetAttackTargetingChanged;
 
             _targets.Remove(actor);
         }

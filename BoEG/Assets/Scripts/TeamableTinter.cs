@@ -21,7 +21,11 @@ namespace MobaGame
                 _materials.Add(mr.material);
             foreach (var smr in GetComponentsInChildren<SkinnedMeshRenderer>())
                 _materials.Add(smr.material);
+        }
 
+        void Start()
+        {
+            
             _teamable = this.GetModule<ITeamable>();
             _teamable.TeamChanged += TeamableOnChanged;
             if (_teamable.Team != null)
