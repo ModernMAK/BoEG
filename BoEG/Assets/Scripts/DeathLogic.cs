@@ -1,4 +1,5 @@
 ﻿using System;
+using Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 
@@ -16,10 +17,11 @@ namespace MobaGame
         public DeathType deathType;
         private IHealthable _healthable;
 
-        private void Awake()
+        private void Start()
         {
-            _healthable = GetComponent<IHealthable>();
-            _healthable.Died += HealthableOnDied;
+            _healthable = this.GetModule<IHealthable>();
+            if (_healthable != null)
+                _healthable.Died += HealthableOnDied;
         }
 
         private void HealthableOnDied(object sender, EventArgs e)

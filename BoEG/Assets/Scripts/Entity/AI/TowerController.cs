@@ -1,4 +1,5 @@
-﻿using MobaGame.Framework.Core.Modules;
+﻿using Framework.Core;
+using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 
 namespace MobaGame.Entity.AI
@@ -7,9 +8,9 @@ namespace MobaGame.Entity.AI
     {
         private IAttackerable _attackerable;
 
-        private void Awake()
+        private void Start()
         {
-            _attackerable = GetComponent<IAttackerable>();
+            _attackerable = this.GetModule<IAttackerable>();
             enabled = (_attackerable != null);
         }
 

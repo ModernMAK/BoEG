@@ -1,3 +1,4 @@
+using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
@@ -24,8 +25,6 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         private DurationTimer _cooldownTimer;
 
         private IArmorable _armorable;
-        // private IMagicable _magicable;
-        // private IAbilitiable _abilitiable;
 
         private bool _isActive;
 #pragma warning restore 0649
@@ -35,9 +34,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             base.Initialize(actor);
             _activeTimer = new DurationTimer(_duration);
             _cooldownTimer = new DurationTimer(_cooldown, true);
-            _armorable = Self.GetComponent<IArmorable>();
-            // _magicable = Self.GetComponent<IMagicable>();
-// _abilitiable = Self.GetComponent<IAbilitiable>();
+            _armorable = Self.GetModule<IArmorable>();
             actor.AddSteppable(this);
         }
 

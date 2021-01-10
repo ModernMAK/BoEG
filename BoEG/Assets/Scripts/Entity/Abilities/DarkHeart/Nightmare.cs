@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
@@ -44,7 +45,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
         {
             base.Initialize(actor);
             _ticks = new List<TickAction>();
-            _cooldownTimer = new DurationTimer(_cooldown,true);
+            _cooldownTimer = new DurationTimer(_cooldown, true);
             Register(actor);
         }
 
@@ -57,11 +58,11 @@ namespace MobaGame.Entity.Abilities.DarkHeart
                 return;
             if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
                 return;
-            if(actor == Self)
+            if (actor == Self)
                 return;
             if (!AbilityHelper.InRange(Self.transform, actor.transform, _castRange))
                 return;
-            if (!AbilityHelper.HasAllComponents(actor.gameObject, typeof(IDamageTarget)))
+            if (!AbilityHelper.HasModule<IDamageTarget>(actor.gameObject))
                 return;
             if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
@@ -90,7 +91,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
         {
             //Deal damage
             var damagePerTick = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
-            var damageable = target.GetComponent<IDamageTarget>();
+            var damageable = target.GetModule<IDamageTarget>();
 
 
             void InternalTick()

@@ -1,4 +1,5 @@
 ﻿using System;
+using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Commands;
@@ -88,8 +89,8 @@ namespace MobaGame.Framework
                 return;
             }
 
-            _commandable = _actor.GetComponent<ICommandable>();
-            _abilitiableHACK = _actor.GetComponent<IAbilitiable>();
+            _commandable = _actor.GetModule<ICommandable>();
+            _abilitiableHACK = _actor.GetModule<IAbilitiable>();
             if (_panel != null)
                 _panel.SetTarget(_actor.gameObject);
         }

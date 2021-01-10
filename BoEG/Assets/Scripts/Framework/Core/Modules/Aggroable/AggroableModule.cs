@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Framework.Core;
 using MobaGame.Framework.Core.Trigger;
 using MobaGame.Framework.Types;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace MobaGame.Framework.Core.Modules
         private void Awake()
         {
             var actor = GetComponent<Actor>();
-            var teamable = GetComponent<ITeamable>();
+            var teamable = this.GetModule<ITeamable>();
             _aggroable = new Aggroable(actor, teamable);
         }
 

@@ -10,7 +10,7 @@ namespace MobaGame.Entity.UnitArchtypes
     [RequireComponent(typeof(HealthableModule))]
     [RequireComponent(typeof(MagicableModule))]
     [RequireComponent(typeof(ArmorableModule))]
-    [RequireComponent(typeof(DamageTarget))]
+    [RequireComponent(typeof(DamageTargetModule))]
     [RequireComponent(typeof(AttackerableModule))]
     [RequireComponent(typeof(MovableModule))]
     public class HeroModule : Actor

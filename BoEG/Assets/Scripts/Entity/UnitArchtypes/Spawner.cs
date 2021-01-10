@@ -1,3 +1,4 @@
+using Framework.Core;
 using MobaGame.Entity.AI;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
@@ -30,7 +31,7 @@ namespace MobaGame.Entity.UnitArchtypes
                     var spawned = data.Spawn(_spawnContainer, _spawnLocations);
                     foreach (var go in spawned)
                     {
-                        if (go.TryGetComponent<ITeamable>(out var teamable))
+                        if (go.TryGetModule<ITeamable>(out var teamable))
                             teamable.SetTeam(_team);
 
                         if (go.TryGetComponent<UnitController>(out var controller))

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 
@@ -58,7 +59,7 @@ namespace MobaGame.UI
                 _abilitiable.AbilitiesChanged -= OnAbilitiesChanged;
 
             _go = go;
-            _abilitiable = _go != null ? _go.GetComponent<IAbilitiable>() : null;
+            _abilitiable = _go != null ? _go.GetModule<IAbilitiable>() : null;
             UpdatePanels();
 
             if (_abilitiable != null)

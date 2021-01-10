@@ -13,6 +13,13 @@ namespace MobaGame.Framework.Core.Modules
         private Attackerable _attackerable;
 
 
+        private void Awake()
+        {
+            var actor = GetComponent<Actor>();
+            var teamable = this.GetModule<ITeamable>();
+            _attackerable = new Attackerable(actor, teamable);
+        }
+
         public float AttackDamage => _attackerable.AttackDamage;
         public float AttackRange => _attackerable.AttackRange;
         public float AttackSpeed => _attackerable.AttackSpeed;

@@ -1,18 +1,69 @@
+using System.Collections.Generic;
+using Framework.Core;
+using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Types;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace MobaGame.Entity.UnitArchtypes
 {
-    [RequireComponent(typeof(HealthableModule))]
-    [RequireComponent(typeof(MagicableModule))]
-    [RequireComponent(typeof(ArmorableModule))]
-    [RequireComponent(typeof(DamageTarget))]
-    [RequireComponent(typeof(AttackerableModule))]
-    [RequireComponent(typeof(MovableModule))]
-    public class Unit : Framework.Core.Actor
+    [RequireComponent(typeof(NavMeshAgent))]
+    [RequireComponent(typeof(NavMeshObstacle))]
+    public class Unit : Framework.Core.Actor, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>,
+        IProxy<IAttackerable>, IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IInitializable<IUnitData>,
+        IProxy<IAggroable>
     {
+        private Healthable _healthable;
+        private Magicable _magicable;
+        private Armorable _armorable;
+        private DamageTarget _damageTarget;
+        private Attackerable _attackerable;
+        private Aggroable _aggroable;
+        private Movable _movable;
+        private Teamable _teamable;
+
+        IArmorable IProxy<IArmorable>.Value => _armorable;
+        IHealthable IProxy<IHealthable>.Value => _healthable;
+        IMagicable IProxy<IMagicable>.Value => _magicable;
+        IAttackerable IProxy<IAttackerable>.Value => _attackerable;
+        ITeamable IProxy<ITeamable>.Value => _teamable;
+        IMovable IProxy<IMovable>.Value => _movable;
+        IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
+        IAggroable IProxy<IAggroable>.Value => _aggroable;
+
+        protected override IEnumerable<IListener<IStepableEvent>> ChildSteppables
+        {
+            get
+            {
+                yield return _healthable;
+                yield return _magicable;
+                // yield return _armorable;
+                // yield return _damageTarget;
+                yield return _attackerable;
+                yield return _aggroable;
+                yield return _movable;
+                // yield return _teamable;
+                
+                
+            }
+        }
         private Sprite _icon;
         public override Sprite GetIcon() => _icon;
+
+        protected override void CreateComponents()
+        {
+            _healthable = new Healthable(this);
+            _magicable = new Magicable(this);
+            _armorable = new Armorable(this);
+            _damageTarget = new DamageTarget(this, _healthable);
+            _teamable = new Teamable(this);
+            _attackerable = new Attackerable(this, _teamable);
+            _aggroable = new Aggroable(this, _teamable);
+            var agent = GetComponent<NavMeshAgent>();
+            var obstacle = GetComponent<NavMeshObstacle>();
+            _movable = new Movable(this, agent, obstacle);
+        }
 
         protected override void SetupComponents()
         {
@@ -20,48 +71,23 @@ namespace MobaGame.Entity.UnitArchtypes
 //            var buffable = new Buffable();
 //            GetFrameworkComponent<IBuffable>().Initialize(buffable);
 
-            _icon = Icon;
-            if (TryGetInitializable<IHealthableData>(out var healthable))
-                healthable.Initialize(HealthableData);
-            else throw new MissingComponentException("IHealthable");
-
-
-            if (TryGetInitializable<IMagicableData>(out var magicable))
-                magicable.Initialize(MagicableData);
-            else throw new MissingComponentException("IMagicable");
-
-
-            if (TryGetInitializable<IArmorableData>(out var armorable))
-                armorable.Initialize(ArmorableData);
-            else throw new MissingComponentException("IArmorable");
-
-//            GetFrameworkComponent<IDamageTarget>().Initialize();
-
-            if (TryGetInitializable<IAggroableData>(out var aggroable))
-                aggroable.Initialize(AggroableData);
-            else throw new MissingComponentException("IAggroable");
-
-            if (TryGetInitializable<IAttackerableData>(out var attackerable))
-                attackerable.Initialize(AttackerableData);
-            else throw new MissingComponentException("IAttackerable");
-
-            if (TryGetInitializable<IMovableData>(out var movable))
-                movable.Initialize(MovableData);
-            else throw new MissingComponentException("IMovable");
+            if (_data != null)
+                Initialize(_data);
         }
 #pragma warning disable 649
 
         [SerializeField] private UnitData _data;
 
-        protected IHealthableData HealthableData => _data._healthableData;
-        protected IAggroableData AggroableData => _data._aggroableData;
-        protected IMagicableData MagicableData => _data._magicableData;
-        protected IArmorableData ArmorableData => _data._armorableData;
-
-        protected Sprite Icon => _data._icon;
-
-        protected IAttackerableData AttackerableData => _data._attackerableData;
-        protected IMovableData MovableData => _data._movableData;
 #pragma warning restore 649
+        public void Initialize(IUnitData module)
+        {
+            _icon = module.Icon;
+            _healthable.Initialize(module.HealthableData);
+            _magicable.Initialize(module.MagicableData);
+            _armorable.Initialize(module.ArmorableData);
+            _aggroable.Initialize(module.AggroableData);
+            _attackerable.Initialize(module.AttackerableData);
+            _movable.Initialize(module.MovableData);
+        }
     }
 }

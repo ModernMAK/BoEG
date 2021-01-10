@@ -1,4 +1,5 @@
-﻿using MobaGame.Framework.Core.Modules;
+﻿using Framework.Core;
+using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +15,7 @@ namespace MobaGame.UI
         public override void SetTarget(GameObject go)
         {
             _go = go;
-            _armorable = _go != null ? _go.GetComponent<IArmorable>() : null;
+            _armorable = _go != null ? _go.GetModule<IArmorable>() : null;
         }
 
         // Update is called once per frame

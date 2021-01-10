@@ -1,46 +1,72 @@
+using System.Collections.Generic;
+using Framework.Core;
+using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
+using MobaGame.Framework.Types;
 using UnityEngine;
 
 namespace MobaGame.Entity.UnitArchtypes
 {
-    [RequireComponent(typeof(HealthableModule))]
-    [RequireComponent(typeof(ArmorableModule))]
-    [RequireComponent(typeof(DamageTarget))]
-    [RequireComponent(typeof(AttackerableModule))]
-    public class Building : Framework.Core.Actor
+    public class Building : Actor, IProxy<IHealthable>, IProxy<IArmorable>, IProxy<IDamageTarget>,
+        IProxy<IAttackerable>, IInitializable<IBuildingData>, IProxy<ITeamable>
     {
+#pragma warning disable 649
+
+        [Header("Data")] [SerializeField] private BuildingData _data;
+
+        [SerializeField] private TeamData _initialTeam;
+        [Header("Sub Components")] private Healthable _healthable;
+        private Armorable _armorable;
+        private DamageTarget _damageTarget;
+        private Attackerable _attackerable;
+        private Teamable _teamable;
+
+#pragma warning restore 649
+        IHealthable IProxy<IHealthable>.Value => _healthable;
+
+        IArmorable IProxy<IArmorable>.Value => _armorable;
+
+        IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
+
+        IAttackerable IProxy<IAttackerable>.Value => _attackerable;
+
+        ITeamable IProxy<ITeamable>.Value => _teamable;
+
         private Sprite _icon;
         public override Sprite GetIcon() => _icon;
+
+        protected override IEnumerable<IListener<IStepableEvent>> ChildSteppables
+        {
+            get
+            {
+                yield return _healthable;
+                yield return _attackerable;
+            }
+        }
 
         protected override void SetupComponents()
         {
             base.SetupComponents();
-
-            _icon = Icon;
-            if (TryGetInitializable<IHealthableData>(out var healthable))
-                healthable.Initialize(HealthableData);
-            else throw new MissingComponentException("IHealthable");
-
-
-            if (TryGetInitializable<IArmorableData>(out var armorable))
-                armorable.Initialize(ArmorableData);
-            else throw new MissingComponentException("IArmorable");
-
-
-            if (TryGetInitializable<IAttackerableData>(out var attackerable))
-                attackerable.Initialize(AttackerableData);
-            else throw new MissingComponentException("IAttackerable");
+            if (_data != null)
+                Initialize(_data);
         }
-#pragma warning disable 649
 
-        [SerializeField] private BuildingData _data;
+        protected override void CreateComponents()
+        {
+            _armorable = new Armorable(this);
+            _healthable = new Healthable(this);
+            _teamable = new Teamable(this);
+            _attackerable = new Attackerable(this, _teamable);
+            _damageTarget = new DamageTarget(this, _healthable, _armorable);
+        }
 
-        protected IHealthableData HealthableData => _data._healthableData;
-        protected IArmorableData ArmorableData => _data._armorableData;
-
-        protected Sprite Icon => _data._icon;
-
-        protected IAttackerableData AttackerableData => _data._attackerableData;
-#pragma warning restore 649
+        public void Initialize(IBuildingData module)
+        {
+            _icon = module.Icon;
+            _healthable.Initialize(module.HealthableData);
+            _armorable.Initialize(module.ArmorableData);
+            _attackerable.Initialize(module.AttackerableData);
+            _teamable.Initialize(_initialTeam);
+        }
     }
 }

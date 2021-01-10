@@ -12,11 +12,20 @@ namespace MobaGame.Framework.Core
 
         private List<IStepable> _steppable;
 
+        protected virtual IEnumerable<IListener<IStepableEvent>> ChildSteppables
+        {
+            get { yield break; }
+        }
+
         protected virtual void Awake()
         {
             _steppable = new List<IStepable>();
             CreateComponents();
             SetupComponents();
+        }
+
+        protected virtual void Start()
+        {
         }
 
         protected virtual void CreateComponents()
@@ -29,6 +38,11 @@ namespace MobaGame.Framework.Core
             _steppable.AddRange(steppables);
             var steppableListener = GetComponents<IListener<IStepableEvent>>();
             foreach (var steppable in steppableListener)
+            {
+                steppable.Register(this);
+            }
+
+            foreach (var steppable in ChildSteppables)
             {
                 steppable.Register(this);
             }
@@ -53,16 +67,6 @@ namespace MobaGame.Framework.Core
 
             OnPreStep(Time.deltaTime);
             foreach (var item in _steppable) item.PreStep(Time.deltaTime);
-        }
-
-        public void AddSteppable(IStepable steppable)
-        {
-            _steppable.Add(steppable);
-        }
-
-        public void RemoveSteppable(IStepable steppable)
-        {
-            _steppable.Remove(steppable);
         }
 
         public void AddSteppable(IListener<IStepableEvent> stepableEvent) => stepableEvent.Register(this);

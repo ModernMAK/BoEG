@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Framework.Core;
 using MobaGame.Framework.Types;
 using MobaGame.Input;
 using UnityEngine;
@@ -55,6 +56,10 @@ namespace MobaGame.Framework.Core.Modules.Ability
         public static bool HasAllComponents(GameObject gameObject, params Type[] components)
         {
             return components.All(comp => gameObject.TryGetComponent(comp, out _));
+        }
+        public static bool HasModule<T>(GameObject gameObject)
+        {
+            return gameObject.TryGetComponent<T>(out _) || gameObject.TryGetComponent<IProxy<T>>(out _);
         }
 
 

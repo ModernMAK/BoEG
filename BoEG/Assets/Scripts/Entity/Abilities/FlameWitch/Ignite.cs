@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
@@ -80,7 +81,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             //Deal damage
             var damage = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
 //            var targetable = target.GetComponent<ITargetable>();
-            var damagable = target.GetComponent<IDamageTarget>();
+            var damagable = target.GetModule<IDamageTarget>();
             damagable.TakeDamage(Self.gameObject, damage);
             //Gather DOT targets
             var dotTargets = new List<Actor> {target};
@@ -104,7 +105,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
             foreach (var actor in dotTargets)
             {
-                if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
+                if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
                     continue;
                 var source = Self.gameObject;
                 var dotDamage = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
@@ -121,7 +122,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                     TickInterval = _tickInterval
                 };
 
-                if (!actor.TryGetComponent<IHealthable>(out var healthable))
+                if (!actor.TryGetModule<IHealthable>(out var healthable))
                     healthable.Died += RemoveTick;
 
                 void RemoveTick(object sender, DeathEventArgs args)
@@ -161,7 +162,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 return;
             if (!AbilityHelper.InRange(Self.transform, actor.transform.position, _castRange))
                 return;
-            if (!AbilityHelper.HasAllComponents(actor.gameObject, typeof(IDamageTarget)))
+            if (!AbilityHelper.HasModule<IDamageTarget>(actor.gameObject))
                 return;
             if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;

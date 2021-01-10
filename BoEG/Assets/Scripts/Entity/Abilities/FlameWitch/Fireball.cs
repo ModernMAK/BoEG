@@ -1,4 +1,5 @@
-﻿using MobaGame.Framework.Core;
+﻿using Framework.Core;
+using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
 using MobaGame.Framework.Types;
@@ -81,7 +82,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 if (AbilityHelper.SameTeam(Modules.Teamable, actor.gameObject))
                     continue; //Ignore if allies
 
-                if (!actor.TryGetComponent<IDamageTarget>(out var damageTarget))
+                if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
                     continue; //Ignore if cant damage
 
                 damageTarget.TakeDamage(Self.gameObject, dmg);
