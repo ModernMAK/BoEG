@@ -9,9 +9,9 @@ using UnityEngine.AI;
 
 namespace MobaGame.Entity.UnitArchtypes
 {
-    public sealed class Hero : Actor, IInitializable<IHeroData>,
+    public sealed class Hero : CommandableActor, IInitializable<IHeroData>,
         IProxy<IAbilitiable>, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>, IProxy<IAttackerable>,
-        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IRespawnable, IProxy<ITargetable>
+        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IProxy<ITargetable>
     {
 #pragma warning disable 649
         private Sprite _icon;
@@ -43,10 +43,12 @@ namespace MobaGame.Entity.UnitArchtypes
         IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
         ITargetable IProxy<ITargetable>.Value => _targetable;
         
-        protected override IEnumerable<IListener<IStepableEvent>> ChildSteppables
+        protected override IEnumerable<object> Modules
         {
             get
             {
+                foreach (var m in base.Modules)
+                    yield return m;
                 // yield return _abilitiable;
                 yield return _healthable;
                 yield return _magicable;
@@ -99,11 +101,5 @@ namespace MobaGame.Entity.UnitArchtypes
                 Initialize(_data);
         }
 
-        public void Respawn()
-        {
-            _attackerable.Respawn();
-            _healthable.Respawn();
-            _magicable.Respawn();
-        }
     }
 }

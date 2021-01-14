@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace MobaGame.Entity.UnitArchtypes
 {
-    public class Building : Actor, IProxy<IHealthable>, IProxy<IArmorable>, IProxy<IDamageTarget>,
+    public class Building : CommandableActor, IProxy<IHealthable>, IProxy<IArmorable>, IProxy<IDamageTarget>,
         IProxy<IAttackerable>, IInitializable<IBuildingData>, IProxy<ITeamable>
     {
 #pragma warning disable 649
@@ -35,10 +35,12 @@ namespace MobaGame.Entity.UnitArchtypes
         private Sprite _icon;
         public override Sprite GetIcon() => _icon;
 
-        protected override IEnumerable<IListener<IStepableEvent>> ChildSteppables
+        protected override IEnumerable<object> Modules
         {
             get
             {
+                foreach (var m in base.Modules)
+                    yield return m;
                 yield return _healthable;
                 yield return _attackerable;
             }

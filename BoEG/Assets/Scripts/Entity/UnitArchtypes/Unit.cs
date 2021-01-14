@@ -10,7 +10,7 @@ namespace MobaGame.Entity.UnitArchtypes
 {
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(NavMeshObstacle))]
-    public class Unit : Framework.Core.Actor, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>,
+    public class Unit : CommandableActor, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>,
         IProxy<IAttackerable>, IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IInitializable<IUnitData>,
         IProxy<IAggroable>
     {
@@ -32,10 +32,12 @@ namespace MobaGame.Entity.UnitArchtypes
         IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
         IAggroable IProxy<IAggroable>.Value => _aggroable;
 
-        protected override IEnumerable<IListener<IStepableEvent>> ChildSteppables
+        protected override IEnumerable<object> Modules
         {
             get
             {
+                foreach (var m in base.Modules)
+                    yield return m;
                 yield return _healthable;
                 yield return _magicable;
                 // yield return _armorable;
