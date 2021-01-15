@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
@@ -62,10 +61,18 @@ namespace MobaGame.Entity.Abilities.DarkHeart
                 return;
             if (!AbilityHelper.InRange(Self.transform, actor.transform, _castRange))
                 return;
+            if(actor.TryGetModule<ITeamable>(out var teamable))
+                if (Modules.Teamable?.SameTeam(teamable) ?? false)
+                    return;
+            if (actor.TryGetModule<ITargetable>(out var targetable))
+                if (!targetable.AllowSpellTargets)
+                    return;
             if (!AbilityHelper.HasModule<IDamageTarget>(actor.gameObject))
                 return;
             if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
+
+
             _cooldownTimer.Reset();
             CastObjectTarget(actor);
             Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
@@ -106,7 +113,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
                 TickInterval = _tickInterval
             };
 
-            if (target.TryGetComponent<IHealthable>(out var healthable))
+            if (target.TryGetModule<IHealthable>(out var healthable))
                 healthable.Died += RemoveTick;
 
             void RemoveTick(object sender, DeathEventArgs args)

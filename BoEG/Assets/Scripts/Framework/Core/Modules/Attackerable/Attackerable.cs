@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Framework.Core;
 using MobaGame.Framework.Core.Trigger;
 using MobaGame.Framework.Types;
 using UnityEngine;
@@ -60,7 +59,7 @@ namespace MobaGame.Framework.Core.Modules
             if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
                 return;
 
-            if (!actor.TryGetModule<ITargetable>(out var targetable))
+            if (actor.TryGetModule<ITargetable>(out var targetable))
             {
                 var dmg = GetAttackDamage();
                 var args = new AttackTargetEventArgs(Actor, dmg);

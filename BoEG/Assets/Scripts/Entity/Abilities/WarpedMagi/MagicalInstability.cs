@@ -1,4 +1,3 @@
-using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
@@ -35,7 +34,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             _activeTimer = new DurationTimer(_duration);
             _cooldownTimer = new DurationTimer(_cooldown, true);
             _armorable = Self.GetModule<IArmorable>();
-            actor.AddSteppable(this);
+            Register(actor);
         }
 
         private void OnResisting(object sender, ArmorableEventArgs e)

@@ -25,7 +25,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             Register(actor);
             _channelTimer = new DurationTimer(_channelTime);
             _cooldownTimer = new DurationTimer(_cooldown, true);
-            Modules.Abilitiable.FindAbility(out _overheatAbility);
+            Modules.Abilitiable.TryGetAbility(out _overheatAbility);
         }
 
 #pragma warning disable 0649
@@ -75,14 +75,14 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             var damage = new Damage(_aoeDamage, DamageType.Magical, DamageModifiers.Ability);
             foreach (var target in targets)
             {
-                if (!target.TryGetComponent<Actor>(out var actor))
+                if (!AbilityHelper.TryGetActor(target, out var actor))
                     continue;
                 if (actor == Self)
                     continue;
 
-                if (!target.TryGetModule<IDamageTarget>(out var damageTarget))
+                if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
                     continue;
-                if (AbilityHelper.SameTeam(Modules.Teamable, target))
+                if (AbilityHelper.SameTeam(Modules.Teamable, actor))
                     continue;
 
                 damageTarget.TakeDamage(Self.gameObject, damage);

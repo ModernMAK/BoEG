@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
@@ -97,7 +96,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                         continue;
                     if (actor == target) //Already added
                         continue;
-                    if (AbilityHelper.SameTeam(Modules.Teamable, actor.gameObject))
+                    if (AbilityHelper.SameTeam(Modules.Teamable, actor))
                         continue; //Skip allies
                     dotTargets.Add(actor);
                 }
@@ -140,13 +139,12 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         public override void Initialize(Actor actor)
         {
             base.Initialize(actor);
-            Modules.Abilitiable.FindAbility(out _overheatAbility);
+            Modules.Abilitiable.TryGetAbility(out _overheatAbility);
             _cooldownTimer = new DurationTimer(_cooldown, true);
             //Manually inject the ability as a stepable
             actor.AddSteppable(this);
             _ticks = new List<TickAction>();
         }
-
 
         public override void ConfirmCast()
         {
@@ -156,16 +154,29 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             var ray = AbilityHelper.GetScreenRay();
             if (!AbilityHelper.TryGetEntity(ray, out var hit))
                 return;
+
             if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
                 return;
+
             if (IsSelf(actor))
                 return;
+
             if (!AbilityHelper.InRange(Self.transform, actor.transform.position, _castRange))
                 return;
+
+            if (AbilityHelper.SameTeam(Modules.Teamable, actor))
+                return;
+
+            if (!AbilityHelper.AllowSpellTargets(actor))
+                return;
+
             if (!AbilityHelper.HasModule<IDamageTarget>(actor.gameObject))
                 return;
+
+
             if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
+
             _cooldownTimer.Reset();
             CastObjectTarget(actor);
             Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = _manaCost});

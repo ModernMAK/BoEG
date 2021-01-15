@@ -3,7 +3,6 @@ using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
-using MobaGame.Framework.Types;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -49,21 +48,23 @@ namespace MobaGame.Entity.UnitArchtypes
             {
                 foreach (var m in base.Modules)
                     yield return m;
-                // yield return _abilitiable;
+                yield return _abilitiable;
                 yield return _healthable;
                 yield return _magicable;
-                // yield return _armorable;
-                // yield return _damageTarget;
+                yield return _armorable;
+                yield return _damageTarget;
                 yield return _attackerable;
                 // yield return _aggroable;
                 yield return _movable;
-                // yield return _teamable;
+                yield return _teamable;
+                
                 
                 
             }
         }
         protected override void CreateComponents()
         {
+            base.CreateComponents();
             _abilitiable = new Abilitiable(this);
             _armorable = new Armorable(this);
             _healthable = new Healthable(this);

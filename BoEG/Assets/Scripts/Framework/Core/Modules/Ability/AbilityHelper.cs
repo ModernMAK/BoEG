@@ -43,38 +43,29 @@ namespace MobaGame.Framework.Core.Modules.Ability
             return result;
         }
 
-        public static Func<GameObject, bool> HasAllComponentsPredicate(params Type[] components)
-        {
-            bool Predicate(GameObject gameObject)
-            {
-                return HasAllComponents(gameObject, components);
-            }
-
-            return Predicate;
-        }
 
         public static bool HasAllComponents(GameObject gameObject, params Type[] components)
         {
             return components.All(comp => gameObject.TryGetComponent(comp, out _));
         }
+
         public static bool HasModule<T>(GameObject gameObject)
         {
             return gameObject.TryGetComponent<T>(out _) || gameObject.TryGetComponent<IProxy<T>>(out _);
         }
 
+        public static bool IsDamagable(Actor actor) =>
+            actor.TryGetModule<IDamageTarget>(out var targetable);
+
+        public static bool AllowSpellTargets(Actor actor, bool defaultResult = true) =>
+            actor.TryGetModule<ITargetable>(out var targetable) ? targetable.AllowSpellTargets : defaultResult;
+
+        public static bool AllowAttackTargets(Actor actor, bool defaultResult = true) =>
+            actor.TryGetModule<ITargetable>(out var targetable) ? targetable.AllowAttackTargets : defaultResult;
 
         public static bool TrySpendMagic(IStatCostAbility ability, IMagicable magicable) =>
             magicable.TrySpendMagic(ability.Cost);
 
-        public static Func<GameObject, bool> InRangePredicate(Transform transform, float range)
-        {
-            bool Predicate(GameObject gameObject)
-            {
-                return InRange(gameObject.transform, transform, range);
-            }
-
-            return Predicate;
-        }
 
         public static bool InRange(Vector3 a, Vector3 b, float range) =>
             (a - b).sqrMagnitude < range * range;
@@ -89,29 +80,15 @@ namespace MobaGame.Framework.Core.Modules.Ability
             InRange(a.position, b.position, range);
 
 
-        public static Func<GameObject, bool> SameTeamPredicate(ITeamable teamable, bool nullValue = false)
-        {
-            bool Predicate(GameObject gameObject) => SameTeam(teamable, gameObject, out _, nullValue);
-            return Predicate;
-        }
+        public static bool SameTeam(ITeamable teamable, Actor actor, bool nullValue = false) =>
+            SameTeam(teamable, actor, out _, nullValue);
 
-        public static bool SameTeam(ITeamable teamable, GameObject gameObject, bool nullValue = false) =>
-            SameTeam(teamable, gameObject, out _, nullValue);
-
-        public static bool SameTeam(ITeamable teamable, GameObject gameObject, out ITeamable otherTeamable,
+        public static bool SameTeam(ITeamable teamable, Actor actor, out ITeamable otherTeamable,
             bool nullValue = false)
         {
-            return gameObject.TryGetComponent(out otherTeamable)
-                ? SameTeam(teamable, otherTeamable, nullValue)
-                : nullValue;
+            otherTeamable = actor.GetModule<ITeamable>();
+            return SameTeam(teamable, otherTeamable, nullValue);
         }
-
-        public static bool SameTeam(ITeamable teamable, Component component, bool nullValue = false) =>
-            SameTeam(teamable, component, out _, nullValue);
-
-        public static bool SameTeam(ITeamable teamable, Component component, out ITeamable otherTeamable,
-            bool nullValue = false) =>
-            SameTeam(teamable, component.gameObject, out otherTeamable, nullValue);
 
         public static bool SameTeam(ITeamable teamable, ITeamable otherTeamable, bool nullValue)
         {
@@ -172,6 +149,7 @@ namespace MobaGame.Framework.Core.Modules.Ability
             origin + rotation * halfSize;
 
         public static float GetLineLength(Vector3 start, Vector3 target) => (target - start).magnitude;
+
         public static Vector3 GetLineBox(Vector3 start, Vector3 target, Vector2 size)
         {
             var z = (target - start).magnitude;

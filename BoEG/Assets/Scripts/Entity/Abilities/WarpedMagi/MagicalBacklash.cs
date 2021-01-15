@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
@@ -39,7 +38,14 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             _sphereCollider.Trigger.Enter += OnActorEnter;
             _sphereCollider.Trigger.Exit += OnActorExit;
             _targetBuffer = new List<IAbilitiable>();
-            actor.AddSteppable(this);
+            Register(actor);
+            if(actor.TryGetModule<IHealthable>(out var healthable))
+                healthable.Died += SelfDied;
+        }
+
+        private void SelfDied(object sender, DeathEventArgs e)
+        {
+            ClearTargets();
         }
 
         private void OnActorEnter(object sender, TriggerEventArgs args)
@@ -74,8 +80,9 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
                 if (Modules.Teamable?.SameTeam(teamable) ?? false)
                     return;
 
+            if (!caster.TryGetModule<IDamageTarget>(out var damageTarget))
+                return;
 
-            var damageTarget = caster.GetComponent<IDamageTarget>();
             var damageValue = _damagePerManaSpent * args.ManaSpent;
             damageValue = Mathf.Max(damageValue, 0f);
             var damage = new Damage(damageValue, DamageType.Pure, DamageModifiers.Ability);

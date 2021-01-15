@@ -83,7 +83,7 @@ namespace MobaGame.Entity.Abilities.LastHunter
 
                 if (AbilityHelper.SameTeam(Modules.Teamable, actor))
                     continue;
-                if (!actor.TryGetComponent<IDamageTarget>(out var target))
+                if (!actor.TryGetModule<IDamageTarget>(out var target))
                     continue;
 
                 target.TakeDamage(Self.gameObject, dmg);

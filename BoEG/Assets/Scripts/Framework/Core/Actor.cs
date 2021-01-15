@@ -1,10 +1,63 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using MobaGame.Framework.Types;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core
 {
+    public static class EnumerableQuery
+    {
+        
+
+        public static T Get<T>(IEnumerable enumerable)
+        {
+            TryGet<T>(enumerable, out var module);
+            return module;
+        }
+
+        public static bool TryGet<T>(IEnumerable enumerable, out T module)
+        {
+            foreach (var m in enumerable)
+            {
+                if (m is T result)
+                {
+                    module = result;
+                    return true;
+                }
+            }
+
+            module = default;
+            return false;
+        }
+
+        public static IEnumerable<T> GetAll<T>(IEnumerable enumerable)
+        {
+            foreach (var item in enumerable)
+            {
+                if (item is T result)
+                {
+                    yield return result;
+                }
+            }
+        }
+
+        public static IReadOnlyList<T> GetAllAsList<T>(IEnumerable enumerable)
+        {
+            var list = new List<T>();
+            foreach (var item in enumerable)
+            {
+                if (item is T result)
+                {
+                    list.Add(result);
+                }
+            }
+
+            return list;
+        }
+        
+    }
+    
     public static class ActorUtil
     {
         public static T GetModuleOrComponent<T>(this Actor actor)
@@ -66,51 +119,13 @@ namespace MobaGame.Framework.Core
         private List<IStepable> _steppable;
 
 
-        public T GetModule<T>()
-        {
-            TryGetModule<T>(out var module);
-            return module;
-        }
+        public T GetModule<T>() => EnumerableQuery.Get<T>(Modules);
 
-        public bool TryGetModule<T>(out T module)
-        {
-            foreach (var m in Modules)
-            {
-                if (m is T result)
-                {
-                    module = result;
-                    return true;
-                }
-            }
+        public bool TryGetModule<T>(out T module) => EnumerableQuery.TryGet<T>(Modules, out module);
 
-            module = default;
-            return false;
-        }
+        public IEnumerable<T> GetModules<T>()=> EnumerableQuery.GetAll<T>(Modules);
 
-        public IEnumerable<T> GetModules<T>()
-        {
-            foreach (var module in Modules)
-            {
-                if (module is T result)
-                {
-                    yield return result;
-                }
-            }
-        }
-
-        public IReadOnlyList<T> GetModulesAsList<T>()
-        {
-            var list = new List<T>();
-            foreach (var module in Modules)
-            {
-                if (module is T result)
-                {
-                    list.Add(result);
-                }
-            }
-
-            return list;
-        }
+        public IReadOnlyList<T> GetModulesAsList<T>()=> EnumerableQuery.GetAllAsList<T>(Modules);
 
 
         protected virtual IEnumerable<object> Modules
