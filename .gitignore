@@ -4,6 +4,10 @@
 ### Rider ###
 .idea/
 
+### VS ###
+.vs/
+.vsconfig
+
 ### Unity ###
 [Ll]ibrary/
 [Tt]emp/
