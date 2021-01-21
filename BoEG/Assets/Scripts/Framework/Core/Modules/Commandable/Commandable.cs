@@ -1,15 +1,15 @@
 using System.Collections.Generic;
-using UnityEngine;
+using MobaGame.Framework.Types;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class Commandable : MonoBehaviour, ICommandable, IRespawnable
+    public class Commandable : ActorModule, ICommandable, IRespawnable
     {
         private readonly LinkedList<ICommand> _commandQueue;
         private ICommand _activeCommand;
 
 
-        public Commandable()
+        public Commandable(Actor actor) : base(actor)
         {
             _commandQueue = new LinkedList<ICommand>();
             _activeCommand = null;
@@ -38,17 +38,17 @@ namespace MobaGame.Framework.Core.Modules
             Enqueue(command);
         }
 
-        public void PreStep(float deltaTime)
+        private void PreStep(float deltaTime)
         {
             _activeCommand?.PreStep(deltaTime);
         }
 
-        public void Step(float deltaStep)
+        private void Step(float deltaStep)
         {
             _activeCommand?.Step(deltaStep);
         }
 
-        public void PostStep(float deltaTick)
+        private void PostStep(float deltaTick)
         {
             if (_activeCommand != null)
             {
@@ -67,7 +67,7 @@ namespace MobaGame.Framework.Core.Modules
             }
         }
 
-        public void PhysicsStep(float deltaTick)
+        private void PhysicsStep(float deltaTick)
         {
             _activeCommand?.PhysicsStep(deltaTick);
         }
@@ -101,6 +101,22 @@ namespace MobaGame.Framework.Core.Modules
         public void Respawn()
         {
             ClearCommands();
+        }
+
+        public void Register(IStepableEvent source)
+        {
+            source.PreStep += PreStep;
+            source.Step += Step;
+            source.PhysicsStep += PhysicsStep;
+            source.PostStep += PostStep;
+        }
+
+        public void Unregister(IStepableEvent source)
+        {
+            source.PreStep -= PreStep;
+            source.Step -= Step;
+            source.PhysicsStep -= PhysicsStep;
+            source.PostStep -= PostStep;
         }
     }
 }

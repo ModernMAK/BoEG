@@ -1,22 +1,28 @@
-﻿using MobaGame.Framework.Core.Modules;
+﻿using System;
+using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Commands;
 using UnityEngine;
 
 namespace MobaGame.Entity.AI
 {
-    public class UnitController : MonoBehaviour
+    [RequireComponent(typeof(Actor))]
+    public class UnitController : ActorBehaviour
     {
         private ICommandable _commandable;
 
-        private void Awake()
+        protected void Start()
         {
-            _commandable = GetComponent<ICommandable>();
+            if (_commandable == null && !Self.TryGetModule(out _commandable))
+                throw new NullReferenceException("Actor does not have commandable!");
         }
 
         //V1
         //We want to attack move towards a position, until we die
         public void SetAttackTarget(Vector3 position)
         {
+            if (_commandable == null && !Self.TryGetModule(out _commandable))
+                throw new NullReferenceException("Actor does not have commandable!");
             //TODO
             var attackMoveCommand = new AttackMoveCommand(gameObject, position);
             _commandable.InterruptCommand(attackMoveCommand);

@@ -3,15 +3,14 @@ using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
-using MobaGame.Framework.Types;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace MobaGame.Entity.UnitArchtypes
 {
-    public sealed class Hero : Actor, IInitializable<IHeroData>,
+    public sealed class Hero : CommandableActor, IInitializable<IHeroData>,
         IProxy<IAbilitiable>, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>, IProxy<IAttackerable>,
-        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IRespawnable, IProxy<ITargetable>
+        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IProxy<ITargetable>
     {
 #pragma warning disable 649
         private Sprite _icon;
@@ -43,25 +42,29 @@ namespace MobaGame.Entity.UnitArchtypes
         IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
         ITargetable IProxy<ITargetable>.Value => _targetable;
         
-        protected override IEnumerable<IListener<IStepableEvent>> ChildSteppables
+        protected override IEnumerable<object> Modules
         {
             get
             {
-                // yield return _abilitiable;
+                foreach (var m in base.Modules)
+                    yield return m;
+                yield return _abilitiable;
                 yield return _healthable;
                 yield return _magicable;
-                // yield return _armorable;
-                // yield return _damageTarget;
+                yield return _armorable;
+                yield return _damageTarget;
                 yield return _attackerable;
                 // yield return _aggroable;
                 yield return _movable;
-                // yield return _teamable;
+                yield return _teamable;
+                
                 
                 
             }
         }
         protected override void CreateComponents()
         {
+            base.CreateComponents();
             _abilitiable = new Abilitiable(this);
             _armorable = new Armorable(this);
             _healthable = new Healthable(this);
@@ -99,11 +102,5 @@ namespace MobaGame.Entity.UnitArchtypes
                 Initialize(_data);
         }
 
-        public void Respawn()
-        {
-            _attackerable.Respawn();
-            _healthable.Respawn();
-            _magicable.Respawn();
-        }
     }
 }

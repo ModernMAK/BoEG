@@ -2,12 +2,11 @@ using System.Collections.Generic;
 using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
-using MobaGame.Framework.Types;
 using UnityEngine;
 
 namespace MobaGame.Entity.UnitArchtypes
 {
-    public class Building : Actor, IProxy<IHealthable>, IProxy<IArmorable>, IProxy<IDamageTarget>,
+    public class Building : CommandableActor, IProxy<IHealthable>, IProxy<IArmorable>, IProxy<IDamageTarget>,
         IProxy<IAttackerable>, IInitializable<IBuildingData>, IProxy<ITeamable>
     {
 #pragma warning disable 649
@@ -35,11 +34,16 @@ namespace MobaGame.Entity.UnitArchtypes
         private Sprite _icon;
         public override Sprite GetIcon() => _icon;
 
-        protected override IEnumerable<IListener<IStepableEvent>> ChildSteppables
+        protected override IEnumerable<object> Modules
         {
             get
             {
+                foreach (var m in base.Modules)
+                    yield return m;
                 yield return _healthable;
+                yield return _armorable;
+                yield return _damageTarget;
+                yield return _teamable;
                 yield return _attackerable;
             }
         }
@@ -53,6 +57,7 @@ namespace MobaGame.Entity.UnitArchtypes
 
         protected override void CreateComponents()
         {
+            base.CreateComponents();
             _armorable = new Armorable(this);
             _healthable = new Healthable(this);
             _teamable = new Teamable(this);

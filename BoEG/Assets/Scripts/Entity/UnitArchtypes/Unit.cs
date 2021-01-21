@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
-using MobaGame.Framework.Types;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,7 +9,7 @@ namespace MobaGame.Entity.UnitArchtypes
 {
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(NavMeshObstacle))]
-    public class Unit : Framework.Core.Actor, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>,
+    public class Unit : CommandableActor, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>,
         IProxy<IAttackerable>, IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IInitializable<IUnitData>,
         IProxy<IAggroable>
     {
@@ -32,18 +31,20 @@ namespace MobaGame.Entity.UnitArchtypes
         IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
         IAggroable IProxy<IAggroable>.Value => _aggroable;
 
-        protected override IEnumerable<IListener<IStepableEvent>> ChildSteppables
+        protected override IEnumerable<object> Modules
         {
             get
             {
+                foreach (var m in base.Modules)
+                    yield return m;
+                yield return _armorable;
                 yield return _healthable;
                 yield return _magicable;
-                // yield return _armorable;
-                // yield return _damageTarget;
                 yield return _attackerable;
-                yield return _aggroable;
+                yield return _teamable;
                 yield return _movable;
-                // yield return _teamable;
+                yield return _damageTarget;
+                yield return _aggroable;
                 
                 
             }
@@ -53,6 +54,7 @@ namespace MobaGame.Entity.UnitArchtypes
 
         protected override void CreateComponents()
         {
+            base.CreateComponents();
             _healthable = new Healthable(this);
             _magicable = new Magicable(this);
             _armorable = new Armorable(this);

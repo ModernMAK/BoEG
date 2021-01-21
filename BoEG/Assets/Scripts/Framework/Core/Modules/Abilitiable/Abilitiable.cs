@@ -4,9 +4,10 @@ using MobaGame.Framework.Core.Modules.Ability;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class Abilitiable : ActorModule, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>
+    public class Abilitiable : ActorModule, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>, IRespawnable
     {
         private IAbility[] _abilities;
+        private IReadOnlyList<IRespawnable> _respawnables;
 
         public Abilitiable(Actor actor) : base(actor)
         {
@@ -28,21 +29,13 @@ namespace MobaGame.Framework.Core.Modules
 
             foreach (var ab in _abilities)
                 ab.Initialize(Actor);
+            _respawnables = EnumerableQuery.GetAllAsList<IRespawnable>(_abilities);
             OnAbilitiesChanged();
         }
 
-        public bool FindAbility<T>(out T ability)
-        {
-            foreach (var temp in _abilities)
-                if (temp is T result)
-                {
-                    ability = result;
-                    return true;
-                }
+        public bool TryGetAbility<T>(out T ability) => EnumerableQuery.TryGet<T>(_abilities, out ability);
 
-            ability = default;
-            return false;
-        }
+        public T GetAbility<T>() => EnumerableQuery.Get<T>(_abilities);
 
         public IAbility GetAbility(int index)
         {
@@ -77,6 +70,14 @@ namespace MobaGame.Framework.Core.Modules
         protected virtual void OnAbilitiesChanged()
         {
             _abilitiesChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Respawn()
+        {
+            foreach (var respawnable in _respawnables)
+            {
+                respawnable.Respawn();
+            }
         }
     }
 }

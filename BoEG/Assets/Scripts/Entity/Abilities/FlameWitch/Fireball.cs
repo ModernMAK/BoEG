@@ -1,5 +1,4 @@
-﻿using Framework.Core;
-using MobaGame.Framework.Core;
+﻿using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
 using MobaGame.Framework.Types;
@@ -37,7 +36,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         {
             base.Initialize(actor);
             _cooldownTimer = new DurationTimer(_cooldown,true);
-            Modules.Abilitiable.FindAbility(out _overheat);
+            Modules.Abilitiable.TryGetAbility(out _overheat);
             Register(actor);
         }
 
@@ -79,7 +78,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 if (IsSelf(actor))
                     continue; //Always ignore self
 
-                if (AbilityHelper.SameTeam(Modules.Teamable, actor.gameObject))
+                if (AbilityHelper.SameTeam(Modules.Teamable, actor))
                     continue; //Ignore if allies
 
                 if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))

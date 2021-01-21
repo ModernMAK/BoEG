@@ -83,7 +83,7 @@ namespace MobaGame.Entity.Abilities.LastHunter
 
                 if (AbilityHelper.SameTeam(Modules.Teamable, actor))
                     continue;
-                if (!actor.TryGetComponent<IDamageTarget>(out var target))
+                if (!actor.TryGetModule<IDamageTarget>(out var target))
                     continue;
 
                 target.TakeDamage(Self.gameObject, dmg);
@@ -99,7 +99,7 @@ namespace MobaGame.Entity.Abilities.LastHunter
             var origin = Self.transform.position;
             var dest = target.transform.position;
             var offset = dest - origin;
-            const float JumpDistance = 0.5f;
+            const float JumpDistance = 0.5f;//As a benefit; it's range is extended slightly
             CastGroundTarget(dest + offset.normalized * JumpDistance);
         }
 
