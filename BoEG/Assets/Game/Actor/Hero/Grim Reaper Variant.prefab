@@ -1,12 +1,17 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &2781540363920957064
+--- !u!1001 &3758899321650700411
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1786291221884245902, guid: a02fd7a7a2eea8a4f8b5d9701ac37c57,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c61319d77541c5942bb99012e9bbf428, type: 2}
     - target: {fileID: 2583657777301377708, guid: a02fd7a7a2eea8a4f8b5d9701ac37c57,
         type: 3}
       propertyPath: m_Center.y
@@ -15,7 +20,12 @@ PrefabInstance:
     - target: {fileID: 3252051806016912368, guid: a02fd7a7a2eea8a4f8b5d9701ac37c57,
         type: 3}
       propertyPath: m_Name
-      value: Hero
+      value: Grim Reaper
+      objectReference: {fileID: 0}
+    - target: {fileID: 3407958442445558981, guid: a02fd7a7a2eea8a4f8b5d9701ac37c57,
+        type: 3}
+      propertyPath: m_Center.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5366978962622352663, guid: a02fd7a7a2eea8a4f8b5d9701ac37c57,
         type: 3}
@@ -35,17 +45,17 @@ PrefabInstance:
     - target: {fileID: 6951833031788447661, guid: a02fd7a7a2eea8a4f8b5d9701ac37c57,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 6951833031788447661, guid: a02fd7a7a2eea8a4f8b5d9701ac37c57,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6951833031788447661, guid: a02fd7a7a2eea8a4f8b5d9701ac37c57,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -9
       objectReference: {fileID: 0}
     - target: {fileID: 6951833031788447661, guid: a02fd7a7a2eea8a4f8b5d9701ac37c57,
         type: 3}
