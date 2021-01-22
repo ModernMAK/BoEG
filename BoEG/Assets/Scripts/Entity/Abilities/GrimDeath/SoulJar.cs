@@ -11,11 +11,18 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 {
 	public class SoulJar : AbilityObject, IListener<IStepableEvent>
 	{
+		#pragma warning disable 0649
+		[SerializeField]
 		private int _soulsAcquired;
+		[SerializeField]
 		private int _soulLimit;
+		[SerializeField]
 		private float _healthGenPerSoul;
+		[SerializeField]
 		private float _manaGenPerSoul;
+		[SerializeField]
 		private float _searchRadius;
+#pragma warning restore 0649
 		private TriggerHelper<SphereCollider> _aura;
 
 		public float HealthGen => _healthGenPerSoul * _soulsAcquired;
@@ -44,17 +51,8 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 			var collider = e.Collider;
 			if (!AbilityHelper.TryGetActor(collider, out var actor))
 				return;
-			if (!actor.TryGetComponent<IHealthable>(out var healthable))
-			{
-				if (!actor.TryGetComponent<IProxy<IHealthable>>(out var proxy))
-				{
-					return;
-				}
-				else
-				{
-					healthable = proxy.Value;
-				}
-			}
+			if (!actor.TryGetModule<IHealthable>(out var healthable))
+				return;
 
 			healthable.Died -= OnTargetDeath;
 		}
@@ -64,16 +62,8 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 			var collider = e.Collider;
 			if (!AbilityHelper.TryGetActor(collider, out var actor))
 				return;
-			if (!actor.TryGetComponent<IHealthable>(out var healthable))
-			{	if (!actor.TryGetComponent<IProxy<IHealthable>>(out var proxy))
-				{
-					return;
-				}
-				else
-				{
-					healthable = proxy.Value;
-				}
-			}
+			if (!actor.TryGetModule<IHealthable>(out var healthable))
+				return;
 
 			healthable.Died += OnTargetDeath;
 		}
