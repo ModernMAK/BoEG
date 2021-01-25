@@ -2,8 +2,9 @@
 using Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
-
+using MobaGame.Framework.Core;
 namespace MobaGame
+
 {
     [RequireComponent(typeof(ITeamable))]
     public class TeamableTinter : MonoBehaviour
@@ -26,7 +27,7 @@ namespace MobaGame
         void Start()
         {
             
-            _teamable = this.GetModule<ITeamable>();
+            _teamable = this.GetComponent<Actor>().GetModule<ITeamable>();
             _teamable.TeamChanged += TeamableOnChanged;
             if (_teamable.Team != null)
                 Apply(_teamable.Team.GetTint());
