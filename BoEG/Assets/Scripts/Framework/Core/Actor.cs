@@ -1,118 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using MobaGame.Framework.Types;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core
 {
-    public static class EnumerableQuery
-    {
-        
 
-        public static T Get<T>(IEnumerable enumerable)
-        {
-            TryGet<T>(enumerable, out var module);
-            return module;
-        }
-
-        public static bool TryGet<T>(IEnumerable enumerable, out T module)
-        {
-            foreach (var m in enumerable)
-            {
-                if (m is T result)
-                {
-                    module = result;
-                    return true;
-                }
-            }
-
-            module = default;
-            return false;
-        }
-
-        public static IEnumerable<T> GetAll<T>(IEnumerable enumerable)
-        {
-            foreach (var item in enumerable)
-            {
-                if (item is T result)
-                {
-                    yield return result;
-                }
-            }
-        }
-
-        public static IReadOnlyList<T> GetAllAsList<T>(IEnumerable enumerable)
-        {
-            var list = new List<T>();
-            foreach (var item in enumerable)
-            {
-                if (item is T result)
-                {
-                    list.Add(result);
-                }
-            }
-
-            return list;
-        }
-        
-    }
-    
-    public static class ActorUtil
-    {
-        public static T GetModuleOrComponent<T>(this Actor actor)
-        {
-            if (actor.TryGetModule<T>(out var module))
-                return module;
-            if (actor.TryGetComponent<T>(out var component))
-                return component;
-            return default;
-        }
-
-        public static bool TryGetModuleOrComponent<T>(this Actor actor, out T module)
-        {
-            if (actor.TryGetModule<T>(out var moduleResult))
-            {
-                module = moduleResult;
-                return true;
-            }
-
-            if (actor.TryGetComponent<T>(out var componentResult))
-            {
-                module = componentResult;
-                return true;
-            }
-
-            module = default;
-            return default;
-        }
-
-        public static IEnumerable<T> GetModules<T>(this Actor actor)
-        {
-            var modules = actor.GetModules<T>();
-            foreach (var module in modules)
-            {
-                yield return module;
-            }
-
-            var components = actor.GetComponents<T>();
-            foreach (var component in components)
-            {
-                yield return component;
-            }
-        }
-
-        public static IReadOnlyList<T> GetModulesAsList<T>(this Actor actor)
-        {
-            var modules = actor.GetModules<T>();
-            var components = actor.GetComponents<T>();
-            var list = new List<T>(components);
-            list.AddRange(modules);
-            return list;
-        }
-    }
-
-    public class Actor : MonoBehaviour, IStepableEvent
+	public class Actor : MonoBehaviour, IStepableEvent
     {
         public virtual Sprite GetIcon() => null;
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class Statable : ActorModule, IListener<ILevelable>, IListener<IModifiable>
+    public class Statable : ActorModule, IListener<ILevelable>
     {
         public Statable(Actor actor) : base(actor)
         {
@@ -67,18 +67,6 @@ namespace MobaGame.Framework.Core.Modules
             source.LevelChanged -= OnLevelChanged;
         }
 
-        public void Register(IModifiable source)
-        {
-            source.OnModifierAdded += OnModifierAdded;
-            source.OnModifierRemoved += OnModifierRemoved;
-        }
-
-        public void Unregister(IModifiable source)
-        {
-            source.OnModifierAdded -= OnModifierAdded;
-            source.OnModifierRemoved -= OnModifierRemoved;
-        }
-
         //TODO use these to add modifiers
 //        protected ModifierResult _capacityModifier;
 //        protected ModifierResult _generationModifier;
@@ -101,13 +89,6 @@ namespace MobaGame.Framework.Core.Modules
             _generation += _generationGain * levelDifference;
         }
 
-        protected virtual void OnModifierAdded(object sender, IModifier modifier)
-        {
-        }
-
-        protected virtual void OnModifierRemoved(object sender, IModifier modifier)
-        {
-        }
 
         protected virtual void Generate(float deltaTime)
         {

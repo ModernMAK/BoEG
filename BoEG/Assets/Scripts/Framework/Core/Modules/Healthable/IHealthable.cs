@@ -23,12 +23,20 @@ namespace MobaGame.Framework.Core.Modules
     {
         float Health { get; set; }
         float HealthPercentage { get; set; }
-        float HealthCapacity { get; set; }
-        float HealthGeneration { get; set; }
+
+        float HealthCapacity { get; }
+        float HealthGeneration { get; }
 
         event EventHandler<float> HealthChanged;
-
         event EventHandler<DeathEventArgs> Died;
+
+        //Should  definately move this elsewhere; this will allow me to have the interface show this
+        float BaseHealthCapacity { get; }
+        float BonusHealthCapacity { get; }
+        float BaseHealthGeneration { get; }
+        float BonusHealthGeneration { get; }
+
+
 
     }
 }

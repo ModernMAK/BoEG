@@ -10,7 +10,7 @@ namespace Framework.Core
 
         [Obsolete("Use Actor TryGetModule")]
         public static bool TryGetModule<TModule>(this Component component, out TModule module) =>
-            TryGetModule<TModule>(component.gameObject, out module);
+			TryGetModule(component.gameObject, out module);
 
         // [Obsolete("Use Actor IS/AS Cast")]
 

@@ -10,7 +10,7 @@ namespace MobaGame.Entity.UnitArchtypes
 {
     public sealed class Hero : CommandableActor, IInitializable<IHeroData>,
         IProxy<IAbilitiable>, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>, IProxy<IAttackerable>,
-        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IProxy<ITargetable>
+        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IProxy<ITargetable>, IProxy<IModifiable>
     {
 #pragma warning disable 649
         private Sprite _icon;
@@ -27,6 +27,7 @@ namespace MobaGame.Entity.UnitArchtypes
         [SerializeField] private Movable _movable;
         [SerializeField] private DamageTarget _damageTarget;
         [SerializeField] private Targetable _targetable;
+        [SerializeField] private Modifiable _modifiable;
 
         [Header("Data")] [SerializeField] private HeroData _data;
         [SerializeField] private TeamData _initialTeam;
@@ -41,7 +42,7 @@ namespace MobaGame.Entity.UnitArchtypes
         IMovable IProxy<IMovable>.Value => _movable;
         IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
         ITargetable IProxy<ITargetable>.Value => _targetable;
-        
+        IModifiable IProxy<IModifiable>.Value => _modifiable;
         protected override IEnumerable<object> Modules
         {
             get
@@ -57,7 +58,7 @@ namespace MobaGame.Entity.UnitArchtypes
                 // yield return _aggroable;
                 yield return _movable;
                 yield return _teamable;
-                
+                yield return _modifiable;
                 
                 
             }
@@ -76,6 +77,7 @@ namespace MobaGame.Entity.UnitArchtypes
             _movable = new Movable(this, agent, obstacle);
             _targetable = new Targetable(this);
             _damageTarget = new DamageTarget(this, _healthable, _armorable);
+            _modifiable = new Modifiable(this);
         }
 
 
@@ -83,6 +85,8 @@ namespace MobaGame.Entity.UnitArchtypes
         {
             _icon = module.Icon;
             _healthable.Initialize(module.HealthableData);
+            _healthable.Register(_modifiable);
+
             _magicable.Initialize(module.MagicableData);
             _armorable.Initialize(module.ArmorableData);
             _attackerable.Initialize(module.AttackerableData);

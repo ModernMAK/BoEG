@@ -9,11 +9,9 @@ using UnityEngine;
 
 namespace MobaGame.Entity.Abilities.GrimDeath
 {
-	public class SoulJar : AbilityObject, IListener<IStepableEvent>
+	public class SoulJar : AbilityObject
 	{
 		#pragma warning disable 0649
-		[SerializeField]
-		private int _soulsAcquired;
 		[SerializeField]
 		private int _soulLimit;
 		[SerializeField]
@@ -25,20 +23,80 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 #pragma warning restore 0649
 		private TriggerHelper<SphereCollider> _aura;
 
-		public float HealthGen => _healthGenPerSoul * _soulsAcquired;
-		public float ManaGen => _manaGenPerSoul * _manaGenPerSoul;
 
-	
+		//TODO add magicable modifier
+		private class SoulJarModifier : IHealthableModifier, IDynamicModifier
+		{
+			public SoulJarModifier(float hpGen, float mpGen, int souls=default)
+			{
+				_souls = souls;
+				_hpGenPerSoul = hpGen;
+				_mpGenPerSoul = mpGen;
+			}
+			private int _souls;
+			private float _hpGenPerSoul;
+			private float _mpGenPerSoul;
+			public int Souls
+			{
+				get => _souls;
+				set
+				{
+					var changed = _souls != value;
+					_souls = value;
+					if (changed)
+						OnChanged();
+				}
+			}
+			public float HealthGenPerSoul
+			{
+				get => _hpGenPerSoul;
+				set
+				{
+					var changed = _hpGenPerSoul != value;
+					_hpGenPerSoul = value;
+					if (changed)
+						OnChanged();
+				}
+			}
+			public float ManaGenPerSoul
+			{
+				get => _mpGenPerSoul;
+				set
+				{
+					var changed = _mpGenPerSoul != value;
+					_mpGenPerSoul = value;
+					if (changed)
+						OnChanged();
+				}
+			}
 
+			public float HealthCapacityBonus => 0f;
+
+			public float HealthCapacityFlatMultiplier => 0f;
+
+			public float HealthCapacityMultiplicativeMultiplier => 0f;
+
+			public float HealthGenerationBonus => HealthGenPerSoul * Souls;
+
+			public float HealthGenerationFlatMultiplier => 0f;
+
+			public float HealthGenerationMultiplicativeMultiplier => 0f;
+
+			public event EventHandler Changed;
+			private void OnChanged() => Changed?.Invoke(this, EventArgs.Empty);
+		}
+
+		SoulJarModifier _modifier;
 		public override void Initialize(Actor actor)
 		{
+			_modifier = new SoulJarModifier(_healthGenPerSoul,_manaGenPerSoul);
 			base.Initialize(actor);
-			Register(actor);
 			_aura = TriggerUtility.CreateTrigger<SphereCollider>(actor, "SoulJar Search Trigger");
 			_aura.Collider.radius = _searchRadius;
 			_aura.Trigger.Enter += OnEnter;
 			_aura.Trigger.Exit += OnExit;
 			Modules.Healthable.Died += OnDeath;
+			Modules.Modifiable.AddModifier(_modifier);
 		}
 
 		private void OnDeath(object sender, DeathEventArgs e)
@@ -75,30 +133,15 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 			AddSouls(1);
 		}
 
-		private void OnPreStep(float step)
-		{
-			Modules.Healthable.Health += step * HealthGen;
-			Modules.Magicable.Magic += step * ManaGen;
-		}
-		public void Register(IStepableEvent source)
-		{
-			source.PreStep += OnPreStep;
-		}
-
-		public void Unregister(IStepableEvent source)
-		{
-			source.PreStep -= OnPreStep;
-		}
 
 
 		private void AddSouls(int souls)
 		{
-			_soulsAcquired += souls;
-			_soulsAcquired = Mathf.Clamp(_soulsAcquired, 0, _soulLimit);
+			_modifier.Souls = Mathf.Clamp(_modifier.Souls + souls, 0, _soulLimit);
 		}
 		private void HalveSouls()
 		{
-			_soulsAcquired /= 2;
+			_modifier.Souls /= 2;
 		}
 
 	}

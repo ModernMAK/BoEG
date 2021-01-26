@@ -78,7 +78,9 @@ namespace MobaGame.Framework.Core.Modules.Ability
 
         public ICommandable Commandable => GetCached<ICommandable>();
 
-        public ModuleCache(GameObject gameObject) : base(gameObject)
+        public IModifiable Modifiable => GetCached<IModifiable>();
+
+		public ModuleCache(GameObject gameObject) : base(gameObject)
         {
         }
 
