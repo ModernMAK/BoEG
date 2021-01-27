@@ -31,7 +31,6 @@ namespace MobaGame.Framework.Core.Modules
         /// <summary>
         /// A flag set once died has been called.
         /// </summary>
-        private bool _isDead;
         private MixedModifierList<IHealthCapacityModifier> _capacityModifiers;
         private MixedModifierList<IHealthGenerationModifier> _generationModifiers;
         private Modifier _capacityModifier;
@@ -90,11 +89,7 @@ namespace MobaGame.Framework.Core.Modules
 
         private void OnPreStep(float deltaTime)
         {
-            if (!HealthPercentage.SafeEquals(0f))
-            {
-                _isDead = false;
-                Generate(deltaTime);
-            }
+            Generate(deltaTime);
         }
 
 
@@ -111,7 +106,6 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Respawn()
         {
-            _isDead = false;
             _percentage = 1f;
         }
 

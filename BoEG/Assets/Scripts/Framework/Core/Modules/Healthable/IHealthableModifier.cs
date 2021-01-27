@@ -45,7 +45,7 @@ namespace MobaGame.Framework.Core.Modules
 
         public   float Additive { get; }
         public float Multiplicative { get; }
-        public float Calculate(float value) => value * (1 + Additive + Multiplicative);
+        public float Calculate(float value) => value * (Additive + Multiplicative);
         public ModifierMultiplier AddModifier(ModifierMultiplier modifier) => new ModifierMultiplier(Additive + modifier.Additive, (1 + Multiplicative) * (1 + modifier.Multiplicative) - 1);
     }
     public interface IHealthCapacityModifier : IModifier
