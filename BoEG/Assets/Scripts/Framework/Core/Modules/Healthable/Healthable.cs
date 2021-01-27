@@ -8,8 +8,6 @@ namespace MobaGame.Framework.Core.Modules
     {
 		public Healthable(Actor actor) : base(actor)
         {
-            _isDead = default;
-
             _capacityModifiers = new MixedModifierList<IHealthCapacityModifier>();
             _generationModifiers = new MixedModifierList<IHealthGenerationModifier>();
 
@@ -29,7 +27,6 @@ namespace MobaGame.Framework.Core.Modules
             _generationModifier = _generationModifiers.SumModifiers(mod => mod.HealthGeneration);
         }
 
-        private event EventHandler<DeathEventArgs> _died;
 
         /// <summary>
         /// A flag set once died has been called.
@@ -78,8 +75,8 @@ namespace MobaGame.Framework.Core.Modules
 
         public event EventHandler<DeathEventArgs> Died
         {
-            add => _died += value;
-            remove => _died -= value;
+            add => throw new Exception();
+            remove => throw new Exception();
         }
 
 
@@ -100,31 +97,17 @@ namespace MobaGame.Framework.Core.Modules
             }
         }
 
-        private void OnPostStep(float deltaTime)
-        {
-            if (!_isDead && HealthPercentage.SafeEquals(0f))
-            {
-                _isDead = true;
-                OnDied(new DeathEventArgs(GameObject));
-            }
-        }
 
         public void Register(IStepableEvent source)
         {
             source.PreStep += OnPreStep;
-            source.PostStep += OnPostStep;
         }
 
         public void Unregister(IStepableEvent source)
         {
             source.PreStep -= OnPreStep;
-            source.PostStep -= OnPostStep;
         }
 
-        protected virtual void OnDied(DeathEventArgs e)
-        {
-            _died?.Invoke(this, e);
-        }
 
         public void Respawn()
         {

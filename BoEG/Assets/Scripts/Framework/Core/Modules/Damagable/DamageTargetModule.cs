@@ -8,19 +8,21 @@ namespace MobaGame.Framework.Core.Modules
     {
         private IArmorable _armorable;
         private IHealthable _healthable;
+        private IKillable _killable;
         private event EventHandler<DamageEventArgs> _damaged;
         private event EventHandler<DamageEventArgs> _damaging;
 
-        public DamageTarget(Actor actor, IHealthable healthable, IArmorable armorable = default) : base(actor)
+        public DamageTarget(Actor actor, IHealthable healthable, IKillable killable, IArmorable armorable = default) : base(actor)
         {
             _healthable = healthable;
             _armorable = armorable;
+            _killable = killable;
         }
 
         // _armorable = GetComponent<IArmorable>();
         // _healthable = GetComponent<IHealthable>();
 
-        public virtual void TakeDamage(GameObject source, Damage damage)
+        public virtual bool TakeDamage(Actor source, Damage damage)
         {
             var damageToTake = damage;
             //ARMORABLE
@@ -34,9 +36,13 @@ namespace MobaGame.Framework.Core.Modules
             OnDamaging(dmgArg);
             _healthable.Health -= dmgArg.Damage.Value;
             OnDamaged(dmgArg);
+            var killed = _healthable.Health == 0f;
+            if (killed)
+                _killable.Die(dmgArg.Source);
+            return killed;
         }
 
-        public void TakeDamage(SourcedDamage<GameObject> damage) => TakeDamage(damage.Source, damage.Damage);
+        public bool TakeDamage(SourcedDamage<Actor> damage) => TakeDamage(damage.Source, damage.Damage);
 
         public event EventHandler<DamageEventArgs> Damaged
         {

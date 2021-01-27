@@ -1,6 +1,5 @@
 using System;
 using MobaGame.Framework.Types;
-using UnityEngine;
 
 
 namespace MobaGame.Framework.Core.Modules
@@ -13,13 +12,13 @@ namespace MobaGame.Framework.Core.Modules
             Damage = default;
         }
 
-        public DamageEventArgs(GameObject source, Damage damage)
+        public DamageEventArgs(Actor source, Damage damage)
         {
             Source = source;
             Damage = damage;
         }
 
-        public GameObject Source { get; set; }
+        public Actor Source { get; set; }
         public Damage Damage { get; set; }
     }
 }

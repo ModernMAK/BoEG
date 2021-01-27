@@ -5,21 +5,56 @@ namespace MobaGame.Framework.Core.Modules
 {
     public class DeathEventArgs : EventArgs
     {
-        public DeathEventArgs(Actor actor)
+        public DeathEventArgs(Actor actor) : this(actor, null) { }
+
+        public DeathEventArgs(Actor actor, Actor killer)
         {
             Self = actor;
-            GameObject = actor.gameObject;
-        }
-
-        public DeathEventArgs(GameObject go)
-        {
-            Self = go.GetComponent<Actor>();
-            GameObject = go;
+            Killer = killer;
         }
         public Actor Self { get; }
-        public GameObject GameObject { get; }
+        public Actor Killer { get; }
     }
-    public interface IHealthable
+    public interface IKillable
+	{
+
+        event EventHandler<DeathEventArgs> Died;
+        bool IsDead { get; }
+        void Die();
+        void Die(Actor killer);
+    }
+	public class Killable : ActorModule, IKillable, IRespawnable
+	{
+        public Killable(Actor actor) : base(actor)
+		{
+            IsDead = false;
+		}
+		public bool IsDead { get; private set; }
+
+		public event EventHandler<DeathEventArgs> Died;
+
+        protected void OnDied(DeathEventArgs args) => Died?.Invoke(this, args);
+
+		public void Die()
+		{
+            OnDied(new DeathEventArgs(Actor));
+            IsDead = true;
+        }
+
+        public void Die(Actor killer)
+		{
+            OnDied(new DeathEventArgs(Actor));
+            IsDead = true;
+
+		}
+
+		public void Respawn()
+		{
+            IsDead = false;
+		}
+	}
+
+	public interface IHealthable
     {
         float Health { get; set; }
         float HealthPercentage { get; set; }
@@ -28,7 +63,7 @@ namespace MobaGame.Framework.Core.Modules
         float HealthGeneration { get; }
 
         event EventHandler<float> HealthChanged;
-        event EventHandler<DeathEventArgs> Died;
+        
 
         //Should  definately move this elsewhere; this will allow me to have the interface show this
         float BaseHealthCapacity { get; }

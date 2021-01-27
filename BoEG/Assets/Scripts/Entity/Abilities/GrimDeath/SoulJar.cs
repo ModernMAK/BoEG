@@ -1,17 +1,21 @@
-﻿using Framework.Core;
-using MobaGame.Framework.Core;
+﻿using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
 using MobaGame.Framework.Core.Trigger;
-using MobaGame.Framework.Types;
 using System;
 using UnityEngine;
 
 namespace MobaGame.Entity.Abilities.GrimDeath
 {
+
 	public class SoulJar : AbilityObject
 	{
-		#pragma warning disable 0649
+#pragma warning disable 0649
+		[SerializeField]
+		private int _soulsPerKill;
+		[SerializeField]
+		private int _soulsPerAssist;
+
 		[SerializeField]
 		private int _soulLimit;
 		[SerializeField]
@@ -91,7 +95,7 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 			_aura.Collider.radius = _searchRadius;
 			_aura.Trigger.Enter += OnEnter;
 			_aura.Trigger.Exit += OnExit;
-			Modules.Healthable.Died += OnDeath;
+			Modules.Killable.Died += OnDeath;
 			Modules.Modifiable.AddModifier(_modifier);
 		}
 
@@ -105,10 +109,10 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 			var collider = e.Collider;
 			if (!AbilityHelper.TryGetActor(collider, out var actor))
 				return;
-			if (!actor.TryGetModule<IHealthable>(out var healthable))
+			if (!actor.TryGetModule<IKillable>(out var killable))
 				return;
 
-			healthable.Died -= OnTargetDeath;
+			killable.Died -= OnTargetDeath;
 		}
 
 		private void OnEnter(object sender, TriggerEventArgs e)
@@ -116,17 +120,20 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 			var collider = e.Collider;
 			if (!AbilityHelper.TryGetActor(collider, out var actor))
 				return;
-			if (!actor.TryGetModule<IHealthable>(out var healthable))
+			if (!actor.TryGetModule<IKillable>(out var killable))
 				return;
 
-			healthable.Died += OnTargetDeath;
+			killable.Died += OnTargetDeath;
 		}
 
 		private void OnTargetDeath(object sender, DeathEventArgs e)
 		{
-			var healthable = sender as IHealthable;
-			healthable.Died -= OnTargetDeath;
-			AddSouls(1);
+			var killable = sender as IKillable;
+			killable.Died -= OnTargetDeath;
+			if (e.Killer == Self)
+				AddSouls(_soulsPerKill);
+			else
+				AddSouls(_soulsPerAssist);
 		}
 
 

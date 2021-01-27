@@ -80,7 +80,9 @@ namespace MobaGame.Framework.Core.Modules.Ability
 
         public IModifiable Modifiable => GetCached<IModifiable>();
 
-		public ModuleCache(GameObject gameObject) : base(gameObject)
+		public IKillable Killable => GetCached<IKillable>();
+
+        public ModuleCache(GameObject gameObject) : base(gameObject)
         {
         }
 
