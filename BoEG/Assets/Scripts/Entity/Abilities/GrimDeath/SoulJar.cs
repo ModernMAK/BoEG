@@ -25,7 +25,7 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 
 
 		//TODO add magicable modifier
-		private class SoulJarModifier : IHealthableModifier, IDynamicModifier
+		private class SoulJarModifier : IHealthGenerationModifier, IMagicGenerationModifier, IDynamicModifier
 		{
 			public SoulJarModifier(float hpGen, float mpGen, int souls=default)
 			{
@@ -70,17 +70,13 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 				}
 			}
 
-			public float HealthCapacityBonus => 0f;
-
-			public float HealthCapacityFlatMultiplier => 0f;
-
-			public float HealthCapacityMultiplicativeMultiplier => 0f;
 
 			public float HealthGenerationBonus => HealthGenPerSoul * Souls;
+			public float MagicGenerationBonus => ManaGenPerSoul * Souls;
 
-			public float HealthGenerationFlatMultiplier => 0f;
+			public Modifier HealthGeneration => new Modifier(HealthGenerationBonus);
 
-			public float HealthGenerationMultiplicativeMultiplier => 0f;
+			public Modifier MagicGeneration => new Modifier(MagicGenerationBonus);
 
 			public event EventHandler Changed;
 			private void OnChanged() => Changed?.Invoke(this, EventArgs.Empty);

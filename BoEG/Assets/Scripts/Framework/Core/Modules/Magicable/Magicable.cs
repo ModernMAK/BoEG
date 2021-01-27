@@ -7,11 +7,31 @@ namespace MobaGame.Framework.Core.Modules
     //Stop overthinking this. Do what unity does best
 
 
-    public class Magicable : Statable,
-        IInitializable<IMagicableData>, IMagicable, IListener<IStepableEvent>, IRespawnable
+    public class Magicable : Statable, IInitializable<IMagicableData>, IMagicable, IListener<IStepableEvent>, IRespawnable
     {
         public Magicable(Actor actor) : base(actor)
         {
+            _capacityModifiers = new MixedModifierList<IHealthCapacityModifier>();
+            _generationModifiers = new MixedModifierList<IHealthGenerationModifier>();
+
+            _generationModifier = _capacityModifier = new Modifier();
+
+            _capacityModifiers.ListChanged += RecalculateCapacityModifiers;
+            _generationModifiers.ListChanged += RecalculateGenerationModifiers;
+        }
+
+        private MixedModifierList<IHealthCapacityModifier> _capacityModifiers;
+        private MixedModifierList<IHealthGenerationModifier> _generationModifiers;
+        private Modifier _capacityModifier;
+        private Modifier _generationModifier;
+
+        private void RecalculateCapacityModifiers(object sender, EventArgs e)
+        {
+            _capacityModifier = _capacityModifiers.SumModifiers(mod => mod.HealthCapacity);
+        }
+        private void RecalculateGenerationModifiers(object sender, EventArgs e)
+        {
+            _generationModifier = _generationModifiers.SumModifiers(mod => mod.HealthGeneration);
         }
 
         public void Initialize(IMagicableData module)
@@ -33,19 +53,25 @@ namespace MobaGame.Framework.Core.Modules
             set => StatPercentage = value;
         }
 
-        public float MagicCapacity
+        public float BaseMagicCapacity
         {
-            get => StatCapacity;
-            set => StatCapacity = value;
+            get => BaseStatCapacity;
+            set => BaseStatCapacity = value;
         }
+        public float MagicCapacity => BaseMagicCapacity + BonusMagicCapacity;
+        public float BonusMagicCapacity => _capacityModifier.Calculate(BaseMagicCapacity);
+        protected override float StatCapacity => BaseMagicCapacity + BonusMagicCapacity;
 
-        public float MagicGeneration
+		public float BaseMagicGeneration
         {
-            get => StatGeneration;
-            set => StatGeneration = value;
+            get => BaseStatGeneration;
+            set => BaseStatGeneration = value;
         }
+        public float MagicGeneration => BaseMagicGeneration + BonusMagicGeneration;
+        public float BonusMagicGeneration => _generationModifier.Calculate(BaseMagicGeneration);
+        protected override float StatGeneration => MagicGeneration;
 
-        public event EventHandler<float> MagicChanged
+		public event EventHandler<float> MagicChanged
         {
             add => StatChanged += value;
             remove => StatChanged -= value;
@@ -54,22 +80,6 @@ namespace MobaGame.Framework.Core.Modules
         public bool HasMagic(float mana) => Magic >= mana;
         public void SpendMagic(float mana) => Magic -= mana;
 
-
-        protected override void OnModifierAdded(object sender, IModifier modifier)
-        {
-            if (modifier is IMagicableModifier magicableModifier)
-            {
-//                _modifiers.Add(magicableModifier);
-            }
-        }
-
-        protected override void OnModifierRemoved(object sender, IModifier modifier)
-        {
-            if (modifier is IMagicableModifier magicableModifier)
-            {
-//                _modifiers.Remove(magicableModifier);
-            }
-        }
 
         private void OnPreStep(float deltaTime)
         {

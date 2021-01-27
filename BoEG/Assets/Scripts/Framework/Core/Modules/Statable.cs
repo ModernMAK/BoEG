@@ -32,7 +32,7 @@ namespace MobaGame.Framework.Core.Modules
             set => StatPercentage = value / StatCapacity;
         }
 
-        protected virtual float StatPercentage
+        protected float StatPercentage
         {
             get => _percentage;
             set
@@ -44,17 +44,19 @@ namespace MobaGame.Framework.Core.Modules
             }
         }
 
-        protected virtual float StatCapacity
+        protected float BaseStatCapacity
         {
             get => _capacity;
             set => _capacity = value;
         }
 
-        protected virtual float StatGeneration
+        protected float BaseStatGeneration
         {
             get => _generation;
             set => _generation = value;
         }
+        protected virtual float StatCapacity => BaseStatCapacity;
+        protected virtual float StatGeneration => BaseStatGeneration;
 
 
         public virtual void Register(ILevelable source)
@@ -90,7 +92,7 @@ namespace MobaGame.Framework.Core.Modules
         }
 
 
-        protected virtual void Generate(float deltaTime)
+        protected void Generate(float deltaTime)
         {
             Stat += StatGeneration * deltaTime;
         }

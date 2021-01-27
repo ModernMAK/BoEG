@@ -6,72 +6,41 @@ namespace MobaGame.Framework.Core.Modules
     
     public class Healthable : Statable, IInitializable<IHealthableData>, IHealthable, IListener<IStepableEvent>, IRespawnable, IListener<IModifiable>
     {
-		private struct ModifierResult : IHealthableModifier
-		{
-            public ModifierResult(float capBonus, float capFlatMul, float capMultiMul, float genBonus, float genFlatMul, float genMultiMul)
-			{
-                HealthCapacityBonus = capBonus;
-                HealthCapacityFlatMultiplier = capFlatMul;
-                HealthCapacityMultiplicativeMultiplier = capMultiMul;
-
-                HealthGenerationBonus = genBonus;
-                HealthGenerationMultiplicativeMultiplier = genMultiMul;
-                HealthGenerationFlatMultiplier = genFlatMul;
-
-            }
-			public float HealthCapacityBonus { get; }
-
-			public float HealthCapacityFlatMultiplier { get; }
-
-			public float HealthCapacityMultiplicativeMultiplier { get; }
-
-            public float HealthGenerationBonus { get; }
-
-            public float HealthGenerationFlatMultiplier { get; }
-
-            public float HealthGenerationMultiplicativeMultiplier { get; }
-
-            public ModifierResult AddModifier(IHealthableModifier modifier)
-            {
-                var hcb = HealthCapacityBonus + modifier.HealthCapacityBonus;
-                var hcmm = HealthCapacityMultiplicativeMultiplier + modifier.HealthCapacityMultiplicativeMultiplier;
-                var hcfm = HealthCapacityFlatMultiplier + modifier.HealthCapacityFlatMultiplier;
-
-                var hgb = HealthGenerationBonus + modifier.HealthGenerationBonus;
-                var hgmm = HealthGenerationMultiplicativeMultiplier + modifier.HealthGenerationMultiplicativeMultiplier;
-                var hgfm = HealthGenerationFlatMultiplier + modifier.HealthGenerationFlatMultiplier;
-                return new ModifierResult(hcb, hcfm, hcmm, hgb, hgfm, hgmm);
-
-            }
-        }
 		public Healthable(Actor actor) : base(actor)
         {
             _isDead = default;
-            _modifiers = new MixedModifierList<IHealthableModifier>();
-            _modifiers.ListChanged += RecaulculateModifiers;
+
+            _capacityModifiers = new MixedModifierList<IHealthCapacityModifier>();
+            _generationModifiers = new MixedModifierList<IHealthGenerationModifier>();
+
+            _generationModifier = _capacityModifier = new Modifier();
+
+            _capacityModifiers.ListChanged += RecalculateCapacityModifiers;
+            _generationModifiers.ListChanged += RecalculateGenerationModifiers;
         }
 
 
-		private void RecaulculateModifiers(object sender, EventArgs e)
-		{
-            var result = new ModifierResult();
-            foreach(var m in _modifiers)
-			{
-                result.AddModifier(m);
-			}
-            _cachedResult = result;
-		}
+        private void RecalculateCapacityModifiers(object sender, EventArgs e)
+        {
+            _capacityModifier = _capacityModifiers.SumModifiers(mod => mod.HealthCapacity);
+        }
+        private void RecalculateGenerationModifiers(object sender, EventArgs e)
+        {
+            _generationModifier = _generationModifiers.SumModifiers(mod => mod.HealthGeneration);
+        }
 
-		private event EventHandler<DeathEventArgs> _died;
+        private event EventHandler<DeathEventArgs> _died;
 
         /// <summary>
         /// A flag set once died has been called.
         /// </summary>
         private bool _isDead;
-		private MixedModifierList<IHealthableModifier> _modifiers;
-        private ModifierResult _cachedResult;
+        private MixedModifierList<IHealthCapacityModifier> _capacityModifiers;
+        private MixedModifierList<IHealthGenerationModifier> _generationModifiers;
+        private Modifier _capacityModifier;
+        private Modifier _generationModifier;
 
-		public float Health
+        public float Health
         {
             get => Stat;
             set => Stat = value;
@@ -85,21 +54,22 @@ namespace MobaGame.Framework.Core.Modules
 
         public float BaseHealthCapacity
         {
-            get => StatCapacity;
-            set => StatCapacity = value;
+            get => BaseStatCapacity;
+            set => BaseStatCapacity = value;
         }
-        public float BonusHealthCapacity => _cachedResult.HealthCapacityBonus + BaseHealthGeneration * (_cachedResult.HealthCapacityFlatMultiplier + _cachedResult.HealthCapacityMultiplicativeMultiplier);
+        public float BonusHealthCapacity => _capacityModifier.Calculate(BaseHealthCapacity);
         public float HealthCapacity     => BaseHealthCapacity + BonusHealthCapacity;
-        
+        protected override float StatCapacity => HealthCapacity;
 
-        public float BaseHealthGeneration
+		public float BaseHealthGeneration
         {
-            get => StatGeneration;
-            set => StatGeneration = value;
+            get => BaseStatGeneration;
+            set => BaseStatGeneration = value;
         }
-        public float BonusHealthGeneration => _cachedResult.HealthGenerationBonus + BaseHealthGeneration * (_cachedResult.HealthGenerationFlatMultiplier + _cachedResult.HealthGenerationMultiplicativeMultiplier);
+        public float BonusHealthGeneration => _generationModifier.Calculate(BaseHealthGeneration);
         public float HealthGeneration => BaseHealthGeneration + BonusHealthGeneration;
-        
+        protected override float StatGeneration => HealthGeneration;
+
         public event EventHandler<float> HealthChanged
         {
             add => StatChanged += value;
@@ -164,12 +134,12 @@ namespace MobaGame.Framework.Core.Modules
 
 		public void Register(IModifiable source)
 		{
-            _modifiers.Register(source);
+            _capacityModifiers.Register(source);
 		}
 
 		public void Unregister(IModifiable source)
 		{
-            _modifiers.Unregister(source);
+            _capacityModifiers.Unregister(source);
 		}
 	}
 }
