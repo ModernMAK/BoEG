@@ -84,7 +84,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
                     continue; //Ignore if cant damage
 
-                damageTarget.TakeDamage(Self.gameObject, dmg);
+                damageTarget.TakeDamage(Self, dmg);
             }
         }
 

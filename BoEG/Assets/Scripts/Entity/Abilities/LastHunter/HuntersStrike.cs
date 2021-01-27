@@ -86,7 +86,7 @@ namespace MobaGame.Entity.Abilities.LastHunter
                 if (!actor.TryGetModule<IDamageTarget>(out var target))
                     continue;
 
-                target.TakeDamage(Self.gameObject, dmg);
+                target.TakeDamage(Self, dmg);
             }
 
             Modules.Movable.WarpTo(worldPos);

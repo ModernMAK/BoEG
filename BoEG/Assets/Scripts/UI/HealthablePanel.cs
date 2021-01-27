@@ -1,5 +1,4 @@
-﻿using Framework.Core;
-using MobaGame.Framework.Core;
+﻿using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,21 +23,14 @@ namespace MobaGame.UI
             var value = 0f;
             var normal = 0f;
             var generation = 0f;
-            
             var capacity = 0f;
-           
             if (_healthable != null)
             {
-                value = _healthable.Health;
-                
+                value = _healthable.Health;               
                 generation = _healthable.HealthGeneration;
-         
-
                 capacity = _healthable.HealthCapacity;            
-                
                 normal = _healthable.HealthPercentage;
             }
-
             UpdateText(value, _healthValueText, 1);
             UpdateText(generation, _healthGenerationText, 1);
             UpdateText(capacity, _healthCapacityText, 1);      

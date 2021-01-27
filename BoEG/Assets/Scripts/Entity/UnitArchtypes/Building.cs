@@ -7,7 +7,7 @@ using UnityEngine;
 namespace MobaGame.Entity.UnitArchtypes
 {
     public class Building : CommandableActor, IProxy<IHealthable>, IProxy<IArmorable>, IProxy<IDamageTarget>,
-        IProxy<IAttackerable>, IInitializable<IBuildingData>, IProxy<ITeamable>
+        IProxy<IAttackerable>, IInitializable<IBuildingData>, IProxy<ITeamable>, IProxy<IKillable>
     {
 #pragma warning disable 649
 
@@ -19,6 +19,7 @@ namespace MobaGame.Entity.UnitArchtypes
         private DamageTarget _damageTarget;
         private Attackerable _attackerable;
         private Teamable _teamable;
+        private Killable _killable;
 
 #pragma warning restore 649
         IHealthable IProxy<IHealthable>.Value => _healthable;
@@ -30,6 +31,8 @@ namespace MobaGame.Entity.UnitArchtypes
         IAttackerable IProxy<IAttackerable>.Value => _attackerable;
 
         ITeamable IProxy<ITeamable>.Value => _teamable;
+
+        IKillable IProxy<IKillable>.Value => _killable;
 
         private Sprite _icon;
         public override Sprite GetIcon() => _icon;
@@ -45,6 +48,8 @@ namespace MobaGame.Entity.UnitArchtypes
                 yield return _damageTarget;
                 yield return _teamable;
                 yield return _attackerable;
+                yield return _killable;
+
             }
         }
 
@@ -62,7 +67,7 @@ namespace MobaGame.Entity.UnitArchtypes
             _healthable = new Healthable(this);
             _teamable = new Teamable(this);
             _attackerable = new Attackerable(this, _teamable);
-            _damageTarget = new DamageTarget(this, _healthable, _armorable);
+            _damageTarget = new DamageTarget(this, _healthable, _killable, _armorable);
         }
 
         public void Initialize(IBuildingData module)

@@ -85,7 +85,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 if (AbilityHelper.SameTeam(Modules.Teamable, actor))
                     continue;
 
-                damageTarget.TakeDamage(Self.gameObject, damage);
+                damageTarget.TakeDamage(Self, damage);
             }
         }
 

@@ -99,7 +99,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             // var targetable = target.GetComponent<Targetable>();
             // targetable.AffectSpell();
             var damageable = target.GetModule<IDamageTarget>();
-            damageable.TakeDamage(target.gameObject, damage);
+            damageable.TakeDamage(target, damage);
             ApplyFX(target.transform);
         }
 

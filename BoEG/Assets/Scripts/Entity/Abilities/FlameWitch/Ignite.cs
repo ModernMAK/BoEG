@@ -81,7 +81,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             var damage = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
 //            var targetable = target.GetComponent<ITargetable>();
             var damagable = target.GetModule<IDamageTarget>();
-            damagable.TakeDamage(Self.gameObject, damage);
+            damagable.TakeDamage(Self, damage);
             //Gather DOT targets
             var dotTargets = new List<Actor> {target};
             if (IsInOverheat)
@@ -106,7 +106,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             {
                 if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
                     continue;
-                var source = Self.gameObject;
+                var source = Self;
                 var dotDamage = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
 
                 void internalFunc()
@@ -121,12 +121,12 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                     TickInterval = _tickInterval
                 };
 
-                if (!actor.TryGetModule<IHealthable>(out var healthable))
-                    healthable.Died += RemoveTick;
+                if (!actor.TryGetModule<IKillable>(out var killable))
+                    killable.Died += RemoveTick;
 
                 void RemoveTick(object sender, DeathEventArgs args)
                 {
-                    healthable.Died -= RemoveTick;
+                    killable.Died -= RemoveTick;
                     _ticks.Remove(tickWrapper);
                 }
 

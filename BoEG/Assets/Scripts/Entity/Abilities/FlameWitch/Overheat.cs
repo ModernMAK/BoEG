@@ -121,7 +121,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                             continue;
 
                     var damage = new Damage(_damagePerSecond, DamageType.Magical, DamageModifiers.Ability);
-                    damageTarget.TakeDamage(Self.gameObject, damage);
+                    damageTarget.TakeDamage(Self, damage);
                 }
             }
             else

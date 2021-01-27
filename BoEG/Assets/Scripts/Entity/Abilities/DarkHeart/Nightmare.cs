@@ -103,7 +103,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
 
             void InternalTick()
             {
-                damageable.TakeDamage(Self.gameObject, damagePerTick);
+                damageable.TakeDamage(Self, damagePerTick);
             }
 
             var tickWrapper = new TickAction
@@ -113,12 +113,12 @@ namespace MobaGame.Entity.Abilities.DarkHeart
                 TickInterval = _tickInterval
             };
 
-            if (target.TryGetModule<IHealthable>(out var healthable))
-                healthable.Died += RemoveTick;
+            if (target.TryGetModule<IKillable>(out var killable))
+                killable.Died += RemoveTick;
 
             void RemoveTick(object sender, DeathEventArgs args)
             {
-                healthable.Died -= RemoveTick;
+                killable.Died -= RemoveTick;
                 _ticks.Remove(tickWrapper);
             }
 

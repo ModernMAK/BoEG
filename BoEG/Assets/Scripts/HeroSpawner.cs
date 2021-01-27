@@ -35,8 +35,8 @@ namespace MobaGame
             _heroTracker.AddRange(heroes);
             foreach (var hero in _heroTracker)
             {
-                var healthable = hero.GetModule<IHealthable>();
-                healthable.Died += HealthableOnDied;
+                if(hero.TryGetModule<IKillable>(out var killable))
+                    killable.Died += HealthableOnDied;
             }
         }
 

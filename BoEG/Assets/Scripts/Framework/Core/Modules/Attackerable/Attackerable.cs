@@ -85,7 +85,7 @@ namespace MobaGame.Framework.Core.Modules
             var dmg = GetAttackDamage();
             var attackArgs = new AttackerableEventArgs();
             OnAttacking(attackArgs);
-            damageTarget.TakeDamage(GameObject, dmg);
+            damageTarget.TakeDamage(Actor, dmg);
             PutAttackOnCooldown();
             OnAttacked(attackArgs);
         }

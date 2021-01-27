@@ -39,8 +39,8 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             _sphereCollider.Trigger.Exit += OnActorExit;
             _targetBuffer = new List<IAbilitiable>();
             Register(actor);
-            if(actor.TryGetModule<IHealthable>(out var healthable))
-                healthable.Died += SelfDied;
+            if(actor.TryGetModule<IKillable>(out var killable))
+                killable.Died += SelfDied;
         }
 
         private void SelfDied(object sender, DeathEventArgs e)
@@ -86,7 +86,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             var damageValue = _damagePerManaSpent * args.ManaSpent;
             damageValue = Mathf.Max(damageValue, 0f);
             var damage = new Damage(damageValue, DamageType.Pure, DamageModifiers.Ability);
-            damageTarget.TakeDamage(Self.gameObject, damage);
+            damageTarget.TakeDamage(Self, damage);
         }
 
         private void OnPhysicsStep(float deltaTime)

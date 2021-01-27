@@ -68,8 +68,8 @@ namespace MobaGame.Framework.Core.Modules
             if (!actor.TryGetModule<IDamageTarget>(out _))
                 return;
 
-            if (actor.TryGetModule<IHealthable>(out var healthable))
-                healthable.Died += TargetDied;
+            if (actor.TryGetModule<IKillable>(out var killable))
+                killable.Died += TargetDied;
 
             if (actor.TryGetModule<ITeamable>(out var teamable))
                 teamable.TeamChanged += OnTargetTeamChanged;
@@ -94,8 +94,8 @@ namespace MobaGame.Framework.Core.Modules
 
         void InternalRemoveActor(Actor actor)
         {
-            if (actor.TryGetModule<IHealthable>(out var healthble))
-                healthble.Died -= TargetDied;
+            if (actor.TryGetModule<IKillable>(out var killable))
+                killable.Died -= TargetDied;
 
             if (actor.TryGetModule<ITeamable>(out var teamable))
                 teamable.TeamChanged -= OnTargetTeamChanged;

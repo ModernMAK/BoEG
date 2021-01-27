@@ -28,7 +28,7 @@ namespace MobaGame.Entity.UnitArchtypes
         [SerializeField] private DamageTarget _damageTarget;
         [SerializeField] private Targetable _targetable;
         [SerializeField] private Modifiable _modifiable;
-
+        [SerializeField] private Killable _killable;
         [Header("Data")] [SerializeField] private HeroData _data;
         [SerializeField] private TeamData _initialTeam;
 #pragma warning restore 649
@@ -59,8 +59,7 @@ namespace MobaGame.Entity.UnitArchtypes
                 yield return _movable;
                 yield return _teamable;
                 yield return _modifiable;
-                
-                
+                yield return _killable;
             }
         }
         protected override void CreateComponents()
@@ -76,7 +75,8 @@ namespace MobaGame.Entity.UnitArchtypes
             var obstacle = GetComponent<NavMeshObstacle>();
             _movable = new Movable(this, agent, obstacle);
             _targetable = new Targetable(this);
-            _damageTarget = new DamageTarget(this, _healthable, _armorable);
+            _killable = new Killable(this);
+            _damageTarget = new DamageTarget(this, _healthable, _killable, _armorable);
             _modifiable = new Modifiable(this);
         }
 
