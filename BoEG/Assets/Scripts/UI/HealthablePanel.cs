@@ -1,20 +1,21 @@
 ﻿using Framework.Core;
+using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace MobaGame.UI
 {
-    public class HealthablePanel : DebugUI
+    public class HealthablePanel : DebugActorUI
     {
         // Start is called before the first frame update
-        private GameObject _go;
+        private Actor _actor;
         private IHealthable _healthable;
 
-        public override void SetTarget(GameObject go)
+        public override void SetTarget(Actor actor)
         {
-            _go = go;
-            _healthable = _go != null ? _go.GetModule<IHealthable>() : null;
+            _actor = actor;
+            _healthable = _actor != null ? _actor.GetModule<IHealthable>() : null;
         }
 
         // Update is called once per frame
@@ -22,36 +23,31 @@ namespace MobaGame.UI
         {
             var value = 0f;
             var normal = 0f;
-            var baseGeneration = 0f;
-            var bonusGeneration = 0f;
-            var baseCapacity = 0f;
-            var bonusCapacity = 0f;
+            var generation = 0f;
+            
+            var capacity = 0f;
+           
             if (_healthable != null)
             {
                 value = _healthable.Health;
                 
-                baseGeneration = _healthable.BaseHealthGeneration;
-                bonusGeneration = _healthable.BonusHealthGeneration;
+                generation = _healthable.HealthGeneration;
+         
 
-                baseCapacity = _healthable.BaseHealthCapacity;
-                bonusCapacity = _healthable.BonusHealthCapacity;
+                capacity = _healthable.HealthCapacity;            
                 
                 normal = _healthable.HealthPercentage;
             }
 
             UpdateText(value, _healthValueText, 1);
-            UpdateText(baseGeneration, _healthBaseGenerationText, 1);
-            UpdateText(bonusGeneration, _healthBonusGenerationText, 1);
-            UpdateText(baseCapacity, _healthBaseCapacityText, 1);
-            UpdateText(bonusCapacity, _healthBonusCapacityText, 1);
+            UpdateText(generation, _healthGenerationText, 1);
+            UpdateText(capacity, _healthCapacityText, 1);      
             UpdateImageFill(normal, _healthNormalImage, 3);
         }
 #pragma warning disable 649
         [SerializeField] private Text _healthValueText;
-        [SerializeField] private Text _healthBaseCapacityText;
-        [SerializeField] private Text _healthBonusCapacityText;
-        [SerializeField] private Text _healthBaseGenerationText;
-        [SerializeField] private Text _healthBonusGenerationText;
+        [SerializeField] private Text _healthCapacityText;
+        [SerializeField] private Text _healthGenerationText;
         [SerializeField] private Image _healthNormalImage;
 #pragma warning restore 649
     }
