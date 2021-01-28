@@ -8,6 +8,7 @@ using UnityEngine;
 namespace MobaGame.Entity.Abilities.GrimDeath
 {
 
+	[CreateAssetMenu(menuName = "Ability/GrimDeath/SoulJar")]
 	public class SoulJar : AbilityObject
 	{
 #pragma warning disable 0649

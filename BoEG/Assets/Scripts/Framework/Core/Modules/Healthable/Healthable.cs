@@ -112,11 +112,13 @@ namespace MobaGame.Framework.Core.Modules
 		public void Register(IModifiable source)
 		{
             _capacityModifiers.Register(source);
+            _generationModifiers.Register(source);
 		}
 
 		public void Unregister(IModifiable source)
 		{
             _capacityModifiers.Unregister(source);
+            _generationModifiers.Unregister(source);
 		}
 	}
 }

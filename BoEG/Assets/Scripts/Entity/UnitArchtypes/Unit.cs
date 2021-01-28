@@ -61,7 +61,7 @@ namespace MobaGame.Entity.UnitArchtypes
             _magicable = new Magicable(this);
             _armorable = new Armorable(this);
             _killable = new Killable(this);
-            _damageTarget = new DamageTarget(this, _healthable,_killable);
+            _damageTarget = new DamageTarget(this, _healthable, _killable);
             _teamable = new Teamable(this);
             _attackerable = new Attackerable(this, _teamable);
             _aggroable = new Aggroable(this, _teamable);

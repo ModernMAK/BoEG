@@ -10,7 +10,7 @@ namespace MobaGame.Entity.UnitArchtypes
 {
     public sealed class Hero : CommandableActor, IInitializable<IHeroData>,
         IProxy<IAbilitiable>, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>, IProxy<IAttackerable>,
-        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IProxy<ITargetable>, IProxy<IModifiable>
+        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IProxy<ITargetable>, IProxy<IModifiable>, IProxy<IKillable>
     {
 #pragma warning disable 649
         private Sprite _icon;
@@ -43,6 +43,7 @@ namespace MobaGame.Entity.UnitArchtypes
         IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
         ITargetable IProxy<ITargetable>.Value => _targetable;
         IModifiable IProxy<IModifiable>.Value => _modifiable;
+        IKillable IProxy<IKillable>.Value => _killable;
         protected override IEnumerable<object> Modules
         {
             get

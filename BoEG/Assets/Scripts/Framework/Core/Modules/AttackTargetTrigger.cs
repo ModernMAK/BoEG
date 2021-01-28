@@ -112,7 +112,7 @@ namespace MobaGame.Framework.Core.Modules
             var go = e.Collider.gameObject;
 
 
-            if (!go.TryGetModule<Actor>(out var actor))
+            if (!go.TryGetComponent<Actor>(out var actor))
                 return;
 
             InternalRemoveActor(actor);
@@ -121,7 +121,7 @@ namespace MobaGame.Framework.Core.Modules
         private void TriggerOnEnter(object sender, TriggerEventArgs e)
         {
             var go = e.Collider.gameObject;
-            if (!go.TryGetModule<Actor>(out var actor))
+            if (!go.TryGetComponent<Actor>(out var actor))
                 return;
 
             InternalAddActor(actor);

@@ -13,30 +13,31 @@ MonoBehaviour:
   m_Name: GrimDeath
   m_EditorClassIdentifier: 
   _healthableData:
-    _healthGeneration: 0
-    _healthCapacity: 0
+    _healthGeneration: 1
+    _healthCapacity: 500
   _magicableData:
-    _magicGeneration: 0
-    _magicCapacity: 0
+    _magicGeneration: 1
+    _magicCapacity: 500
     _magicGenerationGain: 0
     _magicCapacityGain: 0
   _armorableData:
     _physical:
-      _block: 0
+      _block: 1
       _resist: 0
       _immune: 0
     _magical:
-      _block: 0
+      _block: 1
       _resist: 0
       _immune: 0
   _attackerableData:
-    _attackRange: 0
-    _attackDamage: 0
-    _attackSpeed: 0
-    _attackInterval: 0
+    _attackRange: 3
+    _attackDamage: 60
+    _attackSpeed: 1
+    _attackInterval: 1
     _isRanged: 0
   _movableData:
-    _moveSpeed: 0
-    _turnSpeed: 0
-  _abilities: []
-  _icon: {fileID: 0}
+    _moveSpeed: 5
+    _turnSpeed: 360
+  _abilities:
+  - {fileID: 11400000, guid: a421c9cc8aee9264dbae70fcae935d3d, type: 2}
+  _icon: {fileID: 21300000, guid: 0a392ff9bd672a743a6631716eee5cd1, type: 3}

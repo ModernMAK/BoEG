@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using Framework.Core;
+using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 
 namespace MobaGame
 {
-    [RequireComponent(typeof(ITeamable))]
+    [RequireComponent(typeof(Actor))]
     public class TeamableTinter : MonoBehaviour
     {
         private ITeamable _teamable;
@@ -25,11 +26,14 @@ namespace MobaGame
 
         void Start()
         {
-            
-            _teamable = this.GetModule<ITeamable>();
-            _teamable.TeamChanged += TeamableOnChanged;
-            if (_teamable.Team != null)
-                Apply(_teamable.Team.GetTint());
+            var actor = GetComponent<Actor>();
+            _teamable = actor.GetModule<ITeamable>();
+            if (_teamable != null)
+            {
+                _teamable.TeamChanged += TeamableOnChanged;
+                if (_teamable.Team != null)
+                    Apply(_teamable.Team.GetTint());
+            }
         }
 
         private void Apply(Color color)
