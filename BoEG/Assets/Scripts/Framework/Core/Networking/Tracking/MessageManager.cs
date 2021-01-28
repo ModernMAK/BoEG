@@ -47,7 +47,7 @@ namespace MobaGame.Framework.Core.Networking.Tracking
         {
             if (_instance == null)
                 _instance = this;
-            else
+            else if(_instance != this)
                 UnityEngine.Debug.Log($"Multiple {SingletonName}!");
             _isClient = _isServer = false;
             _client = new MessageClient();
@@ -55,6 +55,8 @@ namespace MobaGame.Framework.Core.Networking.Tracking
                 new NetworkServer(new TcpListener(IPAddress.Any, 8000))); //Dummy information, this will be rebound
         }
 
+        protected void Update() => UpdateNetwork();
+        
         public bool IsServer => _isServer;
         public bool IsServerOnline => IsServer && MessageServer.InternalServer.Online;
         public bool IsClient => _isClient;
@@ -143,6 +145,22 @@ namespace MobaGame.Framework.Core.Networking.Tracking
             _isClient = true;
         }
 
+        public void StartClient(IPEndPoint endPoint)
+        {
+            if (!IsClient)
+            {
+                UnityEngine.Debug.Log("Cannot Start Client ~ 'Client Is Not Initialized'");
+            }
+            else
+            {
+                if(!_client.TryConnect(endPoint))
+                    UnityEngine.Debug.Log("Cannot Start Client ~ 'Exception Occured'");
+                else
+                    UnityEngine.Debug.Log("Client Started");
+
+            }
+        }
+
         public void KillClient()
         {
             if (!IsClient)
@@ -178,7 +196,8 @@ namespace MobaGame.Framework.Core.Networking.Tracking
             if (IsServerOnline)
                 MessageServer.InternalServer.DropDisconnectedClients();
             else if (IsClientOnline)
-                MessageClient.InternalClient.CheckServer();
+                if(MessageClient.InternalClient.CheckServer())
+                    KillClient();
         }
 
         public void UpdateNetwork()
@@ -191,7 +210,8 @@ namespace MobaGame.Framework.Core.Networking.Tracking
             }
             else if (IsClientOnline)
             {
-                MessageClient.InternalClient.CheckServer();
+                if(!MessageClient.InternalClient.CheckServer())
+                    KillClient();
                 MessageClient.ReadAllMessages();
             }
         }

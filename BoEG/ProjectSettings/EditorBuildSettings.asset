@@ -8,9 +8,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Game/Scenes/MobaPrototype.unity
     guid: 62c1a95c21678da408d0e9d144afa83c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Game/Scenes/NetworkingChatExample.unity
     guid: 21d10ce192bca3149bb3e84b937fe95c
+  - enabled: 1
+    path: Assets/Game/Scenes/NetworkGame.unity
+    guid: 66ca199b8e279c545bf89a37e1f8f10c
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: e128d08c9540fab458a11fe9896c36b6,
       type: 2}

@@ -1,6 +1,7 @@
 using System;
+#if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.SearchService;
+#endif
 using UnityEngine;
 using Object = UnityEngine.Object;
 

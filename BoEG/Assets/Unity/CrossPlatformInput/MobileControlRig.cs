@@ -1,10 +1,11 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Build;
+#endif
+
 using UnityEngine;
 using UnityEngine.EventSystems;
-#if UNITY_EDITOR
 
-#endif
 
 
 namespace Unity.CrossPlatformInput

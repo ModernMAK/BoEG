@@ -47,6 +47,49 @@ namespace MobaGame
         {
             _start.onClick.AddListener(OnStartClick);
             _stop.onClick.AddListener(OnStopClick);
+            registered = false;
+        }
+
+        private void Start()
+        {
+            if (!registered && Manager.MessageServer != null && Manager.MessageClient != null)
+            {
+                Manager.MessageServer.Stopped += MessageServerOnStopped;
+                Manager.MessageClient.Stopped += MessageClientOnStopped;
+                registered = true;
+            }
+        }
+
+        private bool registered = false;
+        private void OnEnable()
+        {
+            if (!registered && Manager.MessageServer != null && Manager.MessageClient != null)
+            {
+                Manager.MessageServer.Stopped += MessageServerOnStopped;
+                Manager.MessageClient.Stopped += MessageClientOnStopped;
+                registered = true;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (registered)
+            {
+                Manager.MessageServer.Stopped -= MessageServerOnStopped;
+                Manager.MessageClient.Stopped -= MessageClientOnStopped;
+                registered = false;
+            }
+            
+        }
+
+        private void MessageClientOnStopped(object sender, EventArgs e)
+        {
+            TryEnable();
+        }
+
+        private void MessageServerOnStopped(object sender, EventArgs e)
+        {
+            TryEnable();
         }
 
         private void OnStartClick()
@@ -98,6 +141,7 @@ namespace MobaGame
         private void StartClient()
         {
             Manager.InitializeClient();
+            Manager.StartClient(EndPoint);
         }
 
         private void StartServer(MessageManager.ServerMode mode)
@@ -111,6 +155,7 @@ namespace MobaGame
 
         private void OnStopClick()
         {
+            UnityEngine.Debug.Log($"Server Stopped");
             if (Manager.IsClient)
                 Manager.KillClient();
             else if (Manager.IsServer)
