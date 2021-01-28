@@ -6,8 +6,8 @@ namespace MobaGame.Framework.Core.Modules
     {
         float Magic { get; set; }
         float MagicPercentage { get; set; }
-        float MagicCapacity { get; }
-        float MagicGeneration { get; }
+        IModifiedValue<float> MagicCapacity { get; }
+        IModifiedValue<float> MagicGeneration { get; }
 
 
         bool HasMagic(float mana);

@@ -27,8 +27,8 @@ namespace MobaGame.UI
             if (_magicable != null)
             {
                 value = _magicable.Magic;
-                capacity = _magicable.MagicCapacity;
-                generation = _magicable.MagicGeneration;
+                capacity = _magicable.MagicCapacity.Total;
+                generation = _magicable.MagicGeneration.Total;
                 normal = _magicable.MagicPercentage;
             }
 

@@ -14,31 +14,27 @@ namespace MobaGame.Framework.Core.Modules
             _capacityModifiers = new MixedModifierList<IHealthCapacityModifier>();
             _generationModifiers = new MixedModifierList<IHealthGenerationModifier>();
 
-            _generationModifier = _capacityModifier = new Modifier();
-
             _capacityModifiers.ListChanged += RecalculateCapacityModifiers;
             _generationModifiers.ListChanged += RecalculateGenerationModifiers;
         }
 
         private MixedModifierList<IHealthCapacityModifier> _capacityModifiers;
         private MixedModifierList<IHealthGenerationModifier> _generationModifiers;
-        private Modifier _capacityModifier;
-        private Modifier _generationModifier;
-
+ 
         private void RecalculateCapacityModifiers(object sender, EventArgs e)
         {
-            _capacityModifier = _capacityModifiers.SumModifiers(mod => mod.HealthCapacity);
+            StatCapacity.Modifier = _capacityModifiers.SumModifiers(mod => mod.HealthCapacity);
         }
         private void RecalculateGenerationModifiers(object sender, EventArgs e)
         {
-            _generationModifier = _generationModifiers.SumModifiers(mod => mod.HealthGeneration);
+            StatGeneration.Modifier = _generationModifiers.SumModifiers(mod => mod.HealthGeneration);
         }
 
         public void Initialize(IMagicableData module)
         {
-            _capacity = module.MagicCapacity;
-            _percentage = 1f;
-            _generation = module.MagicGeneration;
+            StatCapacity.Base = module.MagicCapacity;
+            SetPercentage(1f);
+            StatGeneration.Base = module.MagicGeneration;
         }
 
         public float Magic
@@ -53,25 +49,11 @@ namespace MobaGame.Framework.Core.Modules
             set => StatPercentage = value;
         }
 
-        public float BaseMagicCapacity
-        {
-            get => BaseStatCapacity;
-            set => BaseStatCapacity = value;
-        }
-        public float MagicCapacity => BaseMagicCapacity + BonusMagicCapacity;
-        public float BonusMagicCapacity => _capacityModifier.Calculate(BaseMagicCapacity);
-        protected override float StatCapacity => BaseMagicCapacity + BonusMagicCapacity;
+        public IModifiedValue<float> MagicCapacity => StatCapacity;
 
-		public float BaseMagicGeneration
-        {
-            get => BaseStatGeneration;
-            set => BaseStatGeneration = value;
-        }
-        public float MagicGeneration => BaseMagicGeneration + BonusMagicGeneration;
-        public float BonusMagicGeneration => _generationModifier.Calculate(BaseMagicGeneration);
-        protected override float StatGeneration => MagicGeneration;
+        public IModifiedValue<float> MagicGeneration => StatGeneration;
 
-		public event EventHandler<float> MagicChanged
+        public event EventHandler<float> MagicChanged
         {
             add => StatChanged += value;
             remove => StatChanged -= value;
@@ -98,7 +80,7 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Respawn()
         {
-            _percentage = 1f;
+            SetPercentage(1f);
         }
     }
 }

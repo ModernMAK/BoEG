@@ -51,7 +51,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             var magicable = Modules.Magicable;
 
             //Mana Available (To Gain)
-            var manaAvailable = magicable.MagicCapacity - magicable.Magic;
+            var manaAvailable = magicable.MagicCapacity.Total - magicable.Magic;
             //Calcualte Potential Block
             var availableDamageBlock = manaAvailable / _manaGainPerDamage;
             //Calculate Block

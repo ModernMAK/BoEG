@@ -4,23 +4,18 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class DamageTarget : ActorModule, IDamageTarget
+    public class DamageTarget : KillableActorModule, IDamageTarget
     {
-        private IArmorable _armorable;
-        private IHealthable _healthable;
-        private IKillable _killable;
+        private readonly IArmorable _armorable;
+        private readonly IHealthable _healthable;
         private event EventHandler<DamageEventArgs> _damaged;
         private event EventHandler<DamageEventArgs> _damaging;
 
-        public DamageTarget(Actor actor, IHealthable healthable, IKillable killable, IArmorable armorable = default) : base(actor)
+        public DamageTarget(Actor actor, IHealthable healthable, IKillable killable, IArmorable armorable = default) : base(actor, killable)
         {
             _healthable = healthable;
             _armorable = armorable;
-            _killable = killable;
         }
-
-        // _armorable = GetComponent<IArmorable>();
-        // _healthable = GetComponent<IHealthable>();
 
         public virtual bool TakeDamage(Actor source, Damage damage)
         {
@@ -38,7 +33,7 @@ namespace MobaGame.Framework.Core.Modules
             OnDamaged(dmgArg);
             var killed = _healthable.Health == 0f;
             if (killed)
-                _killable.Die(dmgArg.Source);
+                Killable.Die(dmgArg.Source);
             return killed;
         }
 

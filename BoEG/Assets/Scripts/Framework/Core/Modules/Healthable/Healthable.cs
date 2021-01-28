@@ -1,6 +1,5 @@
 using System;
 using MobaGame.Framework.Types;
-using MobaGame.Framework.Utility;
 namespace MobaGame.Framework.Core.Modules
 {
     
@@ -11,8 +10,6 @@ namespace MobaGame.Framework.Core.Modules
             _capacityModifiers = new MixedModifierList<IHealthCapacityModifier>();
             _generationModifiers = new MixedModifierList<IHealthGenerationModifier>();
 
-            _generationModifier = _capacityModifier = new Modifier();
-
             _capacityModifiers.ListChanged += RecalculateCapacityModifiers;
             _generationModifiers.ListChanged += RecalculateGenerationModifiers;
         }
@@ -20,11 +17,11 @@ namespace MobaGame.Framework.Core.Modules
 
         private void RecalculateCapacityModifiers(object sender, EventArgs e)
         {
-            _capacityModifier = _capacityModifiers.SumModifiers(mod => mod.HealthCapacity);
+            StatCapacity.Modifier = _capacityModifiers.SumModifiers(mod => mod.HealthCapacity);
         }
         private void RecalculateGenerationModifiers(object sender, EventArgs e)
         {
-            _generationModifier = _generationModifiers.SumModifiers(mod => mod.HealthGeneration);
+            StatGeneration.Modifier = _generationModifiers.SumModifiers(mod => mod.HealthGeneration);
         }
 
 
@@ -33,8 +30,6 @@ namespace MobaGame.Framework.Core.Modules
         /// </summary>
         private MixedModifierList<IHealthCapacityModifier> _capacityModifiers;
         private MixedModifierList<IHealthGenerationModifier> _generationModifiers;
-        private Modifier _capacityModifier;
-        private Modifier _generationModifier;
 
         public float Health
         {
@@ -48,25 +43,11 @@ namespace MobaGame.Framework.Core.Modules
             set => StatPercentage = value;
         }
 
-        public float BaseHealthCapacity
-        {
-            get => BaseStatCapacity;
-            set => BaseStatCapacity = value;
-        }
-        public float BonusHealthCapacity => _capacityModifier.Calculate(BaseHealthCapacity);
-        public float HealthCapacity     => BaseHealthCapacity + BonusHealthCapacity;
-        protected override float StatCapacity => HealthCapacity;
+        public IModifiedValue<float> HealthCapacity => StatCapacity;
+        public IModifiedValue<float> HealthGeneration => StatGeneration;
 
-		public float BaseHealthGeneration
-        {
-            get => BaseStatGeneration;
-            set => BaseStatGeneration = value;
-        }
-        public float BonusHealthGeneration => _generationModifier.Calculate(BaseHealthGeneration);
-        public float HealthGeneration => BaseHealthGeneration + BonusHealthGeneration;
-        protected override float StatGeneration => HealthGeneration;
 
-        public event EventHandler<float> HealthChanged
+		public event EventHandler<float> HealthChanged
         {
             add => StatChanged += value;
             remove => StatChanged -= value;
@@ -81,9 +62,9 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Initialize(IHealthableData module)
         {
-            _capacity = module.HealthCapacity;
-            _percentage = 1f;
-            _generation = module.HealthGeneration;
+            StatCapacity.Base = module.HealthCapacity;
+            SetPercentage(1f);
+            StatGeneration.Base = module.HealthGeneration;
         }
 
 
@@ -104,10 +85,7 @@ namespace MobaGame.Framework.Core.Modules
         }
 
 
-        public void Respawn()
-        {
-            _percentage = 1f;
-        }
+        public void Respawn() => SetPercentage(1f);
 
 		public void Register(IModifiable source)
 		{

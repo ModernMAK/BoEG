@@ -27,8 +27,8 @@ namespace MobaGame.UI
             if (_healthable != null)
             {
                 value = _healthable.Health;               
-                generation = _healthable.HealthGeneration;
-                capacity = _healthable.HealthCapacity;            
+                generation = _healthable.HealthGeneration.Total;
+                capacity = _healthable.HealthCapacity.Total;            
                 normal = _healthable.HealthPercentage;
             }
             UpdateText(value, _healthValueText, 1);
