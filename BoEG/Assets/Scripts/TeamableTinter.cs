@@ -22,6 +22,7 @@ namespace MobaGame
                 _materials.Add(mr.material);
             foreach (var smr in GetComponentsInChildren<SkinnedMeshRenderer>())
                 _materials.Add(smr.material);
+            Apply(new Color(1,1,1,0));
         }
 
         void Start()
