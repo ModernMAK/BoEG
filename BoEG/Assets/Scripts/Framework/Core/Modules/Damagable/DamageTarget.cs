@@ -29,9 +29,9 @@ namespace MobaGame.Framework.Core.Modules
                 Source = source
             };
             OnDamaging(dmgArg);
-            _healthable.Health -= dmgArg.Damage.Value;
+            _healthable.Value -= dmgArg.Damage.Value;
             OnDamaged(dmgArg);
-            var killed = _healthable.Health == 0f;
+            var killed = _healthable.Value == 0f;
             if (killed)
                 Killable.Die(dmgArg.Source);
             return killed;

@@ -6,13 +6,13 @@ namespace MobaGame.Framework.Core.Modules
 
 	public interface IHealthable
     {
-        float Health { get; set; }
-        float HealthPercentage { get; set; }
+        float Value { get; set; }
+        float Percentage { get; set; }
 
-        IModifiedValue<float> HealthCapacity { get; }
-        IModifiedValue<float> HealthGeneration { get; }
+        IModifiedValue<float> Capacity { get; }
+        IModifiedValue<float> Generation { get; }
 
-        event EventHandler<float> HealthChanged;
+        event EventHandler<float> ValueChanged;
         
 
 

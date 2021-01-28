@@ -11,13 +11,13 @@ namespace MobaGame.Framework.Core.Modules
         [SerializeField] private float _healthCapacity;
 #pragma warning restore 649
 
-        public float HealthGeneration => _healthGeneration;
+        public float Generation => _healthGeneration;
 
-        public float HealthCapacity => _healthCapacity;
+        public float Capacity => _healthCapacity;
 
-        public float HealthGenerationGain => throw new NotImplementedException();
+        public float GenerationGain => throw new NotImplementedException();
 
-        public float HealthCapacityGain => throw new NotImplementedException();
+        public float CapacityGain => throw new NotImplementedException();
 
         public static HealthableData Default =>
             new HealthableData()

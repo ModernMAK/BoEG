@@ -26,10 +26,10 @@ namespace MobaGame.UI
             var normal = 0f;
             if (_magicable != null)
             {
-                value = _magicable.Magic;
-                capacity = _magicable.MagicCapacity.Total;
-                generation = _magicable.MagicGeneration.Total;
-                normal = _magicable.MagicPercentage;
+                value = _magicable.Value;
+                capacity = _magicable.Capacity.Total;
+                generation = _magicable.Generation.Total;
+                normal = _magicable.Percentage;
             }
 
             UpdateText(value, _magicValueText, 1);

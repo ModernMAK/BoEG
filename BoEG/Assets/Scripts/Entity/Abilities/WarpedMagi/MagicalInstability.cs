@@ -51,7 +51,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             var magicable = Modules.Magicable;
 
             //Mana Available (To Gain)
-            var manaAvailable = magicable.MagicCapacity.Total - magicable.Magic;
+            var manaAvailable = magicable.Capacity.Total - magicable.Value;
             //Calcualte Potential Block
             var availableDamageBlock = manaAvailable / _manaGainPerDamage;
             //Calculate Block
@@ -60,7 +60,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             var manaGained = appliedDamageBlock * _manaGainPerDamage;
 
             //Gain mana
-            magicable.Magic += manaGained;
+            magicable.Value += manaGained;
             //Negate damage damage, we don't rely on buffs to do the negation
             e.OutgoingDamage = dmg.ModifyValue(-appliedDamageBlock);
         }

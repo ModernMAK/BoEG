@@ -31,23 +31,23 @@ namespace MobaGame.Framework.Core.Modules
         private MixedModifierList<IHealthCapacityModifier> _capacityModifiers;
         private MixedModifierList<IHealthGenerationModifier> _generationModifiers;
 
-        public float Health
+        public float Value
         {
             get => Stat;
             set => Stat = value;
         }
 
-        public float HealthPercentage
+        public float Percentage
         {
             get => StatPercentage;
             set => StatPercentage = value;
         }
 
-        public IModifiedValue<float> HealthCapacity => StatCapacity;
-        public IModifiedValue<float> HealthGeneration => StatGeneration;
+        public IModifiedValue<float> Capacity => StatCapacity;
+        public IModifiedValue<float> Generation => StatGeneration;
 
 
-		public event EventHandler<float> HealthChanged
+		public event EventHandler<float> ValueChanged
         {
             add => StatChanged += value;
             remove => StatChanged -= value;
@@ -62,9 +62,9 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Initialize(IHealthableData module)
         {
-            StatCapacity.Base = module.HealthCapacity;
+            StatCapacity.Base = module.Capacity;
             SetPercentage(1f);
-            StatGeneration.Base = module.HealthGeneration;
+            StatGeneration.Base = module.Generation;
         }
 
 

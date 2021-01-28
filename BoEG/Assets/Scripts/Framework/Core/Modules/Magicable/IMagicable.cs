@@ -4,15 +4,15 @@ namespace MobaGame.Framework.Core.Modules
 {
     public interface IMagicable
     {
-        float Magic { get; set; }
-        float MagicPercentage { get; set; }
-        IModifiedValue<float> MagicCapacity { get; }
-        IModifiedValue<float> MagicGeneration { get; }
+        float Value { get; set; }
+        float Percentage { get; set; }
+        IModifiedValue<float> Capacity { get; }
+        IModifiedValue<float> Generation { get; }
 
 
         bool HasMagic(float mana);
         void SpendMagic(float mana);
-        event EventHandler<float> MagicChanged;
+        event EventHandler<float> ValueChanged;
     }
 
     public static class IMagicableExtensions

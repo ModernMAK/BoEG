@@ -37,30 +37,30 @@ namespace MobaGame.Framework.Core.Modules
             StatGeneration.Base = module.MagicGeneration;
         }
 
-        public float Magic
+        public float Value
         {
-            get => Stat;
-            set => Stat = value;
+            get => base.Stat;
+            set => base.Stat = value;
         }
 
-        public float MagicPercentage
+        public float Percentage
         {
             get => StatPercentage;
             set => StatPercentage = value;
         }
 
-        public IModifiedValue<float> MagicCapacity => StatCapacity;
+        public IModifiedValue<float> Capacity => StatCapacity;
 
-        public IModifiedValue<float> MagicGeneration => StatGeneration;
+        public IModifiedValue<float> Generation => StatGeneration;
 
-        public event EventHandler<float> MagicChanged
+        public event EventHandler<float> ValueChanged
         {
             add => StatChanged += value;
             remove => StatChanged -= value;
         }
 
-        public bool HasMagic(float mana) => Magic >= mana;
-        public void SpendMagic(float mana) => Magic -= mana;
+        public bool HasMagic(float mana) => Value >= mana;
+        public void SpendMagic(float mana) => Value -= mana;
 
 
         private void OnPreStep(float deltaTime)
