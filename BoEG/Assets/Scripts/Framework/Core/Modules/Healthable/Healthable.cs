@@ -57,11 +57,11 @@ namespace MobaGame.Framework.Core.Modules
 
         #region IInitializable<IHealthableData>
 
-        public void Initialize(IHealthableData module)
+        public void Initialize(IHealthableData data)
         {
-            StatCapacity.Base = module.Capacity;
+            StatCapacity.Base = data.Capacity;
             SetPercentage(1f);
-            StatGeneration.Base = module.Generation;
+            StatGeneration.Base = data.Generation;
         }
 
         #endregion

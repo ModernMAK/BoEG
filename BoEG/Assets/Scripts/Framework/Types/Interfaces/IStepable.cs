@@ -2,7 +2,7 @@ using System;
 
 namespace MobaGame.Framework.Types
 {
-    [Obsolete("Use IStepableEvent Instead", false)]
+    [Obsolete("In Most Cases, Use IStepableEvent Instead", false)]
     public interface IStepable
     {
         void PreStep(float deltaTime);

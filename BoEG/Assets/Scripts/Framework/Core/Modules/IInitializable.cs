@@ -8,6 +8,10 @@ namespace MobaGame.Framework.Core.Modules
     /// </typeparam>
     public interface IInitializable<in TData>
     {
-        void Initialize(TData module);
+        /// <summary>
+        /// Initialize the object with the given data.
+        /// </summary>
+        /// <param name="data"></param>
+        void Initialize(TData data);
     }
 }

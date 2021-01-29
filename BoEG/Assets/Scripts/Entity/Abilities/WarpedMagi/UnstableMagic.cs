@@ -66,7 +66,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             else
                 CastObjectTarget(actor);
 
-            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
+            Modules.Abilitiable.NotifySpellCast(new AbilityEventArgs(Self, Cost));
         }
 
         public void CastGroundTarget(Vector3 worldPos)

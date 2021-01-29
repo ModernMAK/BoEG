@@ -7,36 +7,56 @@ namespace MobaGame.Framework.Core.Modules
 {
     public class Aggroable : ActorModule, IAggroable, IInitializable<IAggroableData>, IListener<IStepableEvent>
     {
-        public const string AggroableTriggerName = "Aggroable Trigger";
+        #region Constants / Statics
 
+        public const string TriggerName = "Aggroable Trigger";
+        
+        #endregion
 
-        private float _aggroRange;
-
-        public float AggroRange => _aggroRange;
-        private readonly AttackTargetTrigger<SphereCollider> _triggerLogic;
-        private IReadOnlyList<Actor> Targets => _triggerLogic.Targets;
+        #region Constructors
 
         public Aggroable(Actor actor, ITeamable teamable = default) : base(actor)
         {
-            var helper = TriggerUtility.CreateTrigger<SphereCollider>(actor, AggroableTriggerName);
+            var helper = TriggerUtility.CreateTrigger<SphereCollider>(actor, TriggerName);
             _triggerLogic = new AttackTargetTrigger<SphereCollider>(Actor, helper, teamable);
         }
 
+        
 
-        public IReadOnlyList<Actor> GetAggroTargets() => Targets;
+        #endregion
+        
+        # region Variables
+        private float _searchRange;
+        private readonly AttackTargetTrigger<SphereCollider> _triggerLogic;
+        #endregion
 
-        public Actor GetAggroTarget(int index) => Targets[index];
+        #region Properties
 
-        public bool HasAggroTarget() => Targets.Count > 0;
+        public float SearchRange => _searchRange;
+        public IReadOnlyList<Actor> Targets => _triggerLogic.Targets;
+        
+
+        #endregion
+
+
+        #region IInitializable
 
         public void Initialize(IAggroableData data)
         {
-            _aggroRange = data.AggroRange;
-        }
+            _searchRange = data.AggroRange;
+            _triggerLogic.Trigger.Collider.radius = _searchRange;
+        }        
+
+        #endregion
+
+
+        #region IListener<ISteppableEvent>
+
+        
 
         private void OnPhysicsStep(float deltaStep)
         {
-            _triggerLogic.Trigger.Collider.radius = AggroRange;
+            _triggerLogic.Trigger.Collider.radius = SearchRange;
         }
 
         public void Register(IStepableEvent source)
@@ -48,5 +68,6 @@ namespace MobaGame.Framework.Core.Modules
         {
             source.PhysicsStep -= OnPhysicsStep;
         }
+        #endregion
     }
 }

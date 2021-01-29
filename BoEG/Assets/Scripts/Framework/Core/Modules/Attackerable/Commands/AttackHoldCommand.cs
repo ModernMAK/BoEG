@@ -32,10 +32,10 @@ namespace MobaGame.Framework.Core.Modules.Commands
                 }
             }
             //Aggroable is optional so we check for null
-            else if (_aggroable != null && _aggroable.HasAggroTarget()) 
+            else if (_aggroable != null && _aggroable.HasTarget()) 
             {
                 _movable.UnAnchor();
-                var target = _aggroable.GetAggroTarget(0);
+                var target = _aggroable.Targets[0];
                 var position = target.transform.position;
                 _movable.MoveTo(position);
                 _movable.StartMovement();

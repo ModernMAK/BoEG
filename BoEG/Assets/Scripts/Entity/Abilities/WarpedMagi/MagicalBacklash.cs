@@ -26,7 +26,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         private void ClearTargets()
         {
             foreach (var target in _targetBuffer)
-                target.SpellCasted -= OnSpellCast;
+                target.AbilityCasted -= OnAbilityCast;
             _targetBuffer.Clear();
         }
 
@@ -57,7 +57,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
                 return;
             if (!actor.TryGetModule<IAbilitiable>(out var abilitiable))
                 return;
-            abilitiable.SpellCasted += OnSpellCast;
+            abilitiable.AbilityCasted += OnAbilityCast;
             _targetBuffer.Add(abilitiable);
         }
 
@@ -68,12 +68,12 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
                 return;
             if (!actor.TryGetModule<IAbilitiable>(out var abilitiable))
                 return;
-            abilitiable.SpellCasted -= OnSpellCast;
+            abilitiable.AbilityCasted -= OnAbilityCast;
             _targetBuffer.Remove(abilitiable);
         }
 
 
-        private void OnSpellCast(object sender, SpellEventArgs args)
+        private void OnAbilityCast(object sender, AbilityEventArgs args)
         {
             var caster = args.Caster;
             if (caster.TryGetModule<ITeamable>(out var teamable))

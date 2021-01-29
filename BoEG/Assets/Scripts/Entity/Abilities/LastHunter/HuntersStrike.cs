@@ -56,7 +56,7 @@ namespace MobaGame.Entity.Abilities.LastHunter
                 CastObjectTarget(actor);
             else
                 CastGroundTarget(position);
-            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
+            Modules.Abilitiable.NotifySpellCast(new AbilityEventArgs(Self, Cost));
         }
 
         public void CastGroundTarget(Vector3 worldPos)

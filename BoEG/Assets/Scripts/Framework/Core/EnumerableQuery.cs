@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 namespace MobaGame.Framework.Core
 {
-	public static class EnumerableQuery
+    public static class EnumerableQuery
     {
-        
-
         public static T Get<T>(IEnumerable enumerable)
         {
             TryGet<T>(enumerable, out var module);
@@ -42,6 +40,12 @@ namespace MobaGame.Framework.Core
         public static IReadOnlyList<T> GetAllAsList<T>(IEnumerable enumerable)
         {
             var list = new List<T>();
+            GetAllAsList(enumerable, list);
+            return list;
+        }
+
+        public static void GetAllAsList<T>(IEnumerable enumerable, IList<T> list)
+        {
             foreach (var item in enumerable)
             {
                 if (item is T result)
@@ -49,9 +53,6 @@ namespace MobaGame.Framework.Core
                     list.Add(result);
                 }
             }
-
-            return list;
         }
-        
     }
 }

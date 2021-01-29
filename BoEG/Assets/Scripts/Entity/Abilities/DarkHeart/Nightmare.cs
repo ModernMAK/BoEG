@@ -75,7 +75,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
 
             _cooldownTimer.Reset();
             CastObjectTarget(actor);
-            Modules.Abilitiable.NotifySpellCast(new SpellEventArgs() {Caster = Self, ManaSpent = Cost});
+            Modules.Abilitiable.NotifySpellCast(new AbilityEventArgs(Self, Cost));
         }
 
         private void OnStep(float deltaTime)
