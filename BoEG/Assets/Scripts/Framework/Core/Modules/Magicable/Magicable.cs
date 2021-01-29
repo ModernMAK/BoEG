@@ -11,25 +11,14 @@ namespace MobaGame.Framework.Core.Modules
     {
         public Magicable(Actor actor) : base(actor)
         {
-            _capacityModifiers = new MixedModifierList<IHealthCapacityModifier>();
-            _generationModifiers = new MixedModifierList<IHealthGenerationModifier>();
+            _capacityModifiers = new ModifiedValueBoilerplate<IMagicCapacityModifier>(modifier=>modifier.MagicCapacity);
+            _generationModifiers = new ModifiedValueBoilerplate<IMagicGenerationModifier>(modifier => modifier.MagicGeneration);
 
-            _capacityModifiers.ListChanged += RecalculateCapacityModifiers;
-            _generationModifiers.ListChanged += RecalculateGenerationModifiers;
         }
 
-        private MixedModifierList<IHealthCapacityModifier> _capacityModifiers;
-        private MixedModifierList<IHealthGenerationModifier> _generationModifiers;
+        private ModifiedValueBoilerplate<IMagicCapacityModifier> _capacityModifiers;
+        private ModifiedValueBoilerplate<IMagicGenerationModifier> _generationModifiers;
  
-        private void RecalculateCapacityModifiers(object sender, EventArgs e)
-        {
-            StatCapacity.Modifier = _capacityModifiers.SumModifiers(mod => mod.HealthCapacity);
-        }
-        private void RecalculateGenerationModifiers(object sender, EventArgs e)
-        {
-            StatGeneration.Modifier = _generationModifiers.SumModifiers(mod => mod.HealthGeneration);
-        }
-
         public void Initialize(IMagicableData data)
         {
             StatCapacity.Base = data.MagicCapacity;
@@ -52,6 +41,9 @@ namespace MobaGame.Framework.Core.Modules
         public IModifiedValue<float> Capacity => StatCapacity;
 
         public IModifiedValue<float> Generation => StatGeneration;
+
+        protected override ModifiedValue StatCapacity => _capacityModifiers.Value;
+        protected override ModifiedValue StatGeneration => _generationModifiers.Value;
 
         public event EventHandler<ChangedEventArgs<float>> ValueChanged
         {

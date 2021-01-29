@@ -4,22 +4,17 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class Statable : ActorModule, IListener<ILevelable>
+    public abstract class Statable : ActorModule, IListener<ILevelable>
     {
         public Statable(Actor actor) : base(actor)
         {
             _percentage = default;
-            _capacity = new ModifiedValue();
             _capacityGain = default;
-            _generation = new ModifiedValue();
             _generationGain = default;
         }
 
-        private ModifiedValue _capacity;
         private float _capacityGain;
-        private ModifiedValue _generation;
         private float _generationGain;
-
         private float _percentage;
 
 //        private List<IStatableModifier> _modifiers;
@@ -48,14 +43,14 @@ namespace MobaGame.Framework.Core.Modules
             }
         }
 
-        protected ModifiedValue StatCapacity
+        protected abstract ModifiedValue StatCapacity
         {
-            get => _capacity;
+            get;
         }
 
-        protected ModifiedValue StatGeneration
+        protected abstract ModifiedValue StatGeneration
         {
-            get => _generation;
+            get;
         }
 
         public virtual void Register(ILevelable source)
@@ -90,8 +85,8 @@ namespace MobaGame.Framework.Core.Modules
 
         protected virtual void OnLevelChanged(object sender, int levelDifference)
         {
-            _capacity.Base += _capacityGain * levelDifference;
-            _generation.Base += _generationGain * levelDifference;
+            StatCapacity.Base += _capacityGain * levelDifference;
+            StatGeneration.Base += _generationGain * levelDifference;
         }
 
 

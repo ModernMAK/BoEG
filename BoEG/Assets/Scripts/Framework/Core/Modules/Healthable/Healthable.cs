@@ -3,6 +3,40 @@ using MobaGame.Framework.Types;
 
 namespace MobaGame.Framework.Core.Modules
 {
+
+    /// <summary>
+    /// A Self Contained Modifier List & Modified Value
+    /// 
+    /// </summary>
+    /// <typeparam name="TModifier"></typeparam>
+    public class ModifiedValueBoilerplate<TModifier> : IListener<IModifiable> where TModifier : IModifier
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="func"></param>
+        /// <remarks>List defaults to a Mixed Modifier List.</remarks>
+        public ModifiedValueBoilerplate(Func<TModifier, Modifier> func) : this(new MixedModifierList<TModifier>(), func) { }
+        public ModifiedValueBoilerplate(ModifierList<TModifier> list, Func<TModifier,Modifier> func) 
+		{
+            Value = new ModifiedValue();
+            List = list;
+            GetModifier = func;
+            List.ListChanged += RecalculateModifier;
+            
+		}
+        private Func<TModifier, Modifier> GetModifier { get; }
+        public ModifiedValue Value { get; }
+        public ModifierList<TModifier> List { get; }
+
+		void RecalculateModifier(object sender, EventArgs e) => Value.Modifier = List.SumModifiers(GetModifier);
+
+		public void Register(IModifiable source) => List.Register(source);
+		
+
+		public void Unregister(IModifiable source) => List.Unregister(source);
+    }
+
     public class Healthable : Statable, IInitializable<IHealthableData>, IHealthable, IListener<IStepableEvent>,
         IRespawnable, IListener<IModifiable>
     {
@@ -10,11 +44,9 @@ namespace MobaGame.Framework.Core.Modules
         
         public Healthable(Actor actor) : base(actor)
         {
-            _capacityModifiers = new MixedModifierList<IHealthCapacityModifier>();
-            _generationModifiers = new MixedModifierList<IHealthGenerationModifier>();
+            _capacityModifiers = new ModifiedValueBoilerplate<IHealthCapacityModifier>(modifier=>modifier.HealthCapacity);
+            _generationModifiers = new ModifiedValueBoilerplate<IHealthGenerationModifier>(modifier=>modifier.HealthGeneration);
 
-            _capacityModifiers.ListChanged += RecalculateCapacityModifiers;
-            _generationModifiers.ListChanged += RecalculateGenerationModifiers;
         }
         
         #endregion
@@ -31,8 +63,8 @@ namespace MobaGame.Framework.Core.Modules
 
         #region Variables
 
-        private readonly MixedModifierList<IHealthCapacityModifier> _capacityModifiers;
-        private readonly MixedModifierList<IHealthGenerationModifier> _generationModifiers;
+        private readonly ModifiedValueBoilerplate<IHealthCapacityModifier> _capacityModifiers;
+        private readonly ModifiedValueBoilerplate<IHealthGenerationModifier> _generationModifiers;
 
         #endregion
 
@@ -53,11 +85,15 @@ namespace MobaGame.Framework.Core.Modules
         public IModifiedValue<float> Capacity => StatCapacity;
         public IModifiedValue<float> Generation => StatGeneration;
 
-        #endregion
+        protected override ModifiedValue StatCapacity => _capacityModifiers.Value;
 
-        #region IInitializable<IHealthableData>
+        protected override ModifiedValue StatGeneration => _generationModifiers.Value;
 
-        public void Initialize(IHealthableData data)
+		#endregion
+
+		#region IInitializable<IHealthableData>
+
+		public void Initialize(IHealthableData data)
         {
             StatCapacity.Base = data.Capacity;
             SetPercentage(1f);
@@ -106,27 +142,6 @@ namespace MobaGame.Framework.Core.Modules
             _generationModifiers.Unregister(source);
         }
 
-        /// <summary>
-        /// Recalculates the Capacity Modifier, called only when the modifier list changes.
-        /// </summary>
-        /// <param name="sender">The sender, assumed to be IModifiable.</param>
-        /// <param name="e">A dummy value for the Event Handler.</param>
-        private void RecalculateCapacityModifiers(object sender, EventArgs e)
-        {
-            static Modifier GetModifier(IHealthCapacityModifier container) => container.HealthCapacity;
-            StatCapacity.Modifier = _capacityModifiers.SumModifiers(GetModifier);
-        }
-
-        /// <summary>
-        /// Recalculates the Generation Modifier, called only when the modifier list changes.
-        /// </summary>
-        /// <param name="sender">The sender, assumed to be IModifiable.</param>
-        /// <param name="e">A dummy value for the Event Handler.</param>
-        private void RecalculateGenerationModifiers(object sender, EventArgs e)
-        {
-            static Modifier GetModifier(IHealthGenerationModifier container) => container.HealthGeneration;
-            StatGeneration.Modifier = _generationModifiers.SumModifiers(GetModifier);
-        }
 
         #endregion
     }
