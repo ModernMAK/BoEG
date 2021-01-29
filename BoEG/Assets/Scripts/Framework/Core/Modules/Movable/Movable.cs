@@ -15,10 +15,10 @@ namespace MobaGame.Framework.Core.Modules
             _obstacle = obstacle;
         }
 
-        public void Initialize(IMovableData module)
+        public void Initialize(IMovableData data)
         {
-            MoveSpeed = module.MoveSpeed;
-            TurnSpeed = module.TurnSpeed;
+            MoveSpeed = data.MoveSpeed;
+            TurnSpeed = data.TurnSpeed;
             _obstacle.enabled = false;
         }
 

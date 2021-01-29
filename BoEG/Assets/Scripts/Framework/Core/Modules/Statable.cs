@@ -14,7 +14,7 @@ namespace MobaGame.Framework.Core.Modules
             _generation = new ModifiedValue();
             _generationGain = default;
         }
-        
+
         private ModifiedValue _capacity;
         private float _capacityGain;
         private ModifiedValue _generation;
@@ -37,7 +37,13 @@ namespace MobaGame.Framework.Core.Modules
             {
                 value = Mathf.Clamp01(value);
                 if (!_percentage.SafeEquals(value))
-                    OnStatChanged(default);
+                {
+                    var cap = StatCapacity.Total;
+                    var before = _percentage * cap;
+                    var after = value * cap;
+                    OnStatChanged(new ChangedEventArgs<float>(before, after));
+                }
+
                 _percentage = value;
             }
         }
@@ -65,9 +71,9 @@ namespace MobaGame.Framework.Core.Modules
         //TODO use these to add modifiers
 //        protected ModifierResult _capacityModifier;
 //        protected ModifierResult _generationModifier;
-        protected event EventHandler<float> _statChanged;
+        protected event EventHandler<ChangedEventArgs<float>> _statChanged;
 
-        protected virtual event EventHandler<float> StatChanged
+        protected event EventHandler<ChangedEventArgs<float>> StatChanged
         {
             add => _statChanged += value;
             remove => _statChanged -= value;
@@ -75,9 +81,9 @@ namespace MobaGame.Framework.Core.Modules
 
         //DOES NOT RAISE STAT CHANGED
         protected void SetPercentage(float percentage) => _percentage = percentage;
-            
 
-        protected virtual void OnStatChanged(float e)
+
+        protected virtual void OnStatChanged(ChangedEventArgs<float> e)
         {
             _statChanged?.Invoke(this, e);
         }
@@ -93,8 +99,5 @@ namespace MobaGame.Framework.Core.Modules
         {
             Stat += StatGeneration.Total * deltaTime;
         }
-
     }
-  
-
 }

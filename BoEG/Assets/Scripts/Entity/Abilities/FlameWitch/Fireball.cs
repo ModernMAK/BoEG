@@ -32,12 +32,12 @@ namespace MobaGame.Entity.Abilities.FlameWitch
          * When OverHeating;
          *     Path is longer.
          */
-        public override void Initialize(Actor actor)
+        public override void Initialize(Actor data)
         {
-            base.Initialize(actor);
+            base.Initialize(data);
             _cooldownTimer = new DurationTimer(_cooldown,true);
             Modules.Abilitiable.TryGetAbility(out _overheat);
-            Register(actor);
+            Register(data);
         }
 
         public override void ConfirmCast()

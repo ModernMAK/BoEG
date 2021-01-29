@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
@@ -13,9 +13,9 @@ namespace MobaGame.Framework.Core.Modules
         [SerializeField] private TeamData _team;
         private event EventHandler<ChangedEventArgs<TeamData>> _teamChanged;
 
-        public void Initialize(TeamData module)
+        public void Initialize(TeamData data)
         {
-            Team = module;
+            Team = data;
         }
 
         public TeamData Team

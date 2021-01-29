@@ -113,13 +113,13 @@ namespace MobaGame.Framework.Core.Modules
             Attacked?.Invoke(this, e);
         }
 
-        public void Initialize(IAttackerableData module)
+        public void Initialize(IAttackerableData data)
         {
-            AttackDamage = module.AttackDamage;
-            AttackRange = module.AttackRange;
-            AttackSpeed = module.AttackSpeed;
-            IsRanged = module.IsRanged;
-            AttackInterval = module.AttackInterval;
+            AttackDamage = data.AttackDamage;
+            AttackRange = data.AttackRange;
+            AttackSpeed = data.AttackSpeed;
+            IsRanged = data.IsRanged;
+            AttackInterval = data.AttackInterval;
         }
 
         private void OnPreStep(float deltaTime)

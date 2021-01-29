@@ -136,13 +136,13 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             }
         }
 
-        public override void Initialize(Actor actor)
+        public override void Initialize(Actor data)
         {
-            base.Initialize(actor);
+            base.Initialize(data);
             Modules.Abilitiable.TryGetAbility(out _overheatAbility);
             _cooldownTimer = new DurationTimer(_cooldown, true);
             //Manually inject the ability as a stepable
-            actor.AddSteppable(this);
+            data.AddSteppable(this);
             _ticks = new List<TickAction>();
         }
 

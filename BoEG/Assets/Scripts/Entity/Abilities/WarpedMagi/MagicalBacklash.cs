@@ -31,15 +31,15 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         }
 
 
-        public override void Initialize(Actor actor)
+        public override void Initialize(Actor data)
         {
-            base.Initialize(actor);
+            base.Initialize(data);
             _sphereCollider = TriggerUtility.CreateTrigger<SphereCollider>(Self, "MagicalBacklash Trigger");
             _sphereCollider.Trigger.Enter += OnActorEnter;
             _sphereCollider.Trigger.Exit += OnActorExit;
             _targetBuffer = new List<IAbilitiable>();
-            Register(actor);
-            if(actor.TryGetModule<IKillable>(out var killable))
+            Register(data);
+            if(data.TryGetModule<IKillable>(out var killable))
                 killable.Died += SelfDied;
         }
 

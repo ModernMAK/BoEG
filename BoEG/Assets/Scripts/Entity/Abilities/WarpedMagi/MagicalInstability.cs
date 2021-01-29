@@ -28,13 +28,13 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         private bool _isActive;
 #pragma warning restore 0649
 
-        public override void Initialize(Actor actor)
+        public override void Initialize(Actor data)
         {
-            base.Initialize(actor);
+            base.Initialize(data);
             _activeTimer = new DurationTimer(_duration);
             _cooldownTimer = new DurationTimer(_cooldown, true);
             _armorable = Self.GetModule<IArmorable>();
-            Register(actor);
+            Register(data);
         }
 
         private void OnResisting(object sender, ArmorableEventArgs e)

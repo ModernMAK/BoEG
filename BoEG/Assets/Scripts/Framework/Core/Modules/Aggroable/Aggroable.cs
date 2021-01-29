@@ -29,9 +29,9 @@ namespace MobaGame.Framework.Core.Modules
 
         public bool HasAggroTarget() => Targets.Count > 0;
 
-        public void Initialize(IAggroableData module)
+        public void Initialize(IAggroableData data)
         {
-            _aggroRange = module.AggroRange;
+            _aggroRange = data.AggroRange;
         }
 
         private void OnPhysicsStep(float deltaStep)

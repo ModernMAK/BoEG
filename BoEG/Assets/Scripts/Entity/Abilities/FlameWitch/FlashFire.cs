@@ -18,11 +18,11 @@ namespace MobaGame.Entity.Abilities.FlameWitch
          *     Channel does not prevent movement.
          */
 
-        public override void Initialize(Actor actor)
+        public override void Initialize(Actor data)
         {
-            base.Initialize(actor);
+            base.Initialize(data);
             _isActive = false;
-            Register(actor);
+            Register(data);
             _channelTimer = new DurationTimer(_channelTime);
             _cooldownTimer = new DurationTimer(_cooldown, true);
             Modules.Abilitiable.TryGetAbility(out _overheatAbility);

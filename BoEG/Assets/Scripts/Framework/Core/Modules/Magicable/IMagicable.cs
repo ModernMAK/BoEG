@@ -12,7 +12,7 @@ namespace MobaGame.Framework.Core.Modules
 
         bool HasMagic(float mana);
         void SpendMagic(float mana);
-        event EventHandler<float> ValueChanged;
+        event EventHandler<ChangedEventArgs<float>> ValueChanged;
     }
 
     public static class IMagicableExtensions

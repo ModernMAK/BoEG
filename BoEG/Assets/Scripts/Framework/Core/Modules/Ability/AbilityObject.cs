@@ -19,11 +19,11 @@ namespace MobaGame.Framework.Core.Modules.Ability
         protected bool IsSelf(GameObject gameObject) => gameObject == Self.gameObject;
         protected bool IsSelf(Actor actor) => actor == Self;
 
-        public virtual void Initialize(Actor actor)
+        public virtual void Initialize(Actor data)
         {
-            Self = actor;
+            Self = data;
             AbilityHelper.Initialize(); //HACK TODO make this not a hack
-            _cache = new ModuleCache(actor.gameObject);
+            _cache = new ModuleCache(data.gameObject);
         }
 
 

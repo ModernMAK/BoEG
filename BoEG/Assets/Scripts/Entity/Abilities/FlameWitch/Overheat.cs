@@ -63,13 +63,13 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         }
 
 
-        public override void Initialize(Actor actor)
+        public override void Initialize(Actor data)
         {
-            base.Initialize(actor);
+            base.Initialize(data);
             _tickHelper = new InfiniteTickAction {Callback = OnTick, TickInterval = 1f};
-            actor.AddSteppable(this);
+            data.AddSteppable(this);
             if (_particleSystemInstance == null)
-                _particleSystemInstance = ApplyFX(actor.transform);
+                _particleSystemInstance = ApplyFX(data.transform);
         }
 
         public override void ConfirmCast()

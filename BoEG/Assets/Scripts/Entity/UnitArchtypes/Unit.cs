@@ -84,15 +84,15 @@ namespace MobaGame.Entity.UnitArchtypes
         [SerializeField] private UnitData _data;
 
 #pragma warning restore 649
-        public void Initialize(IUnitData module)
+        public void Initialize(IUnitData data)
         {
-            _icon = module.Icon;
-            _healthable.Initialize(module.HealthableData);
-            _magicable.Initialize(module.MagicableData);
-            _armorable.Initialize(module.ArmorableData);
-            _aggroable.Initialize(module.AggroableData);
-            _attackerable.Initialize(module.AttackerableData);
-            _movable.Initialize(module.MovableData);
+            _icon = data.Icon;
+            _healthable.Initialize(data.HealthableData);
+            _magicable.Initialize(data.MagicableData);
+            _armorable.Initialize(data.ArmorableData);
+            _aggroable.Initialize(data.AggroableData);
+            _attackerable.Initialize(data.AttackerableData);
+            _movable.Initialize(data.MovableData);
         }
     }
 }

@@ -88,11 +88,11 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 		}
 
 		SoulJarModifier _modifier;
-		public override void Initialize(Actor actor)
+		public override void Initialize(Actor data)
 		{
 			_modifier = new SoulJarModifier(_healthGenPerSoul,_manaGenPerSoul);
-			base.Initialize(actor);
-			_aura = TriggerUtility.CreateTrigger<SphereCollider>(actor, "SoulJar Search Trigger");
+			base.Initialize(data);
+			_aura = TriggerUtility.CreateTrigger<SphereCollider>(data, "SoulJar Search Trigger");
 			_aura.Collider.radius = _searchRadius;
 			_aura.Trigger.Enter += OnEnter;
 			_aura.Trigger.Exit += OnExit;

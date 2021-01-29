@@ -23,10 +23,10 @@ namespace MobaGame.Entity.Abilities.LastHunter
         private DurationTimer _cooldownHelper;
 #pragma warning restore 0649
 
-        public override void Initialize(Actor actor)
+        public override void Initialize(Actor data)
         {
-            base.Initialize(actor);
-            actor.AddSteppable(this);
+            base.Initialize(data);
+            data.AddSteppable(this);
             _cooldownHelper = new DurationTimer(_cooldown);
             _cooldownHelper.ElapsedTime = _cooldownHelper.Duration;
         }

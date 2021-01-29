@@ -70,12 +70,12 @@ namespace MobaGame.Entity.UnitArchtypes
             _damageTarget = new DamageTarget(this, _healthable, _killable, _armorable);
         }
 
-        public void Initialize(IBuildingData module)
+        public void Initialize(IBuildingData data)
         {
-            _icon = module.Icon;
-            _healthable.Initialize(module.HealthableData);
-            _armorable.Initialize(module.ArmorableData);
-            _attackerable.Initialize(module.AttackerableData);
+            _icon = data.Icon;
+            _healthable.Initialize(data.HealthableData);
+            _armorable.Initialize(data.ArmorableData);
+            _attackerable.Initialize(data.AttackerableData);
             _teamable.Initialize(_initialTeam);
         }
     }

@@ -32,10 +32,10 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         [SerializeField] private GameObject _unstableMagicFX;
 #pragma warning restore 0649
 
-        public override void Initialize(Actor actor)
+        public override void Initialize(Actor data)
         {
-            base.Initialize(actor);
-            Register(actor);
+            base.Initialize(data);
+            Register(data);
             _cooldownTimer = new DurationTimer(_cooldown, true);
         }
 

@@ -40,12 +40,12 @@ namespace MobaGame.Entity.Abilities.DarkHeart
             die.StartTimer();
         }
 
-        public override void Initialize(Actor actor)
+        public override void Initialize(Actor data)
         {
-            base.Initialize(actor);
+            base.Initialize(data);
             _ticks = new List<TickAction>();
             _cooldownTimer = new DurationTimer(_cooldown, true);
-            Register(actor);
+            Register(data);
         }
 
         public override void ConfirmCast()

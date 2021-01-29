@@ -82,19 +82,19 @@ namespace MobaGame.Entity.UnitArchtypes
         }
 
 
-        public void Initialize(IHeroData module)
+        public void Initialize(IHeroData data)
         {
-            _icon = module.Icon;
-            _healthable.Initialize(module.HealthableData);
+            _icon = data.Icon;
+            _healthable.Initialize(data.HealthableData);
             _healthable.Register(_modifiable);
 
-            _magicable.Initialize(module.MagicableData);
-            _armorable.Initialize(module.ArmorableData);
-            _attackerable.Initialize(module.AttackerableData);
-            _movable.Initialize(module.MovableData);
+            _magicable.Initialize(data.MagicableData);
+            _armorable.Initialize(data.ArmorableData);
+            _attackerable.Initialize(data.AttackerableData);
+            _movable.Initialize(data.MovableData);
             _teamable.Initialize(_initialTeam);
-            var instanceAbilities = new AbilityObject[module.Abilities.Count];
-            for (var i = 0; i < module.Abilities.Count; i++) instanceAbilities[i] = Instantiate(module.Abilities[i]);
+            var instanceAbilities = new AbilityObject[data.Abilities.Count];
+            for (var i = 0; i < data.Abilities.Count; i++) instanceAbilities[i] = Instantiate(data.Abilities[i]);
             _abilitiable.Initialize(instanceAbilities);
         }
 

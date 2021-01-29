@@ -30,11 +30,11 @@ namespace MobaGame.Framework.Core.Modules
             StatGeneration.Modifier = _generationModifiers.SumModifiers(mod => mod.HealthGeneration);
         }
 
-        public void Initialize(IMagicableData module)
+        public void Initialize(IMagicableData data)
         {
-            StatCapacity.Base = module.MagicCapacity;
+            StatCapacity.Base = data.MagicCapacity;
             SetPercentage(1f);
-            StatGeneration.Base = module.MagicGeneration;
+            StatGeneration.Base = data.MagicGeneration;
         }
 
         public float Value
@@ -53,7 +53,7 @@ namespace MobaGame.Framework.Core.Modules
 
         public IModifiedValue<float> Generation => StatGeneration;
 
-        public event EventHandler<float> ValueChanged
+        public event EventHandler<ChangedEventArgs<float>> ValueChanged
         {
             add => StatChanged += value;
             remove => StatChanged -= value;
