@@ -69,7 +69,7 @@ namespace MobaGame.Entity.Abilities.LastHunter
 
             var colliders = Physics.OverlapBox(center, boxHalfExtents, rotation, (int) LayerMaskHelper.Entity);
 
-            var atkDamage = Modules.Attackerable.AttackDamage;
+            var atkDamage = Modules.Attackerable.Damage;
 
             var dmg = new Damage(_bonusDamage + atkDamage, DamageType.Physical,
                 DamageModifiers.Ability | DamageModifiers.Attack);
@@ -83,10 +83,7 @@ namespace MobaGame.Entity.Abilities.LastHunter
 
                 if (AbilityHelper.SameTeam(Modules.Teamable, actor))
                     continue;
-                if (!actor.TryGetModule<IDamageTarget>(out var target))
-                    continue;
-
-                target.TakeDamage(Self, dmg);
+                Modules.Attackerable.RawAttack(actor, dmg);
             }
 
             Modules.Movable.WarpTo(worldPos);

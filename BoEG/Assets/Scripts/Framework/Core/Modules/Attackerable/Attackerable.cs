@@ -11,7 +11,7 @@ namespace MobaGame.Framework.Core.Modules
     {
         public const string AttackerableTrigger = "Attackerable Trigger";
         private readonly AttackTargetTrigger<SphereCollider> _trigger;
-        private IReadOnlyList<Actor> Targets => _trigger.Targets;
+        public IReadOnlyList<Actor> Targets => _trigger.Targets;
 
         private readonly DurationTimer _attackCooldown;
         private readonly ITeamable _teamable;
@@ -28,65 +28,72 @@ namespace MobaGame.Framework.Core.Modules
         }
 
 
-        public float AttackDamage { get; protected set; }
-        public float AttackRange { get; protected set; }
-        public float AttackSpeed { get; protected set; }
+        public float Damage { get; protected set; }
+        public float Range { get; protected set; }
+        public float AttacksPerInterval { get; protected set; }
 
-        public float AttackCooldown => AttackInterval / AttackSpeed;
+        public float Cooldown => Interval / AttacksPerInterval;
 
-        public float AttackInterval { get; protected set; }
+        public float Interval { get; protected set; }
 
         public bool IsRanged { get; protected set; }
 
-        public bool IsAttackOnCooldown => !_attackCooldown.Done;
+        public bool OnCooldown => !_attackCooldown.Done;
 
 
         private void PutAttackOnCooldown()
         {
-            _attackCooldown.Duration = AttackCooldown;
+            _attackCooldown.Duration = Cooldown;
             _attackCooldown.Reset();
         }
 
         public void Attack(Actor actor)
         {
-            if (IsAttackOnCooldown)
+            if (OnCooldown)
                 return;
 
             if (_teamable != null && actor.TryGetModule<ITeamable>(out var teamable))
-                if (_teamable.SameTeam(teamable))
+                if (!_teamable.IsAlly(teamable))
                     return;
 
+            PerformAttack(actor,GetAttackDamage(), true);
+        }
+        public void RawAttack(Actor actor, Damage damage)
+        {
+            PerformAttack(actor, damage, false);
+        }
+        void PerformAttack(Actor actor, Damage damage, bool useCooldown)
+        {
             if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
                 return;
 
             if (actor.TryGetModule<ITargetable>(out var targetable))
             {
-                var dmg = GetAttackDamage();
-                var args = new AttackTargetEventArgs(Actor, dmg);
-                var callback = GetAttackCallback(actor, damageTarget);
+                var args = new AttackTargetEventArgs(Actor, damage);
+                var callback = GetAttackCallback(actor, damageTarget, damage, useCooldown);
                 targetable.TargetAttack(callback, args);
             }
             else
             {
-                InternalPerformAttack(actor, damageTarget);
+                InternalPerformAttack(actor, damageTarget,damage,useCooldown);
             }
         }
 
-        private Damage GetAttackDamage() => new Damage(AttackDamage, DamageType.Physical, DamageModifiers.Attack);
+        private Damage GetAttackDamage() => new Damage(Damage, DamageType.Physical, DamageModifiers.Attack);
 
-        private Action GetAttackCallback(Actor actor, IDamageTarget damageTarget)
+        private Action GetAttackCallback(Actor actor, IDamageTarget damageTarget, Damage damage, bool useCooldown = true)
         {
-            Action<Actor, IDamageTarget> func = InternalPerformAttack;
-            return func.Partial(actor).Partial(damageTarget);
+            Action<Actor, IDamageTarget,Damage,bool> func = InternalPerformAttack;
+            return func.Partial(actor, damageTarget, damage, useCooldown);
         }
 
-        private void InternalPerformAttack(Actor actor, IDamageTarget damageTarget)
+        private void InternalPerformAttack(Actor actor, IDamageTarget damageTarget, Damage damage, bool useCooldown = true)
         {
-            var dmg = GetAttackDamage();
             var attackArgs = new AttackerableEventArgs();
             OnAttacking(attackArgs);
-            damageTarget.TakeDamage(Actor, dmg);
-            PutAttackOnCooldown();
+            damageTarget.TakeDamage(Actor, damage);
+            if(useCooldown)
+                PutAttackOnCooldown();
             OnAttacked(attackArgs);
         }
 
@@ -94,14 +101,6 @@ namespace MobaGame.Framework.Core.Modules
 
         public event EventHandler<AttackerableEventArgs> Attacked;
 
-
-        public bool HasAttackTarget() => Targets.Count > 0;
-
-        public IReadOnlyList<Actor> GetAttackTargets() => Targets;
-
-        public Actor GetAttackTarget(int index) => Targets[index];
-
-        public int AttackTargetCounts => Targets.Count;
 
         protected void OnAttacking(AttackerableEventArgs e)
         {
@@ -115,11 +114,11 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Initialize(IAttackerableData data)
         {
-            AttackDamage = data.AttackDamage;
-            AttackRange = data.AttackRange;
-            AttackSpeed = data.AttackSpeed;
+            Damage = data.AttackDamage;
+            Range = data.AttackRange;
+            AttacksPerInterval = data.AttackSpeed;
             IsRanged = data.IsRanged;
-            AttackInterval = data.AttackInterval;
+            Interval = data.AttackInterval;
         }
 
         private void OnPreStep(float deltaTime)
@@ -130,7 +129,7 @@ namespace MobaGame.Framework.Core.Modules
 
         private void OnPhysicsStep(float deltaTime)
         {
-            _trigger.Trigger.Collider.radius = AttackRange;
+            _trigger.Trigger.Collider.radius = Range;
         }
 
 
@@ -150,5 +149,6 @@ namespace MobaGame.Framework.Core.Modules
         {
             _attackCooldown.SetDone();
         }
-    }
+
+	}
 }

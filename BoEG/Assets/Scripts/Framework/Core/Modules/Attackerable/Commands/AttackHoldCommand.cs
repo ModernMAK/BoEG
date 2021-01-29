@@ -21,13 +21,13 @@ namespace MobaGame.Framework.Core.Modules.Commands
 
         protected override void Step(float deltaTime)
         {
-            if (_attackerable.HasAttackTarget())
+            if (_attackerable.HasTarget())
             {
                 _movable.StopMovement();
                 _movable.Anchor();
-                if (!_attackerable.IsAttackOnCooldown)
+                if (!_attackerable.OnCooldown)
                 {
-                    var target = _attackerable.GetAttackTarget(0);
+                    var target = _attackerable.Targets[0];
                     _attackerable.Attack(target);
                 }
             }
@@ -84,7 +84,7 @@ namespace MobaGame.Framework.Core.Modules.Commands
 
         protected override void Step(float deltaTime)
         {
-            if (Attackerable.IsAttackOnCooldown)
+            if (Attackerable.OnCooldown)
             {
             }
 

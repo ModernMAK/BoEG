@@ -18,8 +18,8 @@ namespace MobaGame.Entity.AI
         // Update is called once per frame
         void Update()
         {
-            if (_attackerable.HasAttackTarget() && !_attackerable.IsAttackOnCooldown)
-                _attackerable.Attack(_attackerable.GetAttackTarget(0));
+            if (_attackerable.HasTarget() && !_attackerable.OnCooldown)
+                _attackerable.Attack(_attackerable.Targets[0]);
         }
     }
 }
