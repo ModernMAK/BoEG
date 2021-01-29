@@ -3,16 +3,32 @@ using MobaGame.Framework.Types;
 
 namespace MobaGame.Framework.Core.Modules
 {
+    public interface IPhysicalBlockModifier : IModifier
+    {
+        public Modifier PhysicalBlock { get; }
+    }
+    public interface IMagicalBlockModifier : IModifier
+    {
+        public Modifier MagicalBlock { get; }
+    }
+    public interface IPhysicalResistanceModifier : IModifier
+    {
+        public Modifier PhysicalResistance { get; }
+    }
+    public interface IMagicalResistanceModifier : IModifier
+    {
+        public Modifier MagicalResistance { get; }
+    }
     public class Armorable : ActorModule, IArmorable, IInitializable<IArmorableData>
     {
         public Armorable(Actor actor) : base(actor)
         {
-            Physical = default;
-            Magical = default;
+            Physical = new ModifiedArmor<IPhysicalBlockModifier, IPhysicalResistanceModifier>(block => block.PhysicalBlock, resist => resist.PhysicalResistance);
+            Magical = new ModifiedArmor<IMagicalBlockModifier, IMagicalResistanceModifier>(block => block.MagicalBlock, resist => resist.MagicalResistance);
         }
         
-        public NewArmor Physical { get; }
-        public NewArmor Magical { get; }
+        public ModifiedArmor<IPhysicalBlockModifier,IPhysicalResistanceModifier> Physical { get; }
+        public ModifiedArmor<IMagicalBlockModifier, IMagicalResistanceModifier> Magical { get; }
 
         IArmor IArmorable.Physical => Physical;
 

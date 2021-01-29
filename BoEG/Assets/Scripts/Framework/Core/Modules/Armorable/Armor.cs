@@ -1,41 +1,33 @@
 
+using System;
+
 namespace MobaGame.Framework.Core.Modules
 {
 
-    public class NewArmor : IArmor, IInitializable<IArmorData>
+    public class ModifiedArmor<TBlockMod,TResistMod> : IArmor, IInitializable<IArmorData> where TBlockMod : IModifier where TResistMod : IModifier
     {
-        public NewArmor()
-		{
-            Block = new ModifiedValue();
-            Resistance = new ModifiedValue();
+        public ModifiedArmor(Func<TBlockMod,Modifier> getBlockMod, Func<TResistMod,Modifier> getResistMod)
+        {
+            Block = new ModifiedValueBoilerplate<TBlockMod>(getBlockMod);
+            Resistance = new ModifiedValueBoilerplate<TResistMod>(getResistMod);
             Immunity = false;
 		}
-        public NewArmor(float block, float resistance, bool immunity)
-        {
-            Block = new ModifiedValue(block);
-            Resistance = new ModifiedValue(resistance);
-            Immunity = immunity;
-        }
 
-        public NewArmor(IArmorData data) : this(data.Block, data.Resist, data.Immune)
-        {
 
-        }
+        public ModifiedValueBoilerplate<TBlockMod> Block { get; }
+        IModifiedValue<float> IArmor.Block => Block.Value;
 
-        public ModifiedValue Block { get; }
-        IModifiedValue<float> IArmor.Block => Block;
+        public ModifiedValueBoilerplate<TResistMod> Resistance { get; }
+        IModifiedValue<float> IArmor.Resistance => Resistance.Value;
 
-        public ModifiedValue Resistance { get; }
-        IModifiedValue<float> IArmor.Resistance => Block;
+        public bool Immunity { get; private set; }
 
-        public bool Immunity { get; set; }
-
-        public float CalculateReduction(float value) => ArmorX.CalculateReduction(value, Block.Total, Resistance.Total, Immunity);
+        public float CalculateReduction(float value) => ArmorX.CalculateReduction(value, Block.Value.Total, Resistance.Value.Total, Immunity);
 
 		public void Initialize(IArmorData data)
 		{
-            Block.Base = data.Block;
-            Resistance.Base = data.Resist;
+            Block.Value.Base = data.Block;
+            Resistance.Value.Base = data.Resist;
             Immunity = data.Immune;
 		}
 	}

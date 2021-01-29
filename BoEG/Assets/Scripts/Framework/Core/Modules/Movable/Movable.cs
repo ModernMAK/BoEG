@@ -4,6 +4,14 @@ using UnityEngine.AI;
 
 namespace MobaGame.Framework.Core.Modules
 {
+    public interface IMoveSpeedModifier : IModifier
+    {
+        Modifier MoveSpeed { get; }
+    }
+    public interface ITurnSpeedModifier : IModifier
+    {
+        Modifier TurnSpeed { get; }
+    }
     public class Movable : ActorModule, IInitializable<IMovableData>, IMovable, IListener<IStepableEvent>
     {
         private NavMeshAgent _agent;
@@ -13,22 +21,22 @@ namespace MobaGame.Framework.Core.Modules
         {
             _agent = agent;
             _obstacle = obstacle;
-            MoveSpeed = new ModifiedValue();
-            TurnSpeed = new ModifiedValue();
+            MoveSpeed = new ModifiedValueBoilerplate<IMoveSpeedModifier>(modifier=>modifier.MoveSpeed);
+            TurnSpeed = new ModifiedValueBoilerplate<ITurnSpeedModifier>(modifiier=>modifiier.TurnSpeed);
         }
 
         public void Initialize(IMovableData data)
         {
-            MoveSpeed.Base = data.MoveSpeed;
-            TurnSpeed.Base = data.TurnSpeed;
+            MoveSpeed.Value.Base = data.MoveSpeed;
+            TurnSpeed.Value.Base = data.TurnSpeed;
             _obstacle.enabled = false;
         }
 
-        public ModifiedValue MoveSpeed { get; }
-        public ModifiedValue TurnSpeed { get; }
+        public ModifiedValueBoilerplate<IMoveSpeedModifier> MoveSpeed { get; }
+        public ModifiedValueBoilerplate<ITurnSpeedModifier> TurnSpeed { get; }
 
-        IModifiedValue<float> IMovable.MoveSpeed => MoveSpeed;
-        IModifiedValue<float> IMovable.TurnSpeed => TurnSpeed;
+        IModifiedValue<float> IMovable.MoveSpeed => MoveSpeed.Value;
+        IModifiedValue<float> IMovable.TurnSpeed => TurnSpeed.Value;
 
 
         private bool UnlockNav()
@@ -134,9 +142,9 @@ namespace MobaGame.Framework.Core.Modules
 
         public void OnPreStep(float deltaTime)
         {
-            _agent.speed = MoveSpeed.Total;
-            _agent.acceleration = MoveSpeed.Total * 1000;
-            _agent.angularSpeed = TurnSpeed.Total;
+            _agent.speed = MoveSpeed.Value.Total;
+            _agent.acceleration = _agent.speed * 1000;
+            _agent.angularSpeed = TurnSpeed.Value.Total;
         }
 
 
