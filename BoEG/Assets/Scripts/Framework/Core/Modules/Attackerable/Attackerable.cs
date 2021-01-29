@@ -15,6 +15,10 @@ namespace MobaGame.Framework.Core.Modules
 
         private readonly DurationTimer _attackCooldown;
         private readonly ITeamable _teamable;
+        private readonly ModifiedValue _damage;
+        private readonly ModifiedValue _range;
+        private readonly ModifiedValue _attacksPerInterval;
+        private readonly ModifiedValue _interval;
 
         public Attackerable(Actor actor, ITeamable teamable = default) : base(actor)
         {
@@ -25,16 +29,20 @@ namespace MobaGame.Framework.Core.Modules
 
             _attackCooldown = new DurationTimer(0f);
             _attackCooldown.SetDone();
+            _damage = new ModifiedValue();
+            _range = new ModifiedValue();
+            _attacksPerInterval = new ModifiedValue();
+            _interval = new ModifiedValue();
         }
 
 
-        public float Damage { get; protected set; }
-        public float Range { get; protected set; }
-        public float AttacksPerInterval { get; protected set; }
+        public IModifiedValue<float> Damage => _damage;
+        public IModifiedValue<float> Range => _range;
+        public IModifiedValue<float> AttacksPerInterval => _attacksPerInterval;
 
-        public float Cooldown => Interval / AttacksPerInterval;
+        public float Cooldown => Interval.Total/ AttacksPerInterval.Total;
 
-        public float Interval { get; protected set; }
+        public IModifiedValue<float> Interval => _interval;
 
         public bool IsRanged { get; protected set; }
 
@@ -79,7 +87,7 @@ namespace MobaGame.Framework.Core.Modules
             }
         }
 
-        private Damage GetAttackDamage() => new Damage(Damage, DamageType.Physical, DamageModifiers.Attack);
+        private Damage GetAttackDamage() => new Damage(Damage.Total, DamageType.Physical, DamageModifiers.Attack);
 
         private Action GetAttackCallback(Actor actor, IDamageTarget damageTarget, Damage damage, bool useCooldown = true)
         {
@@ -114,11 +122,11 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Initialize(IAttackerableData data)
         {
-            Damage = data.AttackDamage;
-            Range = data.AttackRange;
-            AttacksPerInterval = data.AttackSpeed;
+            _damage.Base = data.AttackDamage;
+            _range.Base = data.AttackRange;
+            _attacksPerInterval.Base = data.AttackSpeed;
             IsRanged = data.IsRanged;
-            Interval = data.AttackInterval;
+            _interval.Base = data.AttackInterval;
         }
 
         private void OnPreStep(float deltaTime)
@@ -129,7 +137,7 @@ namespace MobaGame.Framework.Core.Modules
 
         private void OnPhysicsStep(float deltaTime)
         {
-            _trigger.Trigger.Collider.radius = Range;
+            _trigger.Trigger.Collider.radius = _range.Total;
         }
 
 

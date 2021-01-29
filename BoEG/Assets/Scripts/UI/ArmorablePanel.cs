@@ -27,10 +27,10 @@ namespace MobaGame.UI
             var magResist = 0f;
             if (_armorable != null)
             {
-                physBlock = _armorable.Physical.Block;
-                physResist = _armorable.Physical.Resistance * 100f;
-                magBlock = _armorable.Magical.Block;
-                magResist = _armorable.Magical.Resistance * 100f;
+                physBlock = _armorable.Physical.Block.Total;
+                physResist = _armorable.Physical.Resistance.Total * 100f;
+                magBlock = _armorable.Magical.Block.Total;
+                magResist = _armorable.Magical.Resistance.Total * 100f;
             }
 
             UpdateText(physBlock, _physicalBlockText);

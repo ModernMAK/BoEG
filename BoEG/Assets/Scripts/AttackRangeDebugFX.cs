@@ -24,7 +24,7 @@ namespace MobaGame
             var attackRange = 0f;    
             if (_attackerable != null)
             {
-                attackRange = _attackerable.Range;
+                attackRange = _attackerable.Range.Total;
             }
 
             _renderer.SetRadius(attackRange, true);

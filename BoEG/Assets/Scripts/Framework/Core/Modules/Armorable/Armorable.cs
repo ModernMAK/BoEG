@@ -11,10 +11,14 @@ namespace MobaGame.Framework.Core.Modules
             Magical = default;
         }
         
-        public Armor Physical { get; private set; }
-        public Armor Magical { get; private set; }
+        public NewArmor Physical { get; }
+        public NewArmor Magical { get; }
 
-        public virtual Damage ResistDamage(Damage damage)
+        IArmor IArmorable.Physical => Physical;
+
+        IArmor IArmorable.Magical => Magical;
+
+		public virtual Damage ResistDamage(Damage damage)
         {
             var reduction = CalculateReduction(damage);
             var reducedDamage = damage.ModifyValue(-reduction, true);
@@ -47,8 +51,8 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Initialize(IArmorableData data)
         {
-            Physical = new Armor(data.Physical);
-            Magical = new Armor(data.Magical);
+            Physical.Initialize(data.Physical);
+            Magical.Initialize(data.Magical);
         }
 
         protected virtual void OnResisted(ArmorableEventArgs e)

@@ -9,20 +9,20 @@ namespace MobaGame.Framework.Core.Modules
         /// <summary>
         /// The damage value.
         /// </summary>
-        float Damage { get; }
+        IModifiedValue<float> Damage { get; }
         /// <summary>
         /// The range where attacks are allowed. 
         /// </summary>
-        float Range { get; }
+        IModifiedValue<float> Range { get; }
         /// <summary>
         /// The number of attacks to perfrom in a single Interval.
         /// </summary>
-        float AttacksPerInterval { get; }
+        IModifiedValue<float> AttacksPerInterval { get; }
 
         /// <summary>
         /// The duration of a single attack interval.
         /// </summary>
-        float Interval { get; }
+        IModifiedValue<float> Interval { get; }
 
         /// <summary>
         ///     The time in seconds for 

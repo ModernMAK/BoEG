@@ -13,17 +13,22 @@ namespace MobaGame.Framework.Core.Modules
         {
             _agent = agent;
             _obstacle = obstacle;
+            MoveSpeed = new ModifiedValue();
+            TurnSpeed = new ModifiedValue();
         }
 
         public void Initialize(IMovableData data)
         {
-            MoveSpeed = data.MoveSpeed;
-            TurnSpeed = data.TurnSpeed;
+            MoveSpeed.Base = data.MoveSpeed;
+            TurnSpeed.Base = data.TurnSpeed;
             _obstacle.enabled = false;
         }
 
-        public float MoveSpeed { get; private set; }
-        public float TurnSpeed { get; private set; }
+        public ModifiedValue MoveSpeed { get; }
+        public ModifiedValue TurnSpeed { get; }
+
+        IModifiedValue<float> IMovable.MoveSpeed => MoveSpeed;
+        IModifiedValue<float> IMovable.TurnSpeed => TurnSpeed;
 
 
         private bool UnlockNav()
@@ -129,9 +134,9 @@ namespace MobaGame.Framework.Core.Modules
 
         public void OnPreStep(float deltaTime)
         {
-            _agent.speed = MoveSpeed;
-            _agent.acceleration = MoveSpeed * 1000;
-            _agent.angularSpeed = TurnSpeed;
+            _agent.speed = MoveSpeed.Total;
+            _agent.acceleration = MoveSpeed.Total * 1000;
+            _agent.angularSpeed = TurnSpeed.Total;
         }
 
 
