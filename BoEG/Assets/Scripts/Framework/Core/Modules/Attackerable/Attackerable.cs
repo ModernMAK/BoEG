@@ -89,12 +89,13 @@ namespace MobaGame.Framework.Core.Modules
 
         private void InternalPerformAttack(Actor actor, IDamageTarget damageTarget, Damage damage, bool useCooldown = true)
         {
-            var attackArgs = new AttackerableEventArgs();
-            OnAttacking(attackArgs);
-            damageTarget.TakeDamage(Actor, damage);
+            var attackingArgs = new AttackerableEventArgs(Actor,actor,damage);
+            OnAttacking(attackingArgs);
+            damageTarget.TakeDamage(Actor,attackingArgs.Damage);
             if(useCooldown)
                 PutAttackOnCooldown();
-            OnAttacked(attackArgs);
+            var attackedArgs = new AttackerableEventArgs(actor, Actor, attackingArgs.Damage);
+            OnAttacked(attackedArgs);
         }
 
         public event EventHandler<AttackerableEventArgs> Attacking;
