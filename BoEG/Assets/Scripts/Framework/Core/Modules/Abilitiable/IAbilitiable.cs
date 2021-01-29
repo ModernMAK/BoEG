@@ -41,7 +41,7 @@ namespace MobaGame.Framework.Core.Modules
         /// <param name="e">The event args.</param>
         /// <remarks>
         /// Should only be used from abilities.
-        /// May be moved to a callback?
+        /// Maybe moved to a callback in the future.
         /// </remarks>
         void NotifySpellCast(AbilityEventArgs e);
     }

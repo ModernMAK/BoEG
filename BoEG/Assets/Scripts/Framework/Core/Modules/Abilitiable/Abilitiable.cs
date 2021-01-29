@@ -45,7 +45,7 @@ namespace MobaGame.Framework.Core.Modules
 
         private event EventHandler _abilitiesChanged;
 
-        private event EventHandler<SpellEventArgs> _spellCasted;
+        private event EventHandler<AbilityEventArgs> _spellCasted;
 
         public event EventHandler AbilitiesChanged
         {
@@ -54,14 +54,14 @@ namespace MobaGame.Framework.Core.Modules
         }
 
 
-        public event EventHandler<SpellEventArgs> AbilityCasted
+        public event EventHandler<AbilityEventArgs> AbilityCasted
         {
             add => _spellCasted += value;
             remove => _spellCasted -= value;
         }
 
 
-        protected virtual void OnSpellCast(SpellEventArgs e)
+        protected virtual void OnSpellCast(AbilityEventArgs e)
         {
             _spellCasted?.Invoke(this, e);
         }
@@ -119,7 +119,7 @@ namespace MobaGame.Framework.Core.Modules
         public IReadOnlyList<IAbility> Abilities => _abilities;
 
 
-        public void NotifySpellCast(SpellEventArgs e)
+        public void NotifySpellCast(AbilityEventArgs e)
         {
             OnSpellCast(e);
         }

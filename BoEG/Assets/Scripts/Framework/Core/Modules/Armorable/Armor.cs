@@ -1,6 +1,9 @@
 namespace MobaGame.Framework.Core.Modules
 {
-    public struct Armor
+    /// <summary>
+    /// A structure which calculates damage block.
+    /// </summary>
+    public readonly struct Armor
     {
         
         public Armor(float block, float resistance, bool immunity)
