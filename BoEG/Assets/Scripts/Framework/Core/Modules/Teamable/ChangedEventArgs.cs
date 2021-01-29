@@ -9,7 +9,13 @@ namespace MobaGame.Framework.Core.Modules
             Before = before;
             After = after;
         }
+        /// <summary>
+        /// The value before the change.
+        /// </summary>
         public T Before { get; }
+        /// <summary>
+        /// The value after the change.
+        /// </summary>
         public T After { get; }
     }
 }

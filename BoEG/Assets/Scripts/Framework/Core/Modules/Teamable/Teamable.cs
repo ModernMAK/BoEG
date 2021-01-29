@@ -23,11 +23,11 @@ namespace MobaGame.Framework.Core.Modules
             get => _team;
             set
             {
-
-                var changed = (value != _team);
+                var team = _team;
+                var changed = (value != team);
                 _team = value;
                 if(changed)
-                    OnTeamChanged(new ChangedEventArgs<TeamData>(_team,value));
+                    OnTeamChanged(new ChangedEventArgs<TeamData>(team,value));
 
             }
         }
@@ -52,5 +52,14 @@ namespace MobaGame.Framework.Core.Modules
         {
             _teamChanged?.Invoke(this, e);
         }
-    }
+
+		public TeamRelation GetRelation(ITeamable other)
+		{
+            if (this == other)
+                return TeamRelation.Ally;
+            if (_team == null || other.Team == null)
+                return TeamRelation.Neutral;
+			return _team != other.Team ? TeamRelation.Enemy : TeamRelation.Ally;
+		}
+	}
 }
