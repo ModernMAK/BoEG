@@ -4,7 +4,9 @@ using System;
 namespace MobaGame.Framework.Core.Modules
 {
 
-    public class ModifiedArmor<TBlockMod,TResistMod> : IArmor, IInitializable<IArmorData> where TBlockMod : IModifier where TResistMod : IModifier
+    public class ModifiedArmor<TBlockMod,TResistMod> : IArmor, IInitializable<IArmorData>, IListener<IModifiable>
+        where TBlockMod : IModifier 
+        where TResistMod : IModifier
     {
         public ModifiedArmor(Func<TBlockMod,Modifier> getBlockMod, Func<TResistMod,Modifier> getResistMod)
         {
@@ -30,6 +32,18 @@ namespace MobaGame.Framework.Core.Modules
             Resistance.Value.Base = data.Resist;
             Immunity = data.Immune;
 		}
+
+		public void Register(IModifiable source)
+		{
+            Block.Register(source);
+            Resistance.Register(source);
+		}
+
+		public void Unregister(IModifiable source)
+        {
+            Block.Unregister(source);
+            Resistance.Unregister(source);
+        }
 	}
 	public interface IArmor
 	{

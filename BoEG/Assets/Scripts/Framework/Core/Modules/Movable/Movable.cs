@@ -12,7 +12,7 @@ namespace MobaGame.Framework.Core.Modules
     {
         Modifier TurnSpeed { get; }
     }
-    public class Movable : ActorModule, IInitializable<IMovableData>, IMovable, IListener<IStepableEvent>
+    public class Movable : ActorModule, IInitializable<IMovableData>, IMovable, IListener<IStepableEvent>,IListener<IModifiable>
     {
         private NavMeshAgent _agent;
         private NavMeshObstacle _obstacle;
@@ -157,5 +157,17 @@ namespace MobaGame.Framework.Core.Modules
         {
             source.PreStep -= OnPreStep;
         }
-    }
+
+		public void Register(IModifiable source)
+		{
+            MoveSpeed.Register(source);
+            TurnSpeed.Register(source);
+        }
+
+		public void Unregister(IModifiable source)
+        {
+            MoveSpeed.Unregister(source);
+            TurnSpeed.Unregister(source);
+        }
+	}
 }

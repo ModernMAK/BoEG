@@ -6,8 +6,13 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
+    public interface IAttackDamageModifier : IModifier { Modifier AttackDamage { get; } }
+    public interface IAttackRangeModifier : IModifier { Modifier AttackRange { get; } }
+    public interface IAttacksPerIntervalModifier : IModifier { Modifier AttacksPerInterval { get; } }
+    public interface IAttackIntervalModifier : IModifier { Modifier AttackInterval { get; } }
+
     public class Attackerable : ActorModule, IAttackerable, IInitializable<IAttackerableData>,
-        IListener<IStepableEvent>, IRespawnable
+        IListener<IStepableEvent>, IRespawnable, IListener<IModifiable>
     {
         public const string AttackerableTrigger = "Attackerable Trigger";
         private readonly AttackTargetTrigger<SphereCollider> _trigger;
@@ -15,10 +20,10 @@ namespace MobaGame.Framework.Core.Modules
 
         private readonly DurationTimer _attackCooldown;
         private readonly ITeamable _teamable;
-        private readonly ModifiedValue _damage;
-        private readonly ModifiedValue _range;
-        private readonly ModifiedValue _attacksPerInterval;
-        private readonly ModifiedValue _interval;
+        private readonly ModifiedValueBoilerplate<IAttackDamageModifier> _damage;
+        private readonly ModifiedValueBoilerplate<IAttackRangeModifier> _range;
+        private readonly ModifiedValueBoilerplate<IAttacksPerIntervalModifier> _attacksPerInterval;
+        private readonly ModifiedValueBoilerplate<IAttackIntervalModifier> _interval;
 
         public Attackerable(Actor actor, ITeamable teamable = default) : base(actor)
         {
@@ -29,20 +34,20 @@ namespace MobaGame.Framework.Core.Modules
 
             _attackCooldown = new DurationTimer(0f);
             _attackCooldown.SetDone();
-            _damage = new ModifiedValue();
-            _range = new ModifiedValue();
-            _attacksPerInterval = new ModifiedValue();
-            _interval = new ModifiedValue();
+            _damage = new ModifiedValueBoilerplate<IAttackDamageModifier>(modifier=>modifier.AttackDamage);
+            _range = new ModifiedValueBoilerplate<IAttackRangeModifier>(modifier => modifier.AttackRange);
+            _attacksPerInterval = new ModifiedValueBoilerplate<IAttacksPerIntervalModifier>(modifier => modifier.AttacksPerInterval);
+            _interval = new ModifiedValueBoilerplate<IAttackIntervalModifier>(modifier => modifier.AttackInterval); 
         }
 
 
-        public IModifiedValue<float> Damage => _damage;
-        public IModifiedValue<float> Range => _range;
-        public IModifiedValue<float> AttacksPerInterval => _attacksPerInterval;
+        public IModifiedValue<float> Damage => _damage.Value;
+        public IModifiedValue<float> Range => _range.Value;
+        public IModifiedValue<float> AttacksPerInterval => _attacksPerInterval.Value;
 
         public float Cooldown => Interval.Total/ AttacksPerInterval.Total;
 
-        public IModifiedValue<float> Interval => _interval;
+        public IModifiedValue<float> Interval => _interval.Value;
 
         public bool IsRanged { get; protected set; }
 
@@ -122,11 +127,11 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Initialize(IAttackerableData data)
         {
-            _damage.Base = data.AttackDamage;
-            _range.Base = data.AttackRange;
-            _attacksPerInterval.Base = data.AttackSpeed;
+            _damage.Value.Base = data.AttackDamage;
+            _range.Value.Base = data.AttackRange;
+            _attacksPerInterval.Value.Base = data.AttackSpeed;
             IsRanged = data.IsRanged;
-            _interval.Base = data.AttackInterval;
+            _interval.Value.Base = data.AttackInterval;
         }
 
         private void OnPreStep(float deltaTime)
@@ -137,7 +142,7 @@ namespace MobaGame.Framework.Core.Modules
 
         private void OnPhysicsStep(float deltaTime)
         {
-            _trigger.Trigger.Collider.radius = _range.Total;
+            _trigger.Trigger.Collider.radius = _range.Value.Total;
         }
 
 
@@ -158,5 +163,20 @@ namespace MobaGame.Framework.Core.Modules
             _attackCooldown.SetDone();
         }
 
+		public void Register(IModifiable source)
+		{
+            _damage.Register(source);
+            _interval.Register(source);
+            _range.Register(source);
+            _attacksPerInterval.Register(source);
+		}
+
+		public void Unregister(IModifiable source)
+        {
+            _damage.Unregister(source);
+            _interval.Unregister(source);
+            _range.Unregister(source);
+            _attacksPerInterval.Unregister(source);
+        }
 	}
 }

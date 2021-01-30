@@ -19,7 +19,7 @@ namespace MobaGame.Framework.Core.Modules
     {
         public Modifier MagicalResistance { get; }
     }
-    public class Armorable : ActorModule, IArmorable, IInitializable<IArmorableData>
+    public class Armorable : ActorModule, IArmorable, IInitializable<IArmorableData>, IListener<IModifiable>
     {
         public Armorable(Actor actor) : base(actor)
         {
@@ -37,11 +37,11 @@ namespace MobaGame.Framework.Core.Modules
 		public virtual Damage ResistDamage(Damage damage)
         {
             var reduction = CalculateReduction(damage);
+            //Reduction, so negate the value
             var reducedDamage = damage.ModifyValue(-reduction, true);
             var resistingArgs = new ArmorableEventArgs(damage, reducedDamage);
             OnResisting(resistingArgs);
             var resistedArgs = new ArmorableEventArgs(resistingArgs.OutgoingDamage);
-            //Reduction, so negate the value
             OnResisted(resistedArgs);
             return resistedArgs.OutgoingDamage;
         }
@@ -80,5 +80,17 @@ namespace MobaGame.Framework.Core.Modules
         {
             Resisting?.Invoke(this, e);
         }
-    }
+
+		public void Register(IModifiable source)
+		{
+            Physical.Register(source);
+            Magical.Register(source);
+		}
+
+		public void Unregister(IModifiable source)
+        {
+            Physical.Unregister(source);
+            Magical.Unregister(source);
+        }
+	}
 }
