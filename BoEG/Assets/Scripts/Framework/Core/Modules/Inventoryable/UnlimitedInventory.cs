@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MobaGame.Assets.Scripts.Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
 	public class UnlimitedInventory<T> : AbstractInventory<T> where T : IItem
 	{

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MobaGame.Assets.Scripts.Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
 	public abstract class AbstractInventory<T> : IInventory<T> where T : IItem
 	{

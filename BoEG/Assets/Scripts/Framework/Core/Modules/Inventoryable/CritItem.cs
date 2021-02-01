@@ -2,7 +2,7 @@
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Types;
 
-namespace MobaGame.Assets.Scripts.Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
 	public class CritItem : ActorItem
 	{

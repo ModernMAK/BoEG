@@ -1,6 +1,6 @@
 ﻿using MobaGame.Framework.Core;
 
-namespace MobaGame.Assets.Scripts.Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
 	public abstract class ModifierItem : ActorItem, IListener<IModifiable>
 	{

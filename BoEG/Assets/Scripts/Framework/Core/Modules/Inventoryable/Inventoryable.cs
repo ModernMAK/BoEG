@@ -1,7 +1,7 @@
 ﻿using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 
-namespace MobaGame.Assets.Scripts.Framework.Core.Modules
+namespace MobaGame.Framework.Core.Modules
 {
 	public class Inventoryable<T> : ActorModule, IInventoryable<T> where T : IItem
 	{
