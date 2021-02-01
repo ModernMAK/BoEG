@@ -2,7 +2,7 @@
 {
 	public interface IMagicCapacityModifier : IModifier
     {
-        Modifier MagicCapacity { get; }
+        FloatModifier MagicCapacity { get; }
     }
 
 }

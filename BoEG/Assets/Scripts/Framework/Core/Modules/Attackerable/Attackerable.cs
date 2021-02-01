@@ -6,10 +6,10 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public interface IAttackDamageModifier : IModifier { Modifier AttackDamage { get; } }
-    public interface IAttackRangeModifier : IModifier { Modifier AttackRange { get; } }
-    public interface IAttacksPerIntervalModifier : IModifier { Modifier AttacksPerInterval { get; } }
-    public interface IAttackIntervalModifier : IModifier { Modifier AttackInterval { get; } }
+    public interface IAttackDamageModifier : IModifier { FloatModifier AttackDamage { get; } }
+    public interface IAttackRangeModifier : IModifier { FloatModifier AttackRange { get; } }
+    public interface IAttacksPerIntervalModifier : IModifier { FloatModifier AttacksPerInterval { get; } }
+    public interface IAttackIntervalModifier : IModifier { FloatModifier AttackInterval { get; } }
 
     public class AttackCritEventArgs : EventArgs
 	{

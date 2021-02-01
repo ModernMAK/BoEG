@@ -79,9 +79,9 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 			public float HealthGenerationBonus => HealthGenPerSoul * Souls;
 			public float MagicGenerationBonus => ManaGenPerSoul * Souls;
 
-			public Modifier HealthGeneration => new Modifier(HealthGenerationBonus);
+			public FloatModifier HealthGeneration => new FloatModifier(HealthGenerationBonus);
 
-			public Modifier MagicGeneration => new Modifier(MagicGenerationBonus);
+			public FloatModifier MagicGeneration => new FloatModifier(MagicGenerationBonus);
 
 			public event EventHandler Changed;
 			private void OnChanged() => Changed?.Invoke(this, EventArgs.Empty);

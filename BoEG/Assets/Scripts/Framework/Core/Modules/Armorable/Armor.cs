@@ -8,7 +8,7 @@ namespace MobaGame.Framework.Core.Modules
         where TBlockMod : IModifier 
         where TResistMod : IModifier
     {
-        public ModifiedArmor(Func<TBlockMod,Modifier> getBlockMod, Func<TResistMod,Modifier> getResistMod)
+        public ModifiedArmor(Func<TBlockMod,FloatModifier> getBlockMod, Func<TResistMod,FloatModifier> getResistMod)
         {
             Block = new ModifiedValueBoilerplate<TBlockMod>(getBlockMod);
             Resistance = new ModifiedValueBoilerplate<TResistMod>(getResistMod);

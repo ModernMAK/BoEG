@@ -14,8 +14,8 @@ namespace MobaGame.Framework.Core.Modules
         /// </summary>
         /// <param name="func"></param>
         /// <remarks>List defaults to a Mixed Modifier List.</remarks>
-        public ModifiedValueBoilerplate(Func<TModifier, Modifier> func) : this(new MixedModifierList<TModifier>(), func) { }
-        public ModifiedValueBoilerplate(ModifierList<TModifier> list, Func<TModifier,Modifier> func) 
+        public ModifiedValueBoilerplate(Func<TModifier, FloatModifier> func) : this(new MixedModifierList<TModifier>(), func) { }
+        public ModifiedValueBoilerplate(ModifierList<TModifier> list, Func<TModifier,FloatModifier> func) 
 		{
             Value = new ModifiedValue();
             List = list;
@@ -23,7 +23,7 @@ namespace MobaGame.Framework.Core.Modules
             List.ListChanged += RecalculateModifier;
             
 		}
-        private Func<TModifier, Modifier> GetModifier { get; }
+        private Func<TModifier, FloatModifier> GetModifier { get; }
         public ModifiedValue Value { get; }
         public ModifierList<TModifier> List { get; }
 

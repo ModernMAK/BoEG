@@ -5,19 +5,19 @@ namespace MobaGame.Framework.Core.Modules
 {
     public interface IPhysicalBlockModifier : IModifier
     {
-        public Modifier PhysicalBlock { get; }
+        public FloatModifier PhysicalBlock { get; }
     }
     public interface IMagicalBlockModifier : IModifier
     {
-        public Modifier MagicalBlock { get; }
+        public FloatModifier MagicalBlock { get; }
     }
     public interface IPhysicalResistanceModifier : IModifier
     {
-        public Modifier PhysicalResistance { get; }
+        public FloatModifier PhysicalResistance { get; }
     }
     public interface IMagicalResistanceModifier : IModifier
     {
-        public Modifier MagicalResistance { get; }
+        public FloatModifier MagicalResistance { get; }
     }
     public class Armorable : ActorModule, IArmorable, IInitializable<IArmorableData>, IListener<IModifiable>
     {

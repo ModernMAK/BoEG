@@ -6,11 +6,11 @@ namespace MobaGame.Framework.Core.Modules
 {
     public interface IMoveSpeedModifier : IModifier
     {
-        Modifier MoveSpeed { get; }
+        FloatModifier MoveSpeed { get; }
     }
     public interface ITurnSpeedModifier : IModifier
     {
-        Modifier TurnSpeed { get; }
+        FloatModifier TurnSpeed { get; }
     }
     public class Movable : ActorModule, IInitializable<IMovableData>, IMovable, IListener<IStepableEvent>,IListener<IModifiable>
     {
