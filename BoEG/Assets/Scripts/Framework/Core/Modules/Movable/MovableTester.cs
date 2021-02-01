@@ -16,7 +16,7 @@ namespace MobaGame.Framework.Core.Modules
 
         private void Awake()
         {
-            _movable = this.GetModule<IMovable>();
+            _movable = this.GetComponent<Actor>().GetModule<IMovable>();
         }
 
         private void Update()

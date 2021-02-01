@@ -142,7 +142,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             Modules.Abilitiable.TryGetAbility(out _overheatAbility);
             _cooldownTimer = new DurationTimer(_cooldown, true);
             //Manually inject the ability as a stepable
-            data.AddSteppable(this);
+            Register(data);
             _ticks = new List<TickAction>();
         }
 

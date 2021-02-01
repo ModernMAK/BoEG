@@ -1,18 +1,19 @@
 using Framework.Core;
+using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.UI;
 using UnityEngine;
 
 namespace MobaGame
 {
-    public class AttackRangeDebugFX : DebugUI
+    public class AttackRangeDebugFX : DebugActorUI
     {
         private IAttackerable _attackerable;
 
         // Start is called before the first frame update
-        private GameObject _go;
+        private Actor _go;
 
-        public override void SetTarget(GameObject go)
+        public override void SetTarget(Actor go)
         {
             _go = go;
             _attackerable = _go != null ? _go.GetModule<IAttackerable>() : null;
@@ -24,7 +25,7 @@ namespace MobaGame
             var attackRange = 0f;    
             if (_attackerable != null)
             {
-                attackRange = _attackerable.Range.Total;
+                attackRange = _attackerable.Range;
             }
 
             _renderer.SetRadius(attackRange, true);

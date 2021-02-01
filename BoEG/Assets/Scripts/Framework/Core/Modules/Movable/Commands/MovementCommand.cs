@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules.Commands
 {
-    public abstract class MovementCommand : EntityCommand
+    public abstract class MovementCommand : GameObjectCommand
     {
         protected MovementCommand(GameObject entity) : base(entity)
         {

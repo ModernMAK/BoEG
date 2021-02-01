@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules.Commands
 {
-    public class AttackMoveCommand : EntityCommand
+    public class AttackMoveCommand : GameObjectCommand
     {
         private readonly IAggroable _aggroable;
         private readonly IAttackerable _attackerable;
@@ -67,7 +67,7 @@ namespace MobaGame.Framework.Core.Modules.Commands
     }
 
     //TODO fix this
-    public class AttackHoldCommand : EntityCommand
+    public class AttackHoldCommand : GameObjectCommand
     {
         private readonly IAggroable _aggroable;
         private readonly IAttackerable _attackerable;

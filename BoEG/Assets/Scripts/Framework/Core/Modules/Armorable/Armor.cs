@@ -17,10 +17,10 @@ namespace MobaGame.Framework.Core.Modules
 
 
         public ModifiedValueBoilerplate<TBlockMod> Block { get; }
-        IModifiedValue<float> IArmor.Block => Block.Value;
+        float IArmor.Block => Block.Value.Total;
 
         public ModifiedValueBoilerplate<TResistMod> Resistance { get; }
-        IModifiedValue<float> IArmor.Resistance => Resistance.Value;
+        float IArmor.Resistance => Resistance.Value.Total;
 
         public bool Immunity { get; private set; }
 
@@ -45,10 +45,17 @@ namespace MobaGame.Framework.Core.Modules
             Resistance.Unregister(source);
         }
 	}
-	public interface IArmor
-	{
+    public interface IArmorView
+    {
         IModifiedValue<float> Block { get; }
         IModifiedValue<float> Resistance { get; }
+        bool Immunity { get; }
+
+    }
+	public interface IArmor
+	{
+        float Block { get; }
+        float Resistance { get; }
         bool Immunity { get; }
     }
     public static class ArmorX
@@ -91,10 +98,6 @@ namespace MobaGame.Framework.Core.Modules
         public float Block { get; }
         public float Resistance { get; }
         public bool Immunity { get; }
-
-        IModifiedValue<float> IArmor.Block => new ModifiedValue(Block);
-
-		IModifiedValue<float> IArmor.Resistance => new ModifiedValue(Resistance);
 
         public float CalculateReduction(float value) => ArmorX.CalculateReduction(value, Block, Resistance, Immunity);
     }

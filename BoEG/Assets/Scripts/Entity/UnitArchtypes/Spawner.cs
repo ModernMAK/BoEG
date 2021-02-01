@@ -16,13 +16,13 @@ namespace MobaGame.Entity.UnitArchtypes
         [SerializeField] private Transform _spawnContainer;
 #pragma warning restore 0649
 
-
-        private void Start()
-        {
+		protected override void Start()
+		{
+            base.Start();
             foreach (var data in _data) data.LastSpawn = -data.Interval;
         }
 
-        protected override void Update()
+		protected override void Update()
         {
             base.Update();
             foreach (var data in _data)

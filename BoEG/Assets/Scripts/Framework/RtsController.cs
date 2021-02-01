@@ -98,9 +98,9 @@ namespace MobaGame.Framework
         {
             void InternalOnStarted(InputAction.CallbackContext context)
             {
-                if (_abilitiableHACK != null && _abilitiableHACK.AbilityCount > index)
+                if (_abilitiableHACK != null && _abilitiableHACK.Abilities.Count > index)
                 {
-                    var ability = _abilitiableHACK.GetAbility(index);
+                    var ability = _abilitiableHACK.Abilities[index];
                     ability.SetupCast();
                     ability.ConfirmCast();
                 }

@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using Framework.Core;
+using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 
 namespace MobaGame.UI
 {
-    public class AbilitiablePanel : DebugUI
+    public class AbilitiablePanel : DebugActorUI
     {
 #pragma warning disable 0649
         [SerializeField] private GameObject _abilityPanelPrefab;
         [SerializeField] private Transform _container;
         private IAbilitiable _abilitiable;
         private List<AbilityPanel> _abilityPanels;
-        private GameObject _go;
+        private Actor _go;
 #pragma warning restore 0649
 
         private void Awake()
@@ -23,7 +23,7 @@ namespace MobaGame.UI
 
         private void UpdatePanels()
         {
-            var abilityCount = _abilitiable?.AbilityCount ?? 0;
+            var abilityCount = _abilitiable?.Abilities.Count ?? 0;
             if (_abilityPanels.Count != abilityCount)
             {
                 for (var i = _abilityPanels.Count; i < abilityCount; i++)
@@ -47,13 +47,13 @@ namespace MobaGame.UI
                     //BUG aspect ratio not resizing icon?
                     //Toggling on and off fixes this, but its not a good solution imo
                     _abilityPanels[i].gameObject.SetActive(false);
-                    _abilityPanels[i].SetAbility(_abilitiable.GetAbility(i));
+                    _abilityPanels[i].SetAbility(_abilitiable.Abilities[i]);
                     _abilityPanels[i].gameObject.SetActive(true);
                 }
         }
 
 
-        public override void SetTarget(GameObject go)
+        public override void SetTarget(Actor go)
         {
             if (_abilitiable != null)
                 _abilitiable.AbilitiesChanged -= OnAbilitiesChanged;

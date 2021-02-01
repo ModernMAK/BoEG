@@ -4,25 +4,35 @@ using System.Collections.Generic;
 
 namespace MobaGame.Framework.Core.Modules
 {
+
+    public interface IAttackerableView
+	{
+        IModifiedValue<float> Damage { get; }
+        IModifiedValue<float> Range { get; }
+
+        IModifiedValue<float> AttacksPerInterval { get; }
+        IModifiedValue<float> Interval { get; }
+
+    }
     public interface IAttackerable
     {
         /// <summary>
         /// The damage value.
         /// </summary>
-        IModifiedValue<float> Damage { get; }
+        float Damage { get; }
         /// <summary>
         /// The range where attacks are allowed. 
         /// </summary>
-        IModifiedValue<float> Range { get; }
+        float Range { get; }
         /// <summary>
         /// The number of attacks to perfrom in a single Interval.
-        /// </summary>
-        IModifiedValue<float> AttacksPerInterval { get; }
+        /// </summary>        
+        float AttacksPerInterval { get; }
 
         /// <summary>
         /// The duration of a single attack interval.
         /// </summary>
-        IModifiedValue<float> Interval { get; }
+        float Interval { get; }
 
         /// <summary>
         ///     The time in seconds for 
