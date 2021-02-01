@@ -67,7 +67,10 @@ namespace MobaGame.Framework.Core.Modules
         event EventHandler<AttackerableEventArgs> Attacking;
 
         event EventHandler<AttackerableEventArgs> Attacked;
-        IReadOnlyList<Actor> Targets { get; }
+		event EventHandler<AttackCritEventArgs> CritModifiers;
+		event EventHandler<AttackLifestealEventArgs> LifestealModifiers;
+
+		IReadOnlyList<Actor> Targets { get; }
     }
     public static class IAttackerableX
     {
