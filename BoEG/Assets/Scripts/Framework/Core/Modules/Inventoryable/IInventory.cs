@@ -1,11 +1,12 @@
-﻿namespace MobaGame.Assets.Scripts.Framework.Core.Modules
+﻿using System;
+using System.Collections.Generic;
+
+namespace MobaGame.Assets.Scripts.Framework.Core.Modules
 {
-	public interface IInventory<T>
+	public interface IInventory<T> : IList<T>, IReadOnlyList<T> where T : IItem
 	{
-		int Size { get; }
-		T this[int index] { get; set; }
-
-		
-
+		event EventHandler<T> Added;
+		event EventHandler<T> Removed;
 	}
+
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Framework.Core;
+using MobaGame.Assets.Scripts.Framework.Core.Modules;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
@@ -29,6 +30,7 @@ namespace MobaGame.Entity.UnitArchtypes
         [SerializeField] private Targetable _targetable;
         [SerializeField] private Modifiable _modifiable;
         [SerializeField] private Killable _killable;
+        [SerializeField] private Inventoryable<IItem> _inventoryable;
         [Header("Data")] [SerializeField] private HeroData _data;
         [SerializeField] private TeamData _initialTeam;
 #pragma warning restore 649
@@ -61,6 +63,7 @@ namespace MobaGame.Entity.UnitArchtypes
                 yield return _teamable;
                 yield return _modifiable;
                 yield return _killable;
+                yield return _inventoryable;
             }
         }
         protected override void CreateComponents()
@@ -79,6 +82,7 @@ namespace MobaGame.Entity.UnitArchtypes
             _killable = new Killable(this);
             _damageTarget = new DamageTarget(this, _healthable, _killable, _armorable);
             _modifiable = new Modifiable(this);
+            _inventoryable = new Inventoryable<IItem>(this, new LimitedInventory<IItem>(6));
         }
 
 
@@ -101,8 +105,6 @@ namespace MobaGame.Entity.UnitArchtypes
         protected override void SetupComponents()
         {
             base.SetupComponents();
-//            var buffable = new Buffable();
-//            GetFrameworkComponent<IBuffable>().Initialize(buffable);
             if (_data != null)
                 Initialize(_data);
         }

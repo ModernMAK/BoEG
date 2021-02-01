@@ -3,12 +3,6 @@ using MobaGame.Framework.Core.Modules;
 
 namespace MobaGame.Assets.Scripts.Framework.Core.Modules
 {
-	public abstract class ActorItem : IItem, IListener<Actor>
-	{
-		public abstract void Unregister(Actor source);
-		public abstract void Register(Actor source);
-
-	}
 	public abstract class OnAttackItem : ActorItem
 	{
 
