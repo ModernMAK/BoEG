@@ -4,16 +4,11 @@ using UnityEngine.UI;
 
 namespace MobaGame.UI
 {
-    public class AbilityPanel : DebugUI
+    public class AbilityPanel : DebugUI<IAbility>
     {
         private IAbilityView _view;
 
-        public override void SetTarget(GameObject go)
-        {
-        }
-
-
-        public void SetAbility(IAbility ability)
+        public override void SetTarget(IAbility ability)
         {
             _view = ability.GetAbilityView();
             _iconCooldown.sprite = _icon.sprite = _view.GetIcon();

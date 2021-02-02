@@ -1,5 +1,4 @@
-﻿using Framework.Core;
-using MobaGame.Framework.Core;
+﻿using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,9 +12,9 @@ namespace MobaGame.UI
         // Start is called before the first frame update
         private Actor _go;
 
-        public override void SetTarget(Actor go)
+        public override void SetTarget(Actor target)
         {
-            _go = go;
+            _go = target;
             _armorable = _go != null ? _go.GetModule<IArmorable>() : null;
         }
 

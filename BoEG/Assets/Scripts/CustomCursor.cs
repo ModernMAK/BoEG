@@ -48,7 +48,7 @@ namespace MobaGame
         public CursorState Mode { get; set; }
 
         // ReSharper disable twice PossibleLossOfFraction
-        private Vector2 GetCenter(Texture tex) => new Vector2(tex.width / 2, tex.height / 2);
+        private Vector2 GetCenter(Texture tex) => tex != null ? new Vector2(tex.width / 2, tex.height / 2) : default;
 
         public const float MaxDistance = 128;
 

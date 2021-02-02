@@ -5,13 +5,14 @@ namespace MobaGame.Framework.Core.Modules
 	[CreateAssetMenu(menuName = "Item/GenModItem")]
     public class GenerationModifierItemObject : ItemObject, IHealthGenerationModifier, IMagicGenerationModifier, IListener<Actor>, IListener<IModifiable>
     {
+        [SerializeField] private Sprite _icon;
         [SerializeField]
         private FloatModifier _healthGen;
         [SerializeField]
         private FloatModifier _manaGen;
 
         private GenerationModifierItem _item;
-        private GenerationModifierItem Item => _item ??= new GenerationModifierItem(_healthGen, _manaGen);
+        private GenerationModifierItem Item => _item ??= new GenerationModifierItem(_icon,_healthGen, _manaGen);
 
         public FloatModifier HealthGeneration => Item.HealthGeneration;
 
@@ -23,5 +24,6 @@ namespace MobaGame.Framework.Core.Modules
         public void Register(IModifiable source)=> Item.Register(source);
 
         public void Unregister(IModifiable source)=> Item.Unregister(source);
+        public IModifierView View => Item.View;
     }
 }

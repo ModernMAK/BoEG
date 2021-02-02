@@ -17,6 +17,8 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 		[SerializeField]
 		private int _soulsPerAssist;
 
+		[Header("Modifier")] [SerializeField] 
+		private Sprite _modifierIcon;
 		[SerializeField]
 		private int _soulLimit;
 		[SerializeField]
@@ -32,15 +34,20 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 		//TODO add magicable modifier
 		private class SoulJarModifier : IHealthGenerationModifier, IMagicGenerationModifier, IDynamicModifier
 		{
-			public SoulJarModifier(float hpGen, float mpGen, int souls=default)
+			public SoulJarModifier(Sprite icon, float hpGen, float mpGen, int souls=default)
 			{
 				_souls = souls;
 				_hpGenPerSoul = hpGen;
 				_mpGenPerSoul = mpGen;
+				_view = new ModifierView()
+				{
+					Icon = icon
+				};
 			}
 			private int _souls;
 			private float _hpGenPerSoul;
 			private float _mpGenPerSoul;
+			private ModifierView _view;
 			public int Souls
 			{
 				get => _souls;
@@ -85,12 +92,14 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 
 			public event EventHandler Changed;
 			private void OnChanged() => Changed?.Invoke(this, EventArgs.Empty);
+
+			public IModifierView View => _view;
 		}
 
 		SoulJarModifier _modifier;
 		public override void Initialize(Actor data)
 		{
-			_modifier = new SoulJarModifier(_healthGenPerSoul,_manaGenPerSoul);
+			_modifier = new SoulJarModifier(_modifierIcon,_healthGenPerSoul,_manaGenPerSoul);
 			base.Initialize(data);
 			_aura = TriggerUtility.CreateTrigger<SphereCollider>(data, "SoulJar Search Trigger");
 			_aura.Collider.radius = _searchRadius;

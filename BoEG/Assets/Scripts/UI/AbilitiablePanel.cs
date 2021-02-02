@@ -47,18 +47,18 @@ namespace MobaGame.UI
                     //BUG aspect ratio not resizing icon?
                     //Toggling on and off fixes this, but its not a good solution imo
                     _abilityPanels[i].gameObject.SetActive(false);
-                    _abilityPanels[i].SetAbility(_abilitiable.Abilities[i]);
+                    _abilityPanels[i].SetTarget(_abilitiable.Abilities[i]);
                     _abilityPanels[i].gameObject.SetActive(true);
                 }
         }
 
 
-        public override void SetTarget(Actor go)
+        public override void SetTarget(Actor target)
         {
             if (_abilitiable != null)
                 _abilitiable.AbilitiesChanged -= OnAbilitiesChanged;
 
-            _go = go;
+            _go = target;
             _abilitiable = _go != null ? _go.GetModule<IAbilitiable>() : null;
             UpdatePanels();
 

@@ -11,9 +11,9 @@ namespace MobaGame.UI
         private Actor _actor;
         private IHealthable _healthable;
 
-        public override void SetTarget(Actor actor)
+        public override void SetTarget(Actor target)
         {
-            _actor = actor;
+            _actor = target;
             _healthable = _actor != null ? _actor.GetModule<IHealthable>() : null;
         }
 

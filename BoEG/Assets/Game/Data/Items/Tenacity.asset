@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18d88aaf265e4f5494d7f91437062eab, type: 3}
   m_Name: Tenacity
   m_EditorClassIdentifier: 
+  _icon: {fileID: 21300000, guid: a7580ffca65a884449430412b33a9588, type: 3}
   _healthGen:
     _bonus: 6
     _multiplier:

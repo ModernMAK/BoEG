@@ -92,7 +92,7 @@ namespace MobaGame.Framework
             _commandable = _actor.GetModule<ICommandable>();
             _abilitiableHACK = _actor.GetModule<IAbilitiable>();
             if (_panel != null)
-                _panel.SetTarget(_actor.gameObject);
+                _panel.SetTarget(_actor);
         }
 
         private Action<InputAction.CallbackContext> AbilityOnStarted(int index)

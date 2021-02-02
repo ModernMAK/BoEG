@@ -13,9 +13,9 @@ namespace MobaGame
         // Start is called before the first frame update
         private Actor _go;
 
-        public override void SetTarget(Actor go)
+        public override void SetTarget(Actor target)
         {
-            _go = go;
+            _go = target;
             _attackerable = _go != null ? _go.GetModule<IAttackerable>() : null;
         }
 
