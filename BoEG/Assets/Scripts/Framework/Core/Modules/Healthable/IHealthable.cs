@@ -4,8 +4,16 @@ using UnityEngine;
 namespace MobaGame.Framework.Core.Modules
 {
 
+    public interface IHealthableView : IView
+    {
+        float Value { get; }
+        float Percentage { get; }
+        float Capacity { get; }
+        float Generation { get; }
+    }
 	public interface IHealthable
     {
+        IHealthableView View { get; }
         /// <summary>
         /// The Health Point Value.
         /// </summary>

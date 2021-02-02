@@ -26,8 +26,14 @@ namespace MobaGame.Framework.Core.Modules
         private Func<TModifier, FloatModifier> GetModifier { get; }
         public ModifiedValue Value { get; }
         public ModifierList<TModifier> List { get; }
-
-		void RecalculateModifier(object sender, EventArgs e) => Value.Modifier = List.SumModifiers(GetModifier);
+        public event EventHandler ModifierRecalculated;
+        void RecalculateModifier(object sender, EventArgs e)
+        {
+            Value.Modifier = List.SumModifiers(GetModifier);
+            OnModifierRecalculated();
+        
+        }
+        private void OnModifierRecalculated() => ModifierRecalculated?.Invoke(this, EventArgs.Empty);
 
 		public void Register(IModifiable source) => List.Register(source);
 		

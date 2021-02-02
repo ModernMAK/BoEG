@@ -5,22 +5,26 @@ namespace MobaGame.Framework.Core.Modules
 {
 
 	public class Healthable : Statable, IInitializable<IHealthableData>, IHealthable, IListener<IStepableEvent>,
-        IRespawnable, IListener<IModifiable>
+        IRespawnable, IListener<IModifiable>, IHealthableView
     {
-        #region Constructors
-        
-        public Healthable(Actor actor) : base(actor)
+
+
+		#region Constructors
+
+		public Healthable(Actor actor) : base(actor)
         {
             _capacityModifiers = new ModifiedValueBoilerplate<IHealthCapacityModifier>(modifier=>modifier.HealthCapacity);
             _generationModifiers = new ModifiedValueBoilerplate<IHealthGenerationModifier>(modifier=>modifier.HealthGeneration);
-
+            _capacityModifiers.ModifierRecalculated += NotifyViewChanged;
+            _generationModifiers.ModifierRecalculated += NotifyViewChanged;
         }
-        
-        #endregion
 
-        #region Events
+        private void NotifyViewChanged(object sender, EventArgs e) => OnChanged();
 
-        public event EventHandler<ChangedEventArgs<float>> ValueChanged
+		#endregion
+
+		#region Events
+		public event EventHandler<ChangedEventArgs<float>> ValueChanged
         {
             add => StatChanged += value;
             remove => StatChanged -= value;
@@ -33,11 +37,11 @@ namespace MobaGame.Framework.Core.Modules
         private readonly ModifiedValueBoilerplate<IHealthCapacityModifier> _capacityModifiers;
         private readonly ModifiedValueBoilerplate<IHealthGenerationModifier> _generationModifiers;
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        public float Value
+		public float Value
         {
             get => Stat;
             set => Stat = value;
@@ -56,6 +60,12 @@ namespace MobaGame.Framework.Core.Modules
 
         protected override ModifiedValue StatGeneration => _generationModifiers.Value;
 
+		float IHealthableView.Capacity => Capacity.Total;
+
+        float IHealthableView.Generation => Generation.Total;
+
+        public IHealthableView View => this;
+
 		#endregion
 
 		#region IInitializable<IHealthableData>
@@ -63,15 +73,16 @@ namespace MobaGame.Framework.Core.Modules
 		public void Initialize(IHealthableData data)
         {
             StatCapacity.Base = data.Capacity;
-            SetPercentage(1f);
+            Percentage=1f;
             StatGeneration.Base = data.Generation;
+            OnChanged();
         }
 
         #endregion
 
         #region IRespawnable
 
-        public void Respawn() => SetPercentage(1f);
+        public void Respawn() => Percentage=1f;
 
         #endregion
 

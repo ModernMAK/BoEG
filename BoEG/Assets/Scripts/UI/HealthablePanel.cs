@@ -5,20 +5,26 @@ using UnityEngine.UI;
 
 namespace MobaGame.UI
 {
-    public class HealthablePanel : DebugActorUI
+    public class HealthablePanel : DebugModuleUI<IHealthable>
     {
         // Start is called before the first frame update
-        private Actor _actor;
         private IHealthable _healthable;
-
-        public override void SetTarget(Actor target)
+        private IHealthableView View => _healthable.View;
+        private bool IsNull => _healthable == null || View == null;
+        public override void SetTarget(IHealthable target)
         {
-            _actor = target;
-            _healthable = _actor != null ? _actor.GetModule<IHealthable>() : null;
+            if (!IsNull)
+                View.Changed -= View_Changed;
+            _healthable = target;
+            UpdateUI();
+            if (!IsNull)
+                View.Changed += View_Changed;
         }
 
-        // Update is called once per frame
-        private void Update()
+        private void View_Changed(object sender, System.EventArgs e) => UpdateUI();
+
+		// Update is called once per frame
+		private void UpdateUI()
         {
             var value = 0f;
             var normal = 0f;

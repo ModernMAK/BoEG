@@ -22,7 +22,7 @@ namespace MobaGame.Framework.Core.Modules
         public void Initialize(IMagicableData data)
         {
             StatCapacity.Base = data.MagicCapacity;
-            SetPercentage(1f);
+            Percentage = 1f;
             StatGeneration.Base = data.MagicGeneration;
         }
 
@@ -72,7 +72,7 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Respawn()
         {
-            SetPercentage(1f);
+            Percentage=1f;
         }
         #region IListener<IModifiable>
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public abstract class Statable : ActorModule, IListener<ILevelable>
+    public abstract class Statable : ActorModule, IListener<ILevelable>, IView
     {
         public Statable(Actor actor) : base(actor)
         {
@@ -31,19 +31,23 @@ namespace MobaGame.Framework.Core.Modules
             set
             {
                 value = Mathf.Clamp01(value);
-                if (!_percentage.SafeEquals(value))
+                var changed = !_percentage.SafeEquals(value);
+                if (changed)
                 {
                     var cap = StatCapacity.Total;
                     var before = _percentage * cap;
                     var after = value * cap;
                     OnStatChanged(new ChangedEventArgs<float>(before, after));
                 }
-
                 _percentage = value;
+                if (changed)
+                    OnChanged();
             }
         }
 
-        protected abstract ModifiedValue StatCapacity
+        protected virtual void OnChanged() => Changed?.Invoke(this, EventArgs.Empty);
+
+		protected abstract ModifiedValue StatCapacity
         {
             get;
         }
@@ -74,8 +78,8 @@ namespace MobaGame.Framework.Core.Modules
             remove => _statChanged -= value;
         }
 
-        //DOES NOT RAISE STAT CHANGED
-        protected void SetPercentage(float percentage) => _percentage = percentage;
+        public event EventHandler Changed;
+
 
 
         protected virtual void OnStatChanged(ChangedEventArgs<float> e)
