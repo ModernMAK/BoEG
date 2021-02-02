@@ -20,11 +20,13 @@ namespace MobaGame.Framework.Core.Modules.Commands
         protected override void Start()
         {
             Movable.StartMovement();
+            Movable.UnAnchor();
         }
 
         protected override void Stop()
         {
             Movable.StopMovement();
+            Movable.Anchor();
         }
     }
 }

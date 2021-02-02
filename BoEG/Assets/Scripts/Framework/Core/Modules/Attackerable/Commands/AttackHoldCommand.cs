@@ -53,11 +53,13 @@ namespace MobaGame.Framework.Core.Modules.Commands
             _movable.StopMovement();
             _movable.MoveTo(_destenation);
             _movable.StartMovement();
+            _movable.UnAnchor();
         }
 
         protected override void Stop()
         {
             _movable.StopMovement();
+            _movable.Anchor();
         }
 
         protected override bool IsDone()

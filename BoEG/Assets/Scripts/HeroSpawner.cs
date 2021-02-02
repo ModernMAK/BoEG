@@ -29,7 +29,6 @@ namespace MobaGame
         {
             _heroTracker = new List<Actor>();
             _deadTracker = new List<Tuple<Actor, DurationTimer>>();
-
             _notDead = new Queue<Tuple<Actor, DurationTimer>>();
         }
 

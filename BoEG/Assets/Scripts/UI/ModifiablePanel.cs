@@ -4,14 +4,13 @@ using UnityEngine;
 
 namespace MobaGame.UI
 {
-    public class ModifiablePanel : DebugActorUI
+    public class ModifiablePanel : DebugModuleUI<IModifiable>
     {
 #pragma warning disable 0649
         [SerializeField] private GameObject _panelPrefab;
         [SerializeField] private Transform _container;
         private IModifiable _modifiable;
         private List<ModifierPanel> _subPanels;
-        private Actor _go;
 #pragma warning restore 0649
 
         private void Awake()
@@ -51,7 +50,7 @@ namespace MobaGame.UI
         }
 
 
-        public override void SetTarget(Actor target)
+        public override void SetTarget(IModifiable target)
         {
             if (_modifiable != null)
             {
@@ -59,8 +58,7 @@ namespace MobaGame.UI
                 _modifiable.OnModifierRemoved -= OnModifierListChanged;
             }
 
-            _go = target;
-            _modifiable = _go != null ? _go.GetModule<IModifiable>() : null;
+            _modifiable = target;
             UpdatePanels();
 
             if (_modifiable != null)

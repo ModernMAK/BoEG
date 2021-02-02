@@ -7,7 +7,6 @@ namespace MobaGame.Framework.Core
     public class CommandableActor : Actor, IProxy<ICommandable>, IRespawnable
     {
         private Commandable _commandable;
-        private IEnumerable<IRespawnable> _respawnables;
         ICommandable IProxy<ICommandable>.Value => _commandable;
 
         protected override void CreateComponents()
@@ -19,7 +18,6 @@ namespace MobaGame.Framework.Core
         protected override void Awake()
         {
             base.Awake();
-            _respawnables = GetModules<IRespawnable>();
         }
 
 
@@ -35,7 +33,8 @@ namespace MobaGame.Framework.Core
 
         public void Respawn()
         {
-            foreach (var respawnable in _respawnables)
+            var modules = GetModules<IRespawnable>();
+            foreach (var respawnable in modules)
                 respawnable.Respawn();
         }
     }
