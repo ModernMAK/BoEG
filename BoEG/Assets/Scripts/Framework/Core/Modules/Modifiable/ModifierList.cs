@@ -15,10 +15,12 @@ namespace MobaGame.Framework.Core
 		public void Register(IModifiable source)
 		{
 			source.OnModifierAdded += OnModifierAdded;
+			source.OnModifierRemoved += OnModifierRemoved;
 		}
 		public void Unregister(IModifiable source)
 		{
-			source.OnModifierRemoved += OnModifierRemoved;
+			source.OnModifierAdded -= OnModifierAdded;
+			source.OnModifierRemoved -= OnModifierRemoved;
 		}
 		   
 		public event EventHandler<T> ModifierAdded;
@@ -42,7 +44,6 @@ namespace MobaGame.Framework.Core
 				RemoveModifier(mod);
 				ModifierRemoved?.Invoke(sender, mod);
 				OnListChanged();
-				
 			}
 		}
 		protected virtual void AddModifier(T modifier)
