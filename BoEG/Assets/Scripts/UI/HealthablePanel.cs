@@ -7,7 +7,6 @@ namespace MobaGame.UI
 {
     public class HealthablePanel : DebugModuleUI<IHealthable>
     {
-        // Start is called before the first frame update
         private IHealthable _healthable;
         private IHealthableView View => _healthable.View;
         private bool IsNull => _healthable == null || View == null;
