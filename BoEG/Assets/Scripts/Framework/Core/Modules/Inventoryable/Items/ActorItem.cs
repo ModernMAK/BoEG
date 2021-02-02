@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-	public abstract class ScriptableItem : ScriptableObject, IItem
+	public abstract class ItemObject : ScriptableObject, IItem
 	{
 
 	}

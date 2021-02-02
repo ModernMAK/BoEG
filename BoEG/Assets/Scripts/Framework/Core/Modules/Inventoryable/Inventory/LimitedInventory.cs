@@ -16,8 +16,8 @@ namespace MobaGame.Framework.Core.Modules
 			for(var i = 0; i < InternalList.Count; i++)
 			{
 				if (ReferenceEquals(InternalList[i],item))
-					throw new ArgumentException("This item already exists in the inventory!");
-				if (emptySlot == InvalidSlot && InternalList == null)
+					throw new ArgumentException("This item already exists in the inventory! To add it again, create a clone!");
+				if (emptySlot == InvalidSlot && InternalList[i] == null)
 					emptySlot = i;
 			}
 			if (emptySlot == InvalidSlot)
@@ -28,7 +28,7 @@ namespace MobaGame.Framework.Core.Modules
 
 		public override void Clear()
 		{
-			for (var i = InternalList.Count-1; i >=0; i--)
+			for (var i = InternalList.Count-1; i >= 0; i--)
 				RemoveAt(i);
 		}
 
@@ -45,12 +45,25 @@ namespace MobaGame.Framework.Core.Modules
 			OnAdded(item);
 		}
 
-		public override bool Remove(T item)
+		public override int IndexOf(T item)
 		{
-			var index = InternalList.IndexOf(item);
+			const int NotFound = -1;
+			if (item == null)
+				return NotFound;
+			for(var i = 0; i < Count;i++)
+				if (InternalList[i] != null && InternalList[i].Equals(item))
+					return i;
+			return NotFound;
+		}
+
+		public override bool Remove(T item)
+			{
+			if (item == null)
+				return true;
+			var index = IndexOf(item);
 			if (index != -1)
 			{
-				InternalList.RemoveAt(index);
+				InternalList[index] = default;
 				OnRemoved(item);
 				return true;
 			}
@@ -64,7 +77,7 @@ namespace MobaGame.Framework.Core.Modules
 			if (InternalList[index] != null)
 			{
 				var item = InternalList[index];
-				InternalList.RemoveAt(index);
+				InternalList[index] = default;
 				OnRemoved(item);
 			}
 		}

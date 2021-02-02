@@ -11,8 +11,8 @@ namespace MobaGame.Framework.Core.Modules
 		}
 		public override void Unregister(Actor source)
 		{
-			if (!source.TryGetModule<IModifiable>(out var m))
-				Register(m);
+			if (source.TryGetModule<IModifiable>(out var m))
+				Unregister(m);
 		}
 		public abstract void Register(IModifiable source);
 

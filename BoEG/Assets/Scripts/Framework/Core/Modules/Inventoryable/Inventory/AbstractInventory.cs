@@ -33,7 +33,10 @@ namespace MobaGame.Framework.Core.Modules
 
 		public virtual IEnumerator<T> GetEnumerator() => InternalList.GetEnumerator();
 
-		public int IndexOf(T item) => InternalList.IndexOf(item);
+		/// <remarks>
+		/// Virtual to avoid problems with using [] as a backing IList
+		/// </remarks>
+		public virtual int IndexOf(T item) => InternalList.IndexOf(item);
 
 		public abstract void Insert(int index, T item);
 
