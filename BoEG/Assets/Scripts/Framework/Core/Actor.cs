@@ -69,20 +69,8 @@ namespace MobaGame.Framework.Core
             OnPreStep(Time.deltaTime);
         }
 
-        public void AddSteppable(IStepable steppable)
-        {
-            PreStep += steppable.PreStep;
-            PostStep += steppable.PostStep;
-            Step += steppable.Step;
-            PhysicsStep += steppable.PhysicsStep;
-        }
-        public void RemoveSteppable(IStepable steppable)
-        {
-            PreStep -= steppable.PreStep;
-            PostStep -= steppable.PostStep;
-            Step -= steppable.Step;
-            PhysicsStep -= steppable.PhysicsStep;
-        }
+        public void AddSteppable(IStepable steppable) => this.Register(steppable);
+        public void RemoveSteppable(IStepable steppable) => this.Unregister(steppable);
 
 
         private event Action<float> _step;
