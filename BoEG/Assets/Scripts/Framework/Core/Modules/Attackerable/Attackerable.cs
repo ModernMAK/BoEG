@@ -6,37 +6,6 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public interface IAttackDamageModifier : IModifier { FloatModifier AttackDamage { get; } }
-    public interface IAttackRangeModifier : IModifier { FloatModifier AttackRange { get; } }
-    public interface IAttacksPerIntervalModifier : IModifier { FloatModifier AttacksPerInterval { get; } }
-    public interface IAttackIntervalModifier : IModifier { FloatModifier AttackInterval { get; } }
-
-    public class AttackCritEventArgs : EventArgs
-	{
-        public AttackCritEventArgs(SourcedDamage<Actor> damage)
-		{
-            Damage = damage;
-		}
-        public SourcedDamage<Actor> Damage { get; }
-        /// <remarks>
-        /// A value of 0 means no modifier is aplied.
-        /// .5 would be a 150% chance crit
-        /// </remarks>
-        public float CriticalMultiplier { get; set; }
-
-        public SourcedDamage<Actor> FinalDamage => Damage.SetDamage(Damage.Damage.SetValue(Damage.Damage.Value * CriticalMultiplier));
-
-	}
-    public class AttackLifestealEventArgs : EventArgs
-	{
-        public AttackLifestealEventArgs(SourcedDamage<Actor> source)
-		{
-            Damage = source;
-		}
-        public SourcedDamage<Actor> Damage { get; }
-        public float LifestealAmount { get; set; }
-	}
-
     public class Attackerable : ActorModule, IAttackerable, IInitializable<IAttackerableData>,
         IListener<IStepableEvent>, IRespawnable, IListener<IModifiable>
     {
@@ -56,18 +25,19 @@ namespace MobaGame.Framework.Core.Modules
 
             var helper = TriggerUtility.CreateTrigger<SphereCollider>(Actor, AttackerableTrigger);
             _trigger = new AttackTargetTrigger<SphereCollider>(Actor, helper, _teamable);
-            _attackCooldown = new DurationTimer(0f,true);
-            _damage = new ModifiedValueBoilerplate<IAttackDamageModifier>(modifier=>modifier.AttackDamage);
+            _attackCooldown = new DurationTimer(0f, true);
+            _damage = new ModifiedValueBoilerplate<IAttackDamageModifier>(modifier => modifier.AttackDamage);
             _range = new ModifiedValueBoilerplate<IAttackRangeModifier>(modifier => modifier.AttackRange);
-            _attacksPerInterval = new ModifiedValueBoilerplate<IAttacksPerIntervalModifier>(modifier => modifier.AttacksPerInterval);
-            _interval = new ModifiedValueBoilerplate<IAttackIntervalModifier>(modifier => modifier.AttackInterval); 
+            _attacksPerInterval =
+                new ModifiedValueBoilerplate<IAttacksPerIntervalModifier>(modifier => modifier.AttacksPerInterval);
+            _interval = new ModifiedValueBoilerplate<IAttackIntervalModifier>(modifier => modifier.AttackInterval);
         }
 
         public float Damage => _damage.Value.Total;
         public float Range => _range.Value.Total;
         public float AttacksPerInterval => _attacksPerInterval.Value.Total;
 
-        public float Cooldown => Interval/ AttacksPerInterval;
+        public float Cooldown => Interval / AttacksPerInterval;
 
         public float Interval => _interval.Value.Total;
 
@@ -88,16 +58,17 @@ namespace MobaGame.Framework.Core.Modules
                 return;
 
             if (_teamable != null && actor.TryGetModule<ITeamable>(out var teamable))
-                if (!_teamable.IsAlly(teamable))
+                if (_teamable.IsAlly(teamable))
                     return;
 
-            PerformAttack(actor,GetAttackDamage(), true);
+            PerformAttack(actor, GetAttackDamage(), true);
         }
+
         public void RawAttack(Actor actor, Damage damage)
         {
-
             PerformAttack(actor, damage, false);
         }
+
         void PerformAttack(Actor actor, Damage damage, bool useCooldown)
         {
             if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
@@ -111,31 +82,33 @@ namespace MobaGame.Framework.Core.Modules
             }
             else
             {
-                InternalPerformAttack(actor, damageTarget,damage,useCooldown);
+                InternalPerformAttack(actor, damageTarget, damage, useCooldown);
             }
         }
 
         private Damage GetAttackDamage() => new Damage(Damage, DamageType.Physical, DamageModifiers.Attack);
 
-        private Action GetAttackCallback(Actor actor, IDamageTarget damageTarget, Damage damage, bool useCooldown = true)
+        private Action GetAttackCallback(Actor actor, IDamageTarget damageTarget, Damage damage,
+            bool useCooldown = true)
         {
-            Action<Actor, IDamageTarget,Damage,bool> func = InternalPerformAttack;
+            Action<Actor, IDamageTarget, Damage, bool> func = InternalPerformAttack;
             return func.Partial(actor, damageTarget, damage, useCooldown);
         }
 
-        private void InternalPerformAttack(Actor actor, IDamageTarget damageTarget, Damage damage, bool useCooldown = true)
+        private void InternalPerformAttack(Actor actor, IDamageTarget damageTarget, Damage damage,
+            bool useCooldown = true)
         {
             var sourceDamage = new SourcedDamage<Actor>(damage, Actor);
-            var attackArgs = new AttackerableEventArgs(Actor, actor, damage);
+            var attackArgs = new AttackerableEventArgs(sourceDamage.Source, actor, sourceDamage.Damage);
             OnAttacking(attackArgs);
             var critDamage = CalculateCritDamage(sourceDamage);
             var lifesteal = CalculateLifestealModifier(sourceDamage);
             damageTarget.TakeDamage(critDamage);
             if (Actor.TryGetModule<IHealthable>(out var healthable))
                 healthable.Value += lifesteal;
-            if(useCooldown)
+            if (useCooldown)
                 PutAttackOnCooldown();
-            var attackedArgs = new AttackerableEventArgs(actor, Actor,critDamage.Damage);
+            var attackedArgs = new AttackerableEventArgs(actor, Actor, critDamage.Damage);
             OnAttacked(attackedArgs);
         }
 
@@ -154,7 +127,7 @@ namespace MobaGame.Framework.Core.Modules
             return args.LifestealAmount;
         }
 
-        protected void OnLifestealModifiers(AttackLifestealEventArgs e) => LifestealModifiers.Invoke(this, e);
+        protected void OnLifestealModifiers(AttackLifestealEventArgs e) => LifestealModifiers?.Invoke(this, e);
 
 
         protected SourcedDamage<Actor> CalculateCritDamage(SourcedDamage<Actor> damage)
@@ -164,14 +137,14 @@ namespace MobaGame.Framework.Core.Modules
             return args.FinalDamage;
         }
 
-        protected void OnCritModifiers(AttackCritEventArgs e) => CritModifiers.Invoke(this, e);
+        protected void OnCritModifiers(AttackCritEventArgs e) => CritModifiers?.Invoke(this, e);
 
 
-        protected void OnAttacking(AttackerableEventArgs e)        =>            Attacking?.Invoke(this, e);
-        
+        protected void OnAttacking(AttackerableEventArgs e) => Attacking?.Invoke(this, e);
 
-        protected void OnAttacked(AttackerableEventArgs e)        =>            Attacked?.Invoke(this, e);
-        
+
+        protected void OnAttacked(AttackerableEventArgs e) => Attacked?.Invoke(this, e);
+
 
         public void Initialize(IAttackerableData data)
         {
@@ -211,20 +184,20 @@ namespace MobaGame.Framework.Core.Modules
             _attackCooldown.SetDone();
         }
 
-		public void Register(IModifiable source)
-		{
+        public void Register(IModifiable source)
+        {
             _damage.Register(source);
             _interval.Register(source);
             _range.Register(source);
             _attacksPerInterval.Register(source);
-		}
+        }
 
-		public void Unregister(IModifiable source)
+        public void Unregister(IModifiable source)
         {
             _damage.Unregister(source);
             _interval.Unregister(source);
             _range.Unregister(source);
             _attacksPerInterval.Unregister(source);
         }
-	}
+    }
 }

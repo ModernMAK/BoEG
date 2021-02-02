@@ -19,25 +19,14 @@ namespace MobaGame.Framework.Core.Modules.Commands
         protected void GetModule<T>(out T component)=>           component = GetModule<T>();
         
     }
-    public abstract class GameObjectCommand : BaseCommand
+    public abstract class GameObjectCommand : ActorCommand
     {
-        public GameObjectCommand(GameObject entity)
+        public GameObjectCommand(GameObject entity) : base(entity.GetComponent<Actor>())
         {
             Entity = entity;
-            Actor = Entity.GetComponent<Actor>();
         }
 
         protected GameObject Entity { get; }
-        protected Actor Actor { get; }
 
-        protected T GetModule<T>()
-        {
-            return Actor.GetModule<T>();
-        }
-
-        protected void GetModule<T>(out T component)
-        {
-            component = GetModule<T>();
-        }
     }
 }

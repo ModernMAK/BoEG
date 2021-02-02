@@ -7,7 +7,7 @@ namespace MobaGame.Framework.Core.Modules
     //Stop overthinking this. Do what unity does best
 
 
-    public class Magicable : Statable, IInitializable<IMagicableData>, IMagicable, IListener<IStepableEvent>, IRespawnable
+    public class Magicable : Statable, IInitializable<IMagicableData>, IMagicable, IListener<IStepableEvent>, IRespawnable, IListener<IModifiable>
     {
         public Magicable(Actor actor) : base(actor)
         {
@@ -74,5 +74,21 @@ namespace MobaGame.Framework.Core.Modules
         {
             SetPercentage(1f);
         }
+        #region IListener<IModifiable>
+
+        public void Register(IModifiable source)
+        {
+            _capacityModifiers.Register(source);
+            _generationModifiers.Register(source);
+        }
+
+        public void Unregister(IModifiable source)
+        {
+            _capacityModifiers.Unregister(source);
+            _generationModifiers.Unregister(source);
+        }
+
+
+        #endregion
     }
 }

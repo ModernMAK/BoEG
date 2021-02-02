@@ -89,8 +89,6 @@ namespace MobaGame.Entity.UnitArchtypes
         {
             _icon = data.Icon;
             _healthable.Initialize(data.HealthableData);
-            _healthable.Register(_modifiable);
-
             _magicable.Initialize(data.MagicableData);
             _armorable.Initialize(data.ArmorableData);
             _attackerable.Initialize(data.AttackerableData);
@@ -99,6 +97,10 @@ namespace MobaGame.Entity.UnitArchtypes
             var instanceAbilities = new AbilityObject[data.Abilities.Count];
             for (var i = 0; i < data.Abilities.Count; i++) instanceAbilities[i] = Instantiate(data.Abilities[i]);
             _abilitiable.Initialize(instanceAbilities);
+
+            var modifiableListeners = GetModules<IListener<IModifiable>>();
+            foreach(var listener in modifiableListeners)
+                listener.Register(_modifiable);
         }
 
         protected override void SetupComponents()
