@@ -6,7 +6,9 @@ namespace MobaGame.Framework.Core.Modules
     [Serializable]
 	public struct FloatModifier
     {
-        public FloatModifier(float bonus, float addMul = default, float mulMul = default) : this(bonus, new FloatModifierMultiplier(addMul,mulMul))        {        }
+        public FloatModifier(float bonus, float addMul = default, float mulMul = default) : this(bonus, new FloatModifierMultiplier(addMul,mulMul))     
+        { 
+        }
         public FloatModifier(float bonus, FloatModifierMultiplier multiplier)
 		{
             _bonus = bonus;

@@ -1,8 +1,8 @@
 using UnityEngine;
-
 namespace MobaGame.Framework.Core.Modules
 {
-    [CreateAssetMenu(menuName = "Item/GenModItem")]
+
+	[CreateAssetMenu(menuName = "Item/GenModItem")]
     public class GenerationModifierItemObject : ItemObject, IHealthGenerationModifier, IMagicGenerationModifier, IListener<Actor>, IListener<IModifiable>
     {
         [SerializeField]

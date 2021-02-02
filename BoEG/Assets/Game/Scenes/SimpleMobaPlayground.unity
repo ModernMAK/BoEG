@@ -585,7 +585,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d757aa319b36a2745a0b10d4aac25986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InitialItems: []
+  InitialItems:
+  - {fileID: 11400000, guid: e14140de6161e10469fd41553cdd4741, type: 2}
+  - {fileID: 11400000, guid: 0e2fa34795d2bf84eae25bc3f552bea3, type: 2}
   AddItem: 0
   RemoveItem: 0
   Item: {fileID: 11400000, guid: 0e2fa34795d2bf84eae25bc3f552bea3, type: 2}
@@ -2248,8 +2250,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d0931077c4a7354abfa7a519b6c8d6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _default: {fileID: 2800000, guid: 80f79921d75d4fb46a21e81429b94b84, type: 3}
-  _hoverUnit: {fileID: 2800000, guid: ff110cd318bd2574d92834436badbd95, type: 3}
+  _default:
+    _default: {fileID: 2800000, guid: 80f79921d75d4fb46a21e81429b94b84, type: 3}
+    _hover: {fileID: 2800000, guid: ff110cd318bd2574d92834436badbd95, type: 3}
+  _attacking:
+    _default: {fileID: 2800000, guid: 20aab7a7b72bd9742b513c606a26a2d2, type: 3}
+    _hover: {fileID: 2800000, guid: e63ee8d44f9a1f04d88bf6d54bb54cda, type: 3}
 --- !u!114 &1029669723
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -23,6 +23,7 @@ namespace MobaGame.Framework
         private IAbilitiable _abilitiableHACK;
         [SerializeField] private Actor _actor;
         [SerializeField] private ActorPanel _panel;
+        [SerializeField] private CustomCursor _cursor;
         private ICommandable _commandable;
 
         private PlayerControls _controls;
@@ -142,8 +143,18 @@ namespace MobaGame.Framework
                 }
             }
         }
+		private void LateUpdate()
+		{
+            if (_cursor == null)
+                return;
 
-        private ICommand GenerateAttackMove(Vector3 target)
+            if (_controls.Movement.Attack.ButtonPressed())
+                _cursor.Mode = CustomCursor.CursorState.Attacking;
+            else
+                _cursor.Mode = CustomCursor.CursorState.Default;
+		}
+
+		private ICommand GenerateAttackMove(Vector3 target)
         {
             return new AttackMoveCommand(_actor.gameObject, target);
         }
