@@ -87,8 +87,9 @@ namespace MobaGame.Framework.Core.Modules
             _statChanged?.Invoke(this, e);
         }
 
-        protected virtual void OnLevelChanged(object sender, int levelDifference)
+        protected virtual void OnLevelChanged(object sender, ChangedEventArgs<int> e)
         {
+            var levelDifference = e.After - e.Before;
             StatCapacity.Base += _capacityGain * levelDifference;
             StatGeneration.Base += _generationGain * levelDifference;
         }
