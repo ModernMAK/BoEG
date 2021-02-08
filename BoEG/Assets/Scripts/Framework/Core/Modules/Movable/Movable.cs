@@ -12,7 +12,7 @@ namespace MobaGame.Framework.Core.Modules
     {
         FloatModifier TurnSpeed { get; }
     }
-    public class Movable : ActorModule, IInitializable<IMovableData>, IMovable, IListener<IStepableEvent>,IListener<IModifiable>
+    public class Movable : ActorModule, IInitializable<IMovableData>, IMovable, IListener<IStepableEvent>,IListener<IModifiable>, IRespawnable
     {
         private NavMeshAgent _agent;
         private NavMeshObstacle _obstacle;
@@ -169,5 +169,11 @@ namespace MobaGame.Framework.Core.Modules
             MoveSpeed.Unregister(source);
             TurnSpeed.Unregister(source);
         }
-	}
+
+        public void Respawn()
+        {
+            UnAnchor();
+            CancelMovement();
+        }
+    }
 }

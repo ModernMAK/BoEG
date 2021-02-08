@@ -121,7 +121,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                     TickInterval = _tickInterval
                 };
 
-                if (!actor.TryGetModule<IKillable>(out var killable))
+                if (actor.TryGetModule<IKillable>(out var killable))
                     killable.Died += RemoveTick;
 
                 void RemoveTick(object sender, DeathEventArgs args)

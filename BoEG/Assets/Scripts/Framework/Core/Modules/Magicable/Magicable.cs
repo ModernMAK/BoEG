@@ -7,17 +7,21 @@ namespace MobaGame.Framework.Core.Modules
     //Stop overthinking this. Do what unity does best
 
 
-    public class Magicable : Statable, IInitializable<IMagicableData>, IMagicable, IListener<IStepableEvent>, IRespawnable, IListener<IModifiable>
+    public class Magicable : Statable, IInitializable<IMagicableData>, IMagicable, IListener<IStepableEvent>, IRespawnable, IListener<IModifiable>, IMagicableView
     {
         public Magicable(Actor actor) : base(actor)
         {
             _capacityModifiers = new ModifiedValueBoilerplate<IMagicCapacityModifier>(modifier=>modifier.MagicCapacity);
             _generationModifiers = new ModifiedValueBoilerplate<IMagicGenerationModifier>(modifier => modifier.MagicGeneration);
-
+            _generationModifiers.ModifierRecalculated += OnModifierRecalculated;
+            _capacityModifiers.ModifierRecalculated += OnModifierRecalculated;
         }
 
-        private ModifiedValueBoilerplate<IMagicCapacityModifier> _capacityModifiers;
-        private ModifiedValueBoilerplate<IMagicGenerationModifier> _generationModifiers;
+        private void OnModifierRecalculated(object sender, EventArgs e) => OnChanged();
+        
+
+        private readonly ModifiedValueBoilerplate<IMagicCapacityModifier> _capacityModifiers;
+        private readonly ModifiedValueBoilerplate<IMagicGenerationModifier> _generationModifiers;
  
         public void Initialize(IMagicableData data)
         {
@@ -25,6 +29,8 @@ namespace MobaGame.Framework.Core.Modules
             Percentage = 1f;
             StatGeneration.Base = data.MagicGeneration;
         }
+
+        public IMagicableView View => this;
 
         public float Value
         {
@@ -37,6 +43,10 @@ namespace MobaGame.Framework.Core.Modules
             get => StatPercentage;
             set => StatPercentage = value;
         }
+
+        float IMagicableView.Capacity => Capacity.Total;
+
+        float IMagicableView.Generation => Generation.Total;
 
         public IModifiedValue<float> Capacity => StatCapacity;
 

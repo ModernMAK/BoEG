@@ -14,9 +14,10 @@ namespace MobaGame.UI
         public override void SetTarget(Actor target)
         {
             _actor = target;
+            UpdateUI();
         }
 
-        private void Update()
+        private void UpdateUI()
         {
             if (_icon != null)
             {

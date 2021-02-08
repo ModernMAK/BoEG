@@ -4,7 +4,7 @@ using System;
 namespace MobaGame.Framework.Core.Modules
 {
 
-    public class ModifiedArmor<TBlockMod,TResistMod> : IArmor, IInitializable<IArmorData>, IListener<IModifiable>
+    public class ModifiedArmor<TBlockMod,TResistMod> : IArmor, IInitializable<IArmorData>, IListener<IModifiable>, IArmorView
         where TBlockMod : IModifier 
         where TResistMod : IModifier
     {
@@ -12,15 +12,21 @@ namespace MobaGame.Framework.Core.Modules
         {
             Block = new ModifiedValueBoilerplate<TBlockMod>(getBlockMod);
             Resistance = new ModifiedValueBoilerplate<TResistMod>(getResistMod);
+            Block.ModifierRecalculated += OnModifierChanged;
+            Resistance.ModifierRecalculated += OnModifierChanged;
             Immunity = false;
 		}
+
+        private void OnModifierChanged(object sender, EventArgs e) => OnChanged();
 
 
         public ModifiedValueBoilerplate<TBlockMod> Block { get; }
         float IArmor.Block => Block.Value.Total;
+        float IArmorView.Block => Block.Value.Total;
 
         public ModifiedValueBoilerplate<TResistMod> Resistance { get; }
         float IArmor.Resistance => Resistance.Value.Total;
+        float IArmorView.Resistance => Resistance.Value.Total;
 
         public bool Immunity { get; private set; }
 
@@ -31,6 +37,7 @@ namespace MobaGame.Framework.Core.Modules
             Block.Value.Base = data.Block;
             Resistance.Value.Base = data.Resist;
             Immunity = data.Immune;
+            OnChanged();
 		}
 
 		public void Register(IModifiable source)
@@ -44,11 +51,14 @@ namespace MobaGame.Framework.Core.Modules
             Block.Unregister(source);
             Resistance.Unregister(source);
         }
-	}
-    public interface IArmorView
+
+        public event EventHandler Changed;
+        protected void OnChanged() => Changed?.Invoke(this,EventArgs.Empty);
+    }
+    public interface IArmorView : IView
     {
-        IModifiedValue<float> Block { get; }
-        IModifiedValue<float> Resistance { get; }
+        float Block { get; }
+        float Resistance { get; }
         bool Immunity { get; }
 
     }

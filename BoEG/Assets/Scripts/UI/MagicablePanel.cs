@@ -1,24 +1,31 @@
-﻿using MobaGame.Framework.Core;
+﻿using System;
+using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace MobaGame.UI
 {
-    public class MagicablePanel : DebugActorUI
+    public class MagicablePanel : DebugModuleUI<IMagicable>
     {
         // Start is called before the first frame update
-        private Actor _go;
         private IMagicable _magicable;
-
-        public override void SetTarget(Actor target)
+        private IMagicableView View => _magicable.View;
+        private bool IsNull => _magicable == null || View == null;
+        public override void SetTarget(IMagicable target)
         {
-            _go = target;
-            _magicable = _go != null ? _go.GetModule<IMagicable>() : null;
+            if (!IsNull)
+                View.Changed -= View_Changed;
+            _magicable = target;
+            UpdateUI();
+            if (!IsNull)
+                View.Changed += View_Changed;
         }
 
+        private void View_Changed(object sender, EventArgs e) => UpdateUI();
+
         // Update is called once per frame
-        private void Update()
+        private void UpdateUI()
         {
             var value = 0f;
             var generation = 0f;
