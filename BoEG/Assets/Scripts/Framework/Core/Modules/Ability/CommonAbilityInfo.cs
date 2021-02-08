@@ -138,9 +138,9 @@ namespace MobaGame.Framework.Core.Modules.Ability
         public bool InRange(Vector3 position) => AbilityHelper.InRange(_transform, position, Range);
 
 
-        public void NotifySpellCast(AbilityEventArgs args) => _abilitiable.NotifySpellCast(args);
+        public void NotifySpellCast(AbilityEventArgs args) => _abilitiable.NotifyAbilityCast(args);
 
         public void NotifySpellCast() =>
-            _abilitiable.NotifySpellCast(new AbilityEventArgs( _actor,  ManaCost));
+            _abilitiable.NotifyAbilityCast(new AbilityEventArgs( _actor,  ManaCost));
     }
 }

@@ -77,7 +77,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             _isActive = true;
             CastNoTarget();
             _activeTimer.Reset();
-            Modules.Abilitiable.NotifySpellCast(new AbilityEventArgs(Self, Cost));
+            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, Cost));
         }
 
 

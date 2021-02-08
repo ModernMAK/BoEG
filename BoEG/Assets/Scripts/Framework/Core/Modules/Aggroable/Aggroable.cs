@@ -8,7 +8,9 @@ namespace MobaGame.Framework.Core.Modules
     public class Aggroable : ActorModule, IAggroable, IInitializable<IAggroableData>, IListener<IStepableEvent>
     {
         #region Constants / Statics
-
+        /// <summary>
+        /// The Name that our trigger uses.
+        /// </summary>
         public const string TriggerName = "Aggroable Trigger";
         
         #endregion

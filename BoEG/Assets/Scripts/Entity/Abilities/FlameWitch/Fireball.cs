@@ -55,7 +55,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
             _cooldownTimer.Reset();
             CastGroundTarget(hit.point);
-            Modules.Abilitiable.NotifySpellCast(new AbilityEventArgs(Self, Cost));
+            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, Cost));
         }
 
         public void CastGroundTarget(Vector3 worldPos)

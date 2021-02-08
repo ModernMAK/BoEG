@@ -37,32 +37,28 @@ namespace MobaGame.Framework.Core.Modules
 
         #region Events
 
-        private event EventHandler _abilitiesChanged;
+        /// <summary>
+        /// Event fired when the Abilities list changes.
+        /// </summary>
+        /// <remarks>
+        /// This does not fire when the contents of the list changes.
+        /// </remarks>
+        public event EventHandler AbilitiesChanged;
 
-        private event EventHandler<AbilityEventArgs> _spellCasted;
+        /// <summary>
+        /// Event fired when an ability notifies us of an ability cast.
+        /// </summary>
+        public event EventHandler<AbilityEventArgs> AbilityCasted;
 
-        public event EventHandler AbilitiesChanged
+
+        protected virtual void OnAbilityCasted(AbilityEventArgs e)
         {
-            add => _abilitiesChanged += value;
-            remove => _abilitiesChanged -= value;
-        }
-
-
-        public event EventHandler<AbilityEventArgs> AbilityCasted
-        {
-            add => _spellCasted += value;
-            remove => _spellCasted -= value;
-        }
-
-
-        protected virtual void OnSpellCast(AbilityEventArgs e)
-        {
-            _spellCasted?.Invoke(this, e);
+            AbilityCasted?.Invoke(this, e);
         }
 
         protected virtual void OnAbilitiesChanged()
         {
-            _abilitiesChanged?.Invoke(this, EventArgs.Empty);
+            AbilitiesChanged?.Invoke(this, EventArgs.Empty);
         }
 
         #endregion
@@ -94,23 +90,17 @@ namespace MobaGame.Framework.Core.Modules
 
         #region IAbilitiable
 
-        public bool TryGetAbility<TAbility>(out TAbility ability) where TAbility : IAbility
-        {
-            return EnumerableQuery.TryGet(_abilities, out ability);
-        }
+        public bool TryGetAbility<TAbility>(out TAbility ability) where TAbility : IAbility => EnumerableQuery.TryGet(_abilities, out ability);
+        
 
-        public T GetAbility<T>()
-        {
-            return EnumerableQuery.Get<T>(_abilities);
-        }
+        public T GetAbility<T>() => EnumerableQuery.Get<T>(_abilities);
+        
 
         public IReadOnlyList<IAbility> Abilities => _abilities;
 
 
-        public void NotifySpellCast(AbilityEventArgs e)
-        {
-            OnSpellCast(e);
-        }
+        public void NotifyAbilityCast(AbilityEventArgs e) =>             OnAbilityCasted(e);
+        
 
         #endregion
     }

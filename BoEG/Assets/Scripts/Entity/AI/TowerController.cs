@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace MobaGame.Entity.AI
 {
+    // TODO abstract this into a 'Controller' which can be used for AI or Players.
     public class TowerController : MonoBehaviour
     {
         private IAttackerable _attackerable;

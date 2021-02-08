@@ -63,7 +63,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             _isActive = true;
             _channelTimer.Reset();
             CastNoTarget();
-            Modules.Abilitiable.NotifySpellCast(new AbilityEventArgs(Self, Cost));
+            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, Cost));
         }
 
         public void CastNoTarget()

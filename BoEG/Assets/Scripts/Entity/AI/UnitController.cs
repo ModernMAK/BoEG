@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace MobaGame.Entity.AI
 {
+    // TODO abstract this into a 'Controller' which can be used for AI or Players.
     [RequireComponent(typeof(Actor))]
     public class UnitController : ActorBehaviour
     {

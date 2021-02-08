@@ -179,7 +179,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
             _cooldownTimer.Reset();
             CastObjectTarget(actor);
-            Modules.Abilitiable.NotifySpellCast(new AbilityEventArgs(Self, Cost));
+            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, Cost));
         }
 
 

@@ -39,6 +39,6 @@ namespace MobaGame.Framework.Core.Modules
         /// Should only be used from abilities.
         /// Maybe moved to a callback in the future.
         /// </remarks>
-        void NotifySpellCast(AbilityEventArgs e);
+        void NotifyAbilityCast(AbilityEventArgs e);
     }
 }
