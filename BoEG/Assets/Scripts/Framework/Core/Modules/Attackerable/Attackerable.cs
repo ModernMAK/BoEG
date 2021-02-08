@@ -96,8 +96,8 @@ namespace MobaGame.Framework.Core.Modules
 
         private void InternalPerformAttack(Actor actor, IDamageable damageTarget, Damage damage, bool useCooldown = true)
         {
-            var sourceDamage = new SourcedDamage<Actor>(damage, Actor);
-            var attackArgs = new AttackerableEventArgs(sourceDamage.Source, actor, sourceDamage.Damage);
+            var sourceDamage = new SourcedDamage(Actor,damage);
+            var attackArgs = new AttackerableEventArgs(sourceDamage.Source, actor, sourceDamage.Value);
             OnAttacking(attackArgs);
             var critDamage = CalculateCritDamage(sourceDamage);
             var lifesteal = CalculateLifestealModifier(sourceDamage);
@@ -106,7 +106,7 @@ namespace MobaGame.Framework.Core.Modules
                 healthable.Value += lifesteal;
             if (useCooldown)
                 PutAttackOnCooldown();
-            var attackedArgs = new AttackerableEventArgs(actor, Actor, critDamage.Damage);
+            var attackedArgs = new AttackerableEventArgs(actor, Actor, critDamage.Value);
             OnAttacked(attackedArgs);
         }
 
@@ -118,7 +118,7 @@ namespace MobaGame.Framework.Core.Modules
         public event EventHandler<AttackLifestealEventArgs> LifestealModifiers;
 
 
-        protected float CalculateLifestealModifier(SourcedDamage<Actor> damage)
+        protected float CalculateLifestealModifier(SourcedDamage damage)
         {
             var args = new AttackLifestealEventArgs(damage);
             OnLifestealModifiers(args);
@@ -128,7 +128,7 @@ namespace MobaGame.Framework.Core.Modules
         protected void OnLifestealModifiers(AttackLifestealEventArgs e) => LifestealModifiers?.Invoke(this, e);
 
 
-        protected SourcedDamage<Actor> CalculateCritDamage(SourcedDamage<Actor> damage)
+        protected SourcedDamage CalculateCritDamage(SourcedDamage damage)
         {
             var args = new AttackCritEventArgs(damage);
             OnCritModifiers(args);
