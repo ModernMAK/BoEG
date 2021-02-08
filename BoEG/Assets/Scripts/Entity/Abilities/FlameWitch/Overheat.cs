@@ -67,7 +67,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         {
             base.Initialize(data);
             _tickHelper = new InfiniteTickAction {Callback = OnTick, TickInterval = 1f};
-            data.AddSteppable(this);
+            Register(data);
             if (_particleSystemInstance == null)
                 _particleSystemInstance = ApplyFX(data.transform);
         }
@@ -117,7 +117,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                     if (!actor.TryGetModule<IDamageable>(out var damageTarget))
                         continue;
                     if (actor.TryGetModule<ITeamable>(out var teamable))
-                        if (Modules.Teamable?.SameTeam(teamable) ?? false)
+                        if (Modules.Teamable?.IsAlly(teamable) ?? false)
                             continue;
 
                     var damage = new Damage(_damagePerSecond, DamageType.Magical, DamageModifiers.Ability);

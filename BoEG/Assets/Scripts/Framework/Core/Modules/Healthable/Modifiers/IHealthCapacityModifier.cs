@@ -2,7 +2,7 @@
 {
 	public interface IHealthCapacityModifier : IModifier
 	{
-        Modifier HealthCapacity { get; }
+        FloatModifier HealthCapacity { get; }
     }
 
 }

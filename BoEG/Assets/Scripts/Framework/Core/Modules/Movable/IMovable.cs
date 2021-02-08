@@ -4,8 +4,8 @@ namespace MobaGame.Framework.Core.Modules
 {
     public interface IMovable
     {
-        float MoveSpeed { get; }
-        float TurnSpeed { get; }
+        IModifiedValue<float> MoveSpeed { get; }
+        IModifiedValue<float> TurnSpeed { get; }
 
         bool HasReachedDestination { get; }
         void MoveTo(Vector3 destenation);

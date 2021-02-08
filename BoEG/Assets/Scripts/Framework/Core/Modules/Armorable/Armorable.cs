@@ -3,25 +3,45 @@ using MobaGame.Framework.Types;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class Armorable : ActorModule, IArmorable, IInitializable<IArmorableData>
+    public interface IPhysicalBlockModifier : IModifier
+    {
+        public FloatModifier PhysicalBlock { get; }
+    }
+    public interface IMagicalBlockModifier : IModifier
+    {
+        public FloatModifier MagicalBlock { get; }
+    }
+    public interface IPhysicalResistanceModifier : IModifier
+    {
+        public FloatModifier PhysicalResistance { get; }
+    }
+    public interface IMagicalResistanceModifier : IModifier
+    {
+        public FloatModifier MagicalResistance { get; }
+    }
+    public class Armorable : ActorModule, IArmorable, IInitializable<IArmorableData>, IListener<IModifiable>
     {
         public Armorable(Actor actor) : base(actor)
         {
-            Physical = default;
-            Magical = default;
+            Physical = new ModifiedArmor<IPhysicalBlockModifier, IPhysicalResistanceModifier>(block => block.PhysicalBlock, resist => resist.PhysicalResistance);
+            Magical = new ModifiedArmor<IMagicalBlockModifier, IMagicalResistanceModifier>(block => block.MagicalBlock, resist => resist.MagicalResistance);
         }
         
-        public Armor Physical { get; private set; }
-        public Armor Magical { get; private set; }
+        public ModifiedArmor<IPhysicalBlockModifier,IPhysicalResistanceModifier> Physical { get; }
+        public ModifiedArmor<IMagicalBlockModifier, IMagicalResistanceModifier> Magical { get; }
 
-        public virtual Damage ResistDamage(Damage damage)
+        IArmor IArmorable.Physical => Physical;
+
+        IArmor IArmorable.Magical => Magical;
+
+		public virtual Damage ResistDamage(Damage damage)
         {
             var reduction = CalculateReduction(damage);
+            //Reduction, so negate the value
             var reducedDamage = damage.ModifyValue(-reduction, true);
             var resistingArgs = new ArmorableEventArgs(damage, reducedDamage);
             OnResisting(resistingArgs);
             var resistedArgs = new ArmorableEventArgs(resistingArgs.OutgoingDamage);
-            //Reduction, so negate the value
             OnResisted(resistedArgs);
             return resistedArgs.OutgoingDamage;
         }
@@ -47,8 +67,8 @@ namespace MobaGame.Framework.Core.Modules
 
         public void Initialize(IArmorableData data)
         {
-            Physical = new Armor(data.Physical);
-            Magical = new Armor(data.Magical);
+            Physical.Initialize(data.Physical);
+            Magical.Initialize(data.Magical);
         }
 
         protected virtual void OnResisted(ArmorableEventArgs e)
@@ -60,5 +80,17 @@ namespace MobaGame.Framework.Core.Modules
         {
             Resisting?.Invoke(this, e);
         }
-    }
+
+		public void Register(IModifiable source)
+		{
+            Physical.Register(source);
+            Magical.Register(source);
+		}
+
+		public void Unregister(IModifiable source)
+        {
+            Physical.Unregister(source);
+            Magical.Unregister(source);
+        }
+	}
 }

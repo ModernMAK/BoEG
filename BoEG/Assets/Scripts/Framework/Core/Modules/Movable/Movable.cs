@@ -4,7 +4,15 @@ using UnityEngine.AI;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class Movable : ActorModule, IInitializable<IMovableData>, IMovable, IListener<IStepableEvent>
+    public interface IMoveSpeedModifier : IModifier
+    {
+        FloatModifier MoveSpeed { get; }
+    }
+    public interface ITurnSpeedModifier : IModifier
+    {
+        FloatModifier TurnSpeed { get; }
+    }
+    public class Movable : ActorModule, IInitializable<IMovableData>, IMovable, IListener<IStepableEvent>,IListener<IModifiable>
     {
         private NavMeshAgent _agent;
         private NavMeshObstacle _obstacle;
@@ -13,17 +21,22 @@ namespace MobaGame.Framework.Core.Modules
         {
             _agent = agent;
             _obstacle = obstacle;
+            MoveSpeed = new ModifiedValueBoilerplate<IMoveSpeedModifier>(modifier=>modifier.MoveSpeed);
+            TurnSpeed = new ModifiedValueBoilerplate<ITurnSpeedModifier>(modifiier=>modifiier.TurnSpeed);
         }
 
         public void Initialize(IMovableData data)
         {
-            MoveSpeed = data.MoveSpeed;
-            TurnSpeed = data.TurnSpeed;
+            MoveSpeed.Value.Base = data.MoveSpeed;
+            TurnSpeed.Value.Base = data.TurnSpeed;
             _obstacle.enabled = false;
         }
 
-        public float MoveSpeed { get; private set; }
-        public float TurnSpeed { get; private set; }
+        public ModifiedValueBoilerplate<IMoveSpeedModifier> MoveSpeed { get; }
+        public ModifiedValueBoilerplate<ITurnSpeedModifier> TurnSpeed { get; }
+
+        IModifiedValue<float> IMovable.MoveSpeed => MoveSpeed.Value;
+        IModifiedValue<float> IMovable.TurnSpeed => TurnSpeed.Value;
 
 
         private bool UnlockNav()
@@ -129,9 +142,9 @@ namespace MobaGame.Framework.Core.Modules
 
         public void OnPreStep(float deltaTime)
         {
-            _agent.speed = MoveSpeed;
-            _agent.acceleration = MoveSpeed * 1000;
-            _agent.angularSpeed = TurnSpeed;
+            _agent.speed = MoveSpeed.Value.Total;
+            _agent.acceleration = _agent.speed * 1000;
+            _agent.angularSpeed = TurnSpeed.Value.Total;
         }
 
 
@@ -144,5 +157,17 @@ namespace MobaGame.Framework.Core.Modules
         {
             source.PreStep -= OnPreStep;
         }
-    }
+
+		public void Register(IModifiable source)
+		{
+            MoveSpeed.Register(source);
+            TurnSpeed.Register(source);
+        }
+
+		public void Unregister(IModifiable source)
+        {
+            MoveSpeed.Unregister(source);
+            TurnSpeed.Unregister(source);
+        }
+	}
 }

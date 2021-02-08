@@ -1,3 +1,4 @@
+using MobaGame.Framework.Core;
 using UnityEngine;
 
 namespace MobaGame.UI
@@ -7,8 +8,8 @@ namespace MobaGame.UI
 #pragma warning disable 0649
         [SerializeField] private bool _recollectUi;
         [SerializeField] private bool _setTarget;
-        [SerializeField] private GameObject _target;
-        private DebugUI[] _uis;
+        [SerializeField] private Actor _target;
+        private DebugActorUI[] _uis;
 #pragma warning restore 0649
 
 
@@ -16,37 +17,35 @@ namespace MobaGame.UI
         {
             _setTarget = false;
             _recollectUi = false;
-            _uis = GetComponentsInChildren<DebugUI>();
+            _uis = GetComponentsInChildren<DebugActorUI>();
         }
 
         private void Start()
         {
-            SetTargets();
+            SetInspectorTarget();
         }
 
         private void Update()
         {
             if (_recollectUi)
             {
-                _uis = GetComponentsInChildren<DebugUI>();
+                _uis = GetComponentsInChildren<DebugActorUI>();
                 _recollectUi = false;
             }
 
             if (_setTarget)
             {
-                SetTargets();
+                SetInspectorTarget();
                 _setTarget = false;
             }
         }
 
-        private void SetTargets()
-        {
-            foreach (var ui in _uis) ui.SetTarget(_target);
-        }
+        private void SetInspectorTarget() => SetTarget(_target);
 
-        public void SetTarget(GameObject target)
+        public void SetTarget(Actor target)
         {
             foreach (var ui in _uis) ui.SetTarget(target);
         }
+
     }
 }

@@ -5,8 +5,8 @@ namespace MobaGame.Framework.Core.Modules
 {
     public interface IArmorable
     {
-        Armor Physical { get; }
-        Armor Magical { get; }
+        IArmor Physical { get; }
+        IArmor Magical { get; }
         Damage ResistDamage(Damage damage);
 
         float CalculateReduction(Damage damage);

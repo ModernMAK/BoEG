@@ -17,6 +17,7 @@ namespace MobaGame
 
         public DeathType deathType;
         private IKillable _killable;
+        private bool _markDestroy;
 
         private void Start()
         {
@@ -24,15 +25,21 @@ namespace MobaGame
                 if(actor.TryGetModule(out _killable))
                     _killable.Died += HealthableOnDied;
         }
+		private void LateUpdate()
+        {
+            if(_markDestroy)
+                Destroy(gameObject);
+        }
 
-        private void HealthableOnDied(object sender, EventArgs e)
+		private void HealthableOnDied(object sender, EventArgs e)
         {
             switch (deathType)
             {
                 case DeathType.None:
                     break;
                 case DeathType.Destroy:
-                    Destroy(gameObject);
+                    _markDestroy = true;
+                    gameObject.SetActive(false);                       
                     break;
                 case DeathType.Disable:
                     gameObject.SetActive(false);

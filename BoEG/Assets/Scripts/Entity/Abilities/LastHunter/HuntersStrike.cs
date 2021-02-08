@@ -26,7 +26,7 @@ namespace MobaGame.Entity.Abilities.LastHunter
         public override void Initialize(Actor data)
         {
             base.Initialize(data);
-            data.AddSteppable(this);
+            Register(data);
             _cooldownHelper = new DurationTimer(_cooldown);
             _cooldownHelper.ElapsedTime = _cooldownHelper.Duration;
         }

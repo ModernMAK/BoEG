@@ -77,7 +77,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         {
             var caster = args.Caster;
             if (caster.TryGetModule<ITeamable>(out var teamable))
-                if (Modules.Teamable?.SameTeam(teamable) ?? false)
+                if (Modules.Teamable?.IsAlly(teamable) ?? false)
                     return;
 
             if (!caster.TryGetModule<IDamageable>(out var damageTarget))

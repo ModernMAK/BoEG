@@ -2,6 +2,7 @@ using System;
 using MobaGame.Framework.Core.Modules.Ability;
 using MobaGame.Framework.Types;
 using UnityEngine;
+using static MobaGame.CursorPack;
 
 namespace MobaGame
 {
@@ -29,15 +30,25 @@ namespace MobaGame
 
     public class CustomCursor : MonoBehaviour
     {
+
+        public enum CursorState
+        {
+            Default,
+            Attacking,
+        }
+
 #pragma warning disable 0649
         // [SerializeField] private CursorPack _cursor;
-        [SerializeField] private Texture2D _default;
+        [SerializeField] private VariantInfo _default;
 
-        [SerializeField] private Texture2D _hoverUnit;
+        [SerializeField] private VariantInfo _attacking;
 #pragma warning restore 0649
 
+
+        public CursorState Mode { get; set; }
+
         // ReSharper disable twice PossibleLossOfFraction
-        private Vector2 GetCenter(Texture tex) => new Vector2(tex.width / 2, tex.height / 2);
+        private Vector2 GetCenter(Texture tex) => tex != null ? new Vector2(tex.width / 2, tex.height / 2) : default;
 
         public const float MaxDistance = 128;
 
@@ -45,25 +56,39 @@ namespace MobaGame
 
         private void Awake()
         {
-            SetCursor(_default, CursorMode.Auto);
-            _prev = _default;
+            SetCursor(_default.Default, CursorMode.Auto);
+            _prev = _default.Default;
 
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
 
-        private const int Mask = (int) (LayerMaskHelper.Entity | LayerMaskHelper.World);
+        private const int Mask = (int)(LayerMaskHelper.Entity | LayerMaskHelper.World);
+
+        Texture2D GetCursorIcon(VariantInfo info, bool isHovering) => isHovering ? info.Hover : info.Default;
+        VariantInfo GetVariant()
+        {
+			switch (Mode)
+            {
+                case CursorState.Default:
+                    return _default;
+                case CursorState.Attacking:
+                    return _attacking;
+                default:
+                    throw new Exception();
+            }
+        }
 
         private void FixedUpdate()
         {
-            var desired = _default;
+            var variant = GetVariant();
             var ray = AbilityHelper.GetScreenRay();
+            bool isHovering = false;
             if (Physics.Raycast(ray, out var hit, MaxDistance, Mask))
             {
-                if (AbilityHelper.TryGetActor(hit.collider, out _))
-                    desired = _hoverUnit;
+                isHovering = AbilityHelper.TryGetActor(hit.collider, out _);
             }
-
+            var desired = GetCursorIcon(variant, isHovering);
             //We cant set the cursor every frame, because it doesnt move when you do
             if (desired != _prev)
             {
@@ -72,7 +97,7 @@ namespace MobaGame
             }
         }
 
-        private void SetCursor(Texture2D sprite, CursorMode mode)
+        private void SetCursor(Texture2D sprite, UnityEngine.CursorMode mode)
         {
             Cursor.SetCursor(sprite, GetCenter(sprite), mode);
         }

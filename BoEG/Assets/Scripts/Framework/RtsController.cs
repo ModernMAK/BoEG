@@ -3,7 +3,6 @@ using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Commands;
 using MobaGame.Framework.Types;
-//using MobaGame.Input;
 using MobaGame.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -23,6 +22,7 @@ namespace MobaGame.Framework
         private IAbilitiable _abilitiableHACK;
         [SerializeField] private Actor _actor;
         [SerializeField] private ActorPanel _panel;
+        [SerializeField] private CustomCursor _cursor;
         private ICommandable _commandable;
 
         private PlayerControls _controls;
@@ -91,16 +91,16 @@ namespace MobaGame.Framework
             _commandable = _actor.GetModule<ICommandable>();
             _abilitiableHACK = _actor.GetModule<IAbilitiable>();
             if (_panel != null)
-                _panel.SetTarget(_actor.gameObject);
+                _panel.SetTarget(_actor);
         }
 
         private Action<InputAction.CallbackContext> AbilityOnStarted(int index)
         {
             void InternalOnStarted(InputAction.CallbackContext context)
             {
-                if (_abilitiableHACK != null && _abilitiableHACK.AbilityCount > index)
+                if (_abilitiableHACK != null && _abilitiableHACK.Abilities.Count > index)
                 {
-                    var ability = _abilitiableHACK.GetAbility(index);
+                    var ability = _abilitiableHACK.Abilities[index];
                     ability.SetupCast();
                     ability.ConfirmCast();
                 }
@@ -142,8 +142,18 @@ namespace MobaGame.Framework
                 }
             }
         }
+		private void LateUpdate()
+		{
+            if (_cursor == null)
+                return;
 
-        private ICommand GenerateAttackMove(Vector3 target)
+            if (_controls.Movement.Attack.ButtonPressed())
+                _cursor.Mode = CustomCursor.CursorState.Attacking;
+            else
+                _cursor.Mode = CustomCursor.CursorState.Default;
+		}
+
+		private ICommand GenerateAttackMove(Vector3 target)
         {
             return new AttackMoveCommand(_actor.gameObject, target);
         }

@@ -29,6 +29,7 @@ namespace MobaGame.Entity.UnitArchtypes
         [SerializeField] private Targetable _targetable;
         [SerializeField] private Modifiable _modifiable;
         [SerializeField] private Killable _killable;
+        [SerializeField] private Inventoryable<IItem> _inventoryable;
         [Header("Data")] [SerializeField] private HeroData _data;
         [SerializeField] private TeamData _initialTeam;
 #pragma warning restore 649
@@ -61,6 +62,7 @@ namespace MobaGame.Entity.UnitArchtypes
                 yield return _teamable;
                 yield return _modifiable;
                 yield return _killable;
+                yield return _inventoryable;
             }
         }
         protected override void CreateComponents()
@@ -79,6 +81,7 @@ namespace MobaGame.Entity.UnitArchtypes
             _killable = new Killable(this);
             _damageTarget = new Damageable(this, _healthable, _killable, _armorable);
             _modifiable = new Modifiable(this);
+            _inventoryable = new Inventoryable<IItem>(this, new LimitedInventory<IItem>(6));
         }
 
 
@@ -86,8 +89,6 @@ namespace MobaGame.Entity.UnitArchtypes
         {
             _icon = data.Icon;
             _healthable.Initialize(data.HealthableData);
-            _healthable.Register(_modifiable);
-
             _magicable.Initialize(data.MagicableData);
             _armorable.Initialize(data.ArmorableData);
             _attackerable.Initialize(data.AttackerableData);
@@ -96,13 +97,15 @@ namespace MobaGame.Entity.UnitArchtypes
             var instanceAbilities = new AbilityObject[data.Abilities.Count];
             for (var i = 0; i < data.Abilities.Count; i++) instanceAbilities[i] = Instantiate(data.Abilities[i]);
             _abilitiable.Initialize(instanceAbilities);
+
+            var modifiableListeners = GetModules<IListener<IModifiable>>();
+            foreach(var listener in modifiableListeners)
+                listener.Register(_modifiable);
         }
 
         protected override void SetupComponents()
         {
             base.SetupComponents();
-//            var buffable = new Buffable();
-//            GetFrameworkComponent<IBuffable>().Initialize(buffable);
             if (_data != null)
                 Initialize(_data);
         }

@@ -2,7 +2,7 @@
 {
 	public interface IHealthGenerationModifier : IModifier
 	{
-        Modifier HealthGeneration { get; }
+        FloatModifier HealthGeneration { get; }
 	}
 
 }

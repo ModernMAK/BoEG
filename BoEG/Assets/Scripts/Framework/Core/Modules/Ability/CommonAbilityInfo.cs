@@ -133,15 +133,6 @@ namespace MobaGame.Framework.Core.Modules.Ability
 
         public void SpendMana() => _magicable.SpendMagic(ManaCost);
 
-        public bool SameTeam(GameObject go, bool defaultValue = false) =>
-            SameTeam(go.GetComponent<ITeamable>(), defaultValue);
-
-        public bool SameTeam(ITeamable teamable, bool defaultValue = false)
-        {
-            if (_teamable == null || teamable == null)
-                return defaultValue;
-            return _teamable.SameTeam(teamable);
-        }
 
         public bool InRange(Transform transform) => AbilityHelper.InRange(_transform, transform.position, Range);
         public bool InRange(Vector3 position) => AbilityHelper.InRange(_transform, position, Range);

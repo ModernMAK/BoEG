@@ -7,14 +7,17 @@ using UnityEngine;
 namespace MobaGame.Framework.Core.Modules
 {
     public class Attackerable : ActorModule, IAttackerable, IInitializable<IAttackerableData>,
-        IListener<IStepableEvent>, IRespawnable
+        IListener<IStepableEvent>, IRespawnable, IListener<IModifiable>
     {
         public const string AttackerableTrigger = "Attackerable Trigger";
         private readonly AttackTargetTrigger<SphereCollider> _trigger;
         public IReadOnlyList<Actor> Targets => _trigger.Targets;
-
         private readonly DurationTimer _attackCooldown;
         private readonly ITeamable _teamable;
+        private readonly ModifiedValueBoilerplate<IAttackDamageModifier> _damage;
+        private readonly ModifiedValueBoilerplate<IAttackRangeModifier> _range;
+        private readonly ModifiedValueBoilerplate<IAttacksPerIntervalModifier> _attacksPerInterval;
+        private readonly ModifiedValueBoilerplate<IAttackIntervalModifier> _interval;
 
         public Attackerable(Actor actor, ITeamable teamable = default) : base(actor)
         {
@@ -22,19 +25,21 @@ namespace MobaGame.Framework.Core.Modules
 
             var helper = TriggerUtility.CreateTrigger<SphereCollider>(Actor, AttackerableTrigger);
             _trigger = new AttackTargetTrigger<SphereCollider>(Actor, helper, _teamable);
-
-            _attackCooldown = new DurationTimer(0f);
-            _attackCooldown.SetDone();
+            _attackCooldown = new DurationTimer(0f, true);
+            _damage = new ModifiedValueBoilerplate<IAttackDamageModifier>(modifier => modifier.AttackDamage);
+            _range = new ModifiedValueBoilerplate<IAttackRangeModifier>(modifier => modifier.AttackRange);
+            _attacksPerInterval =
+                new ModifiedValueBoilerplate<IAttacksPerIntervalModifier>(modifier => modifier.AttacksPerInterval);
+            _interval = new ModifiedValueBoilerplate<IAttackIntervalModifier>(modifier => modifier.AttackInterval);
         }
 
-
-        public float Damage { get; protected set; }
-        public float Range { get; protected set; }
-        public float AttacksPerInterval { get; protected set; }
+        public float Damage => _damage.Value.Total;
+        public float Range => _range.Value.Total;
+        public float AttacksPerInterval => _attacksPerInterval.Value.Total;
 
         public float Cooldown => Interval / AttacksPerInterval;
 
-        public float Interval { get; protected set; }
+        public float Interval => _interval.Value.Total;
 
         public bool IsRanged { get; protected set; }
 
@@ -53,15 +58,17 @@ namespace MobaGame.Framework.Core.Modules
                 return;
 
             if (_teamable != null && actor.TryGetModule<ITeamable>(out var teamable))
-                if (!_teamable.IsAlly(teamable))
+                if (_teamable.IsAlly(teamable))
                     return;
 
-            PerformAttack(actor,GetAttackDamage(), true);
+            PerformAttack(actor, GetAttackDamage(), true);
         }
+
         public void RawAttack(Actor actor, Damage damage)
         {
             PerformAttack(actor, damage, false);
         }
+
         void PerformAttack(Actor actor, Damage damage, bool useCooldown)
         {
             if (!actor.TryGetModule<IDamageable>(out var damageTarget))
@@ -75,7 +82,7 @@ namespace MobaGame.Framework.Core.Modules
             }
             else
             {
-                InternalPerformAttack(actor, damageTarget,damage,useCooldown);
+                InternalPerformAttack(actor, damageTarget, damage, useCooldown);
             }
         }
 
@@ -89,36 +96,61 @@ namespace MobaGame.Framework.Core.Modules
 
         private void InternalPerformAttack(Actor actor, IDamageable damageTarget, Damage damage, bool useCooldown = true)
         {
-            var attackArgs = new AttackerableEventArgs();
+            var sourceDamage = new SourcedDamage<Actor>(damage, Actor);
+            var attackArgs = new AttackerableEventArgs(sourceDamage.Source, actor, sourceDamage.Damage);
             OnAttacking(attackArgs);
-            damageTarget.TakeDamage(Actor, damage);
-            if(useCooldown)
+            var critDamage = CalculateCritDamage(sourceDamage);
+            var lifesteal = CalculateLifestealModifier(sourceDamage);
+            damageTarget.TakeDamage(critDamage);
+            if (Actor.TryGetModule<IHealthable>(out var healthable))
+                healthable.Value += lifesteal;
+            if (useCooldown)
                 PutAttackOnCooldown();
-            OnAttacked(attackArgs);
+            var attackedArgs = new AttackerableEventArgs(actor, Actor, critDamage.Damage);
+            OnAttacked(attackedArgs);
         }
 
         public event EventHandler<AttackerableEventArgs> Attacking;
 
         public event EventHandler<AttackerableEventArgs> Attacked;
 
+        public event EventHandler<AttackCritEventArgs> CritModifiers;
+        public event EventHandler<AttackLifestealEventArgs> LifestealModifiers;
 
-        protected void OnAttacking(AttackerableEventArgs e)
+
+        protected float CalculateLifestealModifier(SourcedDamage<Actor> damage)
         {
-            Attacking?.Invoke(this, e);
+            var args = new AttackLifestealEventArgs(damage);
+            OnLifestealModifiers(args);
+            return args.LifestealAmount;
         }
 
-        protected void OnAttacked(AttackerableEventArgs e)
+        protected void OnLifestealModifiers(AttackLifestealEventArgs e) => LifestealModifiers?.Invoke(this, e);
+
+
+        protected SourcedDamage<Actor> CalculateCritDamage(SourcedDamage<Actor> damage)
         {
-            Attacked?.Invoke(this, e);
+            var args = new AttackCritEventArgs(damage);
+            OnCritModifiers(args);
+            return args.FinalDamage;
         }
+
+        protected void OnCritModifiers(AttackCritEventArgs e) => CritModifiers?.Invoke(this, e);
+
+
+        protected void OnAttacking(AttackerableEventArgs e) => Attacking?.Invoke(this, e);
+
+
+        protected void OnAttacked(AttackerableEventArgs e) => Attacked?.Invoke(this, e);
+
 
         public void Initialize(IAttackerableData data)
         {
-            Damage = data.AttackDamage;
-            Range = data.AttackRange;
-            AttacksPerInterval = data.AttackSpeed;
+            _damage.Value.Base = data.AttackDamage;
+            _range.Value.Base = data.AttackRange;
+            _attacksPerInterval.Value.Base = data.AttackSpeed;
             IsRanged = data.IsRanged;
-            Interval = data.AttackInterval;
+            _interval.Value.Base = data.AttackInterval;
         }
 
         private void OnPreStep(float deltaTime)
@@ -129,7 +161,7 @@ namespace MobaGame.Framework.Core.Modules
 
         private void OnPhysicsStep(float deltaTime)
         {
-            _trigger.Trigger.Collider.radius = Range;
+            _trigger.Trigger.Collider.radius = _range.Value.Total;
         }
 
 
@@ -150,5 +182,20 @@ namespace MobaGame.Framework.Core.Modules
             _attackCooldown.SetDone();
         }
 
-	}
+        public void Register(IModifiable source)
+        {
+            _damage.Register(source);
+            _interval.Register(source);
+            _range.Register(source);
+            _attacksPerInterval.Register(source);
+        }
+
+        public void Unregister(IModifiable source)
+        {
+            _damage.Unregister(source);
+            _interval.Unregister(source);
+            _range.Unregister(source);
+            _attacksPerInterval.Unregister(source);
+        }
+    }
 }

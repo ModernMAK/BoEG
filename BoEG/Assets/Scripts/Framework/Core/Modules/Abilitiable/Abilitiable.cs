@@ -1,10 +1,10 @@
+using MobaGame.Framework.Core.Modules.Ability;
 using System;
 using System.Collections.Generic;
-using MobaGame.Framework.Core.Modules.Ability;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class Abilitiable : ActorModule, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>, IRespawnable
+	public class Abilitiable : ActorModule, IAbilitiable, IInitializable<IReadOnlyList<IAbility>>, IRespawnable
     {
         #region Variables
 
@@ -18,12 +18,6 @@ namespace MobaGame.Framework.Core.Modules
         /// </summary>
         private IReadOnlyList<IRespawnable> _respawnables;
 
-
-        #endregion
-
-        #region Properties
-
-        public int AbilityCount => _abilities.Count;
 
         #endregion
 
@@ -108,12 +102,6 @@ namespace MobaGame.Framework.Core.Modules
         public T GetAbility<T>()
         {
             return EnumerableQuery.Get<T>(_abilities);
-        }
-
-
-        public IAbility GetAbility(int index)
-        {
-            return _abilities[index];
         }
 
         public IReadOnlyList<IAbility> Abilities => _abilities;

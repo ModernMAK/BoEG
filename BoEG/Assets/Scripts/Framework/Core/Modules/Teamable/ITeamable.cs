@@ -21,13 +21,6 @@ namespace MobaGame.Framework.Core.Modules
         /// This should only be used for effects which change a unit's team. E.G. a convert spell.
         /// </remarks>
         void SetTeam(TeamData team);
-        [Obsolete("Use Get Relation or ITeamableX.IsAlly")]
-        /// <summary>
-        /// Whether this instance considers the other teamable to be an ally.
-        /// </summary>
-        /// <param name="teamable">The other teamable instance.</param>
-        /// <returns>True if ally, false otherwise.</returns>        
-        bool SameTeam(ITeamable teamable);
         /// <summary>
         /// Gets the relation between this teamable, and the other teamable.
         /// </summary>
@@ -38,6 +31,8 @@ namespace MobaGame.Framework.Core.Modules
     }
     public static class ITeamableX
     {
+        
+        public static bool SameTeam(this ITeamable teamable, ITeamable other, bool defaultResult = false) => teamable == other || ((teamable != null && other != null) ? teamable.Team == other.Team : defaultResult);
         /// <summary>
         /// Check if the provided relation is the relation from other to teamable.
         /// </summary>

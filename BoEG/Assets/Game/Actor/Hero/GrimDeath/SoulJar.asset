@@ -15,6 +15,7 @@ MonoBehaviour:
   _icon: {fileID: 21300000, guid: 0a392ff9bd672a743a6631716eee5cd1, type: 3}
   _soulsPerKill: 3
   _soulsPerAssist: 1
+  _modifierIcon: {fileID: 21300000, guid: 0a392ff9bd672a743a6631716eee5cd1, type: 3}
   _soulLimit: 10
   _healthGenPerSoul: 0.25
   _manaGenPerSoul: 0.25

@@ -6,7 +6,6 @@ namespace MobaGame.Framework.Core.Modules
 {
     public interface IAbilitiable
     {
-        [Obsolete("Use Abilities")] int AbilityCount { get; }
 
         /// <summary>
         /// Try and get the ability of the specified type.
@@ -16,9 +15,6 @@ namespace MobaGame.Framework.Core.Modules
         /// <returns>True if an ability was found, false otherwise.</returns>
         /// <remarks>Intended to be used to get a specific ability, E.G. to get FlameWitch's Overheat to check if it is active.</remarks>
         bool TryGetAbility<TAbility>(out TAbility ability) where TAbility : IAbility;
-
-        [Obsolete("Use Abilities")]
-        IAbility GetAbility(int index);
 
         /// <summary>
         /// The abilities of this instance.

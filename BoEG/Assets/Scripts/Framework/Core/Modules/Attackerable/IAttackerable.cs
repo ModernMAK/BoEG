@@ -4,6 +4,16 @@ using System.Collections.Generic;
 
 namespace MobaGame.Framework.Core.Modules
 {
+
+    public interface IAttackerableView
+	{
+        IModifiedValue<float> Damage { get; }
+        IModifiedValue<float> Range { get; }
+
+        IModifiedValue<float> AttacksPerInterval { get; }
+        IModifiedValue<float> Interval { get; }
+
+    }
     public interface IAttackerable
     {
         /// <summary>
@@ -16,7 +26,7 @@ namespace MobaGame.Framework.Core.Modules
         float Range { get; }
         /// <summary>
         /// The number of attacks to perfrom in a single Interval.
-        /// </summary>
+        /// </summary>        
         float AttacksPerInterval { get; }
 
         /// <summary>
@@ -57,7 +67,10 @@ namespace MobaGame.Framework.Core.Modules
         event EventHandler<AttackerableEventArgs> Attacking;
 
         event EventHandler<AttackerableEventArgs> Attacked;
-        IReadOnlyList<Actor> Targets { get; }
+		event EventHandler<AttackCritEventArgs> CritModifiers;
+		event EventHandler<AttackLifestealEventArgs> LifestealModifiers;
+
+		IReadOnlyList<Actor> Targets { get; }
     }
     public static class IAttackerableX
     {

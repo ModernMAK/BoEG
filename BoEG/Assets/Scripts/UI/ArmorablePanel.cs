@@ -1,20 +1,20 @@
-﻿using Framework.Core;
+﻿using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace MobaGame.UI
 {
-    public class ArmorablePanel : DebugUI
+    public class ArmorablePanel : DebugActorUI
     {
         private IArmorable _armorable;
 
         // Start is called before the first frame update
-        private GameObject _go;
+        private Actor _go;
 
-        public override void SetTarget(GameObject go)
+        public override void SetTarget(Actor target)
         {
-            _go = go;
+            _go = target;
             _armorable = _go != null ? _go.GetModule<IArmorable>() : null;
         }
 

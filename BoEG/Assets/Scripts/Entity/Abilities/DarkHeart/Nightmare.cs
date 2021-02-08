@@ -62,7 +62,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
             if (!AbilityHelper.InRange(Self.transform, actor.transform, _castRange))
                 return;
             if(actor.TryGetModule<ITeamable>(out var teamable))
-                if (Modules.Teamable?.SameTeam(teamable) ?? false)
+                if (Modules.Teamable?.IsAlly(teamable) ?? false)
                     return;
             if (actor.TryGetModule<ITargetable>(out var targetable))
                 if (!targetable.AllowSpellTargets)

@@ -10,9 +10,6 @@ namespace MobaGame.Framework.Core
     {
         public virtual Sprite GetIcon() => null;
 
-        private List<IStepable> _steppable;
-
-
         public T GetModule<T>() => EnumerableQuery.Get<T>(Modules);
 
         public bool TryGetModule<T>(out T module) => EnumerableQuery.TryGet<T>(Modules, out module);
@@ -29,7 +26,6 @@ namespace MobaGame.Framework.Core
 
         protected virtual void Awake()
         {
-            _steppable = new List<IStepable>();
             CreateComponents();
             SetupComponents();
         }
@@ -45,43 +41,36 @@ namespace MobaGame.Framework.Core
         protected virtual void SetupComponents()
         {
             var steppables = GetComponents<IStepable>();
-            _steppable.AddRange(steppables);
+            foreach (var steppable in steppables)
+                AddSteppable(steppable);
             var steppableListener = GetComponents<IListener<IStepableEvent>>();
             foreach (var steppable in steppableListener)
-            {
                 steppable.Register(this);
-            }
 
             var childSteppables = GetModules<IListener<IStepableEvent>>();
             foreach (var steppable in childSteppables)
-            {
                 steppable.Register(this);
-            }
         }
 
         protected virtual void Update()
         {
             OnStep(Time.deltaTime);
-            foreach (var item in _steppable) item.Step(Time.deltaTime);
         }
 
         private void FixedUpdate()
         {
             OnPhysicsStep(Time.deltaTime);
-            foreach (var item in _steppable) item.PhysicsStep(Time.fixedDeltaTime);
         }
 
         protected virtual void LateUpdate()
         {
             OnPostStep(Time.deltaTime);
-            foreach (var item in _steppable) item.PostStep(Time.deltaTime);
 
             OnPreStep(Time.deltaTime);
-            foreach (var item in _steppable) item.PreStep(Time.deltaTime);
         }
 
-        [Obsolete("Just use Register")]
-        public void AddSteppable(IListener<IStepableEvent> stepableEvent) => stepableEvent.Register(this);
+        public void AddSteppable(IStepable steppable) => this.Register(steppable);
+        public void RemoveSteppable(IStepable steppable) => this.Unregister(steppable);
 
 
         private event Action<float> _step;

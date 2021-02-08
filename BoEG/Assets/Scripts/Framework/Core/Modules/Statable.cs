@@ -4,22 +4,17 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public class Statable : ActorModule, IListener<ILevelable>
+    public abstract class Statable : ActorModule, IListener<ILevelable>, IView
     {
         public Statable(Actor actor) : base(actor)
         {
             _percentage = default;
-            _capacity = new ModifiedValue();
             _capacityGain = default;
-            _generation = new ModifiedValue();
             _generationGain = default;
         }
 
-        private ModifiedValue _capacity;
         private float _capacityGain;
-        private ModifiedValue _generation;
         private float _generationGain;
-
         private float _percentage;
 
 //        private List<IStatableModifier> _modifiers;
@@ -36,26 +31,30 @@ namespace MobaGame.Framework.Core.Modules
             set
             {
                 value = Mathf.Clamp01(value);
-                if (!_percentage.SafeEquals(value))
+                var changed = !_percentage.SafeEquals(value);
+                if (changed)
                 {
                     var cap = StatCapacity.Total;
                     var before = _percentage * cap;
                     var after = value * cap;
                     OnStatChanged(new ChangedEventArgs<float>(before, after));
                 }
-
                 _percentage = value;
+                if (changed)
+                    OnChanged();
             }
         }
 
-        protected ModifiedValue StatCapacity
+        protected virtual void OnChanged() => Changed?.Invoke(this, EventArgs.Empty);
+
+		protected abstract ModifiedValue StatCapacity
         {
-            get => _capacity;
+            get;
         }
 
-        protected ModifiedValue StatGeneration
+        protected abstract ModifiedValue StatGeneration
         {
-            get => _generation;
+            get;
         }
 
         public virtual void Register(ILevelable source)
@@ -79,8 +78,8 @@ namespace MobaGame.Framework.Core.Modules
             remove => _statChanged -= value;
         }
 
-        //DOES NOT RAISE STAT CHANGED
-        protected void SetPercentage(float percentage) => _percentage = percentage;
+        public event EventHandler Changed;
+
 
 
         protected virtual void OnStatChanged(ChangedEventArgs<float> e)
@@ -88,10 +87,11 @@ namespace MobaGame.Framework.Core.Modules
             _statChanged?.Invoke(this, e);
         }
 
-        protected virtual void OnLevelChanged(object sender, int levelDifference)
+        protected virtual void OnLevelChanged(object sender, ChangedEventArgs<int> e)
         {
-            _capacity.Base += _capacityGain * levelDifference;
-            _generation.Base += _generationGain * levelDifference;
+            var levelDifference = e.After - e.Before;
+            StatCapacity.Base += _capacityGain * levelDifference;
+            StatGeneration.Base += _generationGain * levelDifference;
         }
 
 
