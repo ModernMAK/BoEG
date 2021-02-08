@@ -114,7 +114,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                         continue;
                     if (IsSelf(actor))
                         continue;
-                    if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
+                    if (!actor.TryGetModule<IDamageable>(out var damageTarget))
                         continue;
                     if (actor.TryGetModule<ITeamable>(out var teamable))
                         if (Modules.Teamable?.SameTeam(teamable) ?? false)

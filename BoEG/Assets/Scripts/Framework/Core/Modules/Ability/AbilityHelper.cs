@@ -55,7 +55,7 @@ namespace MobaGame.Framework.Core.Modules.Ability
         }
 
         public static bool IsDamagable(Actor actor) =>
-            actor.TryGetModule<IDamageTarget>(out var targetable);
+            actor.TryGetModule<IDamageable>(out var targetable);
 
         public static bool AllowSpellTargets(Actor actor, bool defaultResult = true) =>
             actor.TryGetModule<ITargetable>(out var targetable) ? targetable.AllowSpellTargets : defaultResult;

@@ -80,7 +80,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
                 if (Modules.Teamable?.SameTeam(teamable) ?? false)
                     return;
 
-            if (!caster.TryGetModule<IDamageTarget>(out var damageTarget))
+            if (!caster.TryGetModule<IDamageable>(out var damageTarget))
                 return;
 
             var damageValue = _damagePerManaSpent * args.ManaSpent;

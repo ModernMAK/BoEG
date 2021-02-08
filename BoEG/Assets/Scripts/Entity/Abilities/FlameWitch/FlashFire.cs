@@ -80,7 +80,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 if (actor == Self)
                     continue;
 
-                if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
+                if (!actor.TryGetModule<IDamageable>(out var damageTarget))
                     continue;
                 if (AbilityHelper.SameTeam(Modules.Teamable, actor))
                     continue;

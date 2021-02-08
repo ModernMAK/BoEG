@@ -64,7 +64,7 @@ namespace MobaGame.Framework.Core.Modules
         }
         void PerformAttack(Actor actor, Damage damage, bool useCooldown)
         {
-            if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
+            if (!actor.TryGetModule<IDamageable>(out var damageTarget))
                 return;
 
             if (actor.TryGetModule<ITargetable>(out var targetable))
@@ -81,13 +81,13 @@ namespace MobaGame.Framework.Core.Modules
 
         private Damage GetAttackDamage() => new Damage(Damage, DamageType.Physical, DamageModifiers.Attack);
 
-        private Action GetAttackCallback(Actor actor, IDamageTarget damageTarget, Damage damage, bool useCooldown = true)
+        private Action GetAttackCallback(Actor actor, IDamageable damageTarget, Damage damage, bool useCooldown = true)
         {
-            Action<Actor, IDamageTarget,Damage,bool> func = InternalPerformAttack;
+            Action<Actor, IDamageable, Damage,bool> func = InternalPerformAttack;
             return func.Partial(actor, damageTarget, damage, useCooldown);
         }
 
-        private void InternalPerformAttack(Actor actor, IDamageTarget damageTarget, Damage damage, bool useCooldown = true)
+        private void InternalPerformAttack(Actor actor, IDamageable damageTarget, Damage damage, bool useCooldown = true)
         {
             var attackArgs = new AttackerableEventArgs();
             OnAttacking(attackArgs);

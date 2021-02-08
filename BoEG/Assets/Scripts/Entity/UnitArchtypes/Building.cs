@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MobaGame.Entity.UnitArchtypes
 {
-    public class Building : CommandableActor, IProxy<IHealthable>, IProxy<IArmorable>, IProxy<IDamageTarget>,
+    public class Building : CommandableActor, IProxy<IHealthable>, IProxy<IArmorable>, IProxy<IDamageable>,
         IProxy<IAttackerable>, IInitializable<IBuildingData>, IProxy<ITeamable>, IProxy<IKillable>
     {
 #pragma warning disable 649
@@ -16,7 +16,7 @@ namespace MobaGame.Entity.UnitArchtypes
         [SerializeField] private TeamData _initialTeam;
         [Header("Sub Components")] private Healthable _healthable;
         private Armorable _armorable;
-        private DamageTarget _damageTarget;
+        private Damageable _damageTarget;
         private Attackerable _attackerable;
         private Teamable _teamable;
         private Killable _killable;
@@ -26,7 +26,7 @@ namespace MobaGame.Entity.UnitArchtypes
 
         IArmorable IProxy<IArmorable>.Value => _armorable;
 
-        IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
+        IDamageable IProxy<IDamageable>.Value => _damageTarget;
 
         IAttackerable IProxy<IAttackerable>.Value => _attackerable;
 
@@ -67,7 +67,7 @@ namespace MobaGame.Entity.UnitArchtypes
             _healthable = new Healthable(this);
             _teamable = new Teamable(this);
             _attackerable = new Attackerable(this, _teamable);
-            _damageTarget = new DamageTarget(this, _healthable, _killable, _armorable);
+            _damageTarget = new Damageable(this, _healthable, _killable, _armorable);
         }
 
         public void Initialize(IBuildingData data)

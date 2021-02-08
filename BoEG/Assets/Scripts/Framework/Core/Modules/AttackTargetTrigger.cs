@@ -65,7 +65,7 @@ namespace MobaGame.Framework.Core.Modules
             if (_targets.Contains(actor))
                 return;
 
-            if (!actor.TryGetModule<IDamageTarget>(out _))
+            if (!actor.TryGetModule<IDamageable>(out _))
                 return;
 
             if (actor.TryGetModule<IKillable>(out var killable))

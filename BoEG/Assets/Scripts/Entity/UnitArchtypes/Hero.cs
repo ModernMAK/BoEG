@@ -10,7 +10,7 @@ namespace MobaGame.Entity.UnitArchtypes
 {
     public sealed class Hero : CommandableActor, IInitializable<IHeroData>,
         IProxy<IAbilitiable>, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>, IProxy<IAttackerable>,
-        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IProxy<ITargetable>, IProxy<IModifiable>, IProxy<IKillable>
+        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageable>, IProxy<ITargetable>, IProxy<IModifiable>, IProxy<IKillable>
     {
 #pragma warning disable 649
         private Sprite _icon;
@@ -25,7 +25,7 @@ namespace MobaGame.Entity.UnitArchtypes
         [SerializeField] private Magicable _magicable;
         [SerializeField] private Teamable _teamable;
         [SerializeField] private Movable _movable;
-        [SerializeField] private DamageTarget _damageTarget;
+        [SerializeField] private Damageable _damageTarget;
         [SerializeField] private Targetable _targetable;
         [SerializeField] private Modifiable _modifiable;
         [SerializeField] private Killable _killable;
@@ -40,7 +40,7 @@ namespace MobaGame.Entity.UnitArchtypes
         IAttackerable IProxy<IAttackerable>.Value => _attackerable;
         ITeamable IProxy<ITeamable>.Value => _teamable;
         IMovable IProxy<IMovable>.Value => _movable;
-        IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
+        IDamageable IProxy<IDamageable>.Value => _damageTarget;
         ITargetable IProxy<ITargetable>.Value => _targetable;
         IModifiable IProxy<IModifiable>.Value => _modifiable;
         IKillable IProxy<IKillable>.Value => _killable;
@@ -77,7 +77,7 @@ namespace MobaGame.Entity.UnitArchtypes
             _movable = new Movable(this, agent, obstacle);
             _targetable = new Targetable(this);
             _killable = new Killable(this);
-            _damageTarget = new DamageTarget(this, _healthable, _killable, _armorable);
+            _damageTarget = new Damageable(this, _healthable, _killable, _armorable);
             _modifiable = new Modifiable(this);
         }
 

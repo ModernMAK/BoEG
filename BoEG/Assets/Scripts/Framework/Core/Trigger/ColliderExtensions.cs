@@ -46,8 +46,9 @@ namespace MobaGame.Framework.Core.Trigger
                     throw new ArgumentException();
             }
 
-            p0 = col.center - col.height * axis / 2;
-            p1 = col.center + col.height * axis / 2;
+            var offset = col.height * axis;
+            p0 = col.center - offset / 2;
+            p1 = p0 + offset;
             radius = col.radius;
 
             var rot = transform.rotation;

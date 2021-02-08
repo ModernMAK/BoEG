@@ -10,13 +10,13 @@ namespace MobaGame.Entity.UnitArchtypes
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(NavMeshObstacle))]
     public class Unit : CommandableActor, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>,
-        IProxy<IAttackerable>, IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageTarget>, IInitializable<IUnitData>,
+        IProxy<IAttackerable>, IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageable>, IInitializable<IUnitData>,
         IProxy<IAggroable>, IProxy<IKillable>
     {
         private Healthable _healthable;
         private Magicable _magicable;
         private Armorable _armorable;
-        private DamageTarget _damageTarget;
+        private Damageable _damageTarget;
         private Attackerable _attackerable;
         private Aggroable _aggroable;
         private Movable _movable;
@@ -29,7 +29,7 @@ namespace MobaGame.Entity.UnitArchtypes
         IAttackerable IProxy<IAttackerable>.Value => _attackerable;
         ITeamable IProxy<ITeamable>.Value => _teamable;
         IMovable IProxy<IMovable>.Value => _movable;
-        IDamageTarget IProxy<IDamageTarget>.Value => _damageTarget;
+        IDamageable IProxy<IDamageable>.Value => _damageTarget;
         IAggroable IProxy<IAggroable>.Value => _aggroable;
         IKillable IProxy<IKillable>.Value => _killable;
 
@@ -61,7 +61,7 @@ namespace MobaGame.Entity.UnitArchtypes
             _magicable = new Magicable(this);
             _armorable = new Armorable(this);
             _killable = new Killable(this);
-            _damageTarget = new DamageTarget(this, _healthable, _killable);
+            _damageTarget = new Damageable(this, _healthable, _killable);
             _teamable = new Teamable(this);
             _attackerable = new Attackerable(this, _teamable);
             _aggroable = new Aggroable(this, _teamable);

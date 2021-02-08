@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MobaGame.Framework.Core;
+using MobaGame.Framework.Core.Modules;
+using System;
 
 namespace MobaGame.Framework.Types
 {
@@ -102,5 +104,27 @@ namespace MobaGame.Framework.Types
         {
             return new Damage(this);
         }
+    }
+
+	public struct SourcedHeal : ISourcedValue<Actor, float>
+    {
+        public SourcedHeal(Actor source, float value)
+        {
+            Source = source;
+            Value = value;
+        }
+
+        public Actor Source { get; }
+        public float Value { get; }
+
+        public SourcedHeal SetActor(Actor actor) => new SourcedHeal(actor, Value);
+        public SourcedHeal SetHeal(float value) => new SourcedHeal(Source, value);
+
+    }
+
+    public interface ISourcedValue<TSource, TValue>
+    {
+        TSource Source { get; }
+        TValue Value { get; }
     }
 }

@@ -81,7 +81,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 if (AbilityHelper.SameTeam(Modules.Teamable, actor))
                     continue; //Ignore if allies
 
-                if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
+                if (!actor.TryGetModule<IDamageable>(out var damageTarget))
                     continue; //Ignore if cant damage
 
                 damageTarget.TakeDamage(Self, dmg);

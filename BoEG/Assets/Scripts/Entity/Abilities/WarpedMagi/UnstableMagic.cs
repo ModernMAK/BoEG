@@ -98,7 +98,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             //TODO add targetable info
             // var targetable = target.GetComponent<Targetable>();
             // targetable.AffectSpell();
-            var damageable = target.GetModule<IDamageTarget>();
+            var damageable = target.GetModule<IDamageable>();
             damageable.TakeDamage(target, damage);
             ApplyFX(target.transform);
         }
@@ -138,7 +138,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
                 //TODO when targetable works, add this
                 // if (!actor.TryGetComponent<ITargetable>(out _))
                 // continue;
-                if (!actor.TryGetModule<IDamageTarget>(out _))
+                if (!actor.TryGetModule<IDamageable>(out _))
                     continue;
 
                 target = actor;

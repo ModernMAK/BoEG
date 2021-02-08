@@ -1,17 +1,20 @@
+using MobaGame.Framework.Core;
+
 namespace MobaGame.Framework.Types
 {
-    public readonly struct SourcedDamage<TSource>
+    public readonly struct SourcedDamage : ISourcedValue<Actor, Damage>
     {
-        public SourcedDamage(Damage damage, TSource source)
+        public SourcedDamage(Actor source, Damage value)
         {
-            Damage = damage;
             Source = source;
+            Value = value;
         }
 
-        public Damage Damage { get; }
-        public TSource Source { get; }
+        public Actor Source { get; }
 
-        public SourcedDamage<TSource> SetDamage(Damage damage) => new SourcedDamage<TSource>(damage, Source);
-        public SourcedDamage<TSource> SetSource(TSource source) => new SourcedDamage<TSource>(Damage, source);
+        public Damage Value { get; }
+
+        public SourcedDamage SetActor(Actor actor) => new SourcedDamage(actor, Value);
+        public SourcedDamage SetDamage(Damage damage) => new SourcedDamage(Source, damage);
     }
 }

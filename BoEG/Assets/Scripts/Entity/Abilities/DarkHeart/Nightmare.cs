@@ -67,7 +67,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
             if (actor.TryGetModule<ITargetable>(out var targetable))
                 if (!targetable.AllowSpellTargets)
                     return;
-            if (!AbilityHelper.HasModule<IDamageTarget>(actor.gameObject))
+            if (!AbilityHelper.HasModule<IDamageable>(actor.gameObject))
                 return;
             if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;
@@ -98,7 +98,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
         {
             //Deal damage
             var damagePerTick = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
-            var damageable = target.GetModule<IDamageTarget>();
+            var damageable = target.GetModule<IDamageable>();
 
 
             void InternalTick()

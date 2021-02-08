@@ -80,7 +80,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             //Deal damage
             var damage = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
 //            var targetable = target.GetComponent<ITargetable>();
-            var damagable = target.GetModule<IDamageTarget>();
+            var damagable = target.GetModule<IDamageable>();
             damagable.TakeDamage(Self, damage);
             //Gather DOT targets
             var dotTargets = new List<Actor> {target};
@@ -104,7 +104,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
             foreach (var actor in dotTargets)
             {
-                if (!actor.TryGetModule<IDamageTarget>(out var damageTarget))
+                if (!actor.TryGetModule<IDamageable>(out var damageTarget))
                     continue;
                 var source = Self;
                 var dotDamage = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
@@ -170,7 +170,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             if (!AbilityHelper.AllowSpellTargets(actor))
                 return;
 
-            if (!AbilityHelper.HasModule<IDamageTarget>(actor.gameObject))
+            if (!AbilityHelper.HasModule<IDamageable>(actor.gameObject))
                 return;
 
 
