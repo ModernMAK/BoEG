@@ -16,5 +16,7 @@ namespace MobaGame.Framework.Types
 
         public SourcedDamage SetActor(Actor actor) => new SourcedDamage(actor, Value);
         public SourcedDamage SetDamage(Damage damage) => new SourcedDamage(Source, damage);
+        public SourcedDamage SetDamageValue(float value, bool clamp = false) => SetDamage(Value.SetValue(value, clamp));
+        public SourcedDamage ModifyDamageValue(float value, bool clamp = false) => SetDamage(Value.ModifyValue(value, clamp));
     }
 }

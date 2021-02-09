@@ -37,13 +37,13 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             Register(data);
         }
 
-        private void OnResisting(object sender, ArmorableEventArgs e)
+        private void OnDamageMitigation(object sender, ChangableEventArgs<SourcedDamage> e)
         {
             //Dont do anything if we aren't on
             if (!_isActive)
                 return;
 
-            var dmg = e.OutgoingDamage;
+            var dmg = e.After.Value;
             //Only apply to magical damage
             if (dmg.Type != DamageType.Magical)
                 return;
@@ -55,14 +55,15 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             //Calcualte Potential Block
             var availableDamageBlock = manaAvailable / _manaGainPerDamage;
             //Calculate Block
-            var appliedDamageBlock = Mathf.Min(e.OutgoingDamage.Value, availableDamageBlock);
+            var appliedDamageBlock = Mathf.Min(dmg.Value, availableDamageBlock);
             //Calculate mana to gain
             var manaGained = appliedDamageBlock * _manaGainPerDamage;
 
             //Gain mana
             magicable.Value += manaGained;
             //Negate damage damage, we don't rely on buffs to do the negation
-            e.OutgoingDamage = dmg.ModifyValue(-appliedDamageBlock);
+            dmg = dmg.ModifyValue(-appliedDamageBlock);
+            e.After = e.After.SetDamage(dmg);
         }
 
         public override void ConfirmCast()
@@ -83,7 +84,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
 
         public void CastNoTarget()
         {
-            _armorable.Resisting += OnResisting;
+            _armorable.DamageMitigation += OnDamageMitigation;
         }
 
         public void OnPreStep(float deltaTime)
@@ -93,7 +94,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             {
                 _isActive = false;
                 _cooldownTimer.Reset();
-                _armorable.Resisting -= OnResisting;
+                _armorable.DamageMitigation -= OnDamageMitigation;
             }
         }
 
