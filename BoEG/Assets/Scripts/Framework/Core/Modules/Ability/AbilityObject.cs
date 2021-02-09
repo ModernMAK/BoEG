@@ -53,10 +53,7 @@ namespace MobaGame.Framework.Core.Modules.Ability
             return this;
         }
 
-        public virtual Sprite GetIcon()
-        {
-            return _icon;
-        }
+        public virtual Sprite Icon => _icon;
 
 
         ICooldownAbilityView IAbilityView.Cooldown => this as ICooldownAbilityView;
