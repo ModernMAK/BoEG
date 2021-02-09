@@ -23,6 +23,16 @@ namespace MobaGame.Entity.Abilities.GrimDeath
         [SerializeField]
         private float _damage;
 
+        public override void ConfirmCast()
+        {
+            var ray = AbilityHelper.GetScreenRay();
+            if(!AbilityHelper.TryGetWorld(ray,out var hit))
+                return;
+            var pos = Self.transform.position;
+            var dir = hit.point - pos;
+                
+            CastVectorTarget(pos,dir);
+        }
 
         public void CastVectorTarget(Vector3 worldPos, Vector3 direction)
         {

@@ -11,7 +11,7 @@ namespace MobaGame.UI
         public override void SetTarget(IAbility ability)
         {
             _view = ability.GetAbilityView();
-            _iconCooldown.sprite = _icon.sprite = _view.GetIcon();
+            _iconCooldown.sprite = _icon.sprite = _view.Icon;
             _updateCooldown = _view.Cooldown != null;
             _updateManaCost = _view.StatCost != null;
             _updateActive = _view.Toggleable != null;
