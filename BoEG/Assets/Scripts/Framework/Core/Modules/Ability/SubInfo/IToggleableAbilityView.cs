@@ -1,6 +1,6 @@
 namespace MobaGame.Framework.Core.Modules.Ability
 {
-    public interface IToggleableAbility : IAbility
+    public interface IToggleableAbilityView : IAbility
     {
         bool Active { get; }
     }

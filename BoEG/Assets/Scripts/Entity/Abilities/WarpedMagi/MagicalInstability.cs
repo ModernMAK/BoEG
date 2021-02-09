@@ -7,8 +7,8 @@ using UnityEngine;
 namespace MobaGame.Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/MagicalInstability")]
-    public class MagicalInstability : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbility,
-        ICooldownAbility, IToggleableAbility
+    public class MagicalInstability : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbilityView,
+        ICooldownAbilityView, IToggleableAbilityView
     {
         /* Self-Target Spell
          * Negates Magical Damage.

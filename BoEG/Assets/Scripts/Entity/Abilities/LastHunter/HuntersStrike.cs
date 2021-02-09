@@ -7,8 +7,8 @@ using UnityEngine;
 namespace MobaGame.Entity.Abilities.LastHunter
 {
     [CreateAssetMenu(menuName = "Ability/LastHunter/HunterStrike")]
-    public class HuntersStrike : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>, ICooldownAbility,
-        IStatCostAbility, IListener<IStepableEvent>
+    public class HuntersStrike : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>, ICooldownAbilityView,
+        IStatCostAbilityView, IListener<IStepableEvent>
     {
         /* Ground target
          * Blink To target

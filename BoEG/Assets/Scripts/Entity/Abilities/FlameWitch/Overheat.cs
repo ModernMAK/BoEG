@@ -14,7 +14,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
      * Drains mana.
     */
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Overheat")]
-    public class Overheat : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbility, IToggleableAbility
+    public class Overheat : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbilityView, IToggleableAbilityView
     {
 #pragma warning disable 0649
         [SerializeField] public float _damagePerSecond;

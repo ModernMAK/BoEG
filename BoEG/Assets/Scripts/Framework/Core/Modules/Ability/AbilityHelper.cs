@@ -63,8 +63,8 @@ namespace MobaGame.Framework.Core.Modules.Ability
         public static bool AllowAttackTargets(Actor actor, bool defaultResult = true) =>
             actor.TryGetModule<ITargetable>(out var targetable) ? targetable.AllowAttackTargets : defaultResult;
 
-        public static bool TrySpendMagic(IStatCostAbility ability, IMagicable magicable) =>
-            magicable.TrySpendMagic(ability.Cost);
+        public static bool TrySpendMagic(IStatCostAbilityView abilityView, IMagicable magicable) =>
+            magicable.TrySpendMagic(abilityView.Cost);
 
 
         public static bool InRange(Vector3 a, Vector3 b, float range) =>

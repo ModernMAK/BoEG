@@ -1,6 +1,6 @@
 namespace MobaGame.Framework.Core.Modules.Ability
 {
-    public interface ICooldownAbility : IAbility
+    public interface ICooldownAbilityView
     {
         float Cooldown { get; }
         float CooldownRemaining { get; }

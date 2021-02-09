@@ -9,8 +9,8 @@ using UnityEngine;
 namespace MobaGame.Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/UnstableMagic")]
-    public class UnstableMagic : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>, IStatCostAbility,
-        ICooldownAbility, IListener<IStepableEvent>
+    public class UnstableMagic : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>, IStatCostAbilityView,
+        ICooldownAbilityView, IListener<IStepableEvent>
     {
         // [Header("Mana Cost")]
         /* Ground Target Spell

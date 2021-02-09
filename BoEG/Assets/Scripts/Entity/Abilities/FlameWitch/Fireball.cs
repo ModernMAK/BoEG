@@ -7,7 +7,7 @@ using UnityEngine;
 namespace MobaGame.Entity.Abilities.FlameWitch
 {
     [CreateAssetMenu(menuName = "Ability/FlameWitch/FireBall")]
-    public class Fireball : AbilityObject, IGroundTargetAbility, IStatCostAbility, ICooldownAbility,
+    public class Fireball : AbilityObject, IGroundTargetAbility, IStatCostAbilityView, ICooldownAbilityView,
         IListener<IStepableEvent>
     {
 #pragma warning disable 0649

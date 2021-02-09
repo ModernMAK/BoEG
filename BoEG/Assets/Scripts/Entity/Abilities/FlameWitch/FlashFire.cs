@@ -8,8 +8,8 @@ using UnityEngine;
 namespace MobaGame.Entity.Abilities.FlameWitch
 {
     [CreateAssetMenu(menuName = "Ability/FlameWitch/FlashFire")]
-    public class FlashFire : AbilityObject, INoTargetAbility, IStatCostAbility, IListener<IStepableEvent>,
-        IToggleableAbility, ICooldownAbility
+    public class FlashFire : AbilityObject, INoTargetAbility, IStatCostAbilityView, IListener<IStepableEvent>,
+        IToggleableAbilityView, ICooldownAbilityView
     {
         /* Channeling Spell
          * Deals damage in an AOE around FlameWitch

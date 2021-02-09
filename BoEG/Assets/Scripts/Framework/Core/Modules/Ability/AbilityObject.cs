@@ -59,10 +59,10 @@ namespace MobaGame.Framework.Core.Modules.Ability
         }
 
 
-        ICooldownAbility IAbilityView.Cooldown => this as ICooldownAbility;
+        ICooldownAbilityView IAbilityView.Cooldown => this as ICooldownAbilityView;
 
-        IStatCostAbility IAbilityView.StatCost => this as IStatCostAbility;
+        IStatCostAbilityView IAbilityView.StatCost => this as IStatCostAbilityView;
 
-        IToggleableAbility IAbilityView.Toggleable => this as IToggleableAbility;
+        IToggleableAbilityView IAbilityView.Toggleable => this as IToggleableAbilityView;
     }
 }

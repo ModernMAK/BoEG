@@ -9,8 +9,8 @@ using UnityEngine;
 namespace MobaGame.Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(menuName = "Ability/DarkHeart/Nightmare")]
-    public class Nightmare : AbilityObject, IObjectTargetAbility<Actor>, IListener<IStepableEvent>, IStatCostAbility,
-        ICooldownAbility
+    public class Nightmare : AbilityObject, IObjectTargetAbility<Actor>, IListener<IStepableEvent>, IStatCostAbilityView,
+        ICooldownAbilityView
     {
 #pragma warning disable 0649
         [SerializeField] private float _manaCost;

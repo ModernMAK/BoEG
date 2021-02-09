@@ -18,8 +18,8 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
 
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Ignite")]
-    public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>, IStatCostAbility,
-        ICooldownAbility
+    public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>, IStatCostAbilityView,
+        ICooldownAbilityView
     {
 #pragma warning disable 0649
         [Header("Cast Range")] [SerializeField]
