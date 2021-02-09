@@ -97,7 +97,7 @@ namespace MobaGame.Framework.Core.Modules
         private void InternalPerformAttack(Actor actor, IDamageable damageTarget, Damage damage, bool useCooldown = true)
         {
             var sourceDamage = new SourcedDamage(Actor,damage);
-            var attackArgs = new AttackerableEventArgs(sourceDamage.Source, actor, sourceDamage.Value);
+            var attackArgs = new AttackerableEventArgs(sourceDamage, actor);
             OnAttacking(attackArgs);
             var critDamage = CalculateCritDamage(sourceDamage);
             var lifesteal = CalculateLifestealModifier(sourceDamage);
@@ -106,7 +106,7 @@ namespace MobaGame.Framework.Core.Modules
                 healthable.Value += lifesteal;
             if (useCooldown)
                 PutAttackOnCooldown();
-            var attackedArgs = new AttackerableEventArgs(actor, Actor, critDamage.Value);
+            var attackedArgs = new AttackerableEventArgs(critDamage, Actor);
             OnAttacked(attackedArgs);
         }
 
