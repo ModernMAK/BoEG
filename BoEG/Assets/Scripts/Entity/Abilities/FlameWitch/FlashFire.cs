@@ -72,7 +72,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
             var targets = Physics.OverlapSphere(Self.transform.position, _aoeSearchRange, (int) LayerMaskHelper.Entity);
 
-            var damage = new Damage(_aoeDamage, DamageType.Magical, DamageModifiers.Ability);
+            var damage = new Damage(_aoeDamage, DamageType.Magical, DamageFlags.Ability);
             foreach (var target in targets)
             {
                 if (!AbilityHelper.TryGetActor(target, out var actor))

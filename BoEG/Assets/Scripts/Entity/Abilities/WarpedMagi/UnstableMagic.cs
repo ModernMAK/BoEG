@@ -94,7 +94,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
 
         private void InternalSingleTarget(Actor target)
         {
-            var damage = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
+            var damage = new Damage(_damage, DamageType.Magical, DamageFlags.Ability);
             //TODO add targetable info
             // var targetable = target.GetComponent<Targetable>();
             // targetable.AffectSpell();

@@ -120,7 +120,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                         if (Modules.Teamable?.IsAlly(teamable) ?? false)
                             continue;
 
-                    var damage = new Damage(_damagePerSecond, DamageType.Magical, DamageModifiers.Ability);
+                    var damage = new Damage(_damagePerSecond, DamageType.Magical, DamageFlags.Ability);
                     damageTarget.TakeDamage(Self, damage);
                 }
             }

@@ -85,7 +85,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
 
             var damageValue = _damagePerManaSpent * args.ManaSpent;
             damageValue = Mathf.Max(damageValue, 0f);
-            var damage = new Damage(damageValue, DamageType.Pure, DamageModifiers.Ability);
+            var damage = new Damage(damageValue, DamageType.Pure, DamageFlags.Ability);
             damageTarget.TakeDamage(Self, damage);
         }
 

@@ -72,7 +72,7 @@ namespace MobaGame.Entity.Abilities.LastHunter
             var atkDamage = Modules.Attackerable.Damage;
 
             var dmg = new Damage(_bonusDamage + atkDamage, DamageType.Physical,
-                DamageModifiers.Ability | DamageModifiers.Attack);
+                DamageFlags.Ability | DamageFlags.Attack);
 
             foreach (var col in colliders)
             {

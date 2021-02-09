@@ -97,7 +97,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
         public void CastObjectTarget(Actor target)
         {
             //Deal damage
-            var damagePerTick = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
+            var damagePerTick = new Damage(_tickDamage, DamageType.Magical, DamageFlags.Ability);
             var damageable = target.GetModule<IDamageable>();
 
 

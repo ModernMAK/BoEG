@@ -78,7 +78,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         public void CastObjectTarget(Actor target)
         {
             //Deal damage
-            var damage = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
+            var damage = new Damage(_damage, DamageType.Magical, DamageFlags.Ability);
 //            var targetable = target.GetComponent<ITargetable>();
             var damagable = target.GetModule<IDamageable>();
             damagable.TakeDamage(Self, damage);
@@ -107,7 +107,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 if (!actor.TryGetModule<IDamageable>(out var damageTarget))
                     continue;
                 var source = Self;
-                var dotDamage = new Damage(_tickDamage, DamageType.Magical, DamageModifiers.Ability);
+                var dotDamage = new Damage(_tickDamage, DamageType.Magical, DamageFlags.Ability);
 
                 void internalFunc()
                 {

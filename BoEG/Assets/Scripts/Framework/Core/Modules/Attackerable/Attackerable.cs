@@ -86,7 +86,7 @@ namespace MobaGame.Framework.Core.Modules
             }
         }
 
-        private Damage GetAttackDamage() => new Damage(Damage, DamageType.Physical, DamageModifiers.Attack);
+        private Damage GetAttackDamage() => new Damage(Damage, DamageType.Physical, DamageFlags.Attack);
 
         private Action GetAttackCallback(Actor actor, IDamageable damageTarget, Damage damage, bool useCooldown = true)
         {
