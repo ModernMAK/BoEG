@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59f3fd31523a436ab9b676b542049d85, type: 3}
   m_Name: New Flash Fire
   m_EditorClassIdentifier: 
-  _icon: {fileID: 21300000, guid: eb132399bb058f94ca23581865a103f2, type: 3}
+  _icon: {fileID: -2941827355910148164, guid: fba65e2ac72cbc9489932e4da95a7264, type: 3}
   _channelTime: 5
   _manaCost: 50
   _cooldown: 20

@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1adad3f7347e2c44eb29cd69c0c47d3c, type: 3}
   m_Name: SoulJar
   m_EditorClassIdentifier: 
-  _icon: {fileID: 21300000, guid: 0a392ff9bd672a743a6631716eee5cd1, type: 3}
+  _icon: {fileID: 7184549462493353692, guid: cf4a0ed3c81933c46b4e76f115f96353, type: 3}
   _soulsPerKill: 3
   _soulsPerAssist: 1
-  _modifierIcon: {fileID: 21300000, guid: 0a392ff9bd672a743a6631716eee5cd1, type: 3}
+  _modifierIcon: {fileID: 7184549462493353692, guid: cf4a0ed3c81933c46b4e76f115f96353,
+    type: 3}
   _soulLimit: 10
   _healthGenPerSoul: 0.25
   _manaGenPerSoul: 0.25

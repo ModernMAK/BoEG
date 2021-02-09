@@ -1,34 +1,43 @@
 fileFormatVersion: 2
-guid: d3ad13f92c7d5c747b91223ebe5e3168
+guid: fba65e2ac72cbc9489932e4da95a7264
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -823450137155249290
-    second: DarkHeartIcons_0
+      213: -2692209467245335588
+    second: AbilityIcon_DarkHeart_0
   - first:
-      213: -4375789195837904834
-    second: DarkHeartIcons_1
+      213: -7000335094991769197
+    second: AbilityIcon_DarkHeart_1
   - first:
-      213: 6233650883073753109
-    second: DarkHeartIcons_2
+      213: -858306592521724314
+    second: AbilityIcon_DarkHeart_2
   - first:
-      213: 1881898853042084174
-    second: DarkHeartIcons_3
+      213: -3433271186408936070
+    second: AbilityIcon_DarkHeart_Nightmare
   - first:
-      213: 466719260560990742
-    second: DarkHeartIcons_4
+      213: 3004198147625668730
+    second: AbilityIcon_DarkHeart_3
   - first:
-      213: 933306303676075036
-    second: DarkHeartIcons_5
+      213: -2125462299899137055
+    second: AbilityIcon_WarpedMagi_MagicalBacklash
   - first:
-      213: -7130874601500082279
-    second: DarkHeartIcons_6
+      213: -2691673644193603492
+    second: AbilityIcon_WarpedMagi_UnstableMagic
   - first:
-      213: -5601658002194537047
-    second: DarkHeartIcons_7
+      213: 3307020828430764007
+    second: AbilityIcon_WarpedMagi_MagicalInstability
   - first:
-      213: -6173565823074200638
-    second: DarkHeartIcons_8
+      213: -2941827355910148164
+    second: AbilityIcon_FlameWitch_FlashFire
+  - first:
+      213: 2803810975683266692
+    second: AbilityIcon_FlameWitch_Ignite
+  - first:
+      213: 3872047521413475355
+    second: AbilityIcon_FlameWitch_Overheat
+  - first:
+      213: -8598519485165241271
+    second: AbilityIcon_FlameWitch_Fireball
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -75,7 +84,7 @@ TextureImporter:
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 1
+  spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -88,11 +97,11 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   ignorePngGamma: 0
-  applyGammaDecoding: 1
+  applyGammaDecoding: 0
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 1024
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -104,7 +113,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Standalone
-    maxTextureSize: 1024
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -118,190 +127,253 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: DarkHeartIcons_0
+      name: AbilityIcon_DarkHeart_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 2133.3335
-        width: 1066.6666
-        height: 1066.6666
+        y: 1792
+        width: 256
+        height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 67b5d9c86748294f0800000000000000
-      internalID: -823450137155249290
+      spriteID: cdbe5e3e0c953aad0800000000000000
+      internalID: -2692209467245335588
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarkHeartIcons_1
+      name: AbilityIcon_DarkHeart_1
       rect:
         serializedVersion: 2
-        x: 1066
-        y: 2133.3335
-        width: 1066.6666
-        height: 1066.6666
+        x: 256
+        y: 1792
+        width: 256
+        height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e38e61a09e21643c0800000000000000
-      internalID: -4375789195837904834
+      spriteID: 391b05a0250d9de90800000000000000
+      internalID: -7000335094991769197
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarkHeartIcons_2
+      name: AbilityIcon_DarkHeart_2
       rect:
         serializedVersion: 2
-        x: 2132
-        y: 2133.3335
-        width: 1066.6666
-        height: 1066.6666
+        x: 512
+        y: 1792
+        width: 256
+        height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 510496b6370628650800000000000000
-      internalID: 6233650883073753109
+      spriteID: 66edd5c93bea614f0800000000000000
+      internalID: -858306592521724314
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarkHeartIcons_3
+      name: AbilityIcon_DarkHeart_Nightmare
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1792
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a7de284db029a50d0800000000000000
+      internalID: -3433271186408936070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AbilityIcon_DarkHeart_3
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1792
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a705d106c4e01b920800000000000000
+      internalID: 3004198147625668730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AbilityIcon_WarpedMagi_MagicalBacklash
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1792
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e3f607ac47d082e0800000000000000
+      internalID: -2125462299899137055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AbilityIcon_WarpedMagi_UnstableMagic
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1792
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c502f8ae41145aad0800000000000000
+      internalID: -2691673644193603492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AbilityIcon_WarpedMagi_MagicalInstability
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1792
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e70f6f0ce5e4ed20800000000000000
+      internalID: 3307020828430764007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AbilityIcon_FlameWitch_FlashFire
       rect:
         serializedVersion: 2
         x: 0
-        y: 1067.3334
-        width: 1066.6666
-        height: 1066.6666
+        y: 1536
+        width: 256
+        height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e49d9ce3909dd1a10800000000000000
-      internalID: 1881898853042084174
+      spriteID: cbfe2743b978c27d0800000000000000
+      internalID: -2941827355910148164
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarkHeartIcons_4
+      name: AbilityIcon_FlameWitch_Ignite
       rect:
         serializedVersion: 2
-        x: 1066
-        y: 1067.3334
-        width: 1066.6666
-        height: 1066.6666
+        x: 256
+        y: 1536
+        width: 256
+        height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6122297d1be1a7600800000000000000
-      internalID: 466719260560990742
+      spriteID: 48841f62a3329e620800000000000000
+      internalID: 2803810975683266692
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarkHeartIcons_5
+      name: AbilityIcon_FlameWitch_Overheat
       rect:
         serializedVersion: 2
-        x: 2132
-        y: 1067.3334
-        width: 1066.6666
-        height: 1066.6666
+        x: 512
+        y: 1536
+        width: 256
+        height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c1cce396325c3fc00800000000000000
-      internalID: 933306303676075036
+      spriteID: b1c284ba4b64cb530800000000000000
+      internalID: 3872047521413475355
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarkHeartIcons_6
+      name: AbilityIcon_FlameWitch_Fireball
       rect:
         serializedVersion: 2
-        x: 0
-        y: 1.333374
-        width: 1066.6666
-        height: 1066.6666
+        x: 768
+        y: 1536
+        width: 256
+        height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 99f7bb7b45b0a0d90800000000000000
-      internalID: -7130874601500082279
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: DarkHeartIcons_7
-      rect:
-        serializedVersion: 2
-        x: 1066
-        y: 1.333374
-        width: 1066.6666
-        height: 1066.6666
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9a568f1d9b9e242b0800000000000000
-      internalID: -5601658002194537047
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: DarkHeartIcons_8
-      rect:
-        serializedVersion: 2
-        x: 2132
-        y: 1.333374
-        width: 1066.6666
-        height: 1066.6666
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2c39b26c796135aa0800000000000000
-      internalID: -6173565823074200638
+      spriteID: 94c737cc51ceba880800000000000000
+      internalID: -8598519485165241271
       vertices: []
       indices: 
       edges: []
@@ -309,7 +381,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: b2b03fe895785a545bea64ec2b68d66c
     internalID: 0
     vertices: []
     indices: 

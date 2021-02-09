@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70afcb663c194543b24a038723e99e75, type: 3}
   m_Name: New Unstable Magic
   m_EditorClassIdentifier: 
-  _icon: {fileID: 21300000, guid: a85878004e08fe744970353576c79fa8, type: 3}
+  _icon: {fileID: -2691673644193603492, guid: fba65e2ac72cbc9489932e4da95a7264, type: 3}
   _manaCost: 100
   _castRange: 10
   _damage: 100
   _searchRange: 3
   _additionalJumps: 4
+  _cooldown: 0
   _unstableMagicFX: {fileID: 6082316400841436982, guid: bf62d92c820b7bf41ab50f97e118d6e1,
     type: 3}
