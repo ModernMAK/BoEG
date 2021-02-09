@@ -3,6 +3,7 @@ using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
 using MobaGame.Framework.Types;
 using MobaGame.FX;
+using System;
 using UnityEngine;
 
 namespace MobaGame.Entity.Abilities.FlameWitch
@@ -32,10 +33,12 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
         [SerializeField] private GameObject _overheatFX;
         private ParticleSystem _particleSystemInstance;
+
+		public event EventHandler<ChangedEventArgs<bool>> Toggled;
 #pragma warning restore 0649
 
-        public bool Active => _isActive;
-
+		public bool Active => _isActive;
+        
         private ParticleSystem ApplyFX(Transform target)
         {
             if (_overheatFX == null)

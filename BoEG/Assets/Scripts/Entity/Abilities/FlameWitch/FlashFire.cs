@@ -3,6 +3,7 @@ using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
 using MobaGame.Framework.Types;
+using System;
 using UnityEngine;
 
 namespace MobaGame.Entity.Abilities.FlameWitch
@@ -119,7 +120,10 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         }
 
         private bool _isActive;
-        public bool Active => _isActive;
+
+		public event EventHandler<ChangedEventArgs<bool>> Toggled;
+
+		public bool Active => _isActive;
         public float Cooldown => _cooldownTimer.Duration;
         public float CooldownRemaining => _cooldownTimer.RemainingTime;
         public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;

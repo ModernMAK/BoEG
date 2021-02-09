@@ -26,9 +26,11 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         private IArmorable _armorable;
 
         private bool _isActive;
+
+		public event System.EventHandler<ChangedEventArgs<bool>> Toggled;
 #pragma warning restore 0649
 
-        public override void Initialize(Actor data)
+		public override void Initialize(Actor data)
         {
             base.Initialize(data);
             _activeTimer = new DurationTimer(_duration);
