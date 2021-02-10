@@ -7,8 +7,7 @@ namespace MobaGame.Framework.Core.Modules.Ability
     {
 #pragma warning disable 0649
 
-        [SerializeField] private Sprite _icon;
-        [Obsolete("Use Actor Module Cache")] protected CommonAbilityInfo _commonAbilityInfo;
+        [SerializeField] protected Sprite _icon;
 
         private ModuleCache _cache;
 #pragma warning disable 0649
@@ -24,6 +23,11 @@ namespace MobaGame.Framework.Core.Modules.Ability
             Self = data;
             AbilityHelper.Initialize(); //HACK TODO make this not a hack
             _cache = new ModuleCache(data.gameObject);
+        }
+
+        public virtual void Setup()
+        {
+            
         }
 
 
@@ -61,5 +65,6 @@ namespace MobaGame.Framework.Core.Modules.Ability
         IStatCostAbilityView IAbilityView.StatCost => this as IStatCostAbilityView;
 
         IToggleableAbilityView IAbilityView.Toggleable => this as IToggleableAbilityView;
+        public virtual event EventHandler Changed;
     }
 }

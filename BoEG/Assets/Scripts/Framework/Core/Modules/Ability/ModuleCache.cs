@@ -20,6 +20,8 @@ namespace MobaGame.Framework.Core.Modules.Ability
 
         public IKillable Killable => GetCached<IKillable>();
 
+        public IHealable Healable => GetCached<IHealable>();
+
         public ModuleCache(GameObject gameObject) : base(gameObject)
         {
         }

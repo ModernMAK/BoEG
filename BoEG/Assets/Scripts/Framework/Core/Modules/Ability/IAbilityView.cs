@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules.Ability
 {
-    public interface IAbilityView
+    public interface IAbilityView : IView
     {
         Sprite Icon { get; }
 

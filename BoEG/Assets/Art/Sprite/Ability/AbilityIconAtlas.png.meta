@@ -38,6 +38,24 @@ TextureImporter:
   - first:
       213: -8598519485165241271
     second: AbilityIcon_FlameWitch_Fireball
+  - first:
+      213: 792072853513443962
+    second: AbilityIconAtlas_ForestGuardian_RedRose
+  - first:
+      213: 7586963623097447478
+    second: AbilityIconAtlas_ForestGuardian_BlackRose
+  - first:
+      213: 6600705962767282796
+    second: AbilityIconAtlas_ForestGuardian_Neglect
+  - first:
+      213: 2958692710617841294
+    second: AbilityIconAtlas_ForestGuardian_Nurture
+  - first:
+      213: -6260538438700093308
+    second: AbilityIconAtlas_ForestGuardian_LifeTap_Heal
+  - first:
+      213: -3370401456428404176
+    second: AbilityIconAtlas_ForestGuardian_LifeTap_Hurt
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -374,6 +392,132 @@ TextureImporter:
       bones: []
       spriteID: 94c737cc51ceba880800000000000000
       internalID: -8598519485165241271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AbilityIconAtlas_ForestGuardian_RedRose
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1536
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a7a16ed40120efa00800000000000000
+      internalID: 792072853513443962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AbilityIconAtlas_ForestGuardian_BlackRose
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1536
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 634b88eb73f4a4960800000000000000
+      internalID: 7586963623097447478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AbilityIconAtlas_ForestGuardian_Neglect
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1536
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c62fb81e91b6a9b50800000000000000
+      internalID: 6600705962767282796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AbilityIconAtlas_ForestGuardian_Nurture
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1536
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8ef9ef28536f0920800000000000000
+      internalID: 2958692710617841294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AbilityIconAtlas_ForestGuardian_LifeTap_Heal
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1280
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4803a92b5791e19a0800000000000000
+      internalID: -6260538438700093308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AbilityIconAtlas_ForestGuardian_LifeTap_Hurt
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 1280
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03230278bbde931d0800000000000000
+      internalID: -3370401456428404176
       vertices: []
       indices: 
       edges: []

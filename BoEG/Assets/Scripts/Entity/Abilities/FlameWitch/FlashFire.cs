@@ -127,5 +127,8 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         public float Cooldown => _cooldownTimer.Duration;
         public float CooldownRemaining => _cooldownTimer.RemainingTime;
         public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
+  
+        public bool ShowActive => true;
+        
     }
 }

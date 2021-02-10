@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules.Ability
@@ -11,5 +12,6 @@ namespace MobaGame.Framework.Core.Modules.Ability
         public IStatCostAbilityView StatCost { get; set; }
 
         public IToggleableAbilityView Toggleable { get; set; }
+        public event EventHandler Changed;
     }
 }

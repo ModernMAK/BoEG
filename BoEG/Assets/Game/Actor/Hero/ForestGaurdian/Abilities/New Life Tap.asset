@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c99a9cdeb55f4b1095473b1f8b6d4e03, type: 3}
+  m_Name: New Life Tap
+  m_EditorClassIdentifier: 
+  _icon: {fileID: -6260538438700093308, guid: fba65e2ac72cbc9489932e4da95a7264, type: 3}
+  _brIcon: {fileID: -3370401456428404176, guid: fba65e2ac72cbc9489932e4da95a7264,
+    type: 3}
+  _brRange: 10
+  _brDamage: 100
+  _brSelfHeal: 75
+  _brManaCost: 90
+  _brCooldown: 10
+  _rrRange: 15
+  _rrHeal: 150
+  _rrManaCost: 60
+  _rrCooldown: 10

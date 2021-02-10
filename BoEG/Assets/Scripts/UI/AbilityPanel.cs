@@ -1,4 +1,5 @@
-﻿using MobaGame.Framework.Core.Modules.Ability;
+﻿using System;
+using MobaGame.Framework.Core.Modules.Ability;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,32 +11,43 @@ namespace MobaGame.UI
 
         public override void SetTarget(IAbility ability)
         {
+            if(_view != null)
+                _view.Changed -= ViewOnChanged;
             _view = ability.GetAbilityView();
-            _iconCooldown.sprite = _icon.sprite = _view.Icon;
-            _updateCooldown = _view.Cooldown != null;
-            _updateManaCost = _view.StatCost != null;
-            _updateActive = _view.Toggleable != null;
-            UpdateImageFill(0f, _iconCooldown);
+            UpdateMain();
+            if(_view != null)
+                _view.Changed += ViewOnChanged;
         }
 
-        private void Update()
+        private void ViewOnChanged(object sender, EventArgs e)
         {
-            if (_updateCooldown)
+            UpdateMain();
+        }
+
+        private void UpdateMain()
+        {
+            
+            _iconCooldown.sprite = _icon.sprite = _view.Icon;
+            
+            UpdateImageFill(0f, _iconCooldown);
+            if (_view.Cooldown != null)
                 UpdateImageFill(1f - _view.Cooldown.CooldownNormal, _iconCooldown, 3);
 
             bool outOfMana = false;
             bool isActive = false;
-            if (_updateManaCost)
+            bool showActive = true;
+            if (_view.StatCost != null)
             {
                 outOfMana = !_view.StatCost.CanSpendCost();
             }
 
-            if (_updateActive)
+            if (_view.Toggleable != null)
             {
+                showActive = _view.Toggleable.ShowActive;
                 isActive = _view.Toggleable.Active;
             }
 
-            if (isActive)
+            if (showActive && isActive)
                 _icon.material = _activeMaterial;
             else if (outOfMana)
                 _icon.material = _outOfManaMaterial;

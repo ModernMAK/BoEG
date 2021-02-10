@@ -119,5 +119,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
 
         public bool Active => _isActive;
+
+        public bool ShowActive => true;
     }
 }

@@ -74,8 +74,12 @@ namespace MobaGame.Framework.Core.Modules
             foreach (var ab in _abilities)
                 ab.Initialize(Actor);
             _respawnables = EnumerableQuery.GetAllAsList<IRespawnable>(_abilities);
+            foreach (var ab in _abilities)
+                ab.Setup();
             OnAbilitiesChanged();
+
         }
+
 
         #endregion
 

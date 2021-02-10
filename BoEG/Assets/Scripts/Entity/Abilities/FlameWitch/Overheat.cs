@@ -34,7 +34,9 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         [SerializeField] private GameObject _overheatFX;
         private ParticleSystem _particleSystemInstance;
 
-		public event EventHandler<ChangedEventArgs<bool>> Toggled;
+        public bool ShowActive => true;
+
+        public event EventHandler<ChangedEventArgs<bool>> Toggled;
 #pragma warning restore 0649
 
 		public bool Active => _isActive;

@@ -18,5 +18,7 @@ namespace MobaGame.Framework.Core.Modules.Ability
         ///     Used to reset the Ability Preview
         /// </summary>
         void CancelCast();
+
+        void Setup();
     }
 }
