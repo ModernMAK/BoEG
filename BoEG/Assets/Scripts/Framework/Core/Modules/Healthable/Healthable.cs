@@ -1,4 +1,5 @@
 using System;
+using MobaGame.Framework.Logging;
 using MobaGame.Framework.Types;
 
 namespace MobaGame.Framework.Core.Modules
@@ -122,5 +123,23 @@ namespace MobaGame.Framework.Core.Modules
 
 
         #endregion
+
+        protected override void OnStatChanged(ChangedEventArgs<float> e)
+        {
+            HealthableLog.LogHealthChanged(Actor, e);
+            base.OnStatChanged(e);
+        }
+    }
+    
+    public static class HealthableLog
+    {
+        
+        public static void LogHealthChanged(Actor actor,ChangedEventArgs<float> e)
+        {
+            var msg =
+                $"{CombatLog.FormatActor(actor.name)} Health Changed {RichText.Italic(e.Before.ToString())} -> {RichText.Italic(e.After.ToString())}";
+            CombatLog.Log(msg);
+        }
+
     }
 }
