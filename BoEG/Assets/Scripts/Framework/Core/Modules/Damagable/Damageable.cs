@@ -1,5 +1,4 @@
 using System;
-using MobaGame.Framework.Logging;
 using MobaGame.Framework.Types;
 using MobaGame.Framework.Utility;
 using UnityEngine;
@@ -19,13 +18,11 @@ namespace MobaGame.Framework.Core.Modules
 
         public virtual bool TakeDamage(SourcedDamage damage)
         {
-            DamageableLog.LogDamaging(damage, Actor);
             OnDamaging(damage);
             //ARMORABLE
             if (_armorable != null) damage = _armorable.ResistDamage(damage);
             damage = CalculateDamageModifiers(damage);
             _healthable.Value -= damage.Value.Value;
-            DamageableLog.LogDamaged(damage, Actor);
             OnDamaged(damage);
             var killed = _healthable.Value.SafeEquals(0f);
             if (killed)
@@ -48,22 +45,5 @@ namespace MobaGame.Framework.Core.Modules
         protected virtual void OnDamaging(SourcedDamage e) => Damaging?.Invoke(this, e);
         protected SourcedDamage CalculateDamageModifiers(SourcedDamage e) => DamageMitigation.CalculateChange(this,e);
         
-    }
-    public static class DamageableLog
-    {
-        
-        public static void LogDamaging(SourcedDamage damage, Actor actor)
-        {
-            var msg =
-                $"{CombatLog.FormatActor(damage.Source.name)} Damaging {CombatLog.FormatActor(actor.name)} for {CombatLog.FormatDamage(damage.Value)}";
-            CombatLog.Log(msg);
-        }
-
-        public static void LogDamaged(SourcedDamage damage, Actor actor)
-        {
-            var msg =
-                $"{CombatLog.FormatActor(damage.Source.name)} Damaged {CombatLog.FormatActor(actor.name)} for {CombatLog.FormatDamage(damage.Value)}";
-            CombatLog.Log(msg);
-        }
     }
 }
