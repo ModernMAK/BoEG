@@ -17,7 +17,6 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         [Header("Damage")] [SerializeField] private float _damage;
 
         [Header("Cooldown")] [SerializeField] private float _cooldown;
-        private DurationTimer _cooldownTimer;
 
         [Header("Cast Range")] [SerializeField]
         private float _castRange;
@@ -41,7 +40,6 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         public override void Initialize(Actor data)
         {
             base.Initialize(data);
-            _cooldownTimer = new DurationTimer(_cooldown,true);
             Modules.Abilitiable.TryGetAbility(out _overheat);
             CastRange = new CastRange(data.transform){MaxDistance = _castRange};//Not part of targeting checks
             CheckBuilder = new AbilityPredicateBuilder(data)

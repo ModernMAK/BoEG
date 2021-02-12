@@ -40,22 +40,22 @@ TextureImporter:
     second: AbilityIcon_FlameWitch_Fireball
   - first:
       213: 792072853513443962
-    second: AbilityIconAtlas_ForestGuardian_RedRose
+    second: AbilityIconAtlas_ForestGuardian_BlackRoseCurse_Red
   - first:
       213: 7586963623097447478
-    second: AbilityIconAtlas_ForestGuardian_BlackRose
+    second: AbilityIconAtlas_ForestGuardian_BlackRoseCurse_Black
   - first:
       213: 6600705962767282796
-    second: AbilityIconAtlas_ForestGuardian_Neglect
+    second: AbilityIconAtlas_ForestGuardian_NurtureNeglect_Black
   - first:
       213: 2958692710617841294
-    second: AbilityIconAtlas_ForestGuardian_Nurture
+    second: AbilityIconAtlas_ForestGuardian_NurtureNeglect_Red
   - first:
       213: -6260538438700093308
-    second: AbilityIconAtlas_ForestGuardian_LifeTap_Heal
+    second: AbilityIconAtlas_ForestGuardian_LifeTap_Red
   - first:
       213: -3370401456428404176
-    second: AbilityIconAtlas_ForestGuardian_LifeTap_Hurt
+    second: AbilityIconAtlas_ForestGuardian_LifeTap_Black
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -397,7 +397,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AbilityIconAtlas_ForestGuardian_RedRose
+      name: AbilityIconAtlas_ForestGuardian_BlackRoseCurse_Red
       rect:
         serializedVersion: 2
         x: 1024
@@ -418,7 +418,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AbilityIconAtlas_ForestGuardian_BlackRose
+      name: AbilityIconAtlas_ForestGuardian_BlackRoseCurse_Black
       rect:
         serializedVersion: 2
         x: 1280
@@ -439,7 +439,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AbilityIconAtlas_ForestGuardian_Neglect
+      name: AbilityIconAtlas_ForestGuardian_NurtureNeglect_Black
       rect:
         serializedVersion: 2
         x: 1536
@@ -460,7 +460,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AbilityIconAtlas_ForestGuardian_Nurture
+      name: AbilityIconAtlas_ForestGuardian_NurtureNeglect_Red
       rect:
         serializedVersion: 2
         x: 1792
@@ -481,7 +481,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AbilityIconAtlas_ForestGuardian_LifeTap_Heal
+      name: AbilityIconAtlas_ForestGuardian_LifeTap_Red
       rect:
         serializedVersion: 2
         x: 0
@@ -502,7 +502,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AbilityIconAtlas_ForestGuardian_LifeTap_Hurt
+      name: AbilityIconAtlas_ForestGuardian_LifeTap_Black
       rect:
         serializedVersion: 2
         x: 256

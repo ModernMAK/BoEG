@@ -35,8 +35,9 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
 				Icon = _rrIcon,
 				Cooldown = CheckBuilder.Cooldown,
 				StatCost = CheckBuilder.MagicCost,
-				Toggleable = new ToggleableAbilityView(this)
+				Toggleable = new ToggleableAbilityView()
 				{
+					Active = false,
 					ShowActive = false
 				}
 			};

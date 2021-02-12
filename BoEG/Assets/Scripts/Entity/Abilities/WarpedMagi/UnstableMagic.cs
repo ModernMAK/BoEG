@@ -20,6 +20,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
 
 #pragma warning disable 0649
 
+        [SerializeField] private Sprite _icon;
         [SerializeField] private float _manaCost;
         [SerializeField] private float _castRange;
         [Header("Damage")] [SerializeField] private float _damage;
@@ -51,6 +52,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             {
                 Cooldown = Checker.Cooldown,
                 StatCost = Checker.MagicCost,
+                Icon = _icon,
             };
             CastRange = new CastRange(data.transform){MaxDistance = _castRange};
             Checker.RebuildChecks();

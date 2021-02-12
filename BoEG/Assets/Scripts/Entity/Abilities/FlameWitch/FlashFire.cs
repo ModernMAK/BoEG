@@ -29,7 +29,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             CheckBuilder = new AbilityPredicateBuilder(data)
             {
                 Teamable = TeamableChecker.NonAllyOnly(Modules.Teamable),
-                MagicCost = new MagicCost(Modules.Magicable,_manaCost),
+                MagicCost = new MagicCost(Modules.Magicable, _manaCost),
                 Cooldown = new Cooldown(_cooldown),
                 AllowSelf = false,
             };
@@ -38,7 +38,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 Icon = _icon,
                 Cooldown = CheckBuilder.Cooldown,
                 StatCost = CheckBuilder.MagicCost,
-                Toggleable = new ToggleableAbilityView()
+                Toggleable = new ToggleableAbilityView(){ShowActive = true}
             };
             CheckBuilder.RebuildChecks();
             Register(data);
@@ -62,8 +62,6 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
         [SerializeField] private float _aoeDamage;
 
-        private TeamableChecker TeamChecker { get; set; }
-
         private Overheat _overheatAbility;
 #pragma warning restore 0649
 
@@ -73,7 +71,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             if (Active)
                 return;
 
-            if (CheckBuilder.AllowCast())
+            if (!CheckBuilder.AllowCast())
                 return;
 
             Active = true;

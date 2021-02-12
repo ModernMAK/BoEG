@@ -12,6 +12,7 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 	[CreateAssetMenu(menuName = "Ability/GrimDeath/SoulJar")]
 	public class SoulJar : AbilityObject
 	{
+		[SerializeField] private Sprite _icon;
 #pragma warning disable 0649
 		[SerializeField]
 		private int _soulsPerKill;
@@ -102,6 +103,11 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 		{
 			_modifier = new SoulJarModifier(_modifierIcon,_healthGenPerSoul,_manaGenPerSoul);
 			base.Initialize(data);
+			base.Initialize(data);
+			View = new SimpleAbilityView()
+			{
+				Icon = _icon
+			};
 			_aura = TriggerUtility.CreateTrigger<SphereCollider>(data, "SoulJar Search Trigger");
 			_aura.Collider.radius = _searchRadius;
 			_aura.Trigger.Enter += OnEnter;

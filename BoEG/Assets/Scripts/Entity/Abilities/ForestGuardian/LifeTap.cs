@@ -87,9 +87,9 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
         {
             if (!AbilityHelper.TryRaycastActor( out var actor))
                 return;
-            if(CheckBuilder.AllowCast())
+            if(!CheckBuilder.AllowCast())
                 return;
-            if(CheckBuilder.AllowTarget(actor))
+            if(!CheckBuilder.AllowTarget(actor))
                 return;
 
 
@@ -99,7 +99,6 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
                 {
                     CheckBuilder.DoCast();
                     CastBlackRoseLifeTap(damageable);
-                    CheckBuilder.Cooldown.Begin();
                     var args = new AbilityEventArgs(Self,CheckBuilder.MagicCost.Cost);
                     Modules.Abilitiable.NotifyAbilityCast(args);
                 }
@@ -110,7 +109,6 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
                 {
                     CheckBuilder.DoCast();
                     CastRedRoseLifeTap(healable);
-                    CheckBuilder.Cooldown.Begin();
                     var args = new AbilityEventArgs(Self,CheckBuilder.MagicCost.Cost);
                     Modules.Abilitiable.NotifyAbilityCast(args);
 

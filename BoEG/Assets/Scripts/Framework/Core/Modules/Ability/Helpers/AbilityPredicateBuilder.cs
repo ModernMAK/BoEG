@@ -70,7 +70,7 @@ namespace MobaGame.Framework.Core.Modules.Ability.Helpers
 			if (Cooldown != null)
 				preds.Add(Cooldown.Begin);
 			if (MagicCost != null)
-				preds.Add(Cooldown.Begin);
+				preds.Add(MagicCost.SpendCost);
 			CastActions = preds.ToArray();
 
 		}

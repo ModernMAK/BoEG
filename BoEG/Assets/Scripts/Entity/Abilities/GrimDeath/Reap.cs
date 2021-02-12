@@ -1,3 +1,4 @@
+using System;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
@@ -24,6 +25,15 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 
         [SerializeField]
         private float _damage;
+
+        public override void Initialize(Actor data)
+        {
+            base.Initialize(data);
+            View = new SimpleAbilityView()
+            {
+                Icon = _icon
+            };
+        }
 
         public override void ConfirmCast()
         {

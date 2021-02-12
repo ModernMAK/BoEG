@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace MobaGame.UI
 {
-    public class AbilityPanel : DebugUI<IAbility>
+    public class AbilityPanel : DebugUI<IAbility>, IDisposable
     {
         private IAbilityView _view;
 
@@ -26,22 +26,24 @@ namespace MobaGame.UI
 
         private void UpdateMain()
         {
-            
-            _iconCooldown.sprite = _icon.sprite = _view.Icon;
-            
+            var icon = _view != null ? _view.Icon : null;
+            _iconCooldown.sprite = _icon.sprite = icon;
             UpdateImageFill(0f, _iconCooldown);
-            if (_view.Cooldown != null)
-                UpdateImageFill(1f - _view.Cooldown.Normal, _iconCooldown, 3);
+
+            var cdNormal = 1f;
+            if (_view != null && _view.Cooldown != null)
+                cdNormal = _view.Cooldown.Normal;
+            UpdateImageFill(1f - cdNormal, _iconCooldown, 3);
 
             bool outOfMana = false;
             bool isActive = false;
             bool showActive = true;
-            if (_view.StatCost != null)
+            if (_view != null && _view.StatCost != null)
             {
                 outOfMana = !_view.StatCost.CanSpendCost();
             }
 
-            if (_view.Toggleable != null)
+            if (_view != null && _view.Toggleable != null)
             {
                 showActive = _view.Toggleable.ShowActive;
                 isActive = _view.Toggleable.Active;
@@ -65,15 +67,17 @@ namespace MobaGame.UI
         private Material _standardMaterial;
 
 
-        private bool _updateCooldown;
         [SerializeField] private Image _iconCooldown;
 
-        private bool _updateManaCost;
         [SerializeField] private Material _outOfManaMaterial;
 
-        private bool _updateActive;
         [SerializeField] private Material _activeMaterial;
 
 #pragma warning restore 649
+        public void Dispose()
+        {
+            if(_view != null)
+                _view.Changed -= ViewOnChanged;
+        }
     }
 }

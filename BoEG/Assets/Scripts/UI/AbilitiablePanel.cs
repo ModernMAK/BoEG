@@ -35,6 +35,7 @@ namespace MobaGame.UI
 
                 for (var i = abilityCount; i < _abilityPanels.Count; i++)
                 {
+                    _abilityPanels[i].Dispose();
                     Destroy(_abilityPanels[i].gameObject);
                     _abilityPanels.RemoveAt(i);
                     i--;

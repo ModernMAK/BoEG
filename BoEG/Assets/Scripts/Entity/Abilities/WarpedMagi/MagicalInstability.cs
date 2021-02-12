@@ -15,7 +15,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
          * Magical Damage grants mana for the duration.
          */
 #pragma warning disable 0649
-
+        [SerializeField] private Sprite _icon;
         [Header("Mana Cost")] [SerializeField] private float _manaCost;
         [SerializeField] private float _manaGainPerDamage;
         [SerializeField] private float _duration;
@@ -41,6 +41,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             };
             View = new SimpleAbilityView()
             {
+                Icon = _icon,
                 Cooldown = Checker.Cooldown,
                 StatCost = Checker.MagicCost,
                 Toggleable = new ToggleableAbilityView()

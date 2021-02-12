@@ -42,6 +42,7 @@ namespace MobaGame.Entity.Abilities.LastHunter
                 Cooldown = Checker.Cooldown,
                 Icon = _icon,
             };
+            Checker.RebuildChecks();
             Register(data);
         }
 

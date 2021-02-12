@@ -28,9 +28,16 @@ namespace MobaGame.Framework.Core.Modules.Ability.Helpers
             var relation = _teamable.GetRelation(otherTeamable);
             return IsAllowed(relation);
         }
+
         public bool IsAllowed(TeamRelation relation)
         {
-            return Allowed.HasFlag(relation);
+            var flag = relation.ToFlag();
+            return IsAllowed(flag);
+        }
+
+        public bool IsAllowed(TeamRelationFlag flag)
+        {
+            return Allowed.HasFlag(flag);
         }
     }
 }

@@ -87,7 +87,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 Icon = _icon,
                 Cooldown = CheckBuilder.Cooldown,
                 StatCost = CheckBuilder.MagicCost,
-                Toggleable = new ToggleableAbilityView()
+                Toggleable = new ToggleableAbilityView(){ShowActive = true}
             };
             CheckBuilder.RebuildChecks();
             
