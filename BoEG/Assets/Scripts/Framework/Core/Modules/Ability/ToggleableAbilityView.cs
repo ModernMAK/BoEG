@@ -5,6 +5,37 @@ using MobaGame.Framework.Core.Modules.Ability;
 
 namespace MobaGame.Entity.Abilities
 {
+    public class AbilityTargetingChecker
+	{
+        public AbilitySelfChecker SelfCheck { get; set; }
+        public AbilityTeamChecker TeamCheck { get; set; }
+
+        public bool IsForbidden(Actor actor) => !IsAllowed(actor);
+        public bool IsAllowed(Actor actor)
+		{
+            if (SelfCheck!=null)
+                if (!SelfCheck.IsAllowed(actor))
+                    return false;
+            if (TeamCheck != null)
+                if (!TeamCheck.IsAllowed(actor))
+                    return false;
+            return true;
+		}
+	}
+    public class AbilitySelfChecker
+	{
+        public AbilitySelfChecker(Actor self, bool allowSelf = default)
+		{
+            Self = self;
+            AllowSelf = allowSelf;
+		}
+        public Actor Self { get; }
+        public bool AllowSelf { get; set; }
+
+        public bool IsAllowed(Actor actor) => AllowSelf || actor != Self;
+        public bool IsForbidden(Actor actor) => !IsAllowed(actor);
+
+    }
     public class AbilityTeamChecker
     {
         public static AbilityTeamChecker AllyOnly(ITeamable teamable) => new AbilityTeamChecker(teamable,TeamRelationFlag.Ally);

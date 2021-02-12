@@ -23,7 +23,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
         [SerializeField] private GameObject _nightmareFX;
         private DurationTimer _cooldownTimer;
 #pragma warning restore 0649
-        private AbilityTeamChecker TeamChecker { get; set; }
+        private AbilityTargetingChecker TargetingChecker { get; set; }
 
         private void ApplyFX(Transform target, float duration)
         {
@@ -47,7 +47,11 @@ namespace MobaGame.Entity.Abilities.DarkHeart
             _ticks = new List<TickAction>();
             _cooldownTimer = new DurationTimer(_cooldown, true);
             Register(data);
-            TeamChecker = AbilityTeamChecker.NonAllyOnly(Modules.Teamable);
+            TargetingChecker = new AbilityTargetingChecker()
+            {
+                SelfCheck = new AbilitySelfChecker(data),
+                TeamCheck = AbilityTeamChecker.NonAllyOnly(Modules.Teamable)
+            };
         }
 
         public override void ConfirmCast()
@@ -59,13 +63,10 @@ namespace MobaGame.Entity.Abilities.DarkHeart
                 return;
             if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
                 return;
-            if (actor == Self)
-                return;
             if (!AbilityHelper.InRange(Self.transform, actor.transform, _castRange))
                 return;
-            if(actor.TryGetModule<ITeamable>(out var teamable))
-                if (Modules.Teamable?.IsAlly(teamable) ?? false)
-                    return;
+            if (TargetingChecker.IsForbidden(actor))
+                return;
             if (actor.TryGetModule<ITargetable>(out var targetable))
                 if (!targetable.AllowSpellTargets)
                     return;
