@@ -7,7 +7,7 @@ using UnityEngine;
 namespace MobaGame.Entity.Abilities.GrimDeath
 {
     [CreateAssetMenu(menuName = "Ability/GrimDeath/Reap")]
-    public class Reap : AbilityObject, IVectorTargetAbility
+    public class Reap : AbilityObject
     {
         [SerializeField]
         private float _searchRange;

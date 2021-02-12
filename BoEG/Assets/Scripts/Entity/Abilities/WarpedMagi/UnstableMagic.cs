@@ -32,7 +32,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         [SerializeField] private GameObject _unstableMagicFX;
 
         #region State Variables
-        private AbilityTeamChecker TeamChecker { get; set; }
+        private TeamableChecker TeamChecker { get; set; }
         
 
         #endregion
@@ -44,7 +44,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             base.Initialize(data);
             Register(data);
             _cooldownTimer = new DurationTimer(_cooldown, true);
-            TeamChecker = new AbilityTeamChecker(Modules.Teamable,TeamRelationFlag.Neutral|TeamRelationFlag.Enemy);
+            TeamChecker = new TeamableChecker(Modules.Teamable,TeamRelationFlag.Neutral|TeamRelationFlag.Enemy);
         }
 
         public override void ConfirmCast()

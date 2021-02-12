@@ -1,6 +1,7 @@
 ﻿using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Types;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         [SerializeField] private float _pathWidth;
 #pragma warning restore 0649
 
-        private AbilityTeamChecker TeamChecker { get; set; }
+        private TeamableChecker TeamChecker { get; set; }
         private float CurrentCastRange => _overheat.Active ? _overheatCastRange : _castRange;
 
         /* Ground-Target Spell
@@ -39,7 +40,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             _cooldownTimer = new DurationTimer(_cooldown,true);
             Modules.Abilitiable.TryGetAbility(out _overheat);
             Register(data);
-            TeamChecker = AbilityTeamChecker.NonAllyOnly(Modules.Teamable);
+            TeamChecker = TeamableChecker.NonAllyOnly(Modules.Teamable);
         }
 
         public override void ConfirmCast()
@@ -50,7 +51,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             if (!AbilityHelper.TryGetWorld(ray, out var hit))
                 return;
             var range = _overheat.IsActive ? _overheatCastRange : _castRange;
-            if (!AbilityHelper.InRange(Self.transform, hit.point, range))
+            if ((Self.transform.position - hit.point).sqrMagnitude <= (range * range))
                 return;
             if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
                 return;

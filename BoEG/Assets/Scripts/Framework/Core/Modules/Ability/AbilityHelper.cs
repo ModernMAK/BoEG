@@ -67,39 +67,6 @@ namespace MobaGame.Framework.Core.Modules.Ability
             magicable.TrySpendMagic(abilityView.Cost);
 
 
-        public static bool InRange(Vector3 a, Vector3 b, float range) =>
-            (a - b).sqrMagnitude < range * range;
-
-        public static bool InRange(Transform a, Vector3 b, float range) =>
-            InRange(a.position, b, range);
-
-        public static bool InRange(Vector3 a, Transform b, float range) =>
-            InRange(a, b.position, range);
-
-        public static bool InRange(Transform a, Transform b, float range) =>
-            InRange(a.position, b.position, range);
-
-
-        [Obsolete("Use TeamChecker")]
-        public static bool SameTeam(ITeamable teamable, Actor actor, bool nullValue = false) =>
-            SameTeam(teamable, actor, out _, nullValue);
-
-        [Obsolete("Use TeamChecker")]
-        public static bool SameTeam(ITeamable teamable, Actor actor, out ITeamable otherTeamable,
-            bool nullValue = false)
-        {
-            otherTeamable = actor.GetModule<ITeamable>();
-            return SameTeam(teamable, otherTeamable, nullValue);
-        }
-
-        [Obsolete("Use TeamChecker")]
-        public static bool SameTeam(ITeamable teamable, ITeamable otherTeamable, bool nullValue)
-        {
-            if (teamable == null)
-                return nullValue;
-            return teamable.SameTeam(otherTeamable);
-        }
-
 
         public static Actor GetActor(RaycastHit hit) => GetActor(hit.collider);
 

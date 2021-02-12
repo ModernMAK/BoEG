@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using MobaGame.Assets.Scripts.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Types;
 using MobaGame.FX;
 using UnityEngine;
@@ -9,7 +11,7 @@ using UnityEngine;
 namespace MobaGame.Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(menuName = "Ability/DarkHeart/Nightmare")]
-    public class Nightmare : AbilityObject, IObjectTargetAbility<Actor>, IListener<IStepableEvent>, IStatCostAbilityView,
+    public class Nightmare : AbilityObject, IReflectableAbility, IListener<IStepableEvent>, IStatCostAbilityView,
         ICooldownAbilityView
     {
 #pragma warning disable 0649
@@ -19,11 +21,10 @@ namespace MobaGame.Entity.Abilities.DarkHeart
         [SerializeField] private int _tickCount;
         [SerializeField] private float _tickDamage;
         private List<TickAction> _ticks;
-        [SerializeField] private float _cooldown;
+        [SerializeField] private float _cooldownDuration;
         [SerializeField] private GameObject _nightmareFX;
-        private DurationTimer _cooldownTimer;
 #pragma warning restore 0649
-        private AbilityTargetingChecker TargetingChecker { get; set; }
+        private AbilityPredicateBuilder CheckBuilder { get; set; }
 
         private void ApplyFX(Transform target, float duration)
         {
@@ -45,28 +46,31 @@ namespace MobaGame.Entity.Abilities.DarkHeart
         {
             base.Initialize(data);
             _ticks = new List<TickAction>();
-            _cooldownTimer = new DurationTimer(_cooldown, true);
-            Register(data);
-            TargetingChecker = new AbilityTargetingChecker()
+            CheckBuilder = new AbilityPredicateBuilder(data)
             {
-                SelfCheck = new AbilitySelfChecker(data),
-                TeamCheck = AbilityTeamChecker.NonAllyOnly(Modules.Teamable)
+                AllowSelf = false,
+                Teamable = TeamableChecker.NonAllyOnly(Modules.Teamable),
+                Cooldown = new Cooldown(_cooldownDuration),
+                CastRange = new CastRange(data.transform) { MaxDistance = _castRange }
             };
+            CheckBuilder.RebuildChecks();
+            Register(data);
         }
 
         public override void ConfirmCast()
         {
             var ray = AbilityHelper.GetScreenRay();
-            if (!_cooldownTimer.Done)
-                return;
             if (!AbilityHelper.TryGetEntity(ray, out var hit))
                 return;
             if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
                 return;
-            if (!AbilityHelper.InRange(Self.transform, actor.transform, _castRange))
+
+
+            if (!CheckBuilder.AllowCast())
                 return;
-            if (TargetingChecker.IsForbidden(actor))
+            if (!CheckBuilder.AllowTarget(actor))
                 return;
+
             if (actor.TryGetModule<ITargetable>(out var targetable))
                 if (!targetable.AllowSpellTargets)
                     return;
@@ -76,28 +80,29 @@ namespace MobaGame.Entity.Abilities.DarkHeart
                 return;
 
 
-            _cooldownTimer.Reset();
-            CastObjectTarget(actor);
+            CheckBuilder.Cooldown.Begin();
+            Cast(Self,actor);
             Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, Cost));
         }
 
         private void OnStep(float deltaTime)
         {
             _ticks.AdvanceAllAndRemoveDone(deltaTime);
-            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
         }
 
         public void Register(IStepableEvent source)
         {
             source.Step += OnStep;
+            CheckBuilder.Cooldown.Register(source);
         }
 
         public void Unregister(IStepableEvent source)
         {
             source.Step += OnStep;
+            CheckBuilder.Cooldown.Unregister(source);
         }
 
-        public void CastObjectTarget(Actor target)
+        private void Cast(Actor caster, Actor target)
         {
             //Deal damage
             var damagePerTick = new Damage(_tickDamage, DamageType.Magical, DamageFlags.Ability);
@@ -129,15 +134,16 @@ namespace MobaGame.Entity.Abilities.DarkHeart
             _ticks.Add(tickWrapper);
             ApplyFX(target.transform, _tickInterval * _tickCount);
         }
-
         public float Cost => _manaCost;
 
         public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
 
-        public float Cooldown => _cooldownTimer.Duration;
+        public void CastReflected(Actor caster) => Cast(caster, Self);
 
-        public float CooldownRemaining => _cooldownTimer.RemainingTime;
+		public float Cooldown => CheckBuilder.Cooldown.Duration;
 
-        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
+        public float CooldownRemaining => CheckBuilder.Cooldown.Remaining;
+
+        public float CooldownNormal => CheckBuilder.Cooldown.Normal;
     }
 }
