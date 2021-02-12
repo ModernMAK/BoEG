@@ -5,6 +5,7 @@ using MobaGame.Framework.Core.Trigger;
 using MobaGame.Framework.Types;
 using System;
 using System.Collections.Generic;
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using UnityEngine;
 
 namespace MobaGame.Entity.Abilities.ForestGuardian
@@ -14,7 +15,8 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
     {
 #pragma warning disable 0649
         private BlackRoseCurse _blackRose;
-        private Sprite _rrIcon => _icon;
+        [SerializeField]
+        private Sprite _rrIcon;
         [SerializeField]
         private Sprite _brIcon;
         
@@ -37,6 +39,12 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
 #pragma warning restore 0649
 
 
+        public SimpleAbilityView View { get; set; }
+
+        public AbilityPredicateBuilder CheckBuilder { get; set; }
+        private TeamableChecker _rrTeamChecker;
+        private TeamableChecker _brTeamChecker;
+        
         public override void Initialize(Actor data)
         {
             base.Initialize(data);
@@ -57,6 +65,20 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
 
             _nurtureTargets = new List<IHealable>();
             _neglectTargets = new List<IHealable>();
+            
+            _rrTeamChecker = TeamableChecker.AllyOnly(Modules.Teamable);
+            _brTeamChecker = TeamableChecker.NonAllyOnly(Modules.Teamable);
+            CheckBuilder = new AbilityPredicateBuilder(data)
+            {
+                AllowSelf = false
+            };
+            View = new SimpleAbilityView()
+            {
+                Icon = _rrIcon,
+                Cooldown = CheckBuilder.Cooldown,
+                StatCost = CheckBuilder.MagicCost,
+            };
+            CheckBuilder.RebuildChecks();
         }
 
         public override void Setup()
@@ -64,14 +86,19 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
             _blackRose.Toggled += BlackRose_Toggled;
         }
 
+        public override IAbilityView GetAbilityView() => View;
+
         private void BlackRose_Toggled(object sender, ChangedEventArgs<bool> e)
         {
             ClearNeglectTargets();
             ClearNurtureTargets();
             var isBlackRose = e.After;
+            View.Icon = isBlackRose ? _brIcon : _rrIcon;
             _neglectAura.Collider.enabled = isBlackRose;
             _nurtureAura.Collider.enabled = !isBlackRose;
-
+            CheckBuilder.AllowSelf = !isBlackRose;
+            CheckBuilder.RebuildChecks();
+                
             if (isBlackRose)
                 RecalculateNeglectTargets();
             else
@@ -96,6 +123,8 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
                 return;
             if (!actor.TryGetModule<IHealable>(out var healable))
                 return;
+            if(!CheckBuilder.AllowTarget(actor))
+                return;
             healable.HealingModifiers += NeglectModifier;
             _neglectTargets.Add(healable);
         }
@@ -115,6 +144,8 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
                 if (!AbilityHelper.TryGetActor(col, out var actor))
                     return;
                 if (!actor.TryGetModule<IHealable>(out var healable))
+                    return;
+                if(!CheckBuilder.AllowTarget(actor))
                     return;
                 healable.HealingModifiers += NeglectModifier;
                 _neglectTargets.Add(healable);
@@ -138,6 +169,8 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
             if (!AbilityHelper.TryGetActor(col, out var actor))
                 return;
             if (!actor.TryGetModule<IHealable>(out var healable))
+                return;
+            if(!CheckBuilder.AllowTarget(actor))
                 return;
             healable.HealingModifiers += NurtrueModifier;
             _nurtureTargets.Add(healable);
@@ -176,6 +209,8 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
                 if (!AbilityHelper.TryGetActor(col, out var actor))
                     return;
                 if (!actor.TryGetModule<IHealable>(out var healable))
+                    return;
+                if(!CheckBuilder.AllowTarget(actor))
                     return;
                 healable.HealingModifiers += NurtrueModifier;
                 _nurtureTargets.Add(healable);

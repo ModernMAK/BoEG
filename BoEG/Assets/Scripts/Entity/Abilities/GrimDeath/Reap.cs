@@ -9,6 +9,8 @@ namespace MobaGame.Entity.Abilities.GrimDeath
     [CreateAssetMenu(menuName = "Ability/GrimDeath/Reap")]
     public class Reap : AbilityObject
     {
+        [SerializeField] private Sprite _icon;
+        
         [SerializeField]
         private float _searchRange;
 
@@ -33,6 +35,9 @@ namespace MobaGame.Entity.Abilities.GrimDeath
                 
             CastVectorTarget(pos,dir);
         }
+
+        public SimpleAbilityView View { get; set; }
+        public override IAbilityView GetAbilityView() => View;
 
         public void CastVectorTarget(Vector3 worldPos, Vector3 direction)
         {

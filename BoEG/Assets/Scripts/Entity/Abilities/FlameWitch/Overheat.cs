@@ -4,6 +4,7 @@ using MobaGame.Framework.Core.Modules.Ability;
 using MobaGame.Framework.Types;
 using MobaGame.FX;
 using System;
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using UnityEngine;
 
 namespace MobaGame.Entity.Abilities.FlameWitch
@@ -15,9 +16,10 @@ namespace MobaGame.Entity.Abilities.FlameWitch
      * Drains mana.
     */
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Overheat")]
-    public class Overheat : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbilityView, IToggleableAbilityView
+    public class Overheat : AbilityObject, IListener<IStepableEvent>, IToggleable
     {
 #pragma warning disable 0649
+        [SerializeField] public Sprite _icon;
         [SerializeField] public float _damagePerSecond;
 
         [Header("Damage On Death")] public float _deathRange;
@@ -26,7 +28,6 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         [Header("Damage Over Time")] [SerializeField]
         public float _dotRange;
 
-        [SerializeField] public bool _isActive;
         [Header("Mana Cost")] [SerializeField] public float _manaCostPerSecond;
 
         private TickAction _tickHelper;
@@ -34,12 +35,20 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         [SerializeField] private GameObject _overheatFX;
         private ParticleSystem _particleSystemInstance;
 
-        public bool ShowActive => true;
 
-        public event EventHandler<ChangedEventArgs<bool>> Toggled;
 #pragma warning restore 0649
 
-		public bool Active => _isActive;
+		public bool Active
+        {
+            get => View.Toggleable.Active;
+            set => View.Toggleable.Active = value;
+        }
+
+        event EventHandler<ChangedEventArgs<bool>> IToggleable.Toggled
+        {
+            add => View.Toggleable.Toggled += value;
+            remove => View.Toggleable.Toggled -= value;
+        }
         
         private ParticleSystem ApplyFX(Transform target)
         {
@@ -54,16 +63,10 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             return ps;
         }
 
-        public bool IsActive
-        {
-            get => _isActive;
-            set => _isActive = value;
-        }
-
 
         public void OnStep(float deltaTime)
         {
-            if (IsActive)
+            if (Active)
                 _tickHelper.Advance(deltaTime);
         }
 
@@ -72,44 +75,57 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         {
             base.Initialize(data);
             _tickHelper = new InfiniteTickAction {Callback = OnTick, TickInterval = 1f};
+            
+            CheckBuilder = new AbilityPredicateBuilder(data)
+            {
+                Teamable = TeamableChecker.NonAllyOnly(Modules.Teamable),
+                MagicCost = new MagicCost(Modules.Magicable,_manaCostPerSecond),
+                AllowSelf = false,
+            };
+            View = new SimpleAbilityView()
+            {
+                Icon = _icon,
+                Cooldown = CheckBuilder.Cooldown,
+                StatCost = CheckBuilder.MagicCost,
+                Toggleable = new ToggleableAbilityView()
+            };
+            CheckBuilder.RebuildChecks();
+            
             Register(data);
             if (_particleSystemInstance == null)
                 _particleSystemInstance = ApplyFX(data.transform);
         }
 
-        public override void ConfirmCast()
-        {
-            CastNoTarget();
-        }
+        public SimpleAbilityView View { get; set; }
+
+        public AbilityPredicateBuilder CheckBuilder { get; set; }
 
         public void UpdateParticleSystemState()
         {
             if (_particleSystemInstance != null)
-                if (IsActive)
+                if (Active)
                     _particleSystemInstance.Play();
                 else
                     _particleSystemInstance.Stop();
         }
 
-        public void CastNoTarget()
+        public override void ConfirmCast()
         {
-            IsActive = !IsActive;
+            Active = !Active;
 
             UpdateParticleSystemState();
 
-            if (IsActive)
+            if (Active)
             {
-                //Immediately start ticking
                 OnTick();
             }
-
-
-            //Do not notify as a spell cast
         }
+
+        public override IAbilityView GetAbilityView() => View;
 
         private void OnTick()
         {
-            if (IsActive && Modules.Magicable.TrySpendMagic(Cost))
+            if (Active && CheckBuilder.MagicCost.TrySpendCost())
             {
                 var dotTargets =
                     Physics.OverlapSphere(Self.transform.position, _dotRange, (int) LayerMaskHelper.Entity);
@@ -117,13 +133,10 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 {
                     if (!AbilityHelper.TryGetActor(col, out var actor))
                         continue;
-                    if (IsSelf(actor))
+                    if (!CheckBuilder.AllowTarget(actor))
                         continue;
                     if (!actor.TryGetModule<IDamageable>(out var damageTarget))
                         continue;
-                    if (actor.TryGetModule<ITeamable>(out var teamable))
-                        if (Modules.Teamable?.IsAlly(teamable) ?? false)
-                            continue;
 
                     var damage = new Damage(_damagePerSecond, DamageType.Magical, DamageFlags.Ability);
                     damageTarget.TakeDamage(Self, damage);
@@ -131,7 +144,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             }
             else
             {
-                IsActive = false;
+                Active = false;
                 UpdateParticleSystemState();
             }
         }
@@ -145,9 +158,5 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         {
             source.Step -= OnStep;
         }
-
-        public float Cost => _manaCostPerSecond;
-
-        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
     }
 }

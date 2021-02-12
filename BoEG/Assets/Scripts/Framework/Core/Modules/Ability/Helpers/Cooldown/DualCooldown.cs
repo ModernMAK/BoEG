@@ -13,9 +13,9 @@ namespace MobaGame.Framework.Core.Modules.Ability.Helpers
 	{
 		public DualCooldown(float active, float inactive, bool updateBoth = true) : this(new DurationTimer(active, true), new DurationTimer(inactive,true), updateBoth) { }
 
-		public DualCooldown(DurationTimer active, DurationTimer inactive, bool updateBoth = true)
+		public DualCooldown(DurationTimer inactive, DurationTimer active, bool updateBoth = true)
 		{
-			Timer = active;
+			Timer = inactive;
 			InactiveTimer = inactive;
 			ActiveTimer = active;
 			UpdateBoth = updateBoth;

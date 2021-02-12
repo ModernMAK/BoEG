@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Core.Trigger;
 using MobaGame.Framework.Types;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
     public class MagicalBacklash : AbilityObject, IListener<IStepableEvent>
     {
 #pragma warning disable 0649
+        [SerializeField] private Sprite _icon;
         [SerializeField] private float _damagePerManaSpent;
         [SerializeField] private float _aoeRange;
         private TriggerHelper<SphereCollider> _sphereCollider;
@@ -31,6 +33,9 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         }
 
 
+        public AbilityPredicateBuilder Checker { get; set; }
+        public SimpleAbilityView View { get; set; }
+        public override IAbilityView GetAbilityView() => View;
         public override void Initialize(Actor data)
         {
             base.Initialize(data);
@@ -38,6 +43,15 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             _sphereCollider.Trigger.Enter += OnActorEnter;
             _sphereCollider.Trigger.Exit += OnActorExit;
             _targetBuffer = new List<IAbilitiable>();
+            Checker = new AbilityPredicateBuilder(data)
+            {
+                AllowSelf = false,
+                Teamable = TeamableChecker.NonAllyOnly(Modules.Teamable)
+            };
+            View = new SimpleAbilityView()
+            {
+                Icon = _icon
+            };
             Register(data);
             if(data.TryGetModule<IKillable>(out var killable))
                 killable.Died += SelfDied;
@@ -52,8 +66,6 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         {
             var collider = args.Collider;
             if (!AbilityHelper.TryGetActor(collider, out var actor))
-                return;
-            if (IsSelf(actor))
                 return;
             if (!actor.TryGetModule<IAbilitiable>(out var abilitiable))
                 return;
@@ -76,9 +88,8 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         private void OnAbilityCast(object sender, AbilityEventArgs args)
         {
             var caster = args.Caster;
-            if (caster.TryGetModule<ITeamable>(out var teamable))
-                if (Modules.Teamable?.IsAlly(teamable) ?? false)
-                    return;
+            if(!Checker.AllowTarget(caster))
+                return;
 
             if (!caster.TryGetModule<IDamageable>(out var damageTarget))
                 return;

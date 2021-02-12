@@ -33,5 +33,6 @@ namespace MobaGame.Framework.Core.Modules.Ability.Helpers
 		public void Register(IStepableEvent source) => source.PreStep += StepTimers;
 		public void Unregister(IStepableEvent source) => source.PreStep -= StepTimers;
 		protected virtual void StepTimers(float deltaTime) => Timer.AdvanceTimeIfNotDone(deltaTime);
+		public void Advance(float deltaTime) => StepTimers(deltaTime);
 	}
 }

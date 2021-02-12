@@ -9,10 +9,10 @@ namespace MobaGame.Framework.Core.Modules.Ability.Helpers
 	{
         private static bool InternalIsSelf(Actor self, Actor other) => self == other;
 		public static Func<Actor, bool> IsSelf(Actor self) => PartialFunctions.Partial<Actor, Actor, bool>(InternalIsSelf, self);
-		public static Func<bool> IsDone(Cooldown cd)
+		public static Func<bool> IsDone(CooldownBase cd)
 		{
-			bool wrapper() => cd.IsDone;
-			return wrapper;
+			bool Wrapper() => cd.IsDone;
+			return Wrapper;
 		}
 	}
 }

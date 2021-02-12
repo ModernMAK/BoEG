@@ -1,14 +1,14 @@
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Types;
 using UnityEngine;
 
 namespace MobaGame.Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/MagicalInstability")]
-    public class MagicalInstability : AbilityObject, IListener<IStepableEvent>, INoTargetAbility, IStatCostAbilityView,
-        ICooldownAbilityView, IToggleableAbilityView
+    public class MagicalInstability : AbilityObject, IListener<IStepableEvent>
     {
         /* Self-Target Spell
          * Negates Magical Damage.
@@ -21,28 +21,41 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         [SerializeField] private float _duration;
         private DurationTimer _activeTimer;
         [Header("Cooldown")] private float _cooldown;
-        private DurationTimer _cooldownTimer;
 
         private IArmorable _armorable;
 
-        private bool _isActive;
-
-		public event System.EventHandler<ChangedEventArgs<bool>> Toggled;
+        public AbilityPredicateBuilder Checker { get; set; }
+        public SimpleAbilityView View { get; set; }
+        public override IAbilityView GetAbilityView() => View;
 #pragma warning restore 0649
 
 		public override void Initialize(Actor data)
         {
             base.Initialize(data);
             _activeTimer = new DurationTimer(_duration);
-            _cooldownTimer = new DurationTimer(_cooldown, true);
             _armorable = Self.GetModule<IArmorable>();
+            Checker = new AbilityPredicateBuilder(data)
+            {
+                Cooldown = new Cooldown(_cooldown),
+                MagicCost = new MagicCost(Modules.Magicable, _manaCost)
+            };
+            View = new SimpleAbilityView()
+            {
+                Cooldown = Checker.Cooldown,
+                StatCost = Checker.MagicCost,
+                Toggleable = new ToggleableAbilityView()
+                {
+                    ShowActive = true
+                }
+            };
+            
             Register(data);
         }
 
         private void OnDamageMitigation(object sender, ChangableEventArgs<SourcedDamage> e)
         {
             //Dont do anything if we aren't on
-            if (!_isActive)
+            if (!View.Toggleable.Active)
                 return;
 
             var dmg = e.After.Value;
@@ -70,17 +83,15 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
 
         public override void ConfirmCast()
         {
-            if (Active)
+            if (View.Toggleable.Active)
                 return;
-            if (!_cooldownTimer.Done)
+            if(!Checker.AllowCast())
                 return;
-
-            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
-                return;
-            _isActive = true;
+            View.Toggleable.Active = true;
             CastNoTarget();
-            _activeTimer.Reset();
-            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, Cost));
+            Checker.DoCast();
+            Checker.Cooldown.End();
+            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, View.StatCost.Cost));
         }
 
 
@@ -91,11 +102,12 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
 
         public void OnPreStep(float deltaTime)
         {
-            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime); //Advance first, otherwise cooldown is started too early
-            if (_activeTimer.AdvanceTimeIfNotDone(deltaTime))
+            if(!View.Toggleable.Active)
+                Checker.Cooldown.Advance(deltaTime); //Advance first, otherwise cooldown is started too early
+            else if (_activeTimer.AdvanceTimeIfNotDone(deltaTime))
             {
-                _isActive = false;
-                _cooldownTimer.Reset();
+                View.Toggleable.Active = false;
+                Checker.Cooldown.Begin();
                 _armorable.DamageMitigation -= OnDamageMitigation;
             }
         }
@@ -110,16 +122,5 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             source.PreStep -= OnPreStep;
         }
 
-        public float Cost => _manaCost;
-
-        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
-
-        public float Cooldown => _cooldownTimer.Duration;
-        public float CooldownRemaining => _cooldownTimer.RemainingTime;
-        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
-
-        public bool Active => _isActive;
-
-        public bool ShowActive => true;
     }
 }

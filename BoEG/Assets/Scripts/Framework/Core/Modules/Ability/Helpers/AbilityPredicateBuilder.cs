@@ -15,7 +15,7 @@ namespace MobaGame.Framework.Core.Modules.Ability.Helpers
 		private Actor Self { get; }
 		public bool AllowSelf { get; set; }
 		public TeamableChecker Teamable { get; set; }
-		public Cooldown Cooldown { get; set; }
+		public CooldownBase Cooldown { get; set; }
 		public CastRange CastRange { get; set; }
 		public MagicCost MagicCost { get; set; }
 		/// <summary>

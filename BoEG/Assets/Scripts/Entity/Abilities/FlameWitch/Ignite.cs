@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Types;
 using MobaGame.FX;
 using UnityEngine;
@@ -18,10 +19,10 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
 
     [CreateAssetMenu(menuName = "Ability/FlameWitch/Ignite")]
-    public class Ignite : AbilityObject, IListener<IStepableEvent>, IObjectTargetAbility<Actor>, IStatCostAbilityView,
-        ICooldownAbilityView
+    public class Ignite : AbilityObject, IListener<IStepableEvent>, IReflectableAbility
     {
 #pragma warning disable 0649
+        [SerializeField] private Sprite _icon;
         [Header("Cast Range")] [SerializeField]
         private float _castRange = 5f;
 
@@ -30,7 +31,6 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
 
         [Header("Cooldown")] [SerializeField] private float _cooldown;
-        private DurationTimer _cooldownTimer;
 
         [Header("Mana Cost")] [SerializeField] private float _manaCost = 100f;
 
@@ -44,6 +44,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
         [SerializeField] private float _tickDamage;
 
+        public CastRange CastRange { get; set; }
 
         private Overheat _overheatAbility;
 
@@ -68,7 +69,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             die.StartTimer();
         }
 
-        private bool IsInOverheat => _overheatAbility != null && _overheatAbility.IsActive;
+        private bool IsInOverheat => _overheatAbility != null && _overheatAbility.Active;
 
         public void OnStep(float deltaTime)
         {
@@ -92,12 +93,10 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 {
                     if (!AbilityHelper.TryGetActor(collider, out var actor))
                         continue;
-                    if (IsSelf(actor))
+                    if(!CheckBuilder.AllowTarget(actor))
                         continue;
                     if (actor == target) //Already added
                         continue;
-                    if (AbilityHelper.SameTeam(Modules.Teamable, actor))
-                        continue; //Skip allies
                     dotTargets.Add(actor);
                 }
             }
@@ -140,31 +139,42 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         {
             base.Initialize(data);
             Modules.Abilitiable.TryGetAbility(out _overheatAbility);
-            _cooldownTimer = new DurationTimer(_cooldown, true);
-            //Manually inject the ability as a stepable
+            
+            CheckBuilder = new AbilityPredicateBuilder(data)
+            {
+                AllowSelf = false,
+                Teamable = TeamableChecker.NonAllyOnly(Modules.Teamable),
+                Cooldown = new Cooldown(_cooldown),
+                MagicCost = new MagicCost(Modules.Magicable, _manaCost),
+            };
+            View = new SimpleAbilityView
+            {
+                Cooldown = CheckBuilder.Cooldown,
+                StatCost = CheckBuilder.MagicCost,
+                Icon = _icon,
+            };
+            CastRange = new CastRange(data.transform){MaxDistance = _castRange};
+            CheckBuilder.RebuildChecks();
             Register(data);
             _ticks = new List<TickAction>();
         }
 
+        public SimpleAbilityView View { get; set; }
+
+        public AbilityPredicateBuilder CheckBuilder{ get; set; }
+
         public override void ConfirmCast()
         {
-            if (!_cooldownTimer.Done)
+            if (!CheckBuilder.AllowCast())
                 return;
 
-            var ray = AbilityHelper.GetScreenRay();
-            if (!AbilityHelper.TryGetEntity(ray, out var hit))
+            if (!AbilityHelper.TryRaycastActor(out var actor))
                 return;
-
-            if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
+            
+            if (!CastRange.InRange(actor))
                 return;
-
-            if (IsSelf(actor))
-                return;
-
-            if (!AbilityHelper.InRange(Self.transform, actor.transform.position, _castRange))
-                return;
-
-            if (AbilityHelper.SameTeam(Modules.Teamable, actor))
+            
+            if (!CheckBuilder.AllowTarget(actor))
                 return;
 
             if (!AbilityHelper.AllowSpellTargets(actor))
@@ -174,38 +184,31 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 return;
 
 
-            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
-                return;
 
-            _cooldownTimer.Reset();
+            CheckBuilder.DoCast();
             CastObjectTarget(actor);
-            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, Cost));
+            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, CheckBuilder.MagicCost.Cost));
         }
+
+        public override IAbilityView GetAbilityView() => View;
 
 
         public void Register(IStepableEvent source)
         {
-            source.PreStep += OnPreStep;
+            CheckBuilder.Cooldown.Register(source);
             source.Step += OnStep;
         }
 
-        private void OnPreStep(float deltaTime)
-        {
-            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
-        }
 
         public void Unregister(IStepableEvent source)
         {
-            source.PreStep -= OnPreStep;
+            CheckBuilder.Cooldown.Unregister(source);
             source.Step -= OnStep;
         }
 
-        public float Cost => _manaCost;
-
-        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
-
-        public float Cooldown => _cooldownTimer.Duration;
-        public float CooldownRemaining => _cooldownTimer.RemainingTime;
-        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
+        public void CastReflected(Actor caster)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

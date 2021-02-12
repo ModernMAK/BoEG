@@ -3,15 +3,14 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules.Ability
 {
-    public class AbilityObject : ScriptableObject, IAbility
+    public abstract class AbilityObject : ScriptableObject, IAbility
     {
-#pragma warning disable 0649
 
-
-        private ModuleCache _cache;
-#pragma warning disable 0649
-
-        protected ModuleCache Modules => _cache;
+        protected ModuleCache Modules
+        {
+            get;
+            private set;
+        } 
 
         public Actor Self { get; private set; }
 
@@ -19,7 +18,7 @@ namespace MobaGame.Framework.Core.Modules.Ability
         {
             Self = data;
             AbilityHelper.Initialize(); //HACK TODO make this not a hack
-            _cache = new ModuleCache(data.gameObject);
+            Modules = new ModuleCache(data.gameObject);
         }
 
         public virtual void Setup()

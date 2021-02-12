@@ -110,6 +110,8 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 			Modules.Modifiable.AddModifier(_modifier);
 		}
 
+		public SimpleAbilityView View { get; set; }
+		public override IAbilityView GetAbilityView() => View;
 		private void OnDeath(object sender, DeathEventArgs e)
 		{
 			HalveSouls();

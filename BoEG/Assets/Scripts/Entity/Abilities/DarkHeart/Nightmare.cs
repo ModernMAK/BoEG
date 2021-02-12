@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Core;
@@ -27,6 +28,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
         private List<TickAction> Ticks { get; set; }            
         private AbilityPredicateBuilder CheckBuilder { get; set; }
         private SimpleAbilityView View { get; set; }
+        public override IAbilityView GetAbilityView() => View;
 
         public override void Initialize(Actor data)
         {
@@ -52,12 +54,8 @@ namespace MobaGame.Entity.Abilities.DarkHeart
 
         public override void ConfirmCast()
         {
-            var ray = AbilityHelper.GetScreenRay();
-            if (!AbilityHelper.TryGetEntity(ray, out var hit))
+            if (!AbilityHelper.TryRaycastActor(out var actor))
                 return;
-            if (!AbilityHelper.TryGetActor(hit.collider, out var actor))
-                return;
-
 
             if (!CheckBuilder.AllowCast())
                 return;
@@ -73,7 +71,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
             CheckBuilder.DoCast();
 
             Cast(Self,actor);
-            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, Cost));
+            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, View.StatCost.Cost));
         }
 
         private void OnStep(float deltaTime)
@@ -97,12 +95,13 @@ namespace MobaGame.Entity.Abilities.DarkHeart
         {
             //Deal damage
             var damagePerTick = new Damage(_tickDamage, DamageType.Magical, DamageFlags.Ability);
+            var damage = new SourcedDamage(caster,damagePerTick);
             var damageable = target.GetModule<IDamageable>();
 
 
             void InternalTick()
             {
-                damageable.TakeDamage(Self, damagePerTick);
+                damageable.TakeDamage(damage);
             }
 
             var tickWrapper = new TickAction

@@ -31,7 +31,7 @@ namespace MobaGame.UI
             
             UpdateImageFill(0f, _iconCooldown);
             if (_view.Cooldown != null)
-                UpdateImageFill(1f - _view.Cooldown.CooldownNormal, _iconCooldown, 3);
+                UpdateImageFill(1f - _view.Cooldown.Normal, _iconCooldown, 3);
 
             bool outOfMana = false;
             bool isActive = false;
