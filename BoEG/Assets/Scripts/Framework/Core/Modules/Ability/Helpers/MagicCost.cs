@@ -1,11 +1,11 @@
 using System;
 using MobaGame.Framework.Utility;
 
-namespace MobaGame.Framework.Core.Modules.Ability
+namespace MobaGame.Framework.Core.Modules.Ability.Helpers
 {
-    public class StatCostAbilityView : IStatCostAbilityView
+    public class MagicCost : IStatCostAbilityView
     {
-        public StatCostAbilityView(IMagicable magicable, float cost = default)
+        public MagicCost(IMagicable magicable, float cost = default)
         {
             _magicable = magicable;
             Cost = cost;
@@ -26,6 +26,7 @@ namespace MobaGame.Framework.Core.Modules.Ability
         }
         public bool CanSpendCost() => _magicable.HasMagic(Cost);
         public bool TrySpendCost() => _magicable.TrySpendMagic(Cost);
+        public void SpendCost() => _magicable.SpendMagic(Cost);
         public event EventHandler Changed;
         private void OnChanged() => Changed?.Invoke(this,EventArgs.Empty);
     }

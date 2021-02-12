@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using MobaGame.Assets.Scripts.Framework.Core.Modules.Ability.Helpers;
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
-using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Types;
 using MobaGame.FX;
 using UnityEngine;
@@ -11,47 +10,41 @@ using UnityEngine;
 namespace MobaGame.Entity.Abilities.DarkHeart
 {
     [CreateAssetMenu(menuName = "Ability/DarkHeart/Nightmare")]
-    public class Nightmare : AbilityObject, IReflectableAbility, IListener<IStepableEvent>, IStatCostAbilityView,
-        ICooldownAbilityView
+    public class Nightmare : AbilityObject, IReflectableAbility, IListener<IStepableEvent>
     {
+        #region Variables
 #pragma warning disable 0649
-        [SerializeField] private float _manaCost;
+        [SerializeField] private Sprite _icon;
+		[SerializeField] private float _manaCost;
         [SerializeField] private float _castRange;
         [SerializeField] private float _tickInterval;
         [SerializeField] private int _tickCount;
         [SerializeField] private float _tickDamage;
-        private List<TickAction> _ticks;
         [SerializeField] private float _cooldownDuration;
         [SerializeField] private GameObject _nightmareFX;
 #pragma warning restore 0649
+        #endregion
+        private List<TickAction> Ticks { get; set; }            
         private AbilityPredicateBuilder CheckBuilder { get; set; }
-
-        private void ApplyFX(Transform target, float duration)
-        {
-            if (_nightmareFX == null)
-                return;
-            var instance = Instantiate(_nightmareFX, target.position, Quaternion.identity);
-            if (!instance.TryGetComponent<DieAfterDuration>(out var die))
-                die = instance.AddComponent<DieAfterDuration>();
-            if (!instance.TryGetComponent<FollowTarget>(out var follow))
-                follow = instance.AddComponent<FollowTarget>();
-            if (instance.TryGetComponent<ParticleSystem>(out var ps))
-                ps.Play();
-            follow.SetTarget(target);
-            die.SetDuration(duration);
-            die.StartTimer();
-        }
+        private SimpleAbilityView View { get; set; }
 
         public override void Initialize(Actor data)
         {
             base.Initialize(data);
-            _ticks = new List<TickAction>();
+            Ticks = new List<TickAction>();
             CheckBuilder = new AbilityPredicateBuilder(data)
             {
                 AllowSelf = false,
                 Teamable = TeamableChecker.NonAllyOnly(Modules.Teamable),
                 Cooldown = new Cooldown(_cooldownDuration),
-                CastRange = new CastRange(data.transform) { MaxDistance = _castRange }
+                CastRange = new CastRange(data.transform) { MaxDistance = _castRange },
+                MagicCost = new MagicCost(Modules.Magicable, _manaCost),
+            };
+            View = new SimpleAbilityView
+            {
+                Cooldown = CheckBuilder.Cooldown,
+                StatCost = CheckBuilder.MagicCost,
+                Icon = _icon,
             };
             CheckBuilder.RebuildChecks();
             Register(data);
@@ -76,18 +69,16 @@ namespace MobaGame.Entity.Abilities.DarkHeart
                     return;
             if (!AbilityHelper.HasModule<IDamageable>(actor.gameObject))
                 return;
-            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
-                return;
 
+            CheckBuilder.DoCast();
 
-            CheckBuilder.Cooldown.Begin();
             Cast(Self,actor);
             Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, Cost));
         }
 
         private void OnStep(float deltaTime)
         {
-            _ticks.AdvanceAllAndRemoveDone(deltaTime);
+            Ticks.AdvanceAllAndRemoveDone(deltaTime);
         }
 
         public void Register(IStepableEvent source)
@@ -127,23 +118,31 @@ namespace MobaGame.Entity.Abilities.DarkHeart
             void RemoveTick(object sender, DeathEventArgs args)
             {
                 killable.Died -= RemoveTick;
-                _ticks.Remove(tickWrapper);
+                Ticks.Remove(tickWrapper);
             }
 
 
-            _ticks.Add(tickWrapper);
+            Ticks.Add(tickWrapper);
             ApplyFX(target.transform, _tickInterval * _tickCount);
         }
-        public float Cost => _manaCost;
-
-        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
-
         public void CastReflected(Actor caster) => Cast(caster, Self);
 
-		public float Cooldown => CheckBuilder.Cooldown.Duration;
+        private void ApplyFX(Transform target, float duration)
+        {
+            if (_nightmareFX == null)
+                return;
+            var instance = Instantiate(_nightmareFX, target.position, Quaternion.identity);
+            if (!instance.TryGetComponent<DieAfterDuration>(out var die))
+                die = instance.AddComponent<DieAfterDuration>();
+            if (!instance.TryGetComponent<FollowTarget>(out var follow))
+                follow = instance.AddComponent<FollowTarget>();
+            if (instance.TryGetComponent<ParticleSystem>(out var ps))
+                ps.Play();
+            follow.SetTarget(target);
+            die.SetDuration(duration);
+            die.StartTimer();
+        }
 
-        public float CooldownRemaining => CheckBuilder.Cooldown.Remaining;
-
-        public float CooldownNormal => CheckBuilder.Cooldown.Normal;
     }
+
 }

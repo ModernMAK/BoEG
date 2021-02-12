@@ -1,5 +1,6 @@
 using System;
 using MobaGame.Entity.Abilities;
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Types;
 using UnityEngine;
 
@@ -20,8 +21,8 @@ namespace MobaGame.Framework.Core.Modules.Ability
         }
 
 
-        private CooldownAbilityView _cooldown;
-        public CooldownAbilityView Cooldown
+        private ICooldownView _cooldown;
+        public ICooldownView Cooldown
         {
             get => _cooldown;
             set
@@ -36,10 +37,9 @@ namespace MobaGame.Framework.Core.Modules.Ability
 
         private void OnInternalChanged(object sender, EventArgs e) => OnChanged();
 
-        ICooldownAbilityView IAbilityView.Cooldown => Cooldown;
 
-        private StatCostAbilityView _statCost;
-        public StatCostAbilityView StatCost { 
+        private MagicCost _statCost;
+        public MagicCost StatCost { 
             get => _statCost;
             set
             {

@@ -25,7 +25,7 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
 			{
 				Icon = _rrIcon,
 				Cooldown = new CooldownAbilityView(new DurationTimer(_cooldown,true)),
-				StatCost = new StatCostAbilityView(Modules.Magicable, _manaCost),
+				StatCost = new MagicCost(Modules.Magicable, _manaCost),
 				Toggleable = new ToggleableAbilityView(this)
 				{
 					ShowActive = false

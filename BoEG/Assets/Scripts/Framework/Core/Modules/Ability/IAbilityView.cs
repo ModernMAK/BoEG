@@ -7,7 +7,7 @@ namespace MobaGame.Framework.Core.Modules.Ability
         Sprite Icon { get; }
 
 
-        ICooldownAbilityView Cooldown { get; }
+        ICooldownView Cooldown { get; }
         IStatCostAbilityView StatCost { get; }
 
         IToggleableAbilityView Toggleable { get; }

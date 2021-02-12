@@ -1,7 +1,7 @@
 ﻿using MobaGame.Framework.Core;
 using UnityEngine;
 
-namespace MobaGame.Assets.Scripts.Framework.Core.Modules.Ability.Helpers
+namespace MobaGame.Framework.Core.Modules.Ability.Helpers
 {
 	public class CastRange
 	{

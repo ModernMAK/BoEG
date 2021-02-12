@@ -46,7 +46,7 @@ namespace MobaGame.Entity.Abilities.ForestGuardian
             _brCooldownTimer = new DurationTimer(_brCooldown,true);
             _view = new SimpleAbilityView()
             {
-                StatCost = new StatCostAbilityView(Modules.Magicable,_rrManaCost),
+                StatCost = new MagicCost(Modules.Magicable,_rrManaCost),
                 Cooldown = new CooldownAbilityView(_rrCooldownTimer),
                 Icon = _rrIcon
             };

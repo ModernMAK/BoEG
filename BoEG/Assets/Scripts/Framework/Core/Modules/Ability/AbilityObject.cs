@@ -3,11 +3,10 @@ using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules.Ability
 {
-    public class AbilityObject : ScriptableObject, IAbility, IAbilityView
+    public class AbilityObject : ScriptableObject, IAbility
     {
 #pragma warning disable 0649
 
-        [SerializeField] protected Sprite _icon;
 
         private ModuleCache _cache;
 #pragma warning disable 0649
@@ -15,8 +14,6 @@ namespace MobaGame.Framework.Core.Modules.Ability
         protected ModuleCache Modules => _cache;
 
         public Actor Self { get; private set; }
-        protected bool IsSelf(GameObject gameObject) => gameObject == Self.gameObject;
-        protected bool IsSelf(Actor actor) => actor == Self;
 
         public virtual void Initialize(Actor data)
         {
@@ -52,19 +49,6 @@ namespace MobaGame.Framework.Core.Modules.Ability
         {
         }
 
-        public virtual IAbilityView GetAbilityView()
-        {
-            return this;
-        }
-
-        public virtual Sprite Icon => _icon;
-
-
-        ICooldownAbilityView IAbilityView.Cooldown => this as ICooldownAbilityView;
-
-        IStatCostAbilityView IAbilityView.StatCost => this as IStatCostAbilityView;
-
-        IToggleableAbilityView IAbilityView.Toggleable => this as IToggleableAbilityView;
-        public virtual event EventHandler Changed;
+        public abstract IAbilityView GetAbilityView();
     }
 }
