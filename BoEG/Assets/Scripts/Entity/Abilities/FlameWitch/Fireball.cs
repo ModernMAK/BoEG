@@ -25,6 +25,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
         [SerializeField] private float _pathWidth;
 #pragma warning restore 0649
 
+        private AbilityTeamChecker TeamChecker { get; set; }
         private float CurrentCastRange => _overheat.Active ? _overheatCastRange : _castRange;
 
         /* Ground-Target Spell
@@ -38,6 +39,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             _cooldownTimer = new DurationTimer(_cooldown,true);
             Modules.Abilitiable.TryGetAbility(out _overheat);
             Register(data);
+            TeamChecker = AbilityTeamChecker.NonAllyOnly(Modules.Teamable);
         }
 
         public override void ConfirmCast()
@@ -78,7 +80,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
                 if (IsSelf(actor))
                     continue; //Always ignore self
 
-                if (AbilityHelper.SameTeam(Modules.Teamable, actor))
+                if (TeamChecker.IsAllowed(actor))
                     continue; //Ignore if allies
 
                 if (!actor.TryGetModule<IDamageable>(out var damageTarget))

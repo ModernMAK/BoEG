@@ -23,6 +23,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
         [SerializeField] private GameObject _nightmareFX;
         private DurationTimer _cooldownTimer;
 #pragma warning restore 0649
+        private AbilityTeamChecker TeamChecker { get; set; }
 
         private void ApplyFX(Transform target, float duration)
         {
@@ -46,6 +47,7 @@ namespace MobaGame.Entity.Abilities.DarkHeart
             _ticks = new List<TickAction>();
             _cooldownTimer = new DurationTimer(_cooldown, true);
             Register(data);
+            TeamChecker = AbilityTeamChecker.NonAllyOnly(Modules.Teamable);
         }
 
         public override void ConfirmCast()

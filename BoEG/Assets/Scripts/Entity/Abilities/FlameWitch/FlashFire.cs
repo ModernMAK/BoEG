@@ -27,6 +27,8 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             _channelTimer = new DurationTimer(_channelTime);
             _cooldownTimer = new DurationTimer(_cooldown, true);
             Modules.Abilitiable.TryGetAbility(out _overheatAbility);
+            TeamChecker = AbilityTeamChecker.NonAllyOnly(Modules.Teamable);
+                
         }
 
 #pragma warning disable 0649
@@ -45,6 +47,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
         [SerializeField] private float _aoeDamage;
 
+        private AbilityTeamChecker TeamChecker { get; set; }
 
         private Overheat _overheatAbility;
 #pragma warning restore 0649
@@ -83,7 +86,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
                 if (!actor.TryGetModule<IDamageable>(out var damageTarget))
                     continue;
-                if (AbilityHelper.SameTeam(Modules.Teamable, actor))
+                if (TeamChecker.IsForbidden(actor))
                     continue;
 
                 damageTarget.TakeDamage(Self, damage);

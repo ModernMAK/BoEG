@@ -80,9 +80,11 @@ namespace MobaGame.Framework.Core.Modules.Ability
             InRange(a.position, b.position, range);
 
 
+        [Obsolete("Use TeamChecker")]
         public static bool SameTeam(ITeamable teamable, Actor actor, bool nullValue = false) =>
             SameTeam(teamable, actor, out _, nullValue);
 
+        [Obsolete("Use TeamChecker")]
         public static bool SameTeam(ITeamable teamable, Actor actor, out ITeamable otherTeamable,
             bool nullValue = false)
         {
@@ -90,6 +92,7 @@ namespace MobaGame.Framework.Core.Modules.Ability
             return SameTeam(teamable, otherTeamable, nullValue);
         }
 
+        [Obsolete("Use TeamChecker")]
         public static bool SameTeam(ITeamable teamable, ITeamable otherTeamable, bool nullValue)
         {
             if (teamable == null)

@@ -30,6 +30,13 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         private DurationTimer _cooldownTimer;
 
         [SerializeField] private GameObject _unstableMagicFX;
+
+        #region State Variables
+        private AbilityTeamChecker TeamChecker { get; set; }
+        
+
+        #endregion
+        
 #pragma warning restore 0649
 
         public override void Initialize(Actor data)
@@ -37,6 +44,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             base.Initialize(data);
             Register(data);
             _cooldownTimer = new DurationTimer(_cooldown, true);
+            TeamChecker = new AbilityTeamChecker(Modules.Teamable,TeamRelationFlag.Neutral|TeamRelationFlag.Enemy);
         }
 
         public override void ConfirmCast()
@@ -132,7 +140,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
                     continue;
                 if (ignore.Contains(actor))
                     continue;
-                if (AbilityHelper.SameTeam(Modules.Teamable, actor))
+                if(!TeamChecker.IsAllowed(actor))
                     continue;
 
                 //TODO when targetable works, add this

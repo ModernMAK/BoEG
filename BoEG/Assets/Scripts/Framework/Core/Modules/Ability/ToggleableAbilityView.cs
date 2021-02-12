@@ -1,9 +1,38 @@
 using System;
+using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
 
 namespace MobaGame.Entity.Abilities
 {
+    public class AbilityTeamChecker
+    {
+        public static AbilityTeamChecker AllyOnly(ITeamable teamable) => new AbilityTeamChecker(teamable,TeamRelationFlag.Ally);
+        public static AbilityTeamChecker NonAllyOnly(ITeamable teamable) => new AbilityTeamChecker(teamable,TeamRelationFlag.Enemy | TeamRelationFlag.Neutral);
+        public AbilityTeamChecker(ITeamable teamable, TeamRelationFlag allowed = default)
+        {
+            _teamable = teamable;
+            Allowed = allowed;
+        }
+        private readonly ITeamable _teamable;
+        public TeamRelationFlag Allowed { get; set; }
+
+        public bool IsAllowed(Actor actor, bool defaultAllowed = false)
+        {
+            if (actor.TryGetModule<ITeamable>(out var otherTeamable))
+                return IsAllowed(otherTeamable);
+            return defaultAllowed;
+        }
+        public bool IsAllowed(ITeamable otherTeamable)
+        {
+            var relation = _teamable.GetRelation(otherTeamable);
+            return IsAllowed(relation);
+        }
+        public bool IsAllowed(TeamRelation relation)
+        {
+            return Allowed.HasFlag(relation);
+        }
+    }
 
     public class ToggleableAbilityView : IToggleableAbilityView
     {
