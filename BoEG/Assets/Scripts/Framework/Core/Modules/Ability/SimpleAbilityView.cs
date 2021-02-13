@@ -1,7 +1,6 @@
 using System;
 using MobaGame.Entity.Abilities;
 using MobaGame.Framework.Core.Modules.Ability.Helpers;
-using MobaGame.Framework.Types;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules.Ability
@@ -70,46 +69,5 @@ namespace MobaGame.Framework.Core.Modules.Ability
 
         public event EventHandler Changed;
         public void OnChanged() => Changed?.Invoke(this,EventArgs.Empty);
-    }
-
-    public class CooldownAbilityView : ICooldownAbilityView
-    {
-        public CooldownAbilityView(DurationTimer timer)
-        {
-            Timer = timer;
-        }
-
-        private DurationTimer _timer;
-        public DurationTimer Timer
-        {
-            get => _timer;
-            set
-            {
-                if (_timer != null)
-                    _timer.Changed -= InteralOnChanged;
-                _timer = value;
-                if (_timer != null)
-                    _timer.Changed += InteralOnChanged;
-                OnChanged();
-            } }
-
-        private void InteralOnChanged(object sender, EventArgs e) => OnChanged();
-
-        public void StartCooldown() => Timer.Reset();
-
-        public void AdvanceTime(float deltaTime)
-        {
-            Timer.AdvanceTimeIfNotDone(deltaTime);
-        }
-
-        public float Cooldown => Timer.Duration;
-
-        public float CooldownRemaining => Timer.RemainingTime;
-
-        public float CooldownNormal => Timer.ElapsedTime / Timer.Duration;
-
-        public bool OnCooldown => CooldownRemaining > 0f;
-        public event EventHandler Changed;
-        private void OnChanged() => Changed?.Invoke(this,EventArgs.Empty);
     }
 }

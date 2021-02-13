@@ -67,16 +67,8 @@ namespace MobaGame.Framework.Core.Modules
             source.LevelChanged -= OnLevelChanged;
         }
 
-        //TODO use these to add modifiers
-//        protected ModifierResult _capacityModifier;
-//        protected ModifierResult _generationModifier;
-        protected event EventHandler<ChangedEventArgs<float>> _statChanged;
 
-        protected event EventHandler<ChangedEventArgs<float>> StatChanged
-        {
-            add => _statChanged += value;
-            remove => _statChanged -= value;
-        }
+        protected event EventHandler<ChangedEventArgs<float>> StatChanged;
 
         public event EventHandler Changed;
 
@@ -84,7 +76,7 @@ namespace MobaGame.Framework.Core.Modules
 
         protected virtual void OnStatChanged(ChangedEventArgs<float> e)
         {
-            _statChanged?.Invoke(this, e);
+            StatChanged?.Invoke(this, e);
         }
 
         protected virtual void OnLevelChanged(object sender, ChangedEventArgs<int> e)
