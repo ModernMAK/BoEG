@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa42225843955c649baf44088ed029f8, type: 3}
-  m_Name: New Nurture Neglect
+  m_Name: Ability_ForestGuardian_NurtureNeglect
   m_EditorClassIdentifier: 
-  _icon: {fileID: 2958692710617841294, guid: fba65e2ac72cbc9489932e4da95a7264, type: 3}
+  _rrIcon: {fileID: 2958692710617841294, guid: fba65e2ac72cbc9489932e4da95a7264, type: 3}
   _brIcon: {fileID: 6600705962767282796, guid: fba65e2ac72cbc9489932e4da95a7264, type: 3}
   _nurtureRange: 20
   _nurtureHealingAmplification: 0.1

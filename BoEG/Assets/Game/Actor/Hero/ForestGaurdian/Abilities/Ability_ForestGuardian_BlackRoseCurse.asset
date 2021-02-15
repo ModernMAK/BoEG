@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 819ae97c3ba750f44a6fcfd151a9bf3b, type: 3}
-  m_Name: New Black Rose Curse
+  m_Name: Ability_ForestGuardian_BlackRoseCurse
   m_EditorClassIdentifier: 
-  _icon: {fileID: 792072853513443962, guid: fba65e2ac72cbc9489932e4da95a7264, type: 3}
+  _rrIcon: {fileID: 792072853513443962, guid: fba65e2ac72cbc9489932e4da95a7264, type: 3}
   _brIcon: {fileID: 7586963623097447478, guid: fba65e2ac72cbc9489932e4da95a7264, type: 3}
   _cooldown: 5
   _manaCost: 50

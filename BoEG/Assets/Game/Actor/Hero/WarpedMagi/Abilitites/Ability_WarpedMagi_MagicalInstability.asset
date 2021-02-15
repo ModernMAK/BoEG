@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0dee845f89fa4300a2f73c1d585fd3c2, type: 3}
-  m_Name: New Magical Instability
+  m_Name: Ability_WarpedMagi_MagicalInstability
   m_EditorClassIdentifier: 
   _icon: {fileID: 3307020828430764007, guid: fba65e2ac72cbc9489932e4da95a7264, type: 3}
   _manaCost: 100
