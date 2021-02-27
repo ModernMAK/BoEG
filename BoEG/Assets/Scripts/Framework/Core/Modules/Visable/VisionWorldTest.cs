@@ -1,11 +1,12 @@
 using MobaGame.Assets.Scripts.Framework.Core;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace MobaGame
 {
+    [Obsolete]
     [RequireComponent(typeof(VisionWorldHeightGridBuilder))]
     [ExecuteInEditMode]
     public class VisionWorldTest : MonoBehaviour

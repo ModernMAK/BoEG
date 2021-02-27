@@ -1,6 +1,5 @@
 using MobaGame.Assets.Scripts.Framework.Core;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
@@ -8,42 +7,10 @@ using UnityEngine;
 
 namespace MobaGame
 {
-	public class LevelVisionData : ScriptableObject
-	{
-		[Serializable]
-		public struct GridData
-		{
-			public byte Height;
-		}
-		public Grid<GridData> Grid;
-		/// <summary>
-		/// Matrix from World To Local Space
-		/// </summary>
-		public Matrix4x4 WorldToLocal;
-		public Matrix4x4 LocalToWorld => WorldToLocal.inverse;
-		public int3 CellCount;
-		public Vector3 CellSize;
 
-		//Is Cell valid XYZ?
-		public bool IsValidCell(int3 point) => math.all(int3.zero < point) && math.all(point < CellCount);
-		//Is cell valid XZ?
-		public bool IsValidCell(int2 point) => IsValidCell(new int3(point.x, 0, point.y));
-
-		public int3 GetCell3d(Vector3 point)
-		{
-			var localPoint = WorldToLocal.MultiplyPoint(point);
-			var intPoint = new int3(localPoint);
-			return intPoint;
-		}
-		public int2 GetCell2d(Vector3 point)
-		{
-			var cell = GetCell3d(point);
-			return new int2(cell.x, cell.z);
-		}
-	}
-
-	[RequireComponent(typeof(VisionWorldMapperBuilder))]
+	[RequireComponent(typeof(VisionSceneDataBuilder))]
     [ExecuteInEditMode]
+	[Obsolete]
     public class VisionWorldHeightGridBuilder : MonoBehaviour
     {
 		[SerializeField]
@@ -56,10 +23,10 @@ namespace MobaGame
 		public VisionWorldMapper Map => _map;
 		public VisionHeightGrid HeightMap => _height;
 
-		private VisionWorldMapperBuilder _builder;
+		private VisionSceneDataBuilder _builder;
 		private void Awake()
 		{
-			_builder = GetComponent<VisionWorldMapperBuilder>();
+			_builder = GetComponent<VisionSceneDataBuilder>();
 		}
 
 		private void Update()

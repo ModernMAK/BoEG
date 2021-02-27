@@ -84,23 +84,29 @@ namespace MobaGame.Assets.Scripts.Framework.Core
 		}
 	}
 	[Serializable]
-	public class Grid<T>
+	public class Grid<T> : IList<T>, IReadOnlyList<T>
 	{
-		public Grid(int w, int h)
+		public Grid(int2 size)
 		{
-			_internal = new T[w * h];
-			_width = w;
-			_height = h;
+			_internal = new T[size.x * size.y];
+			_size = size;
+		}
+		public Grid(int w, int h) :this(new int2(w,h))
+		{
 		}
 		[SerializeField]
 		private T[] _internal;
 		[SerializeField]
-		private int _width;
-		[SerializeField]
-		private int _height;
+		private int2 _size;
 		public T[] Internal => _internal;
-		public int Width => _width;
-		public int Height => _height;
+		public int2 Size => _size;
+		public int Width => Size.x;
+		public int Height => Size.y;
+
+		public int Count => _internal.Length;
+
+		public bool IsReadOnly => throw new NotImplementedException();
+
 		protected int CalculateIndex(int x, int y) => x + y * Width;
 		public T this[int i]
 		{
@@ -118,12 +124,41 @@ namespace MobaGame.Assets.Scripts.Framework.Core
 			set => this[point.x, point.y] = value;
 		}
 
-		internal bool IsValid(int2 point) => 
-			(0 <= point.x && point.x < Width) && 
-			(0 <= point.y && point.y < Height);
+		public IEnumerable<int2> EnumeratePoints()
+		{
+			for (var x = 0; x < Width; x++)
+				for (var y = 0; y < Height; y++)
+					yield return new int2(x, y);
+		}
 
+		public bool IsValid(int2 point) => math.all(int2.zero <= point) && math.all(point < Size);
 
+		public IEnumerator<T> GetEnumerator()
+		{
+			return ((IEnumerable<T>)_internal).GetEnumerator();
+		}
 
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return _internal.GetEnumerator();
+		}
+
+		public int IndexOf(T item) => ((IList<T>)_internal).IndexOf(item);
+
+		public void Insert(int index, T item) => throw new NotSupportedException("Grid does not support Insert!");
+		
+
+		public void RemoveAt(int index) => throw new NotSupportedException("Grid does not support RemoveAt!");
+
+		public void Add(T item) => throw new NotSupportedException("Grid does not support Add!");
+
+		public void Clear() => ((IList<T>)_internal).Clear();
+
+		public bool Contains(T item) => ((IList<T>)_internal).Contains(item);
+
+		public void CopyTo(T[] array, int arrayIndex) => _internal.CopyTo(array, arrayIndex);
+
+		public bool Remove(T item) => throw new NotSupportedException("Grid does not support Remove!");
 	}
 	public abstract class BitGrid<T> : Grid<T>
 	{

@@ -5,9 +5,12 @@ using UnityEngine;
 
 namespace MobaGame.Assets.Scripts.Framework.Core
 {
+
+	[Obsolete]
 	[Serializable]
 	public class VisionHeightGrid : Grid<int>
 	{
+		[Obsolete]
 		public static VisionHeightGrid BuildHeightGrid(VisionWorldMapper mapper)
 		{
 			var origin = mapper.Origin;
@@ -39,6 +42,7 @@ namespace MobaGame.Assets.Scripts.Framework.Core
 				}
 			return grid;
 		}
+		[Obsolete]
 		public VisionHeightGrid(int w, int h) : base(w,h)
 		{
 		}

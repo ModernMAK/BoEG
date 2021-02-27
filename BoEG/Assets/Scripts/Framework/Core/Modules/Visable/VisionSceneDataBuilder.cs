@@ -1,16 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace MobaGame.Assets.Scripts.Framework.Core
 {
-	public class VisionWorldMapperBuilder : MonoBehaviour
+	public class VisionSceneDataBuilder : MonoBehaviour
 	{
-		public int Width;
-		public int Height;
-		public int Depth;
+		public int3 CellCount;
 		public BoxCollider Bound;
 		public bool HideGizmos;
+		private Vector2 AxisScale => Vector3.Scale(Bound.size,new Vector3(1f/CellCount.x,1f/CellCount.y,1f/CellCount.z));
 		private void OnDrawGizmosSelected()
 		{
 			if (HideGizmos)
@@ -18,13 +17,9 @@ namespace MobaGame.Assets.Scripts.Framework.Core
 			if (Bound == null)
 				return;
 			var center = Bound.center;
-			var right = Bound.transform.right * Bound.size.x;
-			var fwd = Bound.transform.forward * Bound.size.z;
-			var up = Bound.transform.up * Bound.size.y;
-			right /= Width;
-			fwd /= Height;
-			up /= Depth;
-			var origin = GetOrigin(center, right, fwd, up, Width, Height, Depth);
+			var scale = AxisScale;
+
+			var origin = GetOrigin(center, scale, CellCount);
 			var r =	new Color(1.0f,	0.5f, 0.5f);
 			var g =	new Color(0.5f,	1.0f, 0.5f);
 			var b =	new Color(0.5f, 0.5f, 1.0f);
@@ -32,9 +27,9 @@ namespace MobaGame.Assets.Scripts.Framework.Core
 			DrawGrid(origin, right, fwd, Width, Height, r,g,b);
 			DrawUp(origin, right * Width, fwd * Height, up, Depth, r,g,b);
 		}
-		private static Vector3 GetOrigin(Vector3 center, Vector3 right, Vector3 fwd, Vector3 up, int w, int h, int d)
+		private static Vector3 GetOrigin(Vector3 center, Matrix4x4 transform, Vector3 scale, int3 cell)
 		{
-			return center - (right * w + fwd * h + up * d) / 2f;
+			return center - (transform.ri * w + fwd * h + up * d) / 2f;
 		}
 		private static void DrawGrid(Vector3 origin, Vector3 right, Vector3 fwd, int w, int h, Color xAxis, Color yAxis, Color zAxis)
 		{
@@ -74,7 +69,7 @@ namespace MobaGame.Assets.Scripts.Framework.Core
 			}
 			Gizmos.color = o;
 		}
-
+		[Obsolete]
 		public VisionWorldMapper Build() => new VisionWorldMapper(Bound.bounds, Bound.transform.rotation, new int3(Width, Depth, Height));
 	}
 }

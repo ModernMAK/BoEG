@@ -227,6 +227,7 @@ namespace MobaGame.Assets.Scripts.Framework.Core
 
 	}
 	[Serializable]
+	[Obsolete]
 	public class VisionWorldMapper 
 	{
 		public VisionWorldMapper(Bounds bound, Quaternion rotation, int3 divisions)
