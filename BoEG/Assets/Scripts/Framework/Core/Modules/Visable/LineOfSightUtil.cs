@@ -226,6 +226,4 @@ namespace MobaGame.Assets.Scripts.Framework.Core
 
 
 	}
-	[Serializable]
-	}
 }
