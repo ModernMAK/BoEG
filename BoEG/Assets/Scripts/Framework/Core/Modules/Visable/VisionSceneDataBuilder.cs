@@ -1,75 +1,119 @@
 ﻿using System;
+using System.IO;
 using Unity.Mathematics;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEngine.SceneManagement;
+using UnityEditor;
+#endif
 
 namespace MobaGame.Assets.Scripts.Framework.Core
 {
+	public static class Int3Hack{
+		public static Vector3 AsVector3(this int3 p) => new Vector3(p.x, p.y, p.z);
+	}
+	[ExecuteInEditMode]
 	public class VisionSceneDataBuilder : MonoBehaviour
 	{
+		[Header("Run")]
+		public bool _create;
+		public bool _build;
+		[Header("Settings")]
 		public int3 CellCount;
 		public BoxCollider Bound;
+		[Header("Results")]
+		public LevelVisionData SceneAsset;
+		[Header("Debug")]
 		public bool HideGizmos;
-		private Vector2 AxisScale => Vector3.Scale(Bound.size,new Vector3(1f/CellCount.x,1f/CellCount.y,1f/CellCount.z));
+#if UNITY_EDITOR
+		public void Create()
+		{
+			var origin = Bound.center - Bound.size / 2f;
+			var rot = Bound.transform.rotation;
+			var scale = Vector3.Scale(Bound.size, CellCount.AsVector3().Inverse());
+			if (SceneAsset == null)
+			{
+				SceneAsset = LevelVisionData.Create(origin, rot, scale, CellCount);
+				const string RootPath = "Assets/Game/Data/Vision";
+				const string AssetExtension = ".asset";
+				var sceneName = SceneManager.GetActiveScene().name;
+				var assetName = sceneName + AssetExtension;
+				var path = Path.Combine(RootPath, assetName);
+				AssetDatabase.CreateAsset(SceneAsset,path);
+			}
+			else
+			{
+				SceneAsset.SetMatrix(origin, rot, scale);
+				SceneAsset.SetCellCount(CellCount);
+			}
+		}
+		public void Build()
+		{
+			if (SceneAsset != null)
+				LevelVisionBuilder.BuildHeightGrid(SceneAsset); 
+		}
+
+#endif
+		public void Update()
+		{
+			if (_create)
+			{
+				_create = false;
+				Create();
+			}
+			if (_build)
+			{
+				_build = false;
+				Build();
+			}
+		}
 		private void OnDrawGizmosSelected()
 		{
 			if (HideGizmos)
 				return;
-			if (Bound == null)
+			if (SceneAsset == null)
 				return;
-			var center = Bound.center;
-			var scale = AxisScale;
-
-			var origin = GetOrigin(center, scale, CellCount);
-			var r =	new Color(1.0f,	0.5f, 0.5f);
-			var g =	new Color(0.5f,	1.0f, 0.5f);
-			var b =	new Color(0.5f, 0.5f, 1.0f);
-
-			DrawGrid(origin, right, fwd, Width, Height, r,g,b);
-			DrawUp(origin, right * Width, fwd * Height, up, Depth, r,g,b);
+			DrawCells(SceneAsset, Color.white, Color.red);
 		}
-		private static Vector3 GetOrigin(Vector3 center, Matrix4x4 transform, Vector3 scale, int3 cell)
+		private static void DrawCells(LevelVisionData data, Color fill, Color invalid)
 		{
-			return center - (transform.ri * w + fwd * h + up * d) / 2f;
+			var origin = (Vector3)data.CellToWorld.GetColumn(3);
+			var cellCount = data.CellCount;
+			var cellSize = data.CellSize;
+			var cachedColor = Gizmos.color;
+			var xzOffset = new Vector3(0.5f, 0, 0.5f);
+			for (var x = 0; x < cellCount.x; x++)
+				for (var z = 0; z < cellCount.z; z++)
+				{
+					var cell = data.Grid[x, z];
+					var y = cell.Height;
+					var validHeight = y >= 0;
+					if (validHeight)
+					{
+						Gizmos.color = fill;
+						var baseCenter = data.GetWorld(new int3(x, 0, z), xzOffset);
+						if(y == 0)
+						{
+							var size = new Vector3(cellSize.x, 0, cellSize.z);
+							Gizmos.DrawWireCube(baseCenter,size);
+						}
+						else
+						{
+							var topCenter = data.GetWorld(new int3(x, y, z), xzOffset);
+							var center = (topCenter + baseCenter) / 2;
+							var size = new Vector3(cellSize.x, topCenter.y - baseCenter.y, cellSize.z);
+							Gizmos.DrawWireCube(center, size);
+						}
+					}
+					else
+					{
+						Gizmos.color = invalid;
+						var center = data.GetWorld(new int3(x, 0, z), xzOffset);
+						var size = new Vector3(cellSize.x, 0, cellSize.z);
+						Gizmos.DrawWireCube(center, size);
+					}
+				}
+			Gizmos.color = cachedColor;
 		}
-		private static void DrawGrid(Vector3 origin, Vector3 right, Vector3 fwd, int w, int h, Color xAxis, Color yAxis, Color zAxis)
-		{
-			//DO NOT NORMALIZE Up/Right
-			var c = Gizmos.color;
-			Gizmos.color = zAxis;				
-			for (var x = 0; x <= w; x++)
-			{
-				var a = origin + right * x;
-				var b = a + fwd * h;
-				Gizmos.DrawLine(a, b);
-			}
-			Gizmos.color = xAxis;
-			for (var y = 0; y <= h; y++)
-			{
-
-				var a = origin + fwd * y;
-				var b = a + right * w;
-				Gizmos.DrawLine(a, b);
-			}
-			Gizmos.color = c;
-		}
-		private static void DrawUp(Vector3 origin, Vector3 right, Vector3 fwd, Vector3 up, int d, Color xAxis, Color yAxis, Color zAxis)
-		{
-			var o = Gizmos.color;
-			Gizmos.color = yAxis;
-			Gizmos.DrawLine(origin, origin + up * d);
-			for (var z = 0; z <= d; z++)
-			{
-				var b = origin + up * z;
-				var a = b + right;
-				var c = b + fwd;
-				Gizmos.color = xAxis;
-				Gizmos.DrawLine(a, b);
-				Gizmos.color = zAxis;
-				Gizmos.DrawLine(b, c);
-			}
-			Gizmos.color = o;
-		}
-		[Obsolete]
-		public VisionWorldMapper Build() => new VisionWorldMapper(Bound.bounds, Bound.transform.rotation, new int3(Width, Depth, Height));
 	}
 }

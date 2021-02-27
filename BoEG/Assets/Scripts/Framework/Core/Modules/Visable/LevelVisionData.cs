@@ -29,7 +29,7 @@ namespace MobaGame
 		}
 
 		#region EDITOR_ONLY
-#if UnityEditor
+#if UNITY_EDITOR
 		public void SetMatrix(Vector3 origin, Quaternion rotation, Vector3 cellSize)
 		{
 			asset._cellToWorld = CreateMatrix(origin,rotation,cellSize);
@@ -83,6 +83,18 @@ namespace MobaGame
 		{
 			var cell = GetCell3d(point);
 			return new int2(cell.x, cell.z);
+		}
+		public Vector3 GetWorld(int3 point, bool centered = false)
+		{
+			var pos = point.AsVector3();
+			if (centered)
+				pos += Vector3.one / 2f;
+			return CellToWorld.MultiplyPoint(pos);
+		}
+		public Vector3 GetWorld(int3 point, Vector3 offset)
+		{
+			var pos = point.AsVector3() + offset;
+			return CellToWorld.MultiplyPoint(pos);
 		}
 	}
 }
