@@ -83,7 +83,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             var boxHalfExtents = new Vector3(boxBaseSize.x, boxBaseSize.y, length) / 2;
             var rotation = AbilityHelper.GetRotation(origin, worldPos);
             var center = AbilityHelper.GetBoxCenter(origin, boxHalfExtents, rotation);
-            var colliders = Physics.OverlapBox(center, boxHalfExtents, rotation, (int) LayerMaskHelper.Entity);
+            var colliders = Physics.OverlapBox(center, boxHalfExtents, rotation, (int) LayerMaskFlag.Entity);
             var dmg = new Damage(_damage, DamageType.Magical, DamageFlags.Ability);
 
             foreach (var col in colliders)

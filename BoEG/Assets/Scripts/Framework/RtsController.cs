@@ -163,7 +163,7 @@ namespace MobaGame.Framework
             var ray = CameraRay;
 
             // Debug.Log("RTS:\t" + ray);
-            return Physics.Raycast(ray, out info, 100f, (int) (LayerMaskHelper.Entity | LayerMaskHelper.World));
+            return Physics.Raycast(ray, out info, 100f, (int) (LayerMaskFlag.Entity | LayerMaskFlag.World));
         }
 
 

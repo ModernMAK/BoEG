@@ -1,5 +1,12 @@
-﻿namespace MobaGame.Framework.Core.Modules
+﻿using UnityEngine;
+
+namespace MobaGame.Framework.Core.Modules
 {
+    public interface IVisionSource
+	{
+        float Range { get; }
+        Vector3 Position { get; }
+	}
     public interface IVisable
     {
         /// <summary>

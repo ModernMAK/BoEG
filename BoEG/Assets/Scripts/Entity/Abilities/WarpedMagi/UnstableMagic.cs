@@ -143,7 +143,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         public override IAbilityView GetAbilityView() => View;
         private bool TrySearchTarget(Vector3 area, ICollection<Actor> ignore, out Actor target)
         {
-            var potentialTargets = Physics.OverlapSphere(area, _searchRange, (int) LayerMaskHelper.Entity);
+            var potentialTargets = Physics.OverlapSphere(area, _searchRange, (int) LayerMaskFlag.Entity);
             foreach (var potentialTarget in potentialTargets)
             {
                 if (!AbilityHelper.TryGetActor(potentialTarget, out var actor))

@@ -48,7 +48,7 @@ namespace MobaGame.Framework.Core.Modules
                 InternalRemoveActor(_targets[0]);
             }
 
-            var colliders = Trigger.Trigger.OverlapCollider((int) LayerMaskHelper.Entity);
+            var colliders = Trigger.Trigger.OverlapCollider((int) LayerMaskFlag.Entity);
             foreach (var col in colliders)
             {
                 if (AbilityHelper.TryGetActor(col, out var actor))

@@ -55,7 +55,7 @@ namespace MobaGame.Entity.Abilities.GrimDeath
             var minDot = NormalizedSideAngle;
             var hasTeamable = Modules.TryGetCached<ITeamable>(out var teamable);
 
-            var colliders = Physics.OverlapSphere(worldPos, searchRange, (int)LayerMaskHelper.Entity);
+            var colliders = Physics.OverlapSphere(worldPos, searchRange, (int)LayerMaskFlag.Entity);
             foreach (var col in colliders)
             {
                 //Actor check

@@ -107,13 +107,13 @@ namespace MobaGame.Framework.Core.Modules.Ability
             return result;
         }
         public static bool TryGetWorldOrEntity(Ray ray, out RaycastHit hit) => Physics.Raycast(ray, out hit,
-            DefaultMaxDistance, (int) (LayerMaskHelper.World | LayerMaskHelper.Entity));
+            DefaultMaxDistance, (int) (LayerMaskFlag.World | LayerMaskFlag.Entity));
 
         public static bool TryGetEntity(Ray ray, out RaycastHit hit) =>
-            Physics.Raycast(ray, out hit, DefaultMaxDistance, (int) (LayerMaskHelper.Entity));
+            Physics.Raycast(ray, out hit, DefaultMaxDistance, (int) (LayerMaskFlag.Entity));
 
         public static bool TryGetWorld(Ray ray, out RaycastHit hit) =>
-            Physics.Raycast(ray, out hit, DefaultMaxDistance, (int) (LayerMaskHelper.World));
+            Physics.Raycast(ray, out hit, DefaultMaxDistance, (int) (LayerMaskFlag.World));
 
         public static Quaternion GetRotation(Vector3 start, Vector3 target) => Quaternion.LookRotation(target - start);
 

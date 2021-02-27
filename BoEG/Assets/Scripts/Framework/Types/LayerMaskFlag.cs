@@ -3,7 +3,7 @@
 namespace MobaGame.Framework.Types
 {
     [Flags]
-    public enum LayerMaskHelper
+    public enum LayerMaskFlag
     {
         Entity = 1 << Layer.Entity,
         World = 1 << Layer.World,

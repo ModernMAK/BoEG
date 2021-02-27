@@ -128,7 +128,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             if (Active && CheckBuilder.MagicCost.TrySpendCost())
             {
                 var dotTargets =
-                    Physics.OverlapSphere(Self.transform.position, _dotRange, (int) LayerMaskHelper.Entity);
+                    Physics.OverlapSphere(Self.transform.position, _dotRange, (int) LayerMaskFlag.Entity);
                 foreach (var col in dotTargets)
                 {
                     if (!AbilityHelper.TryGetActor(col, out var actor))

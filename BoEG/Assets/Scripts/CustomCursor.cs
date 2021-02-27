@@ -63,7 +63,7 @@ namespace MobaGame
             Cursor.lockState = CursorLockMode.None;
         }
 
-        private const int Mask = (int)(LayerMaskHelper.Entity | LayerMaskHelper.World);
+        private const int Mask = (int)(LayerMaskFlag.Entity | LayerMaskFlag.World);
 
         Texture2D GetCursorIcon(VariantInfo info, bool isHovering) => isHovering ? info.Hover : info.Default;
         VariantInfo GetVariant()

@@ -92,7 +92,7 @@ namespace MobaGame.Entity.Abilities.LastHunter
             var rotation = AbilityHelper.GetRotation(origin, worldPos);
             var center = AbilityHelper.GetBoxCenter(origin, boxHalfExtents, rotation);
 
-            var colliders = Physics.OverlapBox(center, boxHalfExtents, rotation, (int) LayerMaskHelper.Entity);
+            var colliders = Physics.OverlapBox(center, boxHalfExtents, rotation, (int) LayerMaskFlag.Entity);
 
             var atkDamage = Modules.Attackerable.Damage;
 

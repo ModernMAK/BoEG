@@ -88,7 +88,7 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             if (IsInOverheat)
             {
                 var colliders = Physics.OverlapSphere(target.transform.position, _overheatSearchRange,
-                    (int) LayerMaskHelper.Entity);
+                    (int) LayerMaskFlag.Entity);
                 foreach (var collider in colliders)
                 {
                     if (!AbilityHelper.TryGetActor(collider, out var actor))
