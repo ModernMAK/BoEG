@@ -32,30 +32,18 @@ namespace MobaGame.Framework.Core.Modules.Ability
             var _ = Controls; //Initializes controls
         }
 
-        public static Ray GetScreenRay(bool updateCamera = false)
-        {
-            if (_cached == null || updateCamera)
-                _cached = Camera.main;
-            Controls.Enable();
-            var point = Controls.Cursor.Pos.ReadValue<Vector2>();
-            // Debug.Log("GetScreenRay:\t" + point);
-            var result = _cached.ScreenPointToRay(point);
-            return result;
-        }
 
-
+        [Obsolete]
         public static bool HasAllComponents(GameObject gameObject, params Type[] components)
         {
             return components.All(comp => gameObject.TryGetComponent(comp, out _));
         }
 
+        [Obsolete]
         public static bool HasModule<T>(GameObject gameObject)
         {
             return gameObject.TryGetComponent<T>(out _) || gameObject.TryGetComponent<IProxy<T>>(out _);
         }
-
-        public static bool IsDamagable(Actor actor) =>
-            actor.TryGetModule<IDamageable>(out var targetable);
 
         public static bool AllowSpellTargets(Actor actor, bool defaultResult = true) =>
             actor.TryGetModule<ITargetable>(out var targetable) ? targetable.AllowSpellTargets : defaultResult;
@@ -63,39 +51,10 @@ namespace MobaGame.Framework.Core.Modules.Ability
         public static bool AllowAttackTargets(Actor actor, bool defaultResult = true) =>
             actor.TryGetModule<ITargetable>(out var targetable) ? targetable.AllowAttackTargets : defaultResult;
 
-        public static bool TrySpendMagic(IStatCostAbility ability, IMagicable magicable) =>
-            magicable.TrySpendMagic(ability.Cost);
+        [Obsolete]
+        public static bool TrySpendMagic(IStatCostAbilityView abilityView, IMagicable magicable) =>
+            magicable.TrySpendMagic(abilityView.Cost);
 
-
-        public static bool InRange(Vector3 a, Vector3 b, float range) =>
-            (a - b).sqrMagnitude < range * range;
-
-        public static bool InRange(Transform a, Vector3 b, float range) =>
-            InRange(a.position, b, range);
-
-        public static bool InRange(Vector3 a, Transform b, float range) =>
-            InRange(a, b.position, range);
-
-        public static bool InRange(Transform a, Transform b, float range) =>
-            InRange(a.position, b.position, range);
-
-
-        public static bool SameTeam(ITeamable teamable, Actor actor, bool nullValue = false) =>
-            SameTeam(teamable, actor, out _, nullValue);
-
-        public static bool SameTeam(ITeamable teamable, Actor actor, out ITeamable otherTeamable,
-            bool nullValue = false)
-        {
-            otherTeamable = actor.GetModule<ITeamable>();
-            return SameTeam(teamable, otherTeamable, nullValue);
-        }
-
-        public static bool SameTeam(ITeamable teamable, ITeamable otherTeamable, bool nullValue)
-        {
-            if (teamable == null)
-                return nullValue;
-            return teamable.SameTeam(otherTeamable);
-        }
 
 
         public static Actor GetActor(RaycastHit hit) => GetActor(hit.collider);
@@ -104,6 +63,8 @@ namespace MobaGame.Framework.Core.Modules.Ability
         {
             return TryGetActor(collider, out var actor) ? actor : null;
         }
+
+        public static bool TryGetActor(RaycastHit hit, out Actor actor) => TryGetActor(hit.collider, out actor);
 
         public static bool TryGetActor(Collider collider, out Actor actor)
         {
@@ -134,14 +95,25 @@ namespace MobaGame.Framework.Core.Modules.Ability
 
         private const float DefaultMaxDistance = 100f;
 
+
+        public static Ray GetScreenRay(bool updateCamera = false)
+        {
+            if (_cached == null || updateCamera)
+                _cached = Camera.main;
+            Controls.Enable();
+            var point = Controls.Cursor.Pos.ReadValue<Vector2>();
+            // Debug.Log("GetScreenRay:\t" + point);
+            var result = _cached.ScreenPointToRay(point);
+            return result;
+        }
         public static bool TryGetWorldOrEntity(Ray ray, out RaycastHit hit) => Physics.Raycast(ray, out hit,
-            DefaultMaxDistance, (int) (LayerMaskHelper.World | LayerMaskHelper.Entity));
+            DefaultMaxDistance, (int) (LayerMaskFlag.World | LayerMaskFlag.Entity));
 
         public static bool TryGetEntity(Ray ray, out RaycastHit hit) =>
-            Physics.Raycast(ray, out hit, DefaultMaxDistance, (int) (LayerMaskHelper.Entity));
+            Physics.Raycast(ray, out hit, DefaultMaxDistance, (int) (LayerMaskFlag.Entity));
 
         public static bool TryGetWorld(Ray ray, out RaycastHit hit) =>
-            Physics.Raycast(ray, out hit, DefaultMaxDistance, (int) (LayerMaskHelper.World));
+            Physics.Raycast(ray, out hit, DefaultMaxDistance, (int) (LayerMaskFlag.World));
 
         public static Quaternion GetRotation(Vector3 start, Vector3 target) => Quaternion.LookRotation(target - start);
 
@@ -154,6 +126,15 @@ namespace MobaGame.Framework.Core.Modules.Ability
         {
             var z = (target - start).magnitude;
             return new Vector3(size.x, size.y, z);
+        }
+
+        public static bool TryRaycastActor(out Actor actor)
+        {
+            var ray = GetScreenRay();
+            if (TryGetEntity(ray, out var hit))
+                return TryGetActor(hit, out actor);
+            actor = default;
+            return false;
         }
     }
 }

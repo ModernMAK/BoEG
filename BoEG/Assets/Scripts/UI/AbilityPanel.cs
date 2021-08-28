@@ -1,41 +1,55 @@
-﻿using MobaGame.Framework.Core.Modules.Ability;
+﻿using System;
+using MobaGame.Framework.Core.Modules.Ability;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace MobaGame.UI
 {
-    public class AbilityPanel : DebugUI<IAbility>
+    public class AbilityPanel : DebugUI<IAbility>, IDisposable
     {
         private IAbilityView _view;
 
         public override void SetTarget(IAbility ability)
         {
+            if(_view != null)
+                _view.Changed -= ViewOnChanged;
             _view = ability.GetAbilityView();
-            _iconCooldown.sprite = _icon.sprite = _view.GetIcon();
-            _updateCooldown = _view.Cooldown != null;
-            _updateManaCost = _view.StatCost != null;
-            _updateActive = _view.Toggleable != null;
-            UpdateImageFill(0f, _iconCooldown);
+            UpdateMain();
+            if(_view != null)
+                _view.Changed += ViewOnChanged;
         }
 
-        private void Update()
+        private void ViewOnChanged(object sender, EventArgs e)
         {
-            if (_updateCooldown)
-                UpdateImageFill(1f - _view.Cooldown.CooldownNormal, _iconCooldown, 3);
+            UpdateMain();
+        }
+
+        private void UpdateMain()
+        {
+            var icon = _view != null ? _view.Icon : null;
+            _iconCooldown.sprite = _icon.sprite = icon;
+            UpdateImageFill(0f, _iconCooldown);
+
+            var cdNormal = 1f;
+            if (_view != null && _view.Cooldown != null)
+                cdNormal = _view.Cooldown.Normal;
+            UpdateImageFill(1f - cdNormal, _iconCooldown, 3);
 
             bool outOfMana = false;
             bool isActive = false;
-            if (_updateManaCost)
+            bool showActive = true;
+            if (_view != null && _view.StatCost != null)
             {
                 outOfMana = !_view.StatCost.CanSpendCost();
             }
 
-            if (_updateActive)
+            if (_view != null && _view.Toggleable != null)
             {
+                showActive = _view.Toggleable.ShowActive;
                 isActive = _view.Toggleable.Active;
             }
 
-            if (isActive)
+            if (showActive && isActive)
                 _icon.material = _activeMaterial;
             else if (outOfMana)
                 _icon.material = _outOfManaMaterial;
@@ -53,15 +67,17 @@ namespace MobaGame.UI
         private Material _standardMaterial;
 
 
-        private bool _updateCooldown;
         [SerializeField] private Image _iconCooldown;
 
-        private bool _updateManaCost;
         [SerializeField] private Material _outOfManaMaterial;
 
-        private bool _updateActive;
         [SerializeField] private Material _activeMaterial;
 
 #pragma warning restore 649
+        public void Dispose()
+        {
+            if(_view != null)
+                _view.Changed -= ViewOnChanged;
+        }
     }
 }

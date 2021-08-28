@@ -40,4 +40,4 @@ MonoBehaviour:
     _turnSpeed: 360
   _abilities:
   - {fileID: 11400000, guid: a421c9cc8aee9264dbae70fcae935d3d, type: 2}
-  _icon: {fileID: 21300000, guid: 0a392ff9bd672a743a6631716eee5cd1, type: 3}
+  _icon: {fileID: 7184549462493353692, guid: cf4a0ed3c81933c46b4e76f115f96353, type: 3}

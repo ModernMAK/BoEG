@@ -2,14 +2,15 @@ using Framework.Core;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Types;
+using System;
 using UnityEngine;
 
 namespace MobaGame.Entity.Abilities.FlameWitch
 {
     [CreateAssetMenu(menuName = "Ability/FlameWitch/FlashFire")]
-    public class FlashFire : AbilityObject, INoTargetAbility, IStatCostAbility, IListener<IStepableEvent>,
-        IToggleableAbility, ICooldownAbility
+    public class FlashFire : AbilityObject, IListener<IStepableEvent>, IToggleable
     {
         /* Channeling Spell
          * Deals damage in an AOE around FlameWitch
@@ -18,17 +19,34 @@ namespace MobaGame.Entity.Abilities.FlameWitch
          *     Channel does not prevent movement.
          */
 
+        private AbilityPredicateBuilder CheckBuilder { get; set; }
+        private SimpleAbilityView View { get; set; }
         public override void Initialize(Actor data)
         {
             base.Initialize(data);
-            _isActive = false;
-            Register(data);
             _channelTimer = new DurationTimer(_channelTime);
-            _cooldownTimer = new DurationTimer(_cooldown, true);
             Modules.Abilitiable.TryGetAbility(out _overheatAbility);
+            CheckBuilder = new AbilityPredicateBuilder(data)
+            {
+                Teamable = TeamableChecker.NonAllyOnly(Modules.Teamable),
+                MagicCost = new MagicCost(Modules.Magicable, _manaCost),
+                Cooldown = new Cooldown(_cooldown),
+                AllowSelf = false,
+            };
+            View = new SimpleAbilityView()
+            {
+                Icon = _icon,
+                Cooldown = CheckBuilder.Cooldown,
+                StatCost = CheckBuilder.MagicCost,
+                Toggleable = new ToggleableAbilityView(){ShowActive = true}
+            };
+            CheckBuilder.RebuildChecks();
+            Register(data);
+                
         }
 
 #pragma warning disable 0649
+        [SerializeField] private Sprite _icon;
         [Header("Channel Time")] [SerializeField]
         private float _channelTime;
 
@@ -44,7 +62,6 @@ namespace MobaGame.Entity.Abilities.FlameWitch
 
         [SerializeField] private float _aoeDamage;
 
-
         private Overheat _overheatAbility;
 #pragma warning restore 0649
 
@@ -54,44 +71,38 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             if (Active)
                 return;
 
-            if (!_cooldownTimer.Done)
+            if (!CheckBuilder.AllowCast())
                 return;
 
-            if (!Modules.Magicable.TrySpendMagic(Cost))
-                return;
-
-            _isActive = true;
+            Active = true;
             _channelTimer.Reset();
+            CheckBuilder.MagicCost.SpendCost();
             CastNoTarget();
-            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, Cost));
+            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, CheckBuilder.MagicCost.Cost));
         }
+
+        public override IAbilityView GetAbilityView() => View;
 
         public void CastNoTarget()
         {
             //TODO channel
 
-            var targets = Physics.OverlapSphere(Self.transform.position, _aoeSearchRange, (int) LayerMaskHelper.Entity);
+            var targets = Physics.OverlapSphere(Self.transform.position, _aoeSearchRange, (int) LayerMaskFlag.Entity);
 
-            var damage = new Damage(_aoeDamage, DamageType.Magical, DamageModifiers.Ability);
+            var damage = new Damage(_aoeDamage, DamageType.Magical, DamageFlags.Ability);
             foreach (var target in targets)
             {
                 if (!AbilityHelper.TryGetActor(target, out var actor))
                     continue;
-                if (actor == Self)
+                if (!CheckBuilder.AllowTarget(actor))
                     continue;
 
                 if (!actor.TryGetModule<IDamageable>(out var damageTarget))
-                    continue;
-                if (AbilityHelper.SameTeam(Modules.Teamable, actor))
                     continue;
 
                 damageTarget.TakeDamage(Self, damage);
             }
         }
-
-        public float Cost => _manaCost;
-
-        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
 
         public void Register(IStepableEvent source)
         {
@@ -103,13 +114,13 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             if (Active)
                 if (_channelTimer.AdvanceTimeIfNotDone(deltaTime))
                 {
-                    _isActive = false;
-                    _cooldownTimer.Reset();
+                    Active = false;
+                    CheckBuilder.Cooldown.Begin();
                 }
 
             if (!Active)
             {
-                _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
+                CheckBuilder.Cooldown.Advance(deltaTime);
             }
         }
 
@@ -118,10 +129,17 @@ namespace MobaGame.Entity.Abilities.FlameWitch
             source.PreStep -= OnPreStep;
         }
 
-        private bool _isActive;
-        public bool Active => _isActive;
-        public float Cooldown => _cooldownTimer.Duration;
-        public float CooldownRemaining => _cooldownTimer.RemainingTime;
-        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
+
+        public bool Active {
+            get => View.Toggleable.Active;
+            set => View.Toggleable.Active = value;
+        } 
+
+
+        event EventHandler<ChangedEventArgs<bool>> IToggleable.Toggled
+        {
+            add => View.Toggleable.Toggled += value;
+            remove => View.Toggleable.Toggled -= value;
+        }
     }
 }

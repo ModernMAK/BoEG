@@ -31,33 +31,33 @@ namespace MobaGame.Framework.Types
         public Damage(Damage damage)
         {
             Value = damage.Value;
-            Modifiers = damage.Modifiers;
+            Flags = damage.Flags;
             Type = damage.Type;
         }
 
         //Standard (No or One Modifier)
-        public Damage(float value, DamageType type, DamageModifiers modifiers = DamageModifiers.None)
+        public Damage(float value, DamageType type, DamageFlags flags = DamageFlags.None)
         {
             ValidateValue(value);
-            Modifiers = modifiers;
+            Flags = flags;
             Type = type;
             Value = value;
         }
 
         //Modifier List Constructor
-        public Damage(float value, DamageType type, params DamageModifiers[] modifiers) :
+        public Damage(float value, DamageType type, params DamageFlags[] modifiers) :
             this(value, type, MergeModifiers(modifiers))
         {
         }
 
         public float Value { get; }
-        public DamageModifiers Modifiers { get; }
+        public DamageFlags Flags { get; }
         public DamageType Type { get; }
 
         public Damage SetValue(float value, bool clamp = CLAMP_DEFAULT)
         {
             ValidateValue(ref value, clamp);
-            return new Damage(value, Type, Modifiers);
+            return new Damage(value, Type, Flags);
         }
 
         public Damage ModifyValue(float change, bool clamp = CLAMP_DEFAULT)
@@ -67,34 +67,34 @@ namespace MobaGame.Framework.Types
 
         public Damage SetType(DamageType type)
         {
-            return new Damage(Value, type, Modifiers);
+            return new Damage(Value, type, Flags);
         }
 
-        public Damage SetModifiers(params DamageModifiers[] modifiers)
+        public Damage SetModifiers(params DamageFlags[] modifiers)
         {
             return new Damage(Value, Type, modifiers);
         }
 
-        public Damage SetModifiers(DamageModifiers modifier)
+        public Damage SetModifiers(DamageFlags flag)
         {
-            return new Damage(Value, Type, modifier);
+            return new Damage(Value, Type, flag);
         }
 
-        public Damage AddModifiers(params DamageModifiers[] modifiers)
+        public Damage AddModifiers(params DamageFlags[] modifiers)
         {
-            var merged = Modifiers | MergeModifiers(modifiers);
+            var merged = Flags | MergeModifiers(modifiers);
             return SetModifiers(merged);
         }
 
-        public Damage RemoveModifiers(params DamageModifiers[] modifiers)
+        public Damage RemoveModifiers(params DamageFlags[] modifiers)
         {
-            var merged = Modifiers & ~MergeModifiers(modifiers);
+            var merged = Flags & ~MergeModifiers(modifiers);
             return SetModifiers(merged);
         }
 
-        private static DamageModifiers MergeModifiers(DamageModifiers[] modifiers)
+        private static DamageFlags MergeModifiers(DamageFlags[] modifiers)
         {
-            var modifier = (DamageModifiers) 0;
+            var modifier = (DamageFlags) 0;
             foreach (var mod in modifiers)
                 modifier |= mod;
             return modifier;

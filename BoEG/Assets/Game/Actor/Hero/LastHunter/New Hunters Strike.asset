@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d89f83ec77b94805874e32d8bb9febe6, type: 3}
   m_Name: New Hunters Strike
   m_EditorClassIdentifier: 
-  _icon: {fileID: 21300000, guid: d881f24b643a44144be3b1a11db44896, type: 3}
+  _icon: {fileID: 8709145097055006561, guid: cf4a0ed3c81933c46b4e76f115f96353, type: 3}
   _bonusDamage: 50
   _castRange: 8
   _manaCost: 50

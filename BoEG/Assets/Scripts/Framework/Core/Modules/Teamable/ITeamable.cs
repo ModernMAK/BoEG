@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MobaGame.Framework.Core.Modules
 {
@@ -96,10 +97,49 @@ namespace MobaGame.Framework.Core.Modules
     /// <summary>
     /// A relation between teams.
     /// </summary>
-    public enum TeamRelation
+    public enum TeamRelation : byte
 	{
         Ally,
         Enemy,
         Neutral
 	}
+
+    [Flags]
+    public enum TeamRelationFlag : byte
+    {
+        Ally = (1 << TeamRelation.Ally),
+        Enemy = (1 << TeamRelation.Enemy),
+        Neutral = (1 << TeamRelation.Neutral),
+    }
+
+    public static class TeamRelationX
+    {
+        public static TeamRelationFlag ToFlag(this TeamRelation relation) => (TeamRelationFlag)(1 << (int) relation);
+
+        public static TeamRelationFlag ToFlags(params TeamRelation[] relations)
+        {
+            TeamRelationFlag flags = 0;
+            foreach (var relation in relations)
+                flags |= relation.ToFlag();
+            return flags;
+        }
+
+        public static bool HasValue(this TeamRelationFlag flags, TeamRelation value)
+        {
+            var valueAsFlag = value.ToFlag();
+            return flags.HasFlag(valueAsFlag);
+        }
+        
+        public static IEnumerable<TeamRelation> ToValues(this TeamRelationFlag relationFlags)
+        {
+            const int teamRelationCount = 3;
+            for (var i = 0; i < teamRelationCount; i++)
+            {
+                var flag = (TeamRelationFlag)(1 << i);
+                var value = (TeamRelation)i;
+                if (relationFlags.HasFlag(flag))
+                    yield return value;
+            }
+        }
+    }
 }

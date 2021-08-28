@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using MobaGame.Framework.Core;
 using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using MobaGame.Framework.Types;
 using MobaGame.FX;
 using UnityEngine;
@@ -9,8 +10,7 @@ using UnityEngine;
 namespace MobaGame.Entity.Abilities.WarpedMagi
 {
     [CreateAssetMenu(menuName = "Ability/WarpedMagi/UnstableMagic")]
-    public class UnstableMagic : AbilityObject, IGroundTargetAbility, IObjectTargetAbility<Actor>, IStatCostAbility,
-        ICooldownAbility, IListener<IStepableEvent>
+    public class UnstableMagic : AbilityObject, IReflectableAbility, IListener<IStepableEvent>
     {
         // [Header("Mana Cost")]
         /* Ground Target Spell
@@ -20,6 +20,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
 
 #pragma warning disable 0649
 
+        [SerializeField] private Sprite _icon;
         [SerializeField] private float _manaCost;
         [SerializeField] private float _castRange;
         [Header("Damage")] [SerializeField] private float _damage;
@@ -27,46 +28,62 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
         [SerializeField] private int _additionalJumps;
 
         [Header("Cooldown")] [SerializeField] private float _cooldown;
-        private DurationTimer _cooldownTimer;
 
         [SerializeField] private GameObject _unstableMagicFX;
+        private CastRange CastRange { get; set; }
+
+        #region State Variables
+        
+
+        #endregion
+        
 #pragma warning restore 0649
 
         public override void Initialize(Actor data)
         {
             base.Initialize(data);
+            Checker = new AbilityPredicateBuilder(data)
+            {
+                Cooldown = new Cooldown(_cooldown),
+                MagicCost = new MagicCost(Modules.Magicable, _manaCost),
+                Teamable = TeamableChecker.NonAllyOnly(Modules.Teamable)
+            };
+            View = new SimpleAbilityView()
+            {
+                Cooldown = Checker.Cooldown,
+                StatCost = Checker.MagicCost,
+                Icon = _icon,
+            };
+            CastRange = new CastRange(data.transform){MaxDistance = _castRange};
+            Checker.RebuildChecks();
             Register(data);
-            _cooldownTimer = new DurationTimer(_cooldown, true);
         }
 
         public override void ConfirmCast()
         {
-            if (!_cooldownTimer.Done)
+            if(!Checker.AllowCast())
                 return;
             var ray = AbilityHelper.GetScreenRay();
             if (!AbilityHelper.TryGetWorldOrEntity(ray, out var hit))
                 return;
-
+            
             var unitTarget = AbilityHelper.TryGetActor(hit.collider, out var actor);
             if (actor == Self)
                 return;
 
-            if (!unitTarget && !AbilityHelper.InRange(Self.transform, hit.point, _castRange))
+            if (!unitTarget && !CastRange.InRange(hit.point))
                 return;
-            if (unitTarget && !AbilityHelper.InRange(Self.transform, actor.transform, _castRange))
-                return;
-
-            if (!AbilityHelper.TrySpendMagic(this, Modules.Magicable))
+            if (unitTarget && !CastRange.InRange(actor))
                 return;
 
 
-            _cooldownTimer.Reset();
+            Checker.DoCast();
             if (!unitTarget)
                 CastGroundTarget(hit.point);
             else
                 CastObjectTarget(actor);
 
-            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, Cost));
+            Modules.Abilitiable.NotifyAbilityCast(new AbilityEventArgs(Self, View.StatCost.Cost));
         }
 
         public void CastGroundTarget(Vector3 worldPos)
@@ -94,7 +111,7 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
 
         private void InternalSingleTarget(Actor target)
         {
-            var damage = new Damage(_damage, DamageType.Magical, DamageModifiers.Ability);
+            var damage = new Damage(_damage, DamageType.Magical, DamageFlags.Ability);
             //TODO add targetable info
             // var targetable = target.GetComponent<Targetable>();
             // targetable.AffectSpell();
@@ -121,20 +138,21 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
 
         private bool TrySearchTarget(Vector3 area, out Actor target) => TrySearchTarget(area, new Actor[0], out target);
 
+        public AbilityPredicateBuilder Checker { get; set; }
+        public SimpleAbilityView View { get; set; }
+        public override IAbilityView GetAbilityView() => View;
         private bool TrySearchTarget(Vector3 area, ICollection<Actor> ignore, out Actor target)
         {
-            var potentialTargets = Physics.OverlapSphere(area, _searchRange, (int) LayerMaskHelper.Entity);
+            var potentialTargets = Physics.OverlapSphere(area, _searchRange, (int) LayerMaskFlag.Entity);
             foreach (var potentialTarget in potentialTargets)
             {
                 if (!AbilityHelper.TryGetActor(potentialTarget, out var actor))
                     continue;
-                if (IsSelf(actor))
+                if (!Checker.AllowTarget(actor))
                     continue;
                 if (ignore.Contains(actor))
                     continue;
-                if (AbilityHelper.SameTeam(Modules.Teamable, actor))
-                    continue;
-
+ 
                 //TODO when targetable works, add this
                 // if (!actor.TryGetComponent<ITargetable>(out _))
                 // continue;
@@ -149,27 +167,20 @@ namespace MobaGame.Entity.Abilities.WarpedMagi
             return false;
         }
 
-        public float Cost => _manaCost;
-
-        public bool CanSpendCost() => Modules.Magicable.HasMagic(Cost);
-
-        public float Cooldown => _cooldownTimer.Duration;
-        public float CooldownRemaining => _cooldownTimer.RemainingTime;
-        public float CooldownNormal => _cooldownTimer.ElapsedTime / _cooldownTimer.Duration;
-
-        public void OnStep(float deltaTime)
-        {
-            _cooldownTimer.AdvanceTimeIfNotDone(deltaTime);
-        }
 
         public void Register(IStepableEvent source)
         {
-            source.PreStep += OnStep;
+            Checker.Cooldown.Register(source);
         }
 
         public void Unregister(IStepableEvent source)
         {
-            source.PreStep -= OnStep;
+            Checker.Cooldown.Unregister(source);
+        }
+
+        public void CastReflected(Actor caster)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

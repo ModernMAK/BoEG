@@ -35,6 +35,7 @@ namespace MobaGame.UI
 
                 for (var i = abilityCount; i < _abilityPanels.Count; i++)
                 {
+                    _abilityPanels[i].Dispose();
                     Destroy(_abilityPanels[i].gameObject);
                     _abilityPanels.RemoveAt(i);
                     i--;
@@ -46,6 +47,9 @@ namespace MobaGame.UI
                 {
                     //BUG aspect ratio not resizing icon?
                     //Toggling on and off fixes this, but its not a good solution imo
+                    // [x] Check if the dispose issue was causing this to fail, it may be fixed now
+                    //    Check done, seems to still be an issue, so this was unrelated.
+                    
                     _abilityPanels[i].gameObject.SetActive(false);
                     _abilityPanels[i].SetTarget(_abilitiable.Abilities[i]);
                     _abilityPanels[i].gameObject.SetActive(true);

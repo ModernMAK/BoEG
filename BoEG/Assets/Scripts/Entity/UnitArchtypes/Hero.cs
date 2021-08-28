@@ -10,7 +10,8 @@ namespace MobaGame.Entity.UnitArchtypes
 {
     public sealed class Hero : CommandableActor, IInitializable<IHeroData>,
         IProxy<IAbilitiable>, IProxy<IArmorable>, IProxy<IHealthable>, IProxy<IMagicable>, IProxy<IAttackerable>,
-        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageable>, IProxy<ITargetable>, IProxy<IModifiable>, IProxy<IKillable>
+        IProxy<ITeamable>, IProxy<IMovable>, IProxy<IDamageable>, IProxy<ITargetable>, IProxy<IModifiable>, IProxy<IKillable>,
+        IProxy<IHealable>
     {
 #pragma warning disable 649
         private Sprite _icon;
@@ -30,6 +31,7 @@ namespace MobaGame.Entity.UnitArchtypes
         [SerializeField] private Modifiable _modifiable;
         [SerializeField] private Killable _killable;
         [SerializeField] private Inventoryable<IItem> _inventoryable;
+        [SerializeField] private Healable _healable;
         [Header("Data")] [SerializeField] private HeroData _data;
         [SerializeField] private TeamData _initialTeam;
 #pragma warning restore 649
@@ -45,6 +47,7 @@ namespace MobaGame.Entity.UnitArchtypes
         ITargetable IProxy<ITargetable>.Value => _targetable;
         IModifiable IProxy<IModifiable>.Value => _modifiable;
         IKillable IProxy<IKillable>.Value => _killable;
+        IHealable IProxy<IHealable>.Value => _healable;
         protected override IEnumerable<object> Modules
         {
             get
@@ -63,6 +66,7 @@ namespace MobaGame.Entity.UnitArchtypes
                 yield return _modifiable;
                 yield return _killable;
                 yield return _inventoryable;
+                yield return _healable;
             }
         }
         protected override void CreateComponents()
@@ -82,6 +86,7 @@ namespace MobaGame.Entity.UnitArchtypes
             _damageTarget = new Damageable(this, _healthable, _killable, _armorable);
             _modifiable = new Modifiable(this);
             _inventoryable = new Inventoryable<IItem>(this, new LimitedInventory<IItem>(6));
+            _healable = new Healable(this,_healthable);
         }
 
 

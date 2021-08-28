@@ -18,6 +18,8 @@ MonoBehaviour:
   _magicableData:
     _magicGeneration: 1
     _magicCapacity: 300
+    _magicGenerationGain: 0
+    _magicCapacityGain: 0
   _armorableData:
     _physical:
       _block: 0
@@ -41,4 +43,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 19c723d4ce11cdd4fa4c291fd6322c3b, type: 2}
   - {fileID: 11400000, guid: cb227aba770d8674f9fc9e2024134642, type: 2}
   - {fileID: 11400000, guid: 0a2d212193142534da2866aacd1bd6d3, type: 2}
-  _icon: {fileID: 21300000, guid: 67b04f16a8bb3d54b894ab9f2de65ebf, type: 3}
+  _icon: {fileID: 429920310216312514, guid: cf4a0ed3c81933c46b4e76f115f96353, type: 3}

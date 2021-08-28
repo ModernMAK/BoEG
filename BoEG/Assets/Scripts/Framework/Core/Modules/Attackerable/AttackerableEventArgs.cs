@@ -5,17 +5,15 @@ namespace MobaGame.Framework.Core.Modules
 {
     public class AttackerableEventArgs : EventArgs
     {
-        public AttackerableEventArgs(Actor attacker, Actor defender, Damage damage)
+        public AttackerableEventArgs(SourcedDamage damage, Actor defender)
 		{
-            Attacker = attacker;
             Defender = defender;
-            BaseDamage = damage;
             Damage = damage;
 		}
 
-        public Actor Attacker { get; }
+        public Actor Attacker => Damage.Source;
         public Actor Defender { get; }
-        public Damage BaseDamage { get; }
-        public Damage Damage { get; set; }
+        public SourcedDamage Damage { get; }
+        public Damage DamageValue => Damage.Value;
     }
 }

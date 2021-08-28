@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56b57da634da4cbdadb9a09ebfb3b435, type: 3}
+  m_Name: ForestGuardian
+  m_EditorClassIdentifier: 
+  _healthableData:
+    _healthGeneration: 1
+    _healthCapacity: 500
+  _magicableData:
+    _magicGeneration: 1
+    _magicCapacity: 300
+    _magicGenerationGain: 0
+    _magicCapacityGain: 0
+  _armorableData:
+    _physical:
+      _block: 0
+      _resist: 0.05
+      _immune: 0
+    _magical:
+      _block: 0
+      _resist: 0.05
+      _immune: 0
+  _attackerableData:
+    _attackRange: 2
+    _attackDamage: 50
+    _attackSpeed: 1
+    _attackInterval: 1
+    _isRanged: 1
+  _movableData:
+    _moveSpeed: 4
+    _turnSpeed: 360
+  _abilities:
+  - {fileID: 11400000, guid: be022dede1a40de41932a0dd89a0109a, type: 2}
+  - {fileID: 11400000, guid: 43eada9eea0489b43a2ce26be3df0a44, type: 2}
+  - {fileID: 11400000, guid: 4a7df6f724ad498478768d8f8dc8e76f, type: 2}
+  _icon: {fileID: 4331510993060141285, guid: cf4a0ed3c81933c46b4e76f115f96353, type: 3}

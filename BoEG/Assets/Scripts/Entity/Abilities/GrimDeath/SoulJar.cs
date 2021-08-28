@@ -3,6 +3,7 @@ using MobaGame.Framework.Core.Modules;
 using MobaGame.Framework.Core.Modules.Ability;
 using MobaGame.Framework.Core.Trigger;
 using System;
+using MobaGame.Framework.Utility;
 using UnityEngine;
 
 namespace MobaGame.Entity.Abilities.GrimDeath
@@ -11,6 +12,7 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 	[CreateAssetMenu(menuName = "Ability/GrimDeath/SoulJar")]
 	public class SoulJar : AbilityObject
 	{
+		[SerializeField] private Sprite _icon;
 #pragma warning disable 0649
 		[SerializeField]
 		private int _soulsPerKill;
@@ -30,9 +32,10 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 #pragma warning restore 0649
 		private TriggerHelper<SphereCollider> _aura;
 
+		private SoulJarModifier _modifier;
+		public SoulJarModifier Modifier => _modifier;
 
-		//TODO add magicable modifier
-		private class SoulJarModifier : IHealthGenerationModifier, IMagicGenerationModifier, IDynamicModifier
+		public class SoulJarModifier : IHealthGenerationModifier, IMagicGenerationModifier, IDynamicModifier
 		{
 			public SoulJarModifier(Sprite icon, float hpGen, float mpGen, int souls=default)
 			{
@@ -47,7 +50,7 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 			private int _souls;
 			private float _hpGenPerSoul;
 			private float _mpGenPerSoul;
-			private ModifierView _view;
+			private readonly ModifierView _view;
 			public int Souls
 			{
 				get => _souls;
@@ -64,7 +67,7 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 				get => _hpGenPerSoul;
 				set
 				{
-					var changed = _hpGenPerSoul != value;
+					var changed = !_hpGenPerSoul.SafeEquals(value);
 					_hpGenPerSoul = value;
 					if (changed)
 						OnChanged();
@@ -75,7 +78,7 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 				get => _mpGenPerSoul;
 				set
 				{
-					var changed = _mpGenPerSoul != value;
+					var changed = !_mpGenPerSoul.SafeEquals(value);
 					_mpGenPerSoul = value;
 					if (changed)
 						OnChanged();
@@ -96,11 +99,15 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 			public IModifierView View => _view;
 		}
 
-		SoulJarModifier _modifier;
 		public override void Initialize(Actor data)
 		{
 			_modifier = new SoulJarModifier(_modifierIcon,_healthGenPerSoul,_manaGenPerSoul);
 			base.Initialize(data);
+			base.Initialize(data);
+			View = new SimpleAbilityView()
+			{
+				Icon = _icon
+			};
 			_aura = TriggerUtility.CreateTrigger<SphereCollider>(data, "SoulJar Search Trigger");
 			_aura.Collider.radius = _searchRadius;
 			_aura.Trigger.Enter += OnEnter;
@@ -109,6 +116,8 @@ namespace MobaGame.Entity.Abilities.GrimDeath
 			Modules.Modifiable.AddModifier(_modifier);
 		}
 
+		public SimpleAbilityView View { get; set; }
+		public override IAbilityView GetAbilityView() => View;
 		private void OnDeath(object sender, DeathEventArgs e)
 		{
 			HalveSouls();

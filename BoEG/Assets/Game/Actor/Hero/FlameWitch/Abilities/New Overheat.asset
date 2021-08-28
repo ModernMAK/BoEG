@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2444c9a8ce9f37749b1b25cc70609561, type: 3}
   m_Name: New Overheat
   m_EditorClassIdentifier: 
-  _icon: {fileID: 21300000, guid: f4a9205ed853cd84f872633767989f67, type: 3}
+  _icon: {fileID: 3872047521413475355, guid: fba65e2ac72cbc9489932e4da95a7264, type: 3}
   _damagePerSecond: 5
   _deathRange: 0
   _deathDamage: 0

@@ -1,16 +1,17 @@
+using MobaGame.Framework.Core.Modules.Ability.Helpers;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules.Ability
 {
-    public interface IAbilityView
+    public interface IAbilityView : IView
     {
-        Sprite GetIcon();
+        Sprite Icon { get; }
 
 
-        ICooldownAbility Cooldown { get; }
-        IStatCostAbility StatCost { get; }
+        ICooldownView Cooldown { get; }
+        IStatCostAbilityView StatCost { get; }
 
-        IToggleableAbility Toggleable { get; }
+        IToggleableAbilityView Toggleable { get; }
 
     }
 }

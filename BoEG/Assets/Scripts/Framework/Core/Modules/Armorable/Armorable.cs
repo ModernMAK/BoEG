@@ -3,22 +3,6 @@ using MobaGame.Framework.Types;
 
 namespace MobaGame.Framework.Core.Modules
 {
-    public interface IPhysicalBlockModifier : IModifier
-    {
-        public FloatModifier PhysicalBlock { get; }
-    }
-    public interface IMagicalBlockModifier : IModifier
-    {
-        public FloatModifier MagicalBlock { get; }
-    }
-    public interface IPhysicalResistanceModifier : IModifier
-    {
-        public FloatModifier PhysicalResistance { get; }
-    }
-    public interface IMagicalResistanceModifier : IModifier
-    {
-        public FloatModifier MagicalResistance { get; }
-    }
     public class Armorable : ActorModule, IArmorable, IInitializable<IArmorableData>, IListener<IModifiable>, IArmorableView
     {
         public Armorable(Actor actor) : base(actor)
@@ -44,22 +28,23 @@ namespace MobaGame.Framework.Core.Modules
 
         IArmor IArmorable.Magical => Magical;
 
-		public virtual Damage ResistDamage(Damage damage)
+		public virtual SourcedDamage ResistDamage(SourcedDamage damage)
         {
+            OnResisting(damage);
+            damage = CalculateDamageMitigation(damage);
             var reduction = CalculateReduction(damage);
             //Reduction, so negate the value
-            var reducedDamage = damage.ModifyValue(-reduction, true);
-            var resistingArgs = new ArmorableEventArgs(damage, reducedDamage);
-            OnResisting(resistingArgs);
-            var resistedArgs = new ArmorableEventArgs(resistingArgs.OutgoingDamage);
-            OnResisted(resistedArgs);
-            return resistedArgs.OutgoingDamage;
+            var reducedDamage = damage.ModifyDamageValue(-reduction, true);
+            damage = reducedDamage;
+            var resisted = new ChangedEventArgs<SourcedDamage>(damage, reducedDamage);
+            OnResisted(resisted);
+            return damage;
         }
 
-        public float CalculateReduction(Damage damage)
+        public float CalculateReduction(SourcedDamage damage)
         {
-            var value = damage.Value;
-            switch (damage.Type)
+            var value = damage.Value.Value;
+            switch (damage.Value.Type)
             {
                 case DamageType.Physical:
                     return Physical.CalculateReduction(value);
@@ -72,8 +57,9 @@ namespace MobaGame.Framework.Core.Modules
             }
         }
 
-        public event EventHandler<ArmorableEventArgs> Resisted;
-        public event EventHandler<ArmorableEventArgs> Resisting;
+        public event EventHandler<ChangedEventArgs<SourcedDamage>> Resisted;
+        public event EventHandler<SourcedDamage> Resisting;
+        public event EventHandler<ChangableEventArgs<SourcedDamage>> DamageMitigation;
 
         public void Initialize(IArmorableData data)
         {
@@ -81,15 +67,18 @@ namespace MobaGame.Framework.Core.Modules
             Magical.Initialize(data.Magical);
         }
 
-        protected virtual void OnResisted(ArmorableEventArgs e)
+        protected virtual void OnResisted(ChangedEventArgs<SourcedDamage> e)
         {
             Resisted?.Invoke(this, e);
         }
 
-        protected virtual void OnResisting(ArmorableEventArgs e)
+        protected virtual void OnResisting(SourcedDamage e)
         {
             Resisting?.Invoke(this, e);
         }
+
+        protected virtual SourcedDamage CalculateDamageMitigation(SourcedDamage e) =>
+            DamageMitigation.CalculateChange(this, e);
 
 		public void Register(IModifiable source)
 		{

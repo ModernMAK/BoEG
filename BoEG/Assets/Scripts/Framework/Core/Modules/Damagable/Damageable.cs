@@ -1,5 +1,6 @@
 using System;
 using MobaGame.Framework.Types;
+using MobaGame.Framework.Utility;
 using UnityEngine;
 
 namespace MobaGame.Framework.Core.Modules
@@ -17,13 +18,13 @@ namespace MobaGame.Framework.Core.Modules
 
         public virtual bool TakeDamage(SourcedDamage damage)
         {
+            OnDamaging(damage);
             //ARMORABLE
             if (_armorable != null) damage = _armorable.ResistDamage(damage);
             damage = CalculateDamageModifiers(damage);
-            OnDamaging(damage);
             _healthable.Value -= damage.Value.Value;
             OnDamaged(damage);
-            var killed = _healthable.Value == 0f;
+            var killed = _healthable.Value.SafeEquals(0f);
             if (killed)
                 Killable.Die(damage.Source);
             return killed;
